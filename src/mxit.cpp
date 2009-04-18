@@ -26,18 +26,20 @@ QByteArray Mxit::getLoginCaptcha()
 {
   QString timestamp = QString("%1").arg(QDateTime::currentDateTime().toTime_t());
   //QUrl url("http://www.mxit.com/res/");//?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp);
-  QUrl url("http://war3.co.za/forum/viewforum.php");
+  QUrl url("http://war3.co.za/forum/viewforum.php?f=26&sid=194feef8a58e637d463271796dd23d22");
   
-  QByteArray query;
-  query += url.path().toLatin1();
+  //QByteArray query;
+  //query += url.path().toLatin1();
   //query += "?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=";
   //query += timestamp;
-  query += "?f=26&sid=194feef8a58e637d463271796dd23d22";
+
   
-  qDebug() << query << "\n";
+  //qDebug() << query << "\n";
+  
+  qDebug() << url.toString() << "\n";
   
   http->setHost(url.host(), url.port() == -1 ? 0 : url.port());
-  httpGetId = http->get(query);
+  httpGetId = http->get(url.toString());
   
   return QByteArray::fromBase64(
   
