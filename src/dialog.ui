@@ -19,19 +19,19 @@
       <x>70</x>
       <y>90</y>
       <width>331</width>
-      <height>91</height>
+      <height>51</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout" >
      <item>
-      <widget class="QLabel" name="captchaLabel" >
-       <property name="text" >
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
       <layout class="QHBoxLayout" name="horizontalLayout" >
+       <item>
+        <widget class="QLabel" name="captchaLabel" >
+         <property name="text" >
+          <string>CAPTCHA</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QLineEdit" name="captchaResponse" />
        </item>
@@ -46,6 +46,13 @@
         </widget>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>Please enter the digits as seen in the image above.</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
