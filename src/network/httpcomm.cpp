@@ -50,6 +50,7 @@ void HttpComm::httpRequestFinished(int requestId, bool error)
     if (!error) {
       qDebug() << "success";
       responseByteArray = http->readAll();
+      DEBUG(responseByteArray);
       if (currentHttpGet == CHALLENGE_INITIAL) {
         //TODO add other functionality here
         if (extractDataFromResponce(0) == "0") {
@@ -113,7 +114,7 @@ void HttpComm::sendInitialChallenge()
 
 ///- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-void HttpComm::sendChallengeResponse(QString captchaResponse, QString login)
+void HttpComm::sendChallengeResponse(QString captchaResponse, QString cell_number)
 {
   // TODO ... like, need to rewrite EVERYTHING! for this function
   
@@ -126,7 +127,7 @@ void HttpComm::sendChallengeResponse(QString captchaResponse, QString login)
   query += "?type=getpid&sessionid=";
   query += sessionId;
   query += "&ver=5.8.2&login=";
-  query += login;
+  query += cell_number;
   query += "&cat=Y&chalresp=";
   query += captchaResponse;
   query += "&cc=ZA&loc=en&brand=LPM&model=StrioClient&path=1";

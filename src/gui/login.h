@@ -10,7 +10,6 @@
 #define __MXIT_GUI_LOGIN_H__
 
 #include "mxit/client.h"
-#include "network/httpcomm.h"
 
 #include "ui_login.h"
 
@@ -39,7 +38,6 @@ class Login : public QMainWindow, private Ui::Login
   
   private:        /* variables */
   
-  MXit::HttpComm * httpComm;
   MXit::Client *mxit;
 };
 

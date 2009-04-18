@@ -19,7 +19,37 @@ namespace MXit
 
 Client::Client(QObject *parent) : QObject (parent)
 {
+    httpComm = new HttpComm();
     
+    
+    connect(httpComm, SIGNAL(captchaReceived(const QByteArray &)), this, SLOT(captchaReceivedClient(const QByteArray &)));
+}
+
+
+void Client::captchaReceivedClient(const QByteArray &captcha) {
+  emit captchaReceived(captcha);
+}
+
+void Client::getLoginInfo() /*includes captach image and language/country options*/{
+  httpComm->sendInitialChallenge();
+}
+
+void Client::login(QString username, QString pass, QString captchaResponse)
+{
+  httpComm->sendChallengeResponse(captchaResponse, username);
+  
 }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+

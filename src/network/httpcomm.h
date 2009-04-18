@@ -14,7 +14,7 @@
 namespace MXit
 {
 
-class HttpComm : public QObject
+class HttpComm/*Comm == Communication*/ : public QObject
 {
   Q_OBJECT
 

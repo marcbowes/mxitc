@@ -16,16 +16,13 @@
    <widget class="QWidget" name="layoutWidget" >
     <property name="geometry" >
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>271</width>
-      <height>262</height>
+      <x>4</x>
+      <y>6</y>
+      <width>261</width>
+      <height>251</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout" >
-     <property name="margin" >
-      <number>5</number>
-     </property>
      <item>
       <widget class="QLabel" name="label_3" >
        <property name="font" >
