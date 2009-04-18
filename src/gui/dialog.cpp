@@ -1,3 +1,11 @@
+/****************************************************************************
+**
+** For Copyright & Licensing information, see COPYRIGHT in project root
+**
+** This is an extension of the generated dialog, made with Designer
+**
+****************************************************************************/
+
 #include "dialog.h"
 
 namespace MXit

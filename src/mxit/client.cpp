@@ -1,4 +1,11 @@
-#include <QString>
+/****************************************************************************
+**
+** For Copyright & Licensing information, see COPYRIGHT in project root
+**
+** This is an extension of the generated dialog, made with Designer
+**
+****************************************************************************/
+
 #include <QUrl>
 #include <QDateTime>
 #include <QDebug>
@@ -13,8 +20,6 @@ namespace MXit
 Client::Client(QObject *parent) : QObject (parent)
 {
   http = new QHttp(this);
-  captchaWaitCond = new QWaitCondition();
-  captchaMutex = new QMutex();
     
   connect(http, SIGNAL(requestStarted(int)), this, SLOT(httpRequestStarted(int)));
   connect(http, SIGNAL(requestFinished(int, bool)), this, SLOT(httpRequestFinished(int, bool)));
@@ -55,6 +60,20 @@ void Client::httpRequestFinished(int requestId, bool error)
     }
     
   }
+
+}
+
+QByteArray Client::extractDataFromResponce(int data_num) {
+  
+  QString delim = ";";
+  int start = 0;
+  int end = responseByteArray.indexOf(delim);
+  for (int i = 0 ; i < data_num ; i++) {
+    start = end+1;
+    end = responseByteArray.indexOf(delim, start);
+  }
+  return responseByteArray.mid(start, end-start);
+
 }
 
 void Client::getLoginCaptcha()
