@@ -31,13 +31,13 @@ Login::Login(QApplication *app, MXit::Client *client)
   mxit = client;      /* store a copy */
   
   /* add in an image to display the login CAPTCHA */
-  mxit->getLoginCaptcha();
+  mxit->getLoginInfo();
     
   /* enable/disable 'Login' based on the validity of the user inputs */
   connect(cellphone, SIGNAL(textChanged(const QString &)), 
           this, SLOT(cellphoneChanged(const QString &)));
   connect(password, SIGNAL(textChanged(const QString &)), 
-          this, SLOT(passwordResponseChanged(const QString &)));
+          this, SLOT(passwordChanged(const QString &)));
   connect(captcha, SIGNAL(textChanged(const QString &)), 
           this, SLOT(captchaChanged(const QString &)));
   
@@ -116,7 +116,7 @@ void Login::cellphoneChanged(const QString &text)
 void Login::login()
 {
   if (!captcha->text().isEmpty())
-    mxit->sendChallengeResponse(captcha->text(), cellphone->text());
+    mxit->login(cellphone->text(), "", captcha->text());
 }
 
 
