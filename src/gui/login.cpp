@@ -2,8 +2,6 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
-** This is an extension of the generated dialog, made with Designer
-**
 ****************************************************************************/
 
 #include "login.h"
@@ -17,12 +15,13 @@ namespace GUI
 
 /****************************************************************************
 **
-** Copyright 2009 Marc Bowes
+** Author: Marc Bowes
 **
 ** Dialog constructor
 **
 ** ==== Arguments
-** - QApplication: defined in main.cpp from cmdline args
+** - app: owned by main.cpp
+** - client: owned by main.cpp
 **
 ****************************************************************************/
 Login::Login(QApplication *app, MXit::Client *client)
@@ -31,7 +30,7 @@ Login::Login(QApplication *app, MXit::Client *client)
   mxit = client;      /* store a copy */
   
   /* add in an image to display the login CAPTCHA */
-  mxit->getLoginInfo();
+  mxit->initialize();
     
   /* enable/disable 'Login' based on the validity of the user inputs */
   connect(cellphone, SIGNAL(textChanged(const QString &)), 
@@ -54,7 +53,7 @@ Login::Login(QApplication *app, MXit::Client *client)
 
 /****************************************************************************
 **
-** Copyright 2009 Marc Bowes
+** Author: Marc Bowes
 **
 ** Dialog deconstructor
 **
@@ -67,7 +66,7 @@ Login::~Login()
 
 /****************************************************************************
 **
-** Copyright 2009 Marc Bowes
+** Author: Marc Bowes
 **
 ** this SLOT is triggered when cellphone input text is changed
 **
@@ -80,7 +79,7 @@ void Login::captchaChanged(const QString &text)
 
 /****************************************************************************
 **
-** Copyright 2009 Timothy Sjoberg
+** Author: Timothy Sjoberg
 **
 ** this SLOT is triggered when the client receives the CAPTCHA
 **
@@ -95,7 +94,7 @@ void Login::captchaReceived(const QByteArray &captcha)
 
 /****************************************************************************
 **
-** Copyright 2009 Marc Bowes
+** Author: Marc Bowes
 **
 ** this SLOT is triggered when cellphone input text is changed
 **
@@ -108,7 +107,7 @@ void Login::cellphoneChanged(const QString &text)
 
 /****************************************************************************
 **
-** Copyright 2009 Marc Bowes
+** Author: Marc Bowes
 **
 ** this SLOT is triggered by pressing 'Login' or typing return
 **
@@ -118,14 +117,14 @@ void Login::login()
   if (!captcha->text().isEmpty()) {
     loginButton->setDisabled(true);
     loginButton->setText("Logging in..");
-    mxit->login(cellphone->text(), "", captcha->text());
+    mxit->login(cellphone->text(), captcha->text());
   }
 }
 
 
 /****************************************************************************
 **
-** Copyright 2009 Marc Bowes
+** Author: Marc Bowes
 **
 ** this SLOT is triggered when password input text is changed
 **
@@ -138,3 +137,4 @@ void Login::passwordChanged(const QString &text)
 }
 
 }
+

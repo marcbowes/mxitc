@@ -2,6 +2,7 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
+** Login window
 ** This is an extension of the generated dialog, made with Designer
 **
 ****************************************************************************/

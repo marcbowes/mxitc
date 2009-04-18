@@ -2,15 +2,19 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
-** This is an extension of the generated dialog, made with Designer
+** Author: Marc Bowes, 2009
+** Author: Timothy Sjoberg, 2009
+** Author: Richard Baxter, 2009
+**
+** MXit::Client is an abstraction layer, providing functionality rather than
+** implementation. Implementation is found at lower levels, e.g. networking
 **
 ****************************************************************************/
 
-#ifndef __CLIENT_H__
-#define __CLIENT_H__
+#ifndef __MXIT_CLIENT_H__
+#define __MXIT_CLIENT_H__
 
-#include<QObject>
-#include "network/httpcomm.h"
+#include "protocol/handshaker.h"
 
 namespace MXit
 {
@@ -19,22 +23,27 @@ class Client : public QObject
 {
   Q_OBJECT
 
-  signals:
-  void captchaReceived(const QByteArray &);
-  
-  private slots:
-  void captchaReceivedClient(const QByteArray &);
-  
   public:         /* class specific */
 	
-  Client(QObject *parent = 0);
-  void getLoginInfo();
-  void login(QString username, QString pass, QString captcha);
+  Client();
+  ~Client();
+
+  signals:
   
+  void captchaReceived(const QByteArray&);
   
-  private:
-    
-  MXit::HttpComm * httpComm;
+  private slots:
+  
+  void incomingCaptcha(const QByteArray&);
+
+  public:         /* methods */
+  
+  void initialize();
+  void login(const QString &cellphone, const QString &captcha);
+
+  private:        /* variables */
+  
+  MXit::Protocol::Handshaker *handshaker;
 };
 
 }
