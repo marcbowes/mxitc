@@ -9,6 +9,8 @@
 Mxit::Mxit(QObject *parent) : QObject (parent)
 {
   http = new QHttp(this);
+  captchaWaitCond = new QWaitCondition();
+  captchaMutex = new QMutex();
     
   connect(http, SIGNAL(requestStarted(int)), this, SLOT(httpRequestStarted(int)));
   connect(http, SIGNAL(requestFinished(int, bool)), this, SLOT(httpRequestFinished(int, bool)));
@@ -24,19 +26,28 @@ void Mxit::httpRequestStarted(int requestId)
 void Mxit::httpRequestFinished(int requestId, bool error)
 {
   qDebug() << "Request Finished";
-  QByteArray response = http->readAll();
 
-  DEBUG(httpGetId);
-  DEBUG(requestId);
-  DEBUG(response);
-  DEBUG(http->lastResponse().statusCode());
+  if (requestId == httpGetId) {
 
-  if (!error)
-    qDebug() << "success";
-  else
-    qDebug() << "err0r";
+//     QByteArray response = http->readAll();
 
-  DEBUG(http->errorString());
+    DEBUG(httpGetId);
+    DEBUG(requestId);
+    DEBUG(http->lastResponse().statusCode());
+
+
+    if (!error) {
+      qDebug() << "success";
+      responseByteArray = http->readAll();
+      captchaWaitCond->wakeAll();
+      captchaMutex->unlock();
+      
+    }
+    else
+      qDebug() << "err0r";
+
+    DEBUG(http->errorString());
+  }
 }
 
 QByteArray Mxit::getLoginCaptcha()
@@ -45,9 +56,10 @@ QByteArray Mxit::getLoginCaptcha()
   QUrl url("http://www.mxit.com");//?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp);
   
   QByteArray query;
+  query += url.path();
   //query += "?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=";
   //query += timestamp;
-  query += ("/res/?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp);
+  query += "/res/?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp;
   
   DEBUG(url.host());
   DEBUG(query);
@@ -57,7 +69,10 @@ QByteArray Mxit::getLoginCaptcha()
 //   DEBUG(http->readAll());
 
   httpGetId = http->get(query);
+  captchaMutex->lock();
 
+  captchaWaitCond->wait(captchaMutex);
+  
 
   
   return QByteArray::fromBase64(

@@ -5,6 +5,8 @@
 //#include <QTcpSocket>
 #include <QHttp>
 #include <QFile>
+#include <QWaitCondition>
+#include <QMutex>
 
 class Mxit : public QObject
 {
@@ -18,8 +20,12 @@ Q_OBJECT
 	  void httpRequestFinished(int requestId, bool error);
 		
 	private:
+	  QWaitCondition *captchaWaitCond;
+	  QMutex *captchaMutex;
+	  
 	  QHttp *http;
 	  int httpGetId;
+	  QByteArray responseByteArray;
 //		QTcpSocket *socket;
 //		QString host;
 //		quint16 port;
