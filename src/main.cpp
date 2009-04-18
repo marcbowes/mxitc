@@ -1,13 +1,11 @@
-#include <QCoreApplication>
-#include <QStringList>
-#include "mxit.h"
+#include "dialog.h"
 
 int main(int argc, char *argv[])
 {
-	QCoreApplication app(argc,argv);
-	QStringList args = app.arguments();
-
-	Mxit mxit_client;
+	QApplication app(argc, argv);
+	
+  Dialog dialog(&app);
+  dialog.show();
 
 	return app.exec();
 }

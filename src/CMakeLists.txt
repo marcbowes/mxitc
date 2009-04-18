@@ -1,6 +1,6 @@
 PROJECT(MXIT_CLIENT)
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${MXIT_CLIENT_BINARY_DIR})
 
 # add Qt modules here, the include will setup QT_LIBRARIES
 SET(QT_USE_QTNETWORK TRUE)
@@ -9,15 +9,16 @@ INCLUDE(${QT_USE_FILE})
 # .cxx sources
 SET(MXIT_CLIENT_SRCS_CXX
   
-  main.cpp
   mxit.cpp
+  dialog.cpp
+  main.cpp
 )
 
 # files which need to be moc'd by Qt
 SET(MXIT_CLIENT_MOC_SRCS
   
-  dialog.h
   mxit.h
+  dialog.h
 )
 
 SET(MXIT_CLIENT_UI
