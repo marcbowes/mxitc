@@ -16,12 +16,22 @@ namespace Network
 **
 ** Author: Marc Bowes
 **
-** appends the message to this packet's data
+** turns the data vector into a single QString seperated by \1
 **
 ****************************************************************************/
-void Packet::operator<<(const QString &message)
+QString Packet::getData() const
 {
-  data.append(message);
+  QString message;
+  DataVecItr itr(data);
+  
+  while (itr.hasNext()) {
+    const QString &d = itr.next();
+    message.append(d);
+    if (itr.hasNext()) /* append \1 if there is another message */
+      message.append("\1");
+  }
+  
+  return message;
 }
 
 
@@ -44,6 +54,19 @@ void Packet::setCellphone(const QString &cellphone)
 void Packet::setCommand(const QString &command)
 {
   this->command = command;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** appends the message to this packet's data
+**
+****************************************************************************/
+void Packet::operator<<(const QString &message)
+{
+  data.append(message);
 }
 
 }

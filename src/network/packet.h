@@ -13,6 +13,7 @@
 #define __MXIT_NETWORK_PACKET_H__
 
 #include <QVector>
+#include <QVectorIterator>
 #include <QString>
 
 namespace MXit
@@ -22,17 +23,19 @@ namespace Network
 {
 
 typedef QVector<QString> DataVec;
+typedef QVectorIterator<QString> DataVecItr;
 
 class Packet
 {
   public:           /* methods */
   
-  void operator<<(const QString &message);
-  virtual operator QByteArray() const = 0; 
+  QString getData() const;
   void setCellphone(const QString &cellphone);
   void setCommand(const QString &command);
+  void operator<<(const QString &message);
+  virtual operator QByteArray() const = 0;
   
-  private:         /* variables */
+  protected:       /* variables */
   
   QString cellphone;
   QString command;

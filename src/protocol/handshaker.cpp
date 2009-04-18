@@ -70,12 +70,14 @@ void Handshaker::requestComplete(int requestId, bool error)
   if (error) {
     qDebug() << "There was an error in the HTTP request";
     DEBUG(http->errorString());
+    
     return;
   }
   
   /* ensure the request that completed is the one we expected */
   if (requestId != httpGetId) {
     qDebug() << "unexpected request id";
+    
     return;
   }
   
@@ -202,6 +204,7 @@ QByteArray Handshaker::extractDataFromResponse(const QByteArray &response, unsig
     start = end + 1;
     end = response.indexOf(delimiter, start);
   }
+  
   return response.mid(start, end - start);
 }
 
