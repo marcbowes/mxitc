@@ -12,8 +12,13 @@
 ****************************************************************************/
 Dialog::Dialog(QApplication *app)
 {
-  setupUi(this); /* from ui_dialog.h: generated from dialog.ui */
-  mxit = new Mxit();
+  setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
+  mxit = new Mxit();  /* this is our slave client */
+  
+  /* add in an image to display the login CAPTCHA */
+  QImage captcha;
+  captcha.loadFromData(mxit->getLoginCaptcha());
+  captchaLabel->setPixmap(QPixmap::fromImage(captcha));
 }
 
 

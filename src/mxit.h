@@ -18,6 +18,10 @@ Q_OBJECT
 //		QTcpSocket *socket;
 //		QString host;
 //		quint16 port;
+
+  public:
+  
+  QByteArray getLoginCaptcha();
 };
 
 #endif
