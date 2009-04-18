@@ -14,6 +14,7 @@ Q_OBJECT
 		Mxit(QObject *parent = 0);
 
 	private slots:
+	  void httpRequestStarted(int requestId);
 	  void httpRequestFinished(int requestId, bool error);
 		
 	private:
