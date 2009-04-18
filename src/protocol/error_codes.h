@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
-**
 ** 
 ** Author: Marc Bowes, 2009
 **

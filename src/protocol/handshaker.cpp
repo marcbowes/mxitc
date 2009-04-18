@@ -59,8 +59,7 @@ Handshaker::~Handshaker()
 ****************************************************************************/
 void Handshaker::requestComplete(int requestId, bool error)
 {
-  /* debugging */
-#ifdef DEBUG
+#ifdef HANDSHAKER_DEBUG
   qDebug() << "Request Finished";
   DEBUG(httpGetId);
   DEBUG(requestId);
@@ -81,7 +80,7 @@ void Handshaker::requestComplete(int requestId, bool error)
   }
   
   QByteArray response = http->readAll();
-#ifdef DEBUG
+#ifdef HANDSHAKER_DEBUG
   DEBUG(response);
 #endif
   
@@ -114,7 +113,7 @@ void Handshaker::initialize()
   query += url.path();
   query += "?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp;
 
-#ifdef DEBUG
+#ifdef HANDSHAKER_DEBUG
   DEBUG(url.host());
   DEBUG(query);
 #endif
@@ -146,7 +145,7 @@ void Handshaker::requestPID(const QString &cellphone, const QString &captcha)
     .arg(captcha)
   ;
   
-#ifdef DEBUG
+#ifdef HANDSHAKER_DEBUG
   DEBUG(url.host());
   DEBUG(query);
 #endif
@@ -178,7 +177,7 @@ void Handshaker::captchaReceived(const QByteArray &response)
   challengeResponseURL = extractDataFromResponse(response, 1);
   sessionID = extractDataFromResponse(response, 2);
   
-#ifdef DEBUG
+#ifdef HANDSHAKER_DEBUG
   DEBUG(challengeResponseURL);
   DEBUG(sessionID);
 #endif
