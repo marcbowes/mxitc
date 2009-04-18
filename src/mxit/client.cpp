@@ -1,17 +1,21 @@
-#include "mxit.h"
 #include <QString>
 #include <QUrl>
 #include <QDateTime>
 #include <QDebug>
 
-Mxit::Mxit(QObject *parent) : QObject (parent)
+#include "client.h"
+
+namespace MXit
+{
+
+Client::Client(QObject *parent) : QObject (parent)
 {
   http = new QHttp(this);
     
   connect(http, SIGNAL(requestFinished(int, bool)), this, SLOT(httpRequestFinished(int, bool)));
 }
 
-void Mxit::httpRequestFinished(int requestId, bool error)
+void Client::httpRequestFinished(int requestId, bool error)
 {
   QByteArray response = http->readAll();
   QString temp(response);
@@ -22,7 +26,7 @@ void Mxit::httpRequestFinished(int requestId, bool error)
   qDebug() << temp << "\n";
 }
 
-QByteArray Mxit::getLoginCaptcha()
+QByteArray Client::getLoginCaptcha()
 {
   QString timestamp = QString("%1").arg(QDateTime::currentDateTime().toTime_t());
   //QUrl url("http://www.mxit.com/res/");//?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp);
@@ -46,8 +50,9 @@ QByteArray Mxit::getLoginCaptcha()
   );
 }
 
-void Mxit::sendCaptchaResponse(const QString &text)
+void Client::sendCaptchaResponse(const QString &text)
 {
   // stub
 }
 
+}

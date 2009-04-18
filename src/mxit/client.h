@@ -6,12 +6,15 @@
 #include <QHttp>
 #include <QFile>
 
-class Mxit : public QObject
+namespace MXit
+{
+
+class Client : public QObject
 {
 Q_OBJECT
 
 	public:
-		Mxit(QObject *parent = 0);
+		Client(QObject *parent = 0);
 
 	private slots:
 	  void httpRequestFinished(int requestId, bool error);
@@ -28,5 +31,7 @@ Q_OBJECT
   QByteArray getLoginCaptcha();
   void sendCaptchaResponse(const QString &text);
 };
+
+}
 
 #endif

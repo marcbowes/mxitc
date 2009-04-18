@@ -1,5 +1,5 @@
 # project name
-PROJECT(MXIT-CLIENT)
+PROJECT(MXIT)
 
 # 2.4.3 is actual minimum, but you have to add additional hacks
 # uncomment this if you need 2.4.3 compatibility
