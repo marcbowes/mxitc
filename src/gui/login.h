@@ -25,7 +25,7 @@ class Login : public QMainWindow, private Ui::Login
 
 	public:         /* class specific */
   
-  Login(QApplication *app);
+  Login(QApplication *app, MXit::Client *client);
   ~Login();
 
   private slots:
@@ -38,7 +38,7 @@ class Login : public QMainWindow, private Ui::Login
   
 	private:        /* variables */
   
-  Client *mxit;
+  MXit::Client *mxit;
 };
 
 }

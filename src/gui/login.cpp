@@ -25,10 +25,10 @@ namespace GUI
 ** - QApplication: defined in main.cpp from cmdline args
 **
 ****************************************************************************/
-Login::Login(QApplication *app)
+Login::Login(QApplication *app, MXit::Client *client)
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
-  mxit = new Client();  /* this is our slave client */
+  mxit = client;      /* store a copy */
   
   /* add in an image to display the login CAPTCHA */
   mxit->getLoginCaptcha();
