@@ -117,6 +117,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout" >
        <item>
         <widget class="QPushButton" name="loginButton" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="text" >
           <string>Login</string>
          </property>
