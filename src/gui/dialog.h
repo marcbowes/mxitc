@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright 2009 Marc Bowes
+** For Copyright & Licensing information, see COPYRIGHT in project root
 **
 ** This is an extension of the generated dialog, made with Designer
 **
@@ -23,19 +23,19 @@ class Dialog : public QMainWindow, private Ui::Dialog
 {
   Q_OBJECT
 
-  public:
+	public:         /* class specific */
   
   Dialog(QApplication *app);
   ~Dialog();
-  
-  private:
-  
-  Client *mxit;
-  
+
   private slots:
   
   void captchaRespond();
   void captchaResponseChanged(const QString &text);
+  
+	private:        /* variables */
+  
+  Client *mxit;
 };
 
 }
