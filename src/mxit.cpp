@@ -8,12 +8,24 @@ Mxit::Mxit(QObject *parent) : QObject (parent)
 {
   http = new QHttp(this);
     
+  connect(http, SIGNAL(requestStarted(int)), this, SLOT(httpRequestStarted(int)));
   connect(http, SIGNAL(requestFinished(int, bool)), this, SLOT(httpRequestFinished(int, bool)));
 }
 
+void Mxit::httpRequestStarted(int requestId)
+{
+  qDebug() << "Request Started";
+}
+
+
+
 void Mxit::httpRequestFinished(int requestId, bool error)
 {
+  qDebug() << "Request Finished";
   QByteArray response = http->readAll();
+
+  qDebug() << response;
+
   QString temp(response);
   if (!error)
     qDebug() << "success\n";
@@ -25,19 +37,24 @@ void Mxit::httpRequestFinished(int requestId, bool error)
 QByteArray Mxit::getLoginCaptcha()
 {
   QString timestamp = QString("%1").arg(QDateTime::currentDateTime().toTime_t());
-  //QUrl url("http://www.mxit.com/res/");//?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp);
-  QUrl url("http://war3.co.za/forum/viewforum.php");
+  QUrl url("http://www.mxit.com/res/");//?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp);
   
   QByteArray query;
   query += url.path().toLatin1();
   //query += "?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=";
   //query += timestamp;
-  query += "?f=26&sid=194feef8a58e637d463271796dd23d22";
+  query += ("?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp).toLatin1();
   
   qDebug() << query << "\n";
+  qDebug() << url.host() << "\n";
   
   http->setHost(url.host(), url.port() == -1 ? 0 : url.port());
+
+  qDebug() << http->readAll() << "\n";
+
   httpGetId = http->get(query);
+
+
   
   return QByteArray::fromBase64(
   
