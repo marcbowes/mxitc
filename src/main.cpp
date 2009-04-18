@@ -1,11 +1,11 @@
-#include "gui/dialog.h"
+#include "gui/login.h"
 
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
 	
-  MXit::GUI::Dialog dialog(&app);
-  dialog.show();
+  MXit::GUI::Login login(&app);
+  login.show();
 
 	return app.exec();
 }
