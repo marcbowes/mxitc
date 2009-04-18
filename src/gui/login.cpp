@@ -116,7 +116,7 @@ void Login::cellphoneChanged(const QString &text)
 void Login::login()
 {
   if (!captcha->text().isEmpty())
-    mxit->sendCaptchaResponse(captcha->text());
+    mxit->sendChallengeResponse(captcha->text(), cellphone->text());
 }
 
 
