@@ -6,7 +6,8 @@
 ** Author: Timothy Sjoberg, 2009
 ** Author: Marc Bowes, 2009
 **
-** Handshaker provides functionality to get a PID via a CAPTCHA negotiation
+** MXit::Protocol::Handshaker provides functionality to get a PID via a 
+** CAPTCHA negotiation
 **
 ****************************************************************************/
 
