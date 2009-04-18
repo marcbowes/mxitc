@@ -44,8 +44,6 @@ void Client::httpRequestFinished(int requestId, bool error)
     if (!error) {
       qDebug() << "success";
       responseByteArray = http->readAll();
-      captchaWaitCond->wakeAll();
-      captchaMutex->unlock();
       
     }
     else
@@ -74,9 +72,6 @@ QByteArray Client::getLoginCaptcha()
 //   DEBUG(http->readAll());
 
   httpGetId = http->get(query);
-  captchaMutex->lock();
-
-  captchaWaitCond->wait(captchaMutex);
   
 
   return QByteArray::fromBase64(
