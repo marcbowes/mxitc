@@ -25,15 +25,18 @@ class Client : public QObject
 	Client(QObject *parent = 0);
 
 	signals:
-	  void captchaReceived(const QByteArray &);
+	
+  void captchaReceived(const QByteArray &);
 	
 	private slots:
-    void httpRequestStarted(int requestId);
-    void httpRequestFinished(int requestId, bool error);
+	
+  void httpRequestStarted(int requestId);
+  void httpRequestFinished(int requestId, bool error);
 
   public:         /* methods */
-    void getLoginCaptcha();
-    void sendCaptchaResponse(const QString &text);
+  
+  void getLoginCaptcha();
+  void sendCaptchaResponse(const QString &text);
   
   private:        /* methods */
   

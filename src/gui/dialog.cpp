@@ -60,6 +60,21 @@ Dialog::~Dialog()
 
 /****************************************************************************
 **
+** Copyright 2009 Timothy Sjoberg
+**
+** this SLOT is triggered when the client receives the CAPTCHA
+**
+****************************************************************************/
+void Dialog::captchaReceived(const QByteArray &captcha)
+{
+  QImage captchaImage;
+  captchaImage.loadFromData(captcha);
+  captchaLabel->setPixmap(QPixmap::fromImage(captchaImage));
+}
+
+
+/****************************************************************************
+**
 ** Copyright 2009 Marc Bowes
 **
 ** this SLOT is triggered when the 'Respond' is clicked or the user presses
@@ -84,13 +99,6 @@ void Dialog::captchaRespond()
 void Dialog::captchaResponseChanged(const QString &text)
 {
   captchaRespondButton->setDisabled(text.isEmpty() ? true : false);
-}
-
-void Dialog::captchaReceived(const QByteArray &captcha)
-{
-  QImage captchaImage;
-  captchaImage.loadFromData(captcha);
-  captchaLabel->setPixmap(QPixmap::fromImage(captchaImage));
 }
 
 }
