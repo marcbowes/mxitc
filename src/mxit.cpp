@@ -4,6 +4,8 @@
 #include <QDateTime>
 #include <QDebug>
 
+#define DEBUG(x) qDebug() << #x << ":\t" << x;
+
 Mxit::Mxit(QObject *parent) : QObject (parent)
 {
   http = new QHttp(this);
@@ -24,33 +26,35 @@ void Mxit::httpRequestFinished(int requestId, bool error)
   qDebug() << "Request Finished";
   QByteArray response = http->readAll();
 
-  qDebug() << response;
+  DEBUG(httpGetId);
+  DEBUG(requestId);
+  DEBUG(response);
+  DEBUG(http->lastResponse().statusCode());
 
-  QString temp(response);
   if (!error)
-    qDebug() << "success\n";
+    qDebug() << "success";
   else
-    qDebug() << "err0r\n";
-  qDebug() << temp << "\n";
+    qDebug() << "err0r";
+
+  DEBUG(http->errorString());
 }
 
 QByteArray Mxit::getLoginCaptcha()
 {
   QString timestamp = QString("%1").arg(QDateTime::currentDateTime().toTime_t());
-  QUrl url("http://www.mxit.com/res/");//?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp);
+  QUrl url("http://www.mxit.com");//?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp);
   
   QByteArray query;
-  query += url.path().toLatin1();
   //query += "?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=";
   //query += timestamp;
-  query += ("?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp).toLatin1();
+  query += ("/res/?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp);
   
-  qDebug() << query << "\n";
-  qDebug() << url.host() << "\n";
+  DEBUG(url.host());
+  DEBUG(query);
   
-  http->setHost(url.host(), url.port() == -1 ? 0 : url.port());
+  http->setHost(url.host(), 80 );
 
-  qDebug() << http->readAll() << "\n";
+//   DEBUG(http->readAll());
 
   httpGetId = http->get(query);
 
