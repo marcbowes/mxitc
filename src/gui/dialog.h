@@ -9,9 +9,15 @@
 #ifndef __DIALOG_H__
 #define __DIALOG_H__
 
-#include "mxit.h"
+#include "mxit/client.h"
 
 #include "ui_dialog.h"
+
+namespace MXit
+{
+
+namespace GUI
+{
 
 class Dialog : public QMainWindow, private Ui::Dialog
 {
@@ -24,13 +30,17 @@ class Dialog : public QMainWindow, private Ui::Dialog
   
   private:
   
-  Mxit *mxit;
+  Client *mxit;
   
   private slots:
   
   void captchaRespond();
   void captchaResponseChanged(const QString &text);
 };
+
+}
+
+}
  
 #endif
 

@@ -8,12 +8,15 @@
 #include <QWaitCondition>
 #include <QMutex>
 
-class Mxit : public QObject
+namespace MXit
+{
+
+class Client : public QObject
 {
 Q_OBJECT
 
 	public:
-		Mxit(QObject *parent = 0);
+		Client(QObject *parent = 0);
 
 	private slots:
 	  void httpRequestStarted(int requestId);
@@ -35,5 +38,7 @@ Q_OBJECT
   QByteArray getLoginCaptcha();
   void sendCaptchaResponse(const QString &text);
 };
+
+}
 
 #endif

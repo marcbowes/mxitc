@@ -1,5 +1,12 @@
 #include "dialog.h"
 
+namespace MXit
+{
+
+namespace GUI
+
+{
+
 /****************************************************************************
 **
 ** Copyright 2009 Marc Bowes
@@ -13,7 +20,7 @@
 Dialog::Dialog(QApplication *app)
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
-  mxit = new Mxit();  /* this is our slave client */
+  mxit = new Client();  /* this is our slave client */
   
   /* add in an image to display the login CAPTCHA */
   QImage captcha;
@@ -21,7 +28,8 @@ Dialog::Dialog(QApplication *app)
   captchaLabel->setPixmap(QPixmap::fromImage(captcha));
   
   /* enable/disable 'Respond' based on the length of the user CAPTCHA response */
-  connect(captchaResponse, SIGNAL(textChanged(QString)), this, SLOT(captchaResponseChanged(QString)));
+  connect(captchaResponse, SIGNAL(textChanged(const QString &)), 
+          this, SLOT(captchaResponseChanged(const QString &)));
   
   /* when 'Respond' is clicked, or the user presses return, send the CAPTCHA response */
   connect(captchaRespondButton, SIGNAL(released()), this, SLOT(captchaRespond()));
@@ -70,3 +78,6 @@ void Dialog::captchaResponseChanged(const QString &text)
   captchaRespondButton->setDisabled(text.isEmpty() ? true : false);
 }
 
+}
+
+}
