@@ -33,6 +33,10 @@ class Client : public QObject
   
   QByteArray getLoginCaptcha();
   void sendCaptchaResponse(const QString &text);
+  
+  private:        /* methods */
+  
+  QByteArray extractDataFromResponce(int data_num);
 
 	private:        /* variables */
 	
