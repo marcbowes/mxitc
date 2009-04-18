@@ -10,8 +10,8 @@ INCLUDE(${QT_USE_FILE})
 SET(MXIT_CLIENT_SRCS_CXX
   
   mxit/client.cpp
-  gui/dialog.cpp
   network/httpcomm.cpp
+  gui/login.cpp
   main.cpp
 )
 
@@ -19,13 +19,13 @@ SET(MXIT_CLIENT_SRCS_CXX
 SET(MXIT_CLIENT_MOC_SRCS
   
   mxit/client.h
-  gui/dialog.h
   network/httpcomm.h
+  gui/login.h
 )
 
 SET(MXIT_CLIENT_UI
   
-  gui/dialog.ui
+  gui/login.ui
 )
 
 # build ui_XXX files from the XML-style .ui files

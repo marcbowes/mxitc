@@ -6,13 +6,13 @@
 **
 ****************************************************************************/
 
-#ifndef __DIALOG_H__
-#define __DIALOG_H__
+#ifndef __MXIT_GUI_LOGIN_H__
+#define __MXIT_GUI_LOGIN_H__
 
 #include "mxit/client.h"
 #include "network/httpcomm.h"
 
-#include "ui_dialog.h"
+#include "ui_login.h"
 
 namespace MXit
 {
@@ -20,25 +20,27 @@ namespace MXit
 namespace GUI
 {
 
-class Dialog : public QMainWindow, private Ui::Dialog
+class Login : public QMainWindow, private Ui::Login
 {
   Q_OBJECT
 
-	public:         /* class specific */
+  public:         /* class specific */
   
-  Dialog(QApplication *app);
-  ~Dialog();
+  Login(QApplication *app, MXit::Client *client);
+  ~Login();
 
   private slots:
   
   void captchaReceived(const QByteArray &captcha);
-  void captchaRespond();
-  void captchaResponseChanged(const QString &text);
+  void captchaChanged(const QString &text);
+  void cellphoneChanged(const QString &text);
+  void login();
+  void passwordChanged(const QString &text);
   
-	private:        /* variables */
+  private:        /* variables */
   
-  Client *mxit;
-  HttpComm * httpComm;
+  MXit::HttpComm * httpComm;
+  MXit::Client *mxit;
 };
 
 }
