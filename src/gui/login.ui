@@ -61,6 +61,9 @@
          <pointsize>16</pointsize>
         </font>
        </property>
+       <property name="toolTip" >
+        <string>Your 10 digit cellphone number</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -86,6 +89,9 @@
          <pointsize>16</pointsize>
         </font>
        </property>
+       <property name="toolTip" >
+        <string>The MXit password for your cellphone</string>
+       </property>
        <property name="echoMode" >
         <enum>QLineEdit::Password</enum>
        </property>
@@ -110,6 +116,9 @@
          <family>Verdana</family>
          <pointsize>16</pointsize>
         </font>
+       </property>
+       <property name="toolTip" >
+        <string>Please enter the digits from the above image</string>
        </property>
       </widget>
      </item>
