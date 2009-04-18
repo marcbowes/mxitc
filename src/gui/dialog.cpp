@@ -29,9 +29,11 @@ Dialog::Dialog(QApplication *app)
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   mxit = new Client();  /* this is our slave client */
+  httpComm = new HttpComm(); // NOTE to be removed
   
   /* add in an image to display the login CAPTCHA */
-  mxit->getLoginCaptcha();
+//   mxit->getLoginCaptcha();
+  httpComm->sendInitialChallenge();
     
   /* enable/disable 'Respond' based on the length of the user CAPTCHA response */
   connect(captchaResponse, SIGNAL(textChanged(const QString &)), 
@@ -41,7 +43,7 @@ Dialog::Dialog(QApplication *app)
   connect(captchaRespondButton, SIGNAL(released()), this, SLOT(captchaRespond()));
   connect(captchaResponse, SIGNAL(returnPressed()), this, SLOT(captchaRespond()));
   
-  connect(mxit, SIGNAL(captchaReceived(const QByteArray &)), this, SLOT(captchaReceived(const QByteArray &)));
+  connect(httpComm, SIGNAL(captchaReceived(const QByteArray &)), this, SLOT(captchaReceived(const QByteArray &)));
 }
 
 
@@ -84,7 +86,7 @@ void Dialog::captchaReceived(const QByteArray &captcha)
 void Dialog::captchaRespond()
 {
   if (!captchaResponse->text().isEmpty())
-    mxit->sendChallengeResponse(captchaResponse->text(), "0836649023");
+    httpComm->sendChallengeResponse(captchaResponse->text(), "0836649023");
 }
 
 

@@ -10,8 +10,6 @@
 #define __HTTPCOMM_H__
 
 #include <QHttp>
-#include <QWaitCondition>
-#include <QMutex>
 
 namespace MXit
 {
@@ -36,7 +34,7 @@ class HttpComm : public QObject
   public:         /* methods */
   
   void sendInitialChallenge();
-  void sendChallengeResponse();
+  void sendChallengeResponse(QString captchaResponse, QString login);
   
   private:        /* methods */
   
@@ -46,14 +44,15 @@ class HttpComm : public QObject
         
   QHttp          *http;
 
-  enum currentHttpGet_t {NONE, CHALLENGE_INITIAL, CHALLENGE_REPONSE};
+  enum currentHttpGet_t {NONE, CHALLENGE_INITIAL, CHALLENGE_RESPONSE};
   currentHttpGet_t currentHttpGet;
 
   int             httpGetId;
   QByteArray      responseByteArray;
   
   
-  QString         challengeResponseURL;
+  QByteArray      challengeResponseURL;
+  QByteArray      sessionID;
 };
 
 }

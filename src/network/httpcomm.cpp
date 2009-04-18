@@ -10,7 +10,7 @@
 #include <QDateTime>
 #include <QDebug>
 
-#include "client.h"
+#include "httpcomm.h"
 
 namespace MXit
 {
@@ -52,9 +52,20 @@ void HttpComm::httpRequestFinished(int requestId, bool error)
       responseByteArray = http->readAll();
       if (currentHttpGet == CHALLENGE_INITIAL) {
         //TODO add other functionality here
-        challengeResponseURL = extractDataFromResponce(1);
-        DEBUG(challengeResponseURL);
-        emit captchaReceived(QByteArray::fromBase64(extractDataFromResponce(3)));
+        if (extractDataFromResponce(0) == "0") {
+          challengeResponseURL = extractDataFromResponce(1);
+          DEBUG(challengeResponseURL);
+          sessionID = extractDataFromResponce(2);
+          DEBUG(sessionID);
+          emit captchaReceived(QByteArray::fromBase64(extractDataFromResponce(3)));
+        }
+        else {
+          //ERROR-CODE != 0, DO SOMETHING! TODO
+        }
+      }
+      else if (currentHttpGet == CHALLENGE_RESPONSE) {
+        //TODO
+        
       }
     } else {
       qDebug() << "err0r";
@@ -102,16 +113,23 @@ void HttpComm::sendInitialChallenge()
 
 ///- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-void HttpComm::sendChallengeResponse()
+void HttpComm::sendChallengeResponse(QString captchaResponse, QString login)
 {
   // TODO ... like, need to rewrite EVERYTHING! for this function
-  QString timestamp = QString("%1").arg(QDateTime::currentDateTime().toTime_t());
-  QUrl url(challengeResponseURL);//TODO use address got in initial challenge
+  
+  QUrl url(challengeResponseURL);
+  QString sessionId(sessionID);
   
   QByteArray query;
   query += url.path();
-
-  query += "?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp; // TODO change to proper data
+  
+  query += "?type=getpid&sessionid=";
+  query += sessionId;
+  query += "&ver=5.8.2&login=";
+  query += login;
+  query += "&cat=Y&chalresp=";
+  query += captchaResponse;
+  query += "&cc=ZA&loc=en&brand=LPM&model=StrioClient&path=1";
   
   DEBUG(url.host());
   DEBUG(query);
@@ -124,4 +142,6 @@ void HttpComm::sendChallengeResponse()
 }
 
 ///=============================================================================
+
+
 }

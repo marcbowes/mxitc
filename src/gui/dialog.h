@@ -10,6 +10,7 @@
 #define __DIALOG_H__
 
 #include "mxit/client.h"
+#include "network/httpcomm.h"
 
 #include "ui_dialog.h"
 
@@ -37,6 +38,7 @@ class Dialog : public QMainWindow, private Ui::Dialog
 	private:        /* variables */
   
   Client *mxit;
+  HttpComm * httpComm;
 };
 
 }

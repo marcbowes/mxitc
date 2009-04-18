@@ -11,6 +11,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   
   mxit/client.cpp
   gui/dialog.cpp
+  network/httpcomm.cpp
   main.cpp
 )
 
@@ -19,6 +20,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   
   mxit/client.h
   gui/dialog.h
+  network/httpcomm.h
 )
 
 SET(MXIT_CLIENT_UI

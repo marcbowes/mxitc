@@ -9,9 +9,7 @@
 #ifndef __CLIENT_H__
 #define __CLIENT_H__
 
-#include <QHttp>
-#include <QWaitCondition>
-#include <QMutex>
+#include<QObject>
 
 namespace MXit
 {
@@ -20,30 +18,18 @@ class Client : public QObject
 {
   Q_OBJECT
 
-	public:         /* class specific */
+  public:         /* class specific */
 	
-	Client(QObject *parent = 0);
+  Client(QObject *parent = 0);
 
-	signals:
-    void captchaReceived(const QByteArray &);
 	
-	private slots:
-	  void httpRequestStarted(int requestId);
-    void httpRequestFinished(int requestId, bool error);
 
   public:         /* methods */
-    void getLoginCaptcha();
-    void sendChallengeResponse(QString captchaResponse, QString login);
     
   private:        /* methods */
-    QByteArray extractDataFromResponce(int data_num);
 
-	private:        /* variables */
-	  QMutex         *captchaMutex;
-    QWaitCondition *captchaWaitCond;
-    QHttp          *http;
-    int             httpGetId;
-    QByteArray      responseByteArray;
+  private:        /* variables */
+
 };
 
 }
