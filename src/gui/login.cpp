@@ -115,8 +115,11 @@ void Login::cellphoneChanged(const QString &text)
 ****************************************************************************/
 void Login::login()
 {
-  if (!captcha->text().isEmpty())
+  if (!captcha->text().isEmpty()) {
+    loginButton->setDisabled(true);
+    loginButton->setText("Logging in..");
     mxit->sendChallengeResponse(captcha->text(), cellphone->text());
+  }
 }
 
 
