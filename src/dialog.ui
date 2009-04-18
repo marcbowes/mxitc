@@ -26,19 +26,22 @@
      <item>
       <widget class="QLabel" name="captchaLabel" >
        <property name="text" >
-        <string>TextLabel</string>
+        <string/>
        </property>
       </widget>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout" >
        <item>
-        <widget class="QLineEdit" name="lineEdit" />
+        <widget class="QLineEdit" name="captchaResponse" />
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton" >
+        <widget class="QPushButton" name="captchaRespondButton" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="text" >
-          <string>PushButton</string>
+          <string>Respond</string>
          </property>
         </widget>
        </item>

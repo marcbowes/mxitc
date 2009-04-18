@@ -25,6 +25,11 @@ class Dialog : public QMainWindow, private Ui::Dialog
   private:
   
   Mxit *mxit;
+  
+  private slots:
+  
+  void captchaRespond();
+  void captchaResponseChanged(const QString &text);
 };
  
 #endif
