@@ -17,6 +17,7 @@ Q_OBJECT
 		Client(QObject *parent = 0);
 
 	private slots:
+	  void httpRequestStarted(int requestId);
 	  void httpRequestFinished(int requestId, bool error);
 		
 	private:
