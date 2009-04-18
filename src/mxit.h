@@ -26,6 +26,7 @@ Q_OBJECT
   public:
   
   QByteArray getLoginCaptcha();
+  void sendCaptchaResponse(const QString &text);
 };
 
 #endif

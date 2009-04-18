@@ -47,3 +47,9 @@ QByteArray Mxit::getLoginCaptcha()
   
   );
 }
+
+void Mxit::sendCaptchaResponse(const QString &text)
+{
+  // stub
+}
+
