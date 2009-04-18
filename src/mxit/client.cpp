@@ -56,13 +56,13 @@ void Client::httpRequestFinished(int requestId, bool error)
 QByteArray Client::getLoginCaptcha()
 {
   QString timestamp = QString("%1").arg(QDateTime::currentDateTime().toTime_t());
-  QUrl url("http://www.mxit.com");//?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp);
+  QUrl url("http://www.mxit.com/res/");//?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp);
   
   QByteArray query;
   query += url.path();
   //query += "?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=";
   //query += timestamp;
-  query += "/res/?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp;
+  query += "?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp;
   
   DEBUG(url.host());
   DEBUG(query);
