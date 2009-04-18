@@ -23,8 +23,8 @@ Q_OBJECT
 	  void httpRequestFinished(int requestId, bool error);
 		
 	private:
-	  QWaitCondition *captchaWaitCond;
-	  QMutex *captchaMutex;
+
+          QByteArray extractDataFromResponce(int data_num);
 	  
 	  QHttp *http;
 	  int httpGetId;

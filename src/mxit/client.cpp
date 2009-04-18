@@ -13,8 +13,6 @@ namespace MXit
 Client::Client(QObject *parent) : QObject (parent)
 {
   http = new QHttp(this);
-  captchaWaitCond = new QWaitCondition();
-  captchaMutex = new QMutex();
     
   connect(http, SIGNAL(requestStarted(int)), this, SLOT(httpRequestStarted(int)));
   connect(http, SIGNAL(requestFinished(int, bool)), this, SLOT(httpRequestFinished(int, bool)));
@@ -44,6 +42,12 @@ void Client::httpRequestFinished(int requestId, bool error)
     if (!error) {
       qDebug() << "success";
       responseByteArray = http->readAll();
+//       DEBUG(responseByteArray);
+      DEBUG(extractDataFromResponce(0));
+      DEBUG(extractDataFromResponce(1));
+      DEBUG(extractDataFromResponce(2));
+      DEBUG(extractDataFromResponce(3));
+//       extractDataFromResponce(2);
       
     }
     else
@@ -51,6 +55,20 @@ void Client::httpRequestFinished(int requestId, bool error)
 
     DEBUG(http->errorString());
   }
+
+}
+
+QByteArray Client::extractDataFromResponce(int data_num) {
+  
+  QString delim = ";";
+  int start = 0;
+  int end = responseByteArray.indexOf(delim);
+  for (int i = 0 ; i < data_num ; i++) {
+    start = end+1;
+    end = responseByteArray.indexOf(delim, start);
+  }
+  return responseByteArray.mid(start, end-start);
+
 }
 
 QByteArray Client::getLoginCaptcha()
