@@ -19,6 +19,7 @@ void Mxit::httpRequestFinished(int requestId, bool error)
     qDebug() << "success\n";
   else
     qDebug() << "err0r\n";
+  qDebug() << http->lastResponse().statusCode();
   qDebug() << temp << "\n";
 }
 
@@ -26,7 +27,7 @@ QByteArray Mxit::getLoginCaptcha()
 {
   QString timestamp = QString("%1").arg(QDateTime::currentDateTime().toTime_t());
   //QUrl url("http://www.mxit.com/res/");//?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp);
-  QUrl url("http://war3.co.za/forum/viewforum.php?f=26&sid=194feef8a58e637d463271796dd23d22");
+  QUrl url("http://bedlamp.dyndns.org/index.html");
   
   //QByteArray query;
   //query += url.path().toLatin1();
@@ -39,7 +40,7 @@ QByteArray Mxit::getLoginCaptcha()
   qDebug() << url.toString() << "\n";
   
   http->setHost(url.host(), url.port() == -1 ? 0 : url.port());
-  httpGetId = http->get(url.toString());
+  httpGetId = http->get(url.path());
   
   return QByteArray::fromBase64(
   
