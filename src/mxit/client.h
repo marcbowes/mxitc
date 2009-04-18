@@ -18,6 +18,9 @@ Q_OBJECT
 	public:
 		Client(QObject *parent = 0);
 
+	signals:
+	  void captchaReceived(const QByteArray &);
+	
 	private slots:
 	  void httpRequestStarted(int requestId);
 	  void httpRequestFinished(int requestId, bool error);
@@ -28,14 +31,13 @@ Q_OBJECT
 	  
 	  QHttp *http;
 	  int httpGetId;
-	  QByteArray responseByteArray;
 //		QTcpSocket *socket;
 //		QString host;
 //		quint16 port;
 
   public:
   
-  QByteArray getLoginCaptcha();
+  void getLoginCaptcha();
   void sendCaptchaResponse(const QString &text);
 };
 

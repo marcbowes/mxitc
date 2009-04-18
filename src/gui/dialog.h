@@ -34,6 +34,7 @@ class Dialog : public QMainWindow, private Ui::Dialog
   
   private slots:
   
+  void captchaReceived(const QByteArray &captcha);
   void captchaRespond();
   void captchaResponseChanged(const QString &text);
 };

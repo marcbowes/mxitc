@@ -23,10 +23,8 @@ Dialog::Dialog(QApplication *app)
   mxit = new Client();  /* this is our slave client */
   
   /* add in an image to display the login CAPTCHA */
-  QImage captcha;
-  captcha.loadFromData(mxit->getLoginCaptcha());
-  captchaLabel->setPixmap(QPixmap::fromImage(captcha));
-  
+  mxit->getLoginCaptcha();
+    
   /* enable/disable 'Respond' based on the length of the user CAPTCHA response */
   connect(captchaResponse, SIGNAL(textChanged(const QString &)), 
           this, SLOT(captchaResponseChanged(const QString &)));
@@ -34,6 +32,8 @@ Dialog::Dialog(QApplication *app)
   /* when 'Respond' is clicked, or the user presses return, send the CAPTCHA response */
   connect(captchaRespondButton, SIGNAL(released()), this, SLOT(captchaRespond()));
   connect(captchaResponse, SIGNAL(returnPressed()), this, SLOT(captchaRespond()));
+  
+  connect(mxit, SIGNAL(captchaReceived(const QByteArray &)), this, SLOT(captchaReceived(const QByteArray &)));
 }
 
 
@@ -76,6 +76,13 @@ void Dialog::captchaRespond()
 void Dialog::captchaResponseChanged(const QString &text)
 {
   captchaRespondButton->setDisabled(text.isEmpty() ? true : false);
+}
+
+void Dialog::captchaReceived(const QByteArray &captcha)
+{
+  QImage captchaImage;
+  captchaImage.loadFromData(captcha);
+  captchaLabel->setPixmap(QPixmap::fromImage(captchaImage));
 }
 
 }
