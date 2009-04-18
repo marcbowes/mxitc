@@ -84,7 +84,7 @@ void Dialog::captchaReceived(const QByteArray &captcha)
 void Dialog::captchaRespond()
 {
   if (!captchaResponse->text().isEmpty())
-    mxit->sendCaptchaResponse(captchaResponse->text());
+    mxit->sendChallengeResponse(captchaResponse->text(), "0836649023");
 }
 
 

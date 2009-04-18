@@ -47,7 +47,7 @@ void Client::httpRequestFinished(int requestId, bool error)
 
     if (!error) {
       qDebug() << "success";
-      responseByteArray = http->readAll();
+      responseByteArray = http->readAll(); //TODO: check error before signalling
       emit captchaReceived(QByteArray::fromBase64(extractDataFromResponce(3)));
     } else {
       qDebug() << "err0r";
@@ -99,9 +99,23 @@ void Client::getLoginCaptcha()
  // );
 }
 
-void Client::sendCaptchaResponse(const QString &text)
+void Client::sendChallengeResponse(QString captchaResponse, QString login)
 {
-  // stub
+  QUrl url(extractDataFromResponce(1));
+  QString sessionId(extractDataFromResponce(2));
+  
+  QByteArray query;
+  query += url.path();
+  query += "?type=getpid&sessionid=";
+  query += sessionId;
+  query += "&ver=5.8.2&login=";
+  query += login;
+  query += "&cat=Y&chalresp=";
+  query += captchaResponse;
+  query += "&cc=ZA&loc=en&brand=LPM&model=StrioClient&path=1";
+  
+  http->setHost(url.host(), 80 );
+  //httpGetId = http->get(query);
 }
 
 }
