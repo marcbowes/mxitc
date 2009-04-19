@@ -11,6 +11,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   
   protocol/handshaker.cpp
   mxit/client.cpp
+  mxit/aes.cpp
   gui/login.cpp
   main.cpp
 )
