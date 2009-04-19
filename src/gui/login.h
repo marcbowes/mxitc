@@ -2,8 +2,8 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
-** Login window
-** This is an extension of the generated dialog, made with Designer
+** MXit::GUI::Login provides a login window.
+** This is an extension of the generated dialog, made with Designer.
 **
 ****************************************************************************/
 

@@ -1,0 +1,74 @@
+/****************************************************************************
+**
+** For Copyright & Licensing information, see COPYRIGHT in project root
+**
+****************************************************************************/
+
+#include "packet.h"
+
+namespace MXit
+{
+
+namespace Network
+{
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** turns the data vector into a single QString seperated by \1
+**
+****************************************************************************/
+QString Packet::getData() const
+{
+  QString message;
+  DataVecItr itr(data);
+  
+  while (itr.hasNext()) {
+    const QString &d = itr.next();
+    message.append(d);
+    if (itr.hasNext()) /* append \1 if there is another message */
+      message.append("\1");
+  }
+  
+  return message;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Packet::setCellphone(const QString &cellphone)
+{
+  this->cellphone = cellphone;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Packet::setCommand(const QString &command)
+{
+  this->command = command;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** appends the message to this packet's data
+**
+****************************************************************************/
+void Packet::operator<<(const QString &message)
+{
+  data.append(message);
+}
+
+}
+
+}

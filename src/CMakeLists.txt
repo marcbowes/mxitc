@@ -9,6 +9,8 @@ INCLUDE(${QT_USE_FILE})
 # .cxx sources
 SET(MXIT_CLIENT_SRCS_CXX
   
+  network/packet.cpp
+  network/tcp_packet.cpp
   protocol/handshaker.cpp
   mxit/client.cpp
   mxit/aes.cpp
