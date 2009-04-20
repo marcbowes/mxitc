@@ -171,8 +171,7 @@ void Handshaker::challenge(const QString &cellphone, const QString &captcha,
 ** Author: Richard Baxter
 ** Author: Marc Bowes
 **
-** this method is called by the requestComplete SLOT and is specific for when
-** the request was for a CAPTCHA
+** this method is called by the requestComplete SLOT
 **
 ****************************************************************************/
 void Handshaker::challengeReceived(const QByteArray &response)
@@ -263,13 +262,72 @@ VariableHash Handshaker::hashResponse(const QByteArray &response, const StringVe
 **
 ** Author: Marc Bowes
 **
-** this method is called by the requestComplete SLOT and is specific for when
-** the request was for a PID
+** this method is called by the requestComplete SLOT
 **
 ****************************************************************************/
 void Handshaker::setupReceived(const QByteArray &response)
 {
-  //
+  /* variable declarations for this response type */
+  StringVec variables;
+  variables.append("err");                  /* 0 = success, else failed */
+  variables.append("pid");                  /* the product ID */
+  variables.append("soc1");                 /* the socket connection string */
+  variables.append("http1");                /* the http connection string */
+  variables.append("dial");                 /* country dialing code */
+  variables.append("npf");                  /* country national prefix */
+  variables.append("ipf");                  /* country international prefix */
+  variables.append("soc2");                 /* fallback socket connection string */
+  variables.append("http2");                /* fallback http connection string */
+  variables.append("keepalive");            /* socket keepalive time */
+  variables.append("loginname");            /* the normalized loginname (checked against MXit database) */
+  variables.append("cc");                   /* the country code of the user if already registered, otherwise the
+                                             * country code passed during the request */
+  variables.append("region");               /* the region of the user in the database, else the region passed during
+                                             * the request */
+  variables.append("isUtf8Disable");        /* whether UTF-8 should be disabled in the client */
+  
+  /* now to assign variable values from the response */
+  VariableHash params = hashResponse(response, variables);
+  
+  if (params["err"] != MXit::Protocol::ErrorCodes::NoError) {
+    /* == Note
+     * MXit::Protocol::ErrorCodes does not cover these errors
+     */
+    switch (params["err"].toInt()) {
+      case 1:                               /* Wrong answer */
+        /* Response: 1;captcha */
+        // TODO
+        break;
+      case 2:                               /* Session expired */
+        /* Response: 2;sessionid;captcha */
+        // TODO
+        break;
+      case 3:                               /* Undefined */
+        /* Response: 3; */
+        // FIXME: how to handle this?
+        break;
+      case 4:                               /* Critical error */
+        /* Response: 4;mxitid@domain */
+        // FIXME: how to handle this?
+        break;  
+      case 5:                               /* Internal Error - Country code not available, select another country */
+        /* Response: 5; */
+        // TODO
+        break;
+      case 6:                               /* User isn't registered (and path=0 was specified */
+        /* Response: 6;sessionid;captcha */
+        // TODO
+        break;
+      case 7:                               /* User is already registered (and path=1 was specified */
+        /* Response: 7;sessionid;captcha */
+        // TODO
+        break;
+    }
+    
+    return;
+  }
+  
+  emit outgoingVariables(params);
 }
 
 }
