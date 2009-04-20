@@ -72,6 +72,19 @@ void Client::initialize()
 
 /****************************************************************************
 **
+** Author: Marc Bowes
+**
+** this method instructs the handshaker to request a PID from MXit
+**
+****************************************************************************/
+void Client::login(const QString &cellphone, const QString &password, const QString &captcha)
+{
+  handshaker->requestPID(cellphone, captcha);
+}
+
+
+/****************************************************************************
+**
 ** Author: Richard Baxter
 **
 ** this method instructs the handshaker to request a PID from MXit
