@@ -283,6 +283,10 @@ int Handshaker::responseError(const QByteArray &response,
 ****************************************************************************/
 void Handshaker::setupReceived(const QByteArray &response)
 {
+  /* setup */
+  StringVec variables;
+  VariableHash params;
+  
   int error = responseError(response);
   
   if (error != 0) {                         /* No error */
@@ -294,14 +298,12 @@ void Handshaker::setupReceived(const QByteArray &response)
         /* Response: 1;captcha */
         
         /* variable declarations for this response type */
-        StringVec variables;
         variables.append("err");            /* 0 = success, else failed */
         variables.append("captcha");        /* the product ID */
         
         /* now to assign variable values from the response */
-        VariableHash params = hashResponse(response, variables);
-  
-        emit newCaptchaReceived();
+        params = hashResponse(response, variables);
+        
         emit outgoingVariables(params);
         break;
       case 2:                               /* Session expired */
@@ -334,7 +336,6 @@ void Handshaker::setupReceived(const QByteArray &response)
   }
   
   /* variable declarations for this response type */
-  StringVec variables;
   variables.append("err");                  /* 0 = success, else failed */
   variables.append("pid");                  /* the product ID */
   variables.append("soc1");                 /* the socket connection string */
@@ -353,7 +354,7 @@ void Handshaker::setupReceived(const QByteArray &response)
   variables.append("isUtf8Disable");        /* whether UTF-8 should be disabled in the client */
   
   /* now to assign variable values from the response */
-  VariableHash params = hashResponse(response, variables);
+  params = hashResponse(response, variables);
   
   emit outgoingVariables(params);
 }
