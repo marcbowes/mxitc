@@ -15,12 +15,19 @@
 #define __MXIT_PROTOCOL_HANDSHAKER_H__
 
 #include <QHttp>
+#include <QVector>
+#include <QVectorIterator>
+#include <QHash>
 
 namespace MXit
 {
 
 namespace Protocol
 {
+
+typedef QVector<QString> StringVec;
+typedef QVectorIterator<QString> StringVecItr;
+typedef QHash<QString, QString> StringHash;
 
 class Handshaker : public QObject
 {
@@ -32,15 +39,14 @@ class Handshaker : public QObject
   ~Handshaker();
   
   enum Status {
-    NONE,
-    CHALLENGE_INITIAL,
-    CHALLENGE_RESPONSE
+    IDLE,
+    INITIALIZING,
+    REQUESTING_PID
   };
 
   signals:
         
-  void outgoingCaptcha(const QByteArray &);
-  void outgoingPID(const QByteArray &);
+  void outgoingVariables(const StringHash &);
         
   private slots:
   
@@ -48,21 +54,21 @@ class Handshaker : public QObject
 
   public:         /* methods */
   
+  void challenge(const QString &cellphone, const QString &captcha);
   void initialize();
-  void requestPID(const QString &cellphone, const QString &captcha);
   
   private:        /* methods */
   
   void captchaReceived(const QByteArray &response);
-  QByteArray extractDataFromResponse(const QByteArray &response, unsigned int index, const QString &delimiter = ";");
+  StringHash hashResponse(const QByteArray &response, const StringVec &variables, const QString &delimiter = ";");
   void PIDReceived(const QByteArray &response);
 
   private:        /* variables */
         
-  QByteArray      challengeResponseURL;
+  int             currentRequest;
   QHttp          *http;
-  int             httpGetId;
-  QByteArray      sessionID;
+  QString         PIDURL;
+  QString         SESSIONID;
   Status          state;
 };
 

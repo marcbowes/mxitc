@@ -27,7 +27,7 @@ namespace Protocol
 **
 ****************************************************************************/
 Handshaker::Handshaker()
-  : state (NONE)
+  : state (IDLE)
 {
   http = new QHttp(this);
   
@@ -57,12 +57,12 @@ Handshaker::~Handshaker()
 ** this SLOT is triggered when an HTTP request completes
 **
 ****************************************************************************/
-void Handshaker::requestComplete(int requestId, bool error)
+void Handshaker::requestComplete(int id, bool error)
 {
 #ifdef HANDSHAKER_DEBUG
   qDebug() << "Request Finished";
-  DEBUG(httpGetId);
-  DEBUG(requestId);
+  DEBUG(currentRequest);
+  DEBUG(id);
   DEBUG(http->lastResponse().statusCode());
 #endif
   
@@ -75,7 +75,7 @@ void Handshaker::requestComplete(int requestId, bool error)
   }
   
   /* ensure the request that completed is the one we expected */
-  if (requestId != httpGetId) {
+  if (id != currentRequest) {
   #ifdef HANDSHAKER_DEBUG
     qDebug() << "unexpected request id";
   #endif
@@ -89,10 +89,10 @@ void Handshaker::requestComplete(int requestId, bool error)
 #endif
   
   switch (state) {
-    case CHALLENGE_INITIAL:
+    case INITIALIZING:
       captchaReceived(response);
       break;
-    case CHALLENGE_RESPONSE:
+    case REQUESTING_PID:
       PIDReceived(response);
     default:
       // TODO: what here?
@@ -124,8 +124,8 @@ void Handshaker::initialize()
   DEBUG(query);
 #endif
   
-  state = CHALLENGE_INITIAL;
-  httpGetId = http->get(query);
+  state = INITIALIZING;
+  currentRequest = http->get(query);
 }
 
 
@@ -137,16 +137,15 @@ void Handshaker::initialize()
 ** utility method to find data at an index defined by a ; delimiter
 **
 ****************************************************************************/
-void Handshaker::requestPID(const QString &cellphone, const QString &captcha)
+void Handshaker::challenge(const QString &cellphone, const QString &captcha)
 {
-  QUrl url(challengeResponseURL);
-  QString sessionID_STR(sessionID);
+  QUrl url(PIDURL);
   
   // FIXME: **way** more environment variables needed here
   QString query =
     QString("%1?type=getpid&sessionid=%2&ver=5.8.2&login=%3&cat=Y&chalresp=%4&cc=ZA&loc=en&brand=LPM&model=StrioClient&path=1")
     .arg(url.path())
-    .arg(sessionID_STR)
+    .arg(SESSIONID)
     .arg(cellphone)
     .arg(captcha)
   ;
@@ -158,8 +157,8 @@ void Handshaker::requestPID(const QString &cellphone, const QString &captcha)
   
   http->setHost(url.host(), 80);
 
-  state = CHALLENGE_RESPONSE;
-  httpGetId = http->get(query);
+  state = REQUESTING_PID;
+  currentRequest = http->get(query);
 }
 
 
@@ -176,40 +175,84 @@ void Handshaker::requestPID(const QString &cellphone, const QString &captcha)
 ****************************************************************************/
 void Handshaker::captchaReceived(const QByteArray &response)
 {
-  if (extractDataFromResponse(response, 0) != MXit::Protocol::ErrorCodes::NoError) {
+  /* variable declarations for this response type */
+  StringVec variables;
+  variables.append("err");                  /* 0 = success, else failed */
+  variables.append("url");                  /* URL that should be used for the Get PID request */
+  variables.append("sessionid");            /* unique identifier to identify the session for code image answer */
+  variables.append("captcha");              /* base64 encoded image data */
+  variables.append("countries");            /* list of available countries (countrycode|countryname)
+                                             * the list of country names should be presented to the user in order to
+                                             * find the country code that should be used later on */
+  variables.append("languages");            /* list of supported languages (locale|languagename)
+                                             * the list of language names should be presented to the user and the
+                                             * corresponding locale saved by the client to be used later on */
+  variables.append("defaultCountryName");   /* country name of the country detenced from the requestors IP */
+  variables.append("defaultCountryCode");   /* country code associated with the defaultCountryName */
+  variables.append("regions");              /* a '|' seperated list of regions if requested */
+  variables.append("defaultDialingCode");   /* dialing code associated with the defaultCountryName */
+  variables.append("defaultRegion");        /* a region of the detected IP */
+  variables.append("defaultNPF");           /* the national dialing prefix for the defaultCountryName, e.g. 0 */
+  variables.append("defaultIPF");           /* the international dialing prefix for the defaultCountryName, e.g. 00 */
+  variables.append("cities");               /* NOT IMPLEMENTED YET */
+  variables.append("defaultCity");          /* the city of the detected IP */
+  
+  /* now to assign variable values from the response */
+  StringHash params = hashResponse(response, variables);
+  
+  if (params["err"] != MXit::Protocol::ErrorCodes::NoError) {
     // FIXME: how to handle this?
+    
+    return;
   }
   
-  challengeResponseURL = extractDataFromResponse(response, 1);
-  sessionID = extractDataFromResponse(response, 2);
+  PIDURL    = params["url"];
+  SESSIONID = params["sessionid"];
   
 #ifdef HANDSHAKER_DEBUG
-  DEBUG(challengeResponseURL);
-  DEBUG(sessionID);
+  DEBUG(PIDURL);
+  DEBUG(SESSIONID);
 #endif
   
-  emit outgoingCaptcha(QByteArray::fromBase64(extractDataFromResponse(response, 3)));
+  emit outgoingVariables(params);
 }
 
 
 /****************************************************************************
 **
-** Author: Richard Baxter
 ** Author: Marc Bowes
+** Author: Richard Baxter
 **
-** utility method to find data at an index defined by a ; delimiter
+** returns a StringHash of variables (from input vector) and their values (from input array)
 **
 ****************************************************************************/
-QByteArray Handshaker::extractDataFromResponse(const QByteArray &response, unsigned int index, const QString &delimiter)
+StringHash Handshaker::hashResponse(const QByteArray &response, const StringVec &variables,
+  const QString &delimiter)
 {
-  unsigned int start = 0;
-  unsigned int end = response.indexOf(delimiter);
-  for (unsigned int i = 0 ; i < index ; i++) {
-    start = end + 1;
-    end = response.indexOf(delimiter, start);
+  /* setup */
+  StringHash params;                      /* to be returned */
+  StringVecItr itr(variables);            /* for iteration */
+  unsigned int start  = 0;                /* stores index of a value start */
+  unsigned int end    = response.indexOf(delimiter);
+                                          /* stores index of a value end */
+  /* iterate over variable list */
+  while (itr.hasNext()) {
+    const QString &key = itr.next();      /* current variable name */
+    
+    /* end will be -1 if the indexOf returns -1 */
+    if (end != -1) {
+      params[key] = response.mid(start, end - start);
+      
+      /* next iteration setup */
+      start = end + 1;
+      end = response.indexOf(delimiter, start);
+    } else {
+      /* i.e. we want to have empty values for the remaining variables */
+      params[key] = "";
+    }
   }
   
-  return response.mid(start, end - start);
+  return params;
 }
 
 
@@ -225,7 +268,7 @@ QByteArray Handshaker::extractDataFromResponse(const QByteArray &response, unsig
 ****************************************************************************/
 void Handshaker::PIDReceived(const QByteArray &response)
 {
-  // emit outgoingPID
+  //
 }
 
 }

@@ -14,10 +14,14 @@
 #ifndef __MXIT_CLIENT_H__
 #define __MXIT_CLIENT_H__
 
+#include <QHash>
+
 #include "protocol/handshaker.h"
 
 namespace MXit
 {
+
+typedef QHash<QString, QString> StringHash;
 
 class Client : public QObject
 {
@@ -30,11 +34,11 @@ class Client : public QObject
 
   signals:
   
-  void captchaReceived(const QByteArray&);
+  void captchaReceived(const QByteArray &);
   
   private slots:
   
-  void incomingCaptcha(const QByteArray&);
+  void incomingVariables(const StringHash &);
 
   public:         /* methods */
   

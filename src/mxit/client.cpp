@@ -50,9 +50,9 @@ Client::~Client()
 ** the signal needs to be bounced up to this client's controller
 **
 ****************************************************************************/
-void Client::incomingCaptcha(const QByteArray &captcha)
+void Client::incomingVariables(const StringHash &params)
 {
-  emit captchaReceived(captcha);
+  // emit captchaReceived(captcha);
 }
 
 
@@ -79,7 +79,7 @@ void Client::initialize()
 ****************************************************************************/
 void Client::login(const QString &cellphone, const QString &password, const QString &captcha)
 {
-  handshaker->requestPID(cellphone, captcha);
+  requestPID(cellphone, captcha);
 }
 
 
@@ -92,7 +92,7 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
 ****************************************************************************/
 void Client::requestPID(const QString &cellphone, const QString &captcha)
 {
-  handshaker->requestPID(cellphone, captcha);
+  handshaker->challenge(cellphone, captcha);
 }
 
 }
