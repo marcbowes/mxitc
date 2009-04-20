@@ -40,6 +40,7 @@ class Handshaker : public QObject
   signals:
         
   void outgoingCaptcha(const QByteArray &);
+  void outgoingPID(const QByteArray &);
         
   private slots:
   
@@ -54,6 +55,7 @@ class Handshaker : public QObject
   
   void captchaReceived(const QByteArray &response);
   QByteArray extractDataFromResponse(const QByteArray &response, unsigned int index, const QString &delimiter = ";");
+  void PIDReceived(const QByteArray &response);
 
   private:        /* variables */
         

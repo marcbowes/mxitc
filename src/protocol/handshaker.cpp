@@ -76,7 +76,9 @@ void Handshaker::requestComplete(int requestId, bool error)
   
   /* ensure the request that completed is the one we expected */
   if (requestId != httpGetId) {
+  #ifdef HANDSHAKER_DEBUG
     qDebug() << "unexpected request id";
+  #endif
     
     return;
   }
@@ -90,8 +92,10 @@ void Handshaker::requestComplete(int requestId, bool error)
     case CHALLENGE_INITIAL:
       captchaReceived(response);
       break;
+    case CHALLENGE_RESPONSE:
+      PIDReceived(response);
     default:
-      // TODO: CHALLENGE_RESPONSE
+      // TODO: what here?
       break;
   }
 }
@@ -206,6 +210,22 @@ QByteArray Handshaker::extractDataFromResponse(const QByteArray &response, unsig
   }
   
   return response.mid(start, end - start);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** this method is called by the requestComplete SLOT and is specific for when
+** the request was for a PID
+**
+** emits outgoingPID if the PID was successfully received
+**
+****************************************************************************/
+void Handshaker::PIDReceived(const QByteArray &response)
+{
+  // emit outgoingPID
 }
 
 }
