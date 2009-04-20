@@ -12,10 +12,17 @@
 #ifndef __MXIT_NETWORK_CONNECTION_H__
 #define __MXIT_NETWORK_CONNECTION_H__
 
-#include <QObject>
+#include <QMutex>
+#include <QTcpSocket>
+#include <QThread>
+#include <QWaitCondition>
+
+#include "common/types.h"
 
 #include "protocol/commands.h"
 #include "protocol/error_codes.h"
+
+#include "tcp_packet.h"
 
 namespace MXit
 {
@@ -23,26 +30,27 @@ namespace MXit
 namespace Network
 {
 
-class Connection : public QObject
+class Connection : public QThread
 {
   Q_OBJECT
 
   public:         /* class specific */
 	
-  Connection();
+  Connection(const QString &gateway);
   ~Connection();
 
   signals:
   
-  // ..
-  
+  void error(QTcpSocket::SocketError error);
+
   private slots:
   
   // ..
 
   public:         /* methods */
   
-  // ..
+  void enqueue(const Packet &packet);
+  void run();
 
   private:        /* methods */
   
@@ -50,7 +58,12 @@ class Connection : public QObject
 
   private:        /* variables */
   
-  // ..
+  ByteArrayVec    queue;
+  QMutex          queueMutex;
+  QWaitCondition  queueWait;
+  QString         gateway;
+  QTcpSocket     *socket;
+  // TODO: HTTP support
 };
 
 }

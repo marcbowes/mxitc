@@ -28,6 +28,10 @@
 typedef QVector         <QString>            StringVec;
 typedef QVectorIterator <QString>            StringVecItr;
 
+/* QVector for QByteArray's */
+typedef QVector         <QByteArray>         ByteArrayVec;
+typedef QVectorIterator <QByteArray>         ByteArrayVecItr;
+
 
 /****************************************************************************
 **
