@@ -290,23 +290,38 @@ void Handshaker::setupReceived(const QByteArray &response)
      * MXit::Protocol::ErrorCodes does not cover these errors
      */
     switch (error) {
-      case 1:                               /* Wrong answer */
+      case 1:                               /* Wrong answer to captcha */
         /* Response: 1;captcha */
         
         /* variable declarations for this response type */
         StringVec variables;
         variables.append("err");            /* 0 = success, else failed */
-        variables.append("captcha");        /* the product ID */
+        variables.append("captcha");        /* the captcha image */
         
         /* now to assign variable values from the response */
         VariableHash params = hashResponse(response, variables);
-  
-        emit newCaptchaReceived();
+        
         emit outgoingVariables(params);
         break;
       case 2:                               /* Session expired */
-        /* Response: 2;sessionid;captcha */
-        // TODO
+        /* Response: 2;sessionid;captcha or 2;captcha */
+        
+        /* variable declarations for this response type */
+        StringVec variables;
+        variables.append("err");            /* 0 = success, else failed */
+        variables.append("sessionid");      /* the session ID */
+        variables.append("captcha");        /* the captcha image */
+        
+        /* now to assign variable values from the response */
+        VariableHash params = hashResponse(response, variables);
+        
+        /* if captcha is empty, then we are re-using our sessionid */
+        if (variables["captcha"].isEmpty()) {
+          variables["captcha"] = variables["sessionid"];
+          variables["sessionid"] = "";
+        }
+        
+        emit outgoingVariables(params);
         break;
       case 3:                               /* Undefined */
         /* Response: 3; */

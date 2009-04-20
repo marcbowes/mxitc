@@ -81,6 +81,7 @@ void Client::incomingVariables(const VariableHash &params)
    * QHash#remove removes ALL items with the specified key
    */
   variables.remove("err");
+  variables.remove("captcha");
 }
 
 
@@ -89,6 +90,7 @@ void Client::incomingVariables(const VariableHash &params)
 ** Author: Marc Bowes
 ** Author: Richard Baxter
 **
+  variables.remove("err");
 ** this method instructs the handshaker to request initial information
 ** see Handshaker#challengeReceived for a list of variables
 **
@@ -145,6 +147,91 @@ void Client::challenge(const QString &cellphone, const QString &captcha)
 void Client::challengeComplete()
 {
   state = IDLE;
+  int error = variables["err"].toInt();
+  
+  if (error != 0) {                         /* No error */
+    switch (error) {
+      case 1:                               /* Wrong answer to captcha */
+        /* Response: 1;captcha */
+        
+        /* there are two captcha's in the variables, we need to remove the old one */
+        QByteArray captcha = variable["captcha"];
+        variables.remove("capcha");
+        variables["capcha"] = capcha;
+        
+        /* reporting error to client */
+        emit error("Wrong answer to captcha");
+        
+        break;
+      case 2:                               /* Session expired */
+        /* Response: 2;sessionid;captcha or 2;captcha */
+        
+        /* we need to correct our stored sessionid */
+        VariableHashItr itr = variables.find("sessionid");
+        if (itr.value().isEmpty()) { /* new sessionid is empty, use old */
+          itr.next(); 
+        QByteArray sesionid = itr.value();
+        variables.remove("sessionid");
+        variables["sesionid"] = sessionid;
+        
+        /* there are two captcha's in the variables, we need to remove the old one */
+        QByteArray captcha = variable["captcha"];
+        variables.remove("capcha");
+        variables["capcha"] = capcha;
+        
+        /* reporting error to client */
+        emit error("Session Expired");
+        break;
+      case 3:                               /* Undefined */
+        /* Response: 3; */
+        // FIXME: how to handle this?
+        
+        emit error("Undefined Challenge error"); /* FFUUUUUUUU */
+        break;
+      case 4:                               /* Critical error */
+        /* Response: 4;mxitid@domain */
+        // FIXME: how to handle this?
+        emit error("Critical Challenge error"); /* FFFFFFUUUUUUUUUUUUUUUUU!!!!!!! */
+        break;  
+      case 5:                               /* Internal Error - Country code not available, select another country */
+        /* Response: 5; */
+        emit error("Country Code not available"); /* ...ffuuuu ... */
+        break;
+      case 6:                               /* User isn't registered (and path=0 was specified) */
+        /* Response: 6;sessionid;captcha */
+        
+        /* there are two sessionid's in the variables, we need to remove the old one */
+        QByteArray sessionid = variable["sessionid"];
+        variables.remove("sessionid");
+        variables["sessionid"] = sessionid;
+        
+        /* there are two captcha's in the variables, we need to remove the old one */
+        QByteArray captcha = variable["captcha"];
+        variables.remove("capcha");
+        variables["capcha"] = capcha;
+        
+        emit error("User is not registered");
+        
+        break;
+      case 7:                               /* User is already registered (and path=1 was specified) */
+        /* Response: 7;sessionid;captcha */
+        
+        /* there are two sessionid's in the variables, we need to remove the old one */
+        QByteArray sessionid = variable["sessionid"];
+        variables.remove("sessionid");
+        variables["sessionid"] = sessionid;
+        
+        /* there are two captcha's in the variables, we need to remove the old one */
+        QByteArray captcha = variable["captcha"];
+        variables.remove("capcha");
+        variables["capcha"] = capcha;
+        
+        break;
+    }
+    
+    return;
+  }
+  
   // TODO: complete login process
 }
 
