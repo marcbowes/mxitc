@@ -150,82 +150,84 @@ void Client::challengeComplete()
   int error = variables["err"].toInt();
   
   if (error != 0) {                         /* No error */
+  QByteArray captcha;
+  QByteArray sessionid;
     switch (error) {
       case 1:                               /* Wrong answer to captcha */
         /* Response: 1;captcha */
         
         /* there are two captcha's in the variables, we need to remove the old one */
-        QByteArray captcha = variable["captcha"];
-        variables.remove("capcha");
-        variables["capcha"] = capcha;
+        captcha = variables["captcha"];
+        variables.remove("captcha");
+        variables["captcha"] = captcha;
         
         /* reporting error to client */
-        emit error("Wrong answer to captcha");
+        emit errorEncountered("Wrong answer to captcha");
         
         break;
       case 2:                               /* Session expired */
         /* Response: 2;sessionid;captcha or 2;captcha */
         
         /* we need to correct our stored sessionid */
-        VariableHashItr itr = variables.find("sessionid");
-        if (itr.value().isEmpty()) { /* new sessionid is empty, use old */
+        VariableHashItr itr = variables.find("sessionid"); /*TODO FIXME WTFF AAHAAAHHAH... marc check this*/
+        if (itr.value().isEmpty()) /* new sessionid is empty, use old */
           itr.next(); 
-        QByteArray sesionid = itr.value();
+        sessionid = itr.value();
         variables.remove("sessionid");
-        variables["sesionid"] = sessionid;
+        variables["sessionid"] = sessionid;
         
         /* there are two captcha's in the variables, we need to remove the old one */
-        QByteArray captcha = variable["captcha"];
-        variables.remove("capcha");
-        variables["capcha"] = capcha;
+        captcha = variables["captcha"];
+        variables.remove("captcha");
+        variables["captcha"] = captcha;
         
         /* reporting error to client */
-        emit error("Session Expired");
+        emit errorEncountered("Session Expired");
         break;
       case 3:                               /* Undefined */
         /* Response: 3; */
         // FIXME: how to handle this?
         
-        emit error("Undefined Challenge error"); /* FFUUUUUUUU */
+        emit errorEncountered("Undefined Challenge error"); /* FFUUUUUUUU */
         break;
       case 4:                               /* Critical error */
         /* Response: 4;mxitid@domain */
         // FIXME: how to handle this?
-        emit error("Critical Challenge error"); /* FFFFFFUUUUUUUUUUUUUUUUU!!!!!!! */
+        emit errorEncountered("Critical Challenge error"); /* FFFFFFUUUUUUUUUUUUUUUUU!!!!!!! */
         break;  
       case 5:                               /* Internal Error - Country code not available, select another country */
         /* Response: 5; */
-        emit error("Country Code not available"); /* ...ffuuuu ... */
+        emit errorEncountered("Country Code not available"); /* ...ffuuuu ... */
         break;
       case 6:                               /* User isn't registered (and path=0 was specified) */
         /* Response: 6;sessionid;captcha */
         
         /* there are two sessionid's in the variables, we need to remove the old one */
-        QByteArray sessionid = variable["sessionid"];
+        sessionid = variables["sessionid"];
         variables.remove("sessionid");
         variables["sessionid"] = sessionid;
         
         /* there are two captcha's in the variables, we need to remove the old one */
-        QByteArray captcha = variable["captcha"];
-        variables.remove("capcha");
-        variables["capcha"] = capcha;
+        captcha = variables["captcha"];
+        variables.remove("captcha");
+        variables["captcha"] = captcha;
         
-        emit error("User is not registered");
-        
+        emit errorEncountered("User is not registered");
         break;
       case 7:                               /* User is already registered (and path=1 was specified) */
         /* Response: 7;sessionid;captcha */
         
         /* there are two sessionid's in the variables, we need to remove the old one */
-        QByteArray sessionid = variable["sessionid"];
+        sessionid = variables["sessionid"];
         variables.remove("sessionid");
         variables["sessionid"] = sessionid;
         
         /* there are two captcha's in the variables, we need to remove the old one */
-        QByteArray captcha = variable["captcha"];
-        variables.remove("capcha");
-        variables["capcha"] = capcha;
+        captcha = variables["captcha"];
+        variables.remove("captcha");
+        variables["captcha"] = captcha;
         
+        emit errorEncountered("User is already registered");
         break;
     }
     

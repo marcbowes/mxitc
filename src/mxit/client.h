@@ -39,7 +39,7 @@ class Client : public QObject
   signals:
   
   void captchaReceived(const QByteArray &);
-  void error(const QString &);
+  void errorEncountered(const QString &);
   
   private slots:
   

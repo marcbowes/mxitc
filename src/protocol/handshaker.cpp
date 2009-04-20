@@ -310,18 +310,17 @@ void Handshaker::setupReceived(const QByteArray &response)
         /* Response: 2;sessionid;captcha or 2;captcha */
         
         /* variable declarations for this response type */
-        StringVec variables;
         variables.append("err");            /* 0 = success, else failed */
         variables.append("sessionid");      /* the session ID */
         variables.append("captcha");        /* the captcha image */
         
         /* now to assign variable values from the response */
-        VariableHash params = hashResponse(response, variables);
+        params = hashResponse(response, variables);
         
         /* if captcha is empty, then we are re-using our sessionid */
-        if (variables["captcha"].isEmpty()) {
-          variables["captcha"] = variables["sessionid"];
-          variables["sessionid"] = "";
+        if (params["captcha"].isEmpty()) {
+          params["captcha"] = params["sessionid"];
+          params["sessionid"] = "";
         }
         
         emit outgoingVariables(params);
