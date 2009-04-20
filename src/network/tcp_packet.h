@@ -3,6 +3,7 @@
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
 ** Author: Marc Bowes, 2009
+** Author: Richard Baxter, 2009
 **
 ** MXit::Network::TCPPacket implements a MXit::Network::Packet for TCP use
 **
@@ -23,7 +24,7 @@ class TCPPacket : public Packet
 {
   public:           /* class specific */
   
-  TCPPacket(QString cellph = "", QString cmd = "");
+  TCPPacket(const QString &cellphone = "", const QString &commandNumber = "");
   ~TCPPacket();
   
   public:           /* methods */

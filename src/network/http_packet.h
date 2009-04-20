@@ -19,23 +19,23 @@ namespace MXit
 namespace Network
 {
 
+static unsigned int sequenceCounter = 0;
+
 class HTTPPacket : public Packet
 {
   public:           /* class specific */
   
-  HTTPPacket(unsigned int seqNo, int sessID = -1, QString cellph = "", QString cmd = "");
+  HTTPPacket(int sessionID = -1, const QString &cellphone = "", const QString &commandNumber = "");
   ~HTTPPacket();
   
   public:           /* methods */
   
-  int getSessionID();
-  int getSequenceNo();
   virtual operator QByteArray() const;
   
   protected:
   
   int sessionID; /* if no session number is to be sent, this should be set to -1 */
-  unsigned int sequenceNo;
+  unsigned int sequenceNumber;
 };
 
 }

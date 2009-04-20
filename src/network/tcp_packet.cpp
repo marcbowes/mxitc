@@ -16,11 +16,28 @@ namespace Network
 **
 ** Author: Richard Baxter
 **
-** Consructor
+** TCPPacket constructor
 **
 ****************************************************************************/
+TCPPacket::TCPPacket(const QString &cellphone, const QString &commandNumber)
+ : Packet(cellphone, commandNumber)
+{
+  // nothing here
+}
 
-  TCPPacket::TCPPacket(QString cellph, QString cmd) : Packet(cellph, cmd) {}
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** TCPPacket constructor
+**
+****************************************************************************/
+TCPPacket::~TCPPacket()
+{
+  // nothing here
+}
+
 
 /****************************************************************************
 **

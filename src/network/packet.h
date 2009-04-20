@@ -22,9 +22,11 @@ namespace Network
 
 class Packet
 {
-  public:           /* methods */
+  public:           /* class specific */
   
-  Packet(QString cellph = "", QString cmd = "");
+  Packet(const QString &cellphone = "", const QString &commandNumber = "");
+
+  public:           /* methods */
   
   void operator<<(const QString &message);
   virtual operator QByteArray() const = 0;

@@ -12,15 +12,19 @@ namespace MXit
 namespace Network
 {
 
-
 /****************************************************************************
 **
 ** Author: Richard Baxter
 **
+** Packet constructor
+**
 ****************************************************************************/
+Packet::Packet(const QString &cellphone , const QString &commandNumber)
+  : cellphone (cellphone), command (commandNumber)
+{
+  // nothing else
+}
 
-  Packet::Packet(QString cellph, QString cmd) : 
-    cellphone(cellph), command(cmd) {}
 
 /****************************************************************************
 **

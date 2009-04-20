@@ -20,35 +20,29 @@ namespace Network
 ** Consructor to set all variables
 **
 ****************************************************************************/
-
-  HTTPPacket::HTTPPacket(unsigned int seqNo, int sessID, QString cellph, QString cmd) : 
-    Packet(cellph, cmd), sequenceNo(seqNo), sessionID(sessID) {}
-    
-    
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-int HTTPPacket::getSessionID() {
-  return sessionID;
-}
-  
-  
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-int HTTPPacket::getSequenceNo(){
-  return sequenceNo;
+HTTPPacket::HTTPPacket(int sessionID, const QString &cellphone, const QString &commandNumber)
+  : Packet(cellphone, commandNumber), sequenceNumber (++sequenceCounter), sessionID (sessionID)
+{
+  // nothing here
 }
 
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** HTTPPacket constructor
+**
+****************************************************************************/
+HTTPPacket::~HTTPPacket()
+{
+  // nothing here
+}
+
+    
 /****************************************************************************
 **
 ** Author: Richard Baxter
-** Author/stolen from: Marc Bowes
 **
 ** turns this HTTPPacket into a QByteArray:
 **
@@ -78,8 +72,8 @@ HTTPPacket::operator QByteArray() const
   /* next three lines of code creates the {"s"=[ sesid \1 ] seqno &} part */
   self.append   (     QString("\"s\"=")                                   );
   if (sessionID != -1)
-    self.append   (     QString("%1\1")         .arg(sessionID)             );
-  self.append   (     QString("%1&")          .arg(sequenceNo)            );
+    self.append (     QString("%1\1")         .arg(sessionID)             );
+  self.append   (     QString("%1&")          .arg(sequenceNumber)        );
     
   self.append   (     QString("\"cm\"=%1&")   .arg(command)               );
   self.append   (     QString("\"ms\"=%1")    .arg(getData())             );
