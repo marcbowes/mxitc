@@ -109,6 +109,20 @@ void Login::cellphoneChanged(const QString &text)
 **
 ** Author: Marc Bowes
 **
+** this SLOT is triggered when the client reports an error
+**
+****************************************************************************/
+void Login::error(const QString &text)
+{
+  QMessageBox error; error.setText(text);
+  error.exec();
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** this SLOT is triggered by pressing 'Login' or typing return
 **
 ****************************************************************************/
