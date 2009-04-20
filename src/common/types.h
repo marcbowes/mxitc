@@ -13,7 +13,6 @@
 
 #include <QString>
 
-
 /****************************************************************************
 **
 ** Author: Marc Bowes
@@ -28,6 +27,7 @@
 /* QVector for QString's */
 typedef QVector         <QString>            StringVec;
 typedef QVectorIterator <QString>            StringVecItr;
+
 
 /****************************************************************************
 **

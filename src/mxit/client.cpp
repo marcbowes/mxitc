@@ -4,8 +4,6 @@
 **
 ****************************************************************************/
 
-#include <QUrl>
-#include <QDateTime>
 #include <QDebug>
 
 #include "client.h"
