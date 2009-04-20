@@ -49,7 +49,8 @@ class Handshaker : public QObject
 
   public:         /* methods */
   
-  void challenge(const QString &cellphone, const QString &captcha);
+  void challenge(const QString &cellphone, const QString &captcha,
+    const QString &_url, const QString &_sessionid);
   void initialize();
   
   private:        /* methods */
@@ -63,8 +64,6 @@ class Handshaker : public QObject
         
   int             currentRequest;
   QHttp          *http;
-  QString         PIDURL;
-  QString         SESSIONID;
   Status          state;
 };
 

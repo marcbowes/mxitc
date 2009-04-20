@@ -126,7 +126,7 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
 void Client::challenge(const QString &cellphone, const QString &captcha)
 {
   state = CHALLENGING;
-  handshaker->challenge(cellphone, captcha);
+  handshaker->challenge(cellphone, captcha, variables["url"], variables["sessionid"]);
 }
 
 

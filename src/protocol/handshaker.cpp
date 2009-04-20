@@ -107,7 +107,7 @@ void Handshaker::requestComplete(int id, bool error)
 ** Author: Richard Baxter
 ** Author: Marc Bowes
 **
-** utility method to find data at an index defined by a ; delimiter
+** sends initialization request to MXit
 **
 ****************************************************************************/
 void Handshaker::initialize()
@@ -116,9 +116,11 @@ void Handshaker::initialize()
   QUrl url("http://www.mxit.com/res/");
   http->setHost(url.host(), 80);
   
-  QByteArray query;
-  query += url.path();
-  query += "?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp;
+  QString query =
+    QString("%1?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=%2")
+    .arg(url.path())
+    .arg(timestamp)
+  ;
 
 #ifdef HANDSHAKER_DEBUG
   DEBUG(url.host());
@@ -135,18 +137,21 @@ void Handshaker::initialize()
 ** Author: Richard Baxter
 ** Author: Marc Bowes
 **
-** utility method to find data at an index defined by a ; delimiter
+** sends challenge response to MXit
+** variables starting with an underscore were set by a previous response
 **
 ****************************************************************************/
-void Handshaker::challenge(const QString &cellphone, const QString &captcha)
+void Handshaker::challenge(const QString &cellphone, const QString &captcha,
+  const QString &_url, const QString &_sessionid) /* from initialization */
 {
-  QUrl url(PIDURL);
+  QUrl url(_url);
+  http->setHost(url.host(), 80);
   
   // FIXME: **way** more environment variables needed here
   QString query =
     QString("%1?type=getpid&sessionid=%2&ver=5.8.2&login=%3&cat=Y&chalresp=%4&cc=ZA&loc=en&brand=LPM&model=StrioClient&path=1")
     .arg(url.path())
-    .arg(SESSIONID)
+    .arg(_sessionid)
     .arg(cellphone)
     .arg(captcha)
   ;
@@ -155,8 +160,6 @@ void Handshaker::challenge(const QString &cellphone, const QString &captcha)
   DEBUG(url.host());
   DEBUG(query);
 #endif
-  
-  http->setHost(url.host(), 80);
 
   state = CHALLENGING;
   currentRequest = http->get(query);
@@ -205,14 +208,6 @@ void Handshaker::challengeReceived(const QByteArray &response)
     return;
   }
   
-  PIDURL    = params["url"];
-  SESSIONID = params["sessionid"];
-  
-#ifdef HANDSHAKER_DEBUG
-  DEBUG(PIDURL);
-  DEBUG(SESSIONID);
-#endif
-  
   emit outgoingVariables(params);
 }
 
@@ -240,6 +235,7 @@ VariableHash Handshaker::hashResponse(const QByteArray &response, const StringVe
     
     /* end will be -1 if the indexOf returns -1 */
     if (end != -1) {
+      /* store string between delimiters as the value of the variable */
       params[key] = response.mid(start, end - start);
       
       /* next iteration setup */
