@@ -8,8 +8,8 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_NETWORK_TCP_PACKET_H__
-#define __MXIT_NETWORK_TCP_PACKET_H__
+#ifndef __MXIT_NETWORK_HTTP_PACKET_H__
+#define __MXIT_NETWORK_HTTP_PACKET_H__
 
 #include "packet.h"
 
@@ -19,16 +19,23 @@ namespace MXit
 namespace Network
 {
 
-class TCPPacket : public Packet
+class HTTPPacket : public Packet
 {
   public:           /* class specific */
   
-  TCPPacket(QString cellph = "", QString cmd = "");
-  ~TCPPacket();
+  HTTPPacket(unsigned int seqNo, int sessID = -1, QString cellph = "", QString cmd = "");
+  ~HTTPPacket();
   
   public:           /* methods */
   
+  int getSessionID();
+  int getSequenceNo();
   virtual operator QByteArray() const;
+  
+  protected:
+  
+  int sessionID; /* if no session number is to be sent, this should be set to -1 */
+  unsigned int sequenceNo;
 };
 
 }

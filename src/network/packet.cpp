@@ -12,6 +12,16 @@ namespace MXit
 namespace Network
 {
 
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+  Packet::Packet(QString cellph, QString cmd) : 
+    cellphone(cellph), command(cmd) {}
+
 /****************************************************************************
 **
 ** Author: Marc Bowes

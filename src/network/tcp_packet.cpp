@@ -14,6 +14,16 @@ namespace Network
 
 /****************************************************************************
 **
+** Author: Richard Baxter
+**
+** Consructor
+**
+****************************************************************************/
+
+  TCPPacket::TCPPacket(QString cellph, QString cmd) : Packet(cellph, cmd) {}
+
+/****************************************************************************
+**
 ** Author: Marc Bowes
 **
 ** turns this TCPPacket into a QByteArray:
