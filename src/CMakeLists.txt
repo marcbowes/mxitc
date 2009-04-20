@@ -9,9 +9,10 @@ INCLUDE(${QT_USE_FILE})
 # .cxx sources
 SET(MXIT_CLIENT_SRCS_CXX
   
+  protocol/handshaker.cpp
   network/packet.cpp
   network/tcp_packet.cpp
-  protocol/handshaker.cpp
+  network/connection.cpp
   mxit/client.cpp
   gui/login.cpp
   main.cpp
@@ -21,6 +22,7 @@ SET(MXIT_CLIENT_SRCS_CXX
 SET(MXIT_CLIENT_MOC_SRCS
   
   protocol/handshaker.h
+  network/connection.h
   mxit/client.h
   gui/login.h
 )
@@ -36,7 +38,7 @@ QT4_WRAP_UI(MXIT_CLIENT_SRCS_CXX ${MXIT_CLIENT_UI})
 QT4_WRAP_CPP(MXIT_CLIENT_SRCS_CXX ${MXIT_CLIENT_MOC_SRCS})
 
 IF(HANDSHAKER_DEBUG)
-  add_definitions("-DHANDSHAKER_DEBUG")
+  ADD_DEFINITIONS("-DHANDSHAKER_DEBUG")
 ENDIF(HANDSHAKER_DEBUG)
 
 ADD_EXECUTABLE(

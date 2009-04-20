@@ -11,6 +11,8 @@
 #ifndef __MXIT_PROTOCOL_ERROR_CODES_H__
 #define __MXIT_PROTOCOL_ERROR_CODES_H__
 
+#include <QString>
+
 namespace MXit
 {
 
