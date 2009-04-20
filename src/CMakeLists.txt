@@ -12,6 +12,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handshaker.cpp
   network/packet.cpp
   network/tcp_packet.cpp
+  network/http_packet.cpp
   network/connection.cpp
   mxit/client.cpp
   gui/login.cpp

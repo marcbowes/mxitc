@@ -24,11 +24,16 @@ class Packet
 {
   public:           /* methods */
   
-  QString getData() const;
+  Packet(QString cellph = "", QString cmd = "");
+  
   void operator<<(const QString &message);
   virtual operator QByteArray() const = 0;
   void setCellphone(const QString &cellphone);
   void setCommand(const QString &command);
+
+  protected:         /* methods */
+  
+  QString getData() const;
   
   protected:       /* variables */
   
