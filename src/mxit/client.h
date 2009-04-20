@@ -21,8 +21,6 @@
 namespace MXit
 {
 
-typedef QHash<QString, QByteArray> VariableHash;
-
 class Client : public QObject
 {
   Q_OBJECT

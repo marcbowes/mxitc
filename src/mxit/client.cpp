@@ -109,6 +109,11 @@ void Client::initialize()
 ****************************************************************************/
 void Client::login(const QString &cellphone, const QString &password, const QString &captcha)
 {
+  /* need to store password so that it can be sent after challenge is complete */
+  QByteArray _password; _password.append(password); /* FIXME: easier conversion? */
+  variables["_password"] = _password;
+  
+  /* begin challenge */
   challenge(cellphone, captcha);
 }
 
