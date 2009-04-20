@@ -30,6 +30,18 @@ Packet::Packet(const QString &cellphone , const QString &commandNumber)
 **
 ** Author: Marc Bowes
 **
+** Packet deconstructor -- required for inheritance to work properly
+**
+****************************************************************************/
+Packet::~Packet()
+{
+  // nothing
+}
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** turns the data vector into a single QString seperated by \1
 **
 ****************************************************************************/

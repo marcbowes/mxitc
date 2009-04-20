@@ -25,7 +25,7 @@ class TCPPacket : public Packet
   public:           /* class specific */
   
   TCPPacket(const QString &cellphone = "", const QString &commandNumber = "");
-  ~TCPPacket();
+  virtual ~TCPPacket();
   
   public:           /* methods */
   

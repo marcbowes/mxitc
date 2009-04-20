@@ -12,7 +12,6 @@ namespace MXit
 namespace Network
 {
 
-
 /****************************************************************************
 **
 ** Author: Richard Baxter

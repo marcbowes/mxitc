@@ -25,6 +25,7 @@ class Packet
   public:           /* class specific */
   
   Packet(const QString &cellphone = "", const QString &commandNumber = "");
+  virtual ~Packet() = 0;
 
   public:           /* methods */
   

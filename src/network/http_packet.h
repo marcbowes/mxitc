@@ -26,7 +26,7 @@ class HTTPPacket : public Packet
   public:           /* class specific */
   
   HTTPPacket(int sessionID = -1, const QString &cellphone = "", const QString &commandNumber = "");
-  ~HTTPPacket();
+  virtual ~HTTPPacket();
   
   public:           /* methods */
   
