@@ -292,7 +292,17 @@ void Handshaker::setupReceived(const QByteArray &response)
     switch (error) {
       case 1:                               /* Wrong answer */
         /* Response: 1;captcha */
-        // TODO
+        
+        /* variable declarations for this response type */
+        StringVec variables;
+        variables.append("err");            /* 0 = success, else failed */
+        variables.append("captcha");        /* the product ID */
+        
+        /* now to assign variable values from the response */
+        VariableHash params = hashResponse(response, variables);
+  
+        emit newCaptchaReceived();
+        emit outgoingVariables(params);
         break;
       case 2:                               /* Session expired */
         /* Response: 2;sessionid;captcha */
@@ -310,11 +320,11 @@ void Handshaker::setupReceived(const QByteArray &response)
         /* Response: 5; */
         // TODO
         break;
-      case 6:                               /* User isn't registered (and path=0 was specified */
+      case 6:                               /* User isn't registered (and path=0 was specified) */
         /* Response: 6;sessionid;captcha */
         // TODO
         break;
-      case 7:                               /* User is already registered (and path=1 was specified */
+      case 7:                               /* User is already registered (and path=1 was specified) */
         /* Response: 7;sessionid;captcha */
         // TODO
         break;
