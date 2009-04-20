@@ -39,7 +39,7 @@ class Client : public QObject
   public:         /* methods */
   
   void initialize();
-  void login(const QString &cellphone, const QString &captcha);
+  void requestPID(const QString &cellphone, const QString &captcha);
 
   private:        /* variables */
   

@@ -74,11 +74,10 @@ void Client::initialize()
 **
 ** Author: Richard Baxter
 **
-** this method instructs the handshaker to request initial information
-** includes CAPTCHA image and language/country options
+** this method instructs the handshaker to request a PID from MXit
 **
 ****************************************************************************/
-void Client::login(const QString &cellphone, const QString &captcha)
+void Client::requestPID(const QString &cellphone, const QString &captcha)
 {
   handshaker->requestPID(cellphone, captcha);
 }

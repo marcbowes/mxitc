@@ -117,7 +117,7 @@ void Login::login()
   if (!captcha->text().isEmpty()) {
     loginButton->setDisabled(true);
     loginButton->setText("Logging in..");
-    mxit->login(cellphone->text(), captcha->text());
+    mxit->requestPID(cellphone->text(), captcha->text());
   }
 }
 

@@ -30,10 +30,10 @@ class Packet
   public:           /* methods */
   
   QString getData() const;
-  void setCellphone(const QString &cellphone);
-  void setCommand(const QString &command);
   void operator<<(const QString &message);
   virtual operator QByteArray() const = 0;
+  void setCellphone(const QString &cellphone);
+  void setCommand(const QString &command);
   
   protected:       /* variables */
   
