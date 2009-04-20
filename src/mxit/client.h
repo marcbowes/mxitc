@@ -3,8 +3,8 @@
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
 ** Author: Marc Bowes, 2009
-** Author: Timothy Sjoberg, 2009
 ** Author: Richard Baxter, 2009
+** Author: Timothy Sjoberg, 2009
 **
 ** MXit::Client is an abstraction layer, providing functionality rather than
 ** implementation. Implementation is found at lower levels, e.g. networking
@@ -47,11 +47,12 @@ class Client : public QObject
 
   private:        /* methods */
   
-  void requestPID(const QString &cellphone, const QString &captcha);
+  void challenge(const QString &cellphone, const QString &captcha);
 
   private:        /* variables */
   
   MXit::Protocol::Handshaker *handshaker;
+  VariableHash                variables;
 };
 
 }

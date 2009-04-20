@@ -93,7 +93,7 @@ void Handshaker::requestComplete(int id, bool error)
     case INITIALIZING:
       challengeReceived(response);
       break;
-    case REQUESTING_PID:
+    case CHALLENGING:
       setupReceived(response);
     default:
       // TODO: what here?
@@ -158,7 +158,7 @@ void Handshaker::challenge(const QString &cellphone, const QString &captcha)
   
   http->setHost(url.host(), 80);
 
-  state = REQUESTING_PID;
+  state = CHALLENGING;
   currentRequest = http->get(query);
 }
 

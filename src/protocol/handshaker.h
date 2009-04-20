@@ -2,9 +2,9 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
+** Author: Marc Bowes, 2009
 ** Author: Richard Baxter, 2009
 ** Author: Timothy Sjoberg, 2009
-** Author: Marc Bowes, 2009
 **
 ** MXit::Protocol::Handshaker provides functionality to get a PID via a 
 ** CAPTCHA negotiation
@@ -36,7 +36,7 @@ class Handshaker : public QObject
   enum Status {
     IDLE,
     INITIALIZING,
-    REQUESTING_PID
+    CHALLENGING
   };
 
   signals:

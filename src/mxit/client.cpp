@@ -14,6 +14,7 @@ namespace MXit
 /****************************************************************************
 **
 ** Author: Richard Baxter
+** Author: Marc Bowes
 **
 ** Client constructor
 **
@@ -43,27 +44,44 @@ Client::~Client()
 
 /****************************************************************************
 **
-** Author: Richard Baxter
+** Author: Marc Bowes
 **
-** this SLOT is triggered by the handshaker receiving a CAPTCHA
-** the signal needs to be bounced up to this client's controller
+** this SLOT is used by by subclients to report responses of operations
+** TODO: handler needs an origin type
 **
 ****************************************************************************/
 void Client::incomingVariables(const VariableHash &params)
 {
-  /* TODO: need to include an origin identifier */
+  /* unite these params with the client's variables
+   *
+   * == NOTE
+   * QHash#unite will not override keys, rather it will insert a duplicate
+   * key. Ensure that common variables (e.g. err) are properly cleaned up
+   * to prevent a very long useless list building up.
+   */
+  variables.unite(params);
+  
+  /* deal with the incoming variables */
   if (params.contains("captcha")) {
     emit captchaReceived(QByteArray::fromBase64(params["captcha"]));
   }
+  
+  /* clean up values we don't care about
+   *
+   * == NOTE
+   * QHash#remove removes ALL items with the specified key
+   */
+  variables.remove("err");
 }
 
 
 /****************************************************************************
 **
+** Author: Marc Bowes
 ** Author: Richard Baxter
 **
 ** this method instructs the handshaker to request initial information
-** includes CAPTCHA image and language/country options
+** see Handshaker#challengeReceived for a list of variables
 **
 ****************************************************************************/
 void Client::initialize()
@@ -76,23 +94,26 @@ void Client::initialize()
 **
 ** Author: Marc Bowes
 **
-** this method instructs the handshaker to request a PID from MXit
+** abstraction method to simply login process, see submethod calls
 **
 ****************************************************************************/
 void Client::login(const QString &cellphone, const QString &password, const QString &captcha)
 {
-  requestPID(cellphone, captcha);
+  challenge(cellphone, captcha);
 }
 
 
 /****************************************************************************
 **
 ** Author: Richard Baxter
+** Author: Marc Bowes
 **
-** this method instructs the handshaker to request a PID from MXit
+** this method instructs the handshaker to MXit for setup information
+** a successful challenge will return a PID for use with encryption
+** this is required to login
 **
 ****************************************************************************/
-void Client::requestPID(const QString &cellphone, const QString &captcha)
+void Client::challenge(const QString &cellphone, const QString &captcha)
 {
   handshaker->challenge(cellphone, captcha);
 }
