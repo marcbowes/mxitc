@@ -13,6 +13,7 @@
 
 #include <QString>
 
+
 /****************************************************************************
 **
 ** Author: Marc Bowes
@@ -25,8 +26,8 @@
 #include <QVectorIterator>
 
 /* QVector for QString's */
-typedef QVector<QString>              StringVec;
-typedef QVectorIterator<QString>      StringVecItr;
+typedef QVector         <QString>            StringVec;
+typedef QVectorIterator <QString>            StringVecItr;
 
 /****************************************************************************
 **
@@ -37,9 +38,11 @@ typedef QVectorIterator<QString>      StringVecItr;
 ****************************************************************************/
 
 #include <QHash>
+#include <QHashIterator>
 
 /* QHash of QString => QByteArray */
-typedef QHash<QString, QByteArray>    VariableHash;
+typedef QHash         <QString, QByteArray>  VariableHash;
+typedef QHashIterator <QString, QByteArray>  VariableHashItr;
 
 #endif
 

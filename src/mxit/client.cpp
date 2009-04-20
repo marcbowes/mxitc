@@ -6,6 +6,7 @@
 
 #include <QUrl>
 #include <QDateTime>
+#include <QDebug>
 
 #include "client.h"
 
@@ -22,6 +23,10 @@ namespace MXit
 Client::Client()
 {
   handshaker = new MXit::Protocol::Handshaker();
+  
+  /* variable passing */
+  connect(handshaker, SIGNAL(outgoingVariables(const VariableHash &)),
+    this, SLOT(incomingVariables(const VariableHash &)));
 }
 
 

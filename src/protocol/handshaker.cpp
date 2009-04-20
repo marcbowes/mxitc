@@ -8,8 +8,9 @@
 #include <QDateTime>
 #include <QDebug>
 
-#include "handshaker.h"
 #include "error_codes.h"
+
+#include "handshaker.h"
 
 #define DEBUG(x) qDebug() << #x << ":\t" << x;
 
@@ -77,7 +78,7 @@ void Handshaker::requestComplete(int id, bool error)
   /* ensure the request that completed is the one we expected */
   if (id != currentRequest) {
   #ifdef HANDSHAKER_DEBUG
-    qDebug() << "unexpected request id";
+    qDebug() << "ignoring unexpected request id";
   #endif
     
     return;
@@ -249,6 +250,14 @@ VariableHash Handshaker::hashResponse(const QByteArray &response, const StringVe
       params[key] = "";
     }
   }
+  
+#ifdef HANDSHAKER_DEBUG
+  VariableHashItr i(params);
+  while (i.hasNext()) {
+    i.next();
+    qDebug() << i.key() << ":\t" << i.value();
+  }
+#endif
   
   return params;
 }
