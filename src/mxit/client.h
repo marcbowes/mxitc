@@ -31,6 +31,12 @@ class Client : public QObject
 	
   Client();
   ~Client();
+  
+  enum Status {
+    IDLE,
+    INITIALIZING,
+    CHALLENGING
+  };
 
   signals:
   
@@ -48,10 +54,13 @@ class Client : public QObject
   private:        /* methods */
   
   void challenge(const QString &cellphone, const QString &captcha);
+  void challengeComplete();
+  void initializationComplete();
 
   private:        /* variables */
   
   MXit::Protocol::Handshaker *handshaker;
+  Status                      state;
   VariableHash                variables;
 };
 

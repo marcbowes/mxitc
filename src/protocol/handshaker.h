@@ -45,7 +45,7 @@ class Handshaker : public QObject
         
   private slots:
   
-  void requestComplete(int requestId, bool error);
+  void requestComplete(int id, bool error);
 
   public:         /* methods */
   

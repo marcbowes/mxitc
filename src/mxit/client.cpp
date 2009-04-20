@@ -20,6 +20,7 @@ namespace MXit
 **
 ****************************************************************************/
 Client::Client()
+  : state (IDLE)
 {
   handshaker = new MXit::Protocol::Handshaker();
   
@@ -62,11 +63,19 @@ void Client::incomingVariables(const VariableHash &params)
   variables.unite(params);
   
   /* deal with the incoming variables */
-  if (params.contains("captcha")) {
-    emit captchaReceived(QByteArray::fromBase64(params["captcha"]));
+  switch (state) {
+    case INITIALIZING:
+      initializationComplete();
+      break;
+    case CHALLENGING:
+      challengeComplete();
+      break;
+    default:
+      // TODO: what here?
+      break;
   }
   
-  /* clean up values we don't care about
+  /* clean up values we don't wish to store
    *
    * == NOTE
    * QHash#remove removes ALL items with the specified key
@@ -86,6 +95,7 @@ void Client::incomingVariables(const VariableHash &params)
 ****************************************************************************/
 void Client::initialize()
 {
+  state = INITIALIZING;
   handshaker->initialize();
 }
 
@@ -115,7 +125,36 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
 ****************************************************************************/
 void Client::challenge(const QString &cellphone, const QString &captcha)
 {
+  state = CHALLENGING;
   handshaker->challenge(cellphone, captcha);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** this method is called by the incomingVariables SLOT
+**
+****************************************************************************/
+void Client::challengeComplete()
+{
+  state = IDLE;
+  // TODO: complete login process
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** this method is called by the incomingVariables SLOT
+**
+****************************************************************************/
+void Client::initializationComplete()
+{
+  state = IDLE;
+  emit captchaReceived(QByteArray::fromBase64(variables["captcha"]));
 }
 
 }
