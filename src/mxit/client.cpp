@@ -22,10 +22,6 @@ namespace MXit
 Client::Client()
 {
   handshaker = new MXit::Protocol::Handshaker();
-  
-  /* when the handshaker gets a CAPTCHA */
-  connect(handshaker, SIGNAL(outgoingCaptcha(const QByteArray &)),
-          this, SLOT(incomingCaptcha(const QByteArray &)));
 }
 
 
@@ -50,9 +46,12 @@ Client::~Client()
 ** the signal needs to be bounced up to this client's controller
 **
 ****************************************************************************/
-void Client::incomingVariables(const StringHash &params)
+void Client::incomingVariables(const VariableHash &params)
 {
-  // emit captchaReceived(captcha);
+  /* TODO: need to include an origin identifier */
+  if (params.contains("captcha")) {
+    emit captchaReceived(QByteArray::fromBase64(params["captcha"]));
+  }
 }
 
 

@@ -15,19 +15,14 @@
 #define __MXIT_PROTOCOL_HANDSHAKER_H__
 
 #include <QHttp>
-#include <QVector>
-#include <QVectorIterator>
-#include <QHash>
+
+#include "common/types.h"
 
 namespace MXit
 {
 
 namespace Protocol
 {
-
-typedef QVector<QString> StringVec;
-typedef QVectorIterator<QString> StringVecItr;
-typedef QHash<QString, QString> StringHash;
 
 class Handshaker : public QObject
 {
@@ -46,7 +41,7 @@ class Handshaker : public QObject
 
   signals:
         
-  void outgoingVariables(const StringHash &);
+  void outgoingVariables(const VariableHash &);
         
   private slots:
   
@@ -59,9 +54,10 @@ class Handshaker : public QObject
   
   private:        /* methods */
   
-  void captchaReceived(const QByteArray &response);
-  StringHash hashResponse(const QByteArray &response, const StringVec &variables, const QString &delimiter = ";");
-  void PIDReceived(const QByteArray &response);
+  void challengeReceived(const QByteArray &response);
+  VariableHash hashResponse(const QByteArray &response, const StringVec &variables,
+    const QString &delimiter = ";");
+  void setupReceived(const QByteArray &response);
 
   private:        /* variables */
         

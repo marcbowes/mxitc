@@ -22,7 +22,7 @@ namespace Network
 QString Packet::getData() const
 {
   QString message;
-  DataVecItr itr(data);
+  StringVecItr itr(data);
   
   while (itr.hasNext()) {
     const QString &d = itr.next();

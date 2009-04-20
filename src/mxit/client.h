@@ -21,7 +21,7 @@
 namespace MXit
 {
 
-typedef QHash<QString, QString> StringHash;
+typedef QHash<QString, QByteArray> VariableHash;
 
 class Client : public QObject
 {
@@ -38,7 +38,7 @@ class Client : public QObject
   
   private slots:
   
-  void incomingVariables(const StringHash &);
+  void incomingVariables(const VariableHash &);
 
   public:         /* methods */
   

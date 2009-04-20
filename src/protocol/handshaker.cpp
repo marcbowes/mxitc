@@ -90,10 +90,10 @@ void Handshaker::requestComplete(int id, bool error)
   
   switch (state) {
     case INITIALIZING:
-      captchaReceived(response);
+      challengeReceived(response);
       break;
     case REQUESTING_PID:
-      PIDReceived(response);
+      setupReceived(response);
     default:
       // TODO: what here?
       break;
@@ -170,10 +170,8 @@ void Handshaker::challenge(const QString &cellphone, const QString &captcha)
 ** this method is called by the requestComplete SLOT and is specific for when
 ** the request was for a CAPTCHA
 **
-** emits outgoingCaptcha if the CAPTCHA was successfully received
-**
 ****************************************************************************/
-void Handshaker::captchaReceived(const QByteArray &response)
+void Handshaker::challengeReceived(const QByteArray &response)
 {
   /* variable declarations for this response type */
   StringVec variables;
@@ -198,7 +196,7 @@ void Handshaker::captchaReceived(const QByteArray &response)
   variables.append("defaultCity");          /* the city of the detected IP */
   
   /* now to assign variable values from the response */
-  StringHash params = hashResponse(response, variables);
+  VariableHash params = hashResponse(response, variables);
   
   if (params["err"] != MXit::Protocol::ErrorCodes::NoError) {
     // FIXME: how to handle this?
@@ -223,14 +221,14 @@ void Handshaker::captchaReceived(const QByteArray &response)
 ** Author: Marc Bowes
 ** Author: Richard Baxter
 **
-** returns a StringHash of variables (from input vector) and their values (from input array)
+** returns a VariableHash
 **
 ****************************************************************************/
-StringHash Handshaker::hashResponse(const QByteArray &response, const StringVec &variables,
+VariableHash Handshaker::hashResponse(const QByteArray &response, const StringVec &variables,
   const QString &delimiter)
 {
   /* setup */
-  StringHash params;                      /* to be returned */
+  VariableHash params;                    /* to be returned */
   StringVecItr itr(variables);            /* for iteration */
   unsigned int start  = 0;                /* stores index of a value start */
   unsigned int end    = response.indexOf(delimiter);
@@ -263,10 +261,8 @@ StringHash Handshaker::hashResponse(const QByteArray &response, const StringVec 
 ** this method is called by the requestComplete SLOT and is specific for when
 ** the request was for a PID
 **
-** emits outgoingPID if the PID was successfully received
-**
 ****************************************************************************/
-void Handshaker::PIDReceived(const QByteArray &response)
+void Handshaker::setupReceived(const QByteArray &response)
 {
   //
 }
