@@ -8,8 +8,6 @@
 #include <QDateTime>
 #include <QDebug>
 
-#include "error_codes.h"
-
 #include "handshaker.h"
 
 #define DEBUG(x) qDebug() << #x << ":\t" << x;
@@ -99,6 +97,8 @@ void Handshaker::requestComplete(int id, bool error)
       // TODO: what here?
       break;
   }
+  
+  state = IDLE;
 }
 
 
@@ -176,6 +176,14 @@ void Handshaker::challenge(const QString &cellphone, const QString &captcha,
 ****************************************************************************/
 void Handshaker::challengeReceived(const QByteArray &response)
 {
+  int error = responseError(response);
+  
+  if (error != 0) {                         /* No error */
+    // FIXME: how to handle this?
+    
+    return;
+  }
+  
   /* variable declarations for this response type */
   StringVec variables;
   variables.append("err");                  /* 0 = success, else failed */
@@ -200,12 +208,6 @@ void Handshaker::challengeReceived(const QByteArray &response)
   
   /* now to assign variable values from the response */
   VariableHash params = hashResponse(response, variables);
-  
-  if (params["err"] != MXit::Protocol::ErrorCodes::NoError) {
-    // FIXME: how to handle this?
-    
-    return;
-  }
   
   emit outgoingVariables(params);
 }
@@ -262,38 +264,32 @@ VariableHash Handshaker::hashResponse(const QByteArray &response, const StringVe
 **
 ** Author: Marc Bowes
 **
+** extracts the error code from a response
+**
+****************************************************************************/
+int Handshaker::responseError(const QByteArray &response,
+  const QString &delimiter)
+{
+  return response.left(response.indexOf(delimiter)).toInt();
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** this method is called by the requestComplete SLOT
 **
 ****************************************************************************/
 void Handshaker::setupReceived(const QByteArray &response)
 {
-  /* variable declarations for this response type */
-  StringVec variables;
-  variables.append("err");                  /* 0 = success, else failed */
-  variables.append("pid");                  /* the product ID */
-  variables.append("soc1");                 /* the socket connection string */
-  variables.append("http1");                /* the http connection string */
-  variables.append("dial");                 /* country dialing code */
-  variables.append("npf");                  /* country national prefix */
-  variables.append("ipf");                  /* country international prefix */
-  variables.append("soc2");                 /* fallback socket connection string */
-  variables.append("http2");                /* fallback http connection string */
-  variables.append("keepalive");            /* socket keepalive time */
-  variables.append("loginname");            /* the normalized loginname (checked against MXit database) */
-  variables.append("cc");                   /* the country code of the user if already registered, otherwise the
-                                             * country code passed during the request */
-  variables.append("region");               /* the region of the user in the database, else the region passed during
-                                             * the request */
-  variables.append("isUtf8Disable");        /* whether UTF-8 should be disabled in the client */
+  int error = responseError(response);
   
-  /* now to assign variable values from the response */
-  VariableHash params = hashResponse(response, variables);
-  
-  if (params["err"] != MXit::Protocol::ErrorCodes::NoError) {
+  if (error != 0) {                         /* No error */
     /* == Note
      * MXit::Protocol::ErrorCodes does not cover these errors
      */
-    switch (params["err"].toInt()) {
+    switch (error) {
       case 1:                               /* Wrong answer */
         /* Response: 1;captcha */
         // TODO
@@ -326,6 +322,28 @@ void Handshaker::setupReceived(const QByteArray &response)
     
     return;
   }
+  
+  /* variable declarations for this response type */
+  StringVec variables;
+  variables.append("err");                  /* 0 = success, else failed */
+  variables.append("pid");                  /* the product ID */
+  variables.append("soc1");                 /* the socket connection string */
+  variables.append("http1");                /* the http connection string */
+  variables.append("dial");                 /* country dialing code */
+  variables.append("npf");                  /* country national prefix */
+  variables.append("ipf");                  /* country international prefix */
+  variables.append("soc2");                 /* fallback socket connection string */
+  variables.append("http2");                /* fallback http connection string */
+  variables.append("keepalive");            /* socket keepalive time */
+  variables.append("loginname");            /* the normalized loginname (checked against MXit database) */
+  variables.append("cc");                   /* the country code of the user if already registered, otherwise the
+                                             * country code passed during the request */
+  variables.append("region");               /* the region of the user in the database, else the region passed during
+                                             * the request */
+  variables.append("isUtf8Disable");        /* whether UTF-8 should be disabled in the client */
+  
+  /* now to assign variable values from the response */
+  VariableHash params = hashResponse(response, variables);
   
   emit outgoingVariables(params);
 }

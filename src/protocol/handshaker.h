@@ -58,6 +58,8 @@ class Handshaker : public QObject
   void challengeReceived(const QByteArray &response);
   VariableHash hashResponse(const QByteArray &response, const StringVec &variables,
     const QString &delimiter = ";");
+  int responseError(const QByteArray &response,
+    const QString &delimiter = ";");
   void setupReceived(const QByteArray &response);
 
   private:        /* variables */
