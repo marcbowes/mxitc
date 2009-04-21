@@ -173,6 +173,7 @@ void Client::challenge(const QString &cellphone, const QString &captcha)
 /****************************************************************************
 **
 ** Author: Marc Bowes
+** Author: Richard Baxter
 **
 ** this method is called by the incomingVariables SLOT
 **
@@ -265,21 +266,27 @@ void Client::setupReceived()
   connection->addGateway(variables["soc2"]);
   connection->addGateway(variables["http2"]);
   
-  // TODO: complete login process
+  // TODO: complete login process (TODO probably should put into it's own method (?))
   
-  Packet * packetToSend = connection->getNewPacket();
+  // (for below) Author: Richard Baxer
   
-  packet_to_send.setCellphone(variables["cellphone"]);
-  packet_to_send.setCommand("1");
+  Network::Packet * packetToSend = buildPacket();
+  
+  packetToSend->setCellphone(variables["cellphone"]);
+  packetToSend->setCommand("1");
   
   /* see definitions on pg 7 of mxit open protocol*/
-  packet_to_send << variables["password"] /* password */
-                 << "MXITC-0.0-Y-Generic_PC" /* version == distributorCode-releaseVersion-archSeries-platform - see pg 7*/ 
-                 << "0"                   /* getContacts - FIXME just seting to 0 for 'don't return contacts', should be 0|1 */
-                 << ""                    /* capabilities - FIXME just leaving blank, should fill in as needed - see pg 8*/
-                 << variables[""]         /* dc */
-                 << variables[""]
-                 << variables[""]
+  (*packetToSend) << variables["password"] /* password */
+               << "MXITC-0.0-Y-Generic_PC"          /* version == distributorCode-releaseVersion-archSeries-platform - see pg 7 FIXME ... i think what I've made this should be alright*/ 
+               << "0"                               /* getContacts - FIXME just setting to 0 for 'don't return contacts', should be 0|1 */
+               << ""                                /* capabilities - FIXME just leaving blank, should fill in as needed - see pg 8*/
+               << ""                                /* dc - distribution code FIXME wtf is this supposed to be ... leaveing blank for now - see pg 7*/
+               << "0x0"                             /* features - FIXME 0x0 == no features */
+               << variables["defaultDialingCode"]   /* dialingCode - FIXME should we be setting this to something? */
+               << "en"                              /* locale - FIXME don't know what to set this to, just set to en*/
+               ;
+  connection->enqueue(*packetToSend);
+     
 }
 
 
