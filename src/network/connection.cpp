@@ -122,26 +122,30 @@ void Connection::enqueue(const Packet &packet)
 ****************************************************************************/
 void Connection::run()
 {
-  queueMutex.lock();        /* wait for a lock on the queue */
+  TCP_connect();
   
-  /* check for messages to send */
-  if (queue.isEmpty()) {
-    queueWait.wait(&queueMutex);
+  while (true) {  /* FIXME: check state */
+    queueMutex.lock();        /* wait for a lock on the queue */
+    
+    /* check for messages to send */
+    if (queue.isEmpty()) {
+      queueWait.wait(&queueMutex);
+    }
+    
+    /* write all messages into a stream */
+    QTextStream out(socket);
+    ByteArrayVecItr itr(queue);
+    while (itr.hasNext()) {   /* iterate over queue */
+      out << itr.next();      /* write to stream */
+    }
+    
+    /* need to flush the stream, otherwise data will go out of scope before
+     * it is actually sent */
+    out.flush();
+    while (socket->bytesToWrite() && socket->waitForBytesWritten());
+    
+    queueMutex.unlock();      /* release the mutex */
   }
-  
-  /* write all messages into a stream */
-  QTextStream out(socket);
-  ByteArrayVecItr itr(queue);
-  while (itr.hasNext()) {   /* iterate over queue */
-    out << itr.next();      /* write to stream */
-  }
-  
-  /* need to flush the stream, otherwise data will go out of scope before
-   * it is actually sent */
-  out.flush();
-  while (socket->bytesToWrite() && socket->waitForBytesWritten());
-  
-  queueMutex.unlock();      /* release the mutex */
 }
 
 
