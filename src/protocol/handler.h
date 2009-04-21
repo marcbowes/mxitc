@@ -23,6 +23,33 @@ namespace MXit
 namespace Protocol
 {
 
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** extracts the error code from a response
+**
+****************************************************************************/
+static int packetError(const QByteArray &packet,
+  const QString &delimiter = "\0");
+
+static int packetError(const QByteArray &packet,
+  const QString &delimiter)
+{
+  /* == Example
+   * 1\0
+   * errorCode [\1errorMessage]\0
+   * ... etc
+   */
+  QString error = packet.mid(packet.indexOf(delimiter), packet.indexOf(delimiter, 1));
+  
+  /* now need to check for \1 */
+  int idx1 = error.indexOf("\1");
+  
+  /* return errorCode only */
+  return error.left(idx1 == -1 ? error.indexOf("\0") : idx1).toInt();
+}
+
 class Handler : public QObject
 {
   Q_OBJECT

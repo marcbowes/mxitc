@@ -14,10 +14,6 @@
 
 #include "types.h"
 
-static VariableHash hashVariables(const QByteArray &data, const StringVec &variables,
-    const QString &delimiter = ";");
-
-
 /****************************************************************************
 **
 ** Author: Marc Bowes
@@ -26,6 +22,9 @@ static VariableHash hashVariables(const QByteArray &data, const StringVec &varia
 ** maps variables to values
 **
 ****************************************************************************/
+static VariableHash hashVariables(const QByteArray &data, const StringVec &variables,
+    const QString &delimiter = ";");
+
 static VariableHash hashVariables(const QByteArray &data, const StringVec &variables,
   const QString &delimiter)
 {
