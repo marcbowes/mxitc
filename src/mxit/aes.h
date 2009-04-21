@@ -4,6 +4,7 @@
 #define __AES_H__
 
 #include <QByteArray>
+#include <QDebug>
 
 typedef unsigned char uchar;
 
