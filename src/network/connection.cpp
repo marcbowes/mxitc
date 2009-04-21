@@ -132,6 +132,9 @@ void Connection::run()
       queueWait.wait(&queueMutex);
     }
     
+    /* FIXME: this is a hack */
+    socket->waitForConnected();
+    
     /* write all messages into a stream */
     QTextStream out(socket);
     ByteArrayVecItr itr(queue);
