@@ -98,3 +98,4 @@ void Packet::operator<<(const QString &message)
 }
 
 }
+

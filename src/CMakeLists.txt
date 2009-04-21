@@ -8,12 +8,13 @@ INCLUDE(${QT_USE_FILE})
 
 # .cxx sources
 SET(MXIT_CLIENT_SRCS_CXX
-  
-  protocol/handshaker.cpp
-  network/packet.cpp
-  network/tcp_packet.cpp
+
   network/http_packet.cpp
+  network/tcp_packet.cpp
+  network/packet.cpp
+  network/gateway.cpp
   network/connection.cpp
+  protocol/handshaker.cpp
   mxit/client.cpp
   gui/login.cpp
   main.cpp
@@ -22,8 +23,8 @@ SET(MXIT_CLIENT_SRCS_CXX
 # files which need to be moc'd by Qt
 SET(MXIT_CLIENT_MOC_SRCS
   
-  protocol/handshaker.h
   network/connection.h
+  protocol/handshaker.h
   mxit/client.h
   gui/login.h
 )

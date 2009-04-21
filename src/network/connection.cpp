@@ -42,6 +42,21 @@ Connection::~Connection()
 **
 ** Author: Marc Bowes
 **
+** adds a gateway to the connection
+** (not thread-safe)
+**
+****************************************************************************/
+void Connection::addGateway(const QString &connectionString)
+{
+  Gateway gateway (connectionString);
+  gateways.append(gateway);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** thread-safe method to enqueue a message
 **
 ****************************************************************************/
