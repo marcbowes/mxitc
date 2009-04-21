@@ -207,56 +207,9 @@ void Handshaker::challengeReceived(const QByteArray &response)
   variables.append("defaultCity");          /* the city of the detected IP */
   
   /* now to assign variable values from the response */
-  VariableHash params = hashResponse(response, variables);
+  VariableHash params = hashVariables(response, variables);
   
   emit outgoingVariables(params);
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-** Author: Richard Baxter
-**
-** returns a VariableHash
-**
-****************************************************************************/
-VariableHash Handshaker::hashResponse(const QByteArray &response, const StringVec &variables,
-  const QString &delimiter)
-{
-  /* setup */
-  VariableHash params;                    /* to be returned */
-  StringVecItr itr(variables);            /* for iteration */
-  unsigned int start  = 0;                /* stores index of a value start */
-  unsigned int end    = response.indexOf(delimiter);
-                                          /* stores index of a value end */
-  /* iterate over variable list */
-  while (itr.hasNext()) {
-    const QString &key = itr.next();      /* current variable name */
-    
-    /* end will be -1 if the indexOf returns -1 */
-    if (end != -1) {
-      /* store string between delimiters as the value of the variable */
-      params[key] = response.mid(start, end - start);
-      
-      /* next iteration setup */
-      start = end + 1;
-      end = response.indexOf(delimiter, start);
-    } else {
-      /* i.e. we want to have empty values for the remaining variables */
-      params[key] = "";
-    }
-  }
-  
-#ifdef HANDSHAKER_DEBUG
-  VariableHashItr i(params);
-  while (i.hasNext()) {
-    i.next();
-    qDebug() << i.key() << ":\t" << i.value();
-  }
-#endif
-  
-  return params;
 }
 
 
@@ -302,7 +255,7 @@ void Handshaker::setupReceived(const QByteArray &response)
         variables.append("captcha");        /* the captcha image */
         
         /* now to assign variable values from the response */
-        params = hashResponse(response, variables);
+        params = hashVariables(response, variables);
         
         emit outgoingVariables(params);
         break;
@@ -315,7 +268,7 @@ void Handshaker::setupReceived(const QByteArray &response)
         variables.append("captcha");        /* the captcha image */
         
         /* now to assign variable values from the response */
-        params = hashResponse(response, variables);
+        params = hashVariables(response, variables);
         
         /* if captcha is empty, then we are re-using our sessionid */
         if (params["captcha"].isEmpty()) {
@@ -369,7 +322,7 @@ void Handshaker::setupReceived(const QByteArray &response)
   variables.append("isUtf8Disable");        /* whether UTF-8 should be disabled in the client */
   
   /* now to assign variable values from the response */
-  params = hashResponse(response, variables);
+  params = hashVariables(response, variables);
   
   emit outgoingVariables(params);
 }

@@ -16,7 +16,7 @@
 
 #include <QHttp>
 
-#include "common/types.h"
+#include "common/hash_variables.h"
 
 namespace MXit
 {
@@ -56,8 +56,6 @@ class Handshaker : public QObject
   private:        /* methods */
   
   void challengeReceived(const QByteArray &response);
-  VariableHash hashResponse(const QByteArray &response, const StringVec &variables,
-    const QString &delimiter = ";");
   int responseError(const QByteArray &response,
     const QString &delimiter = ";");
   void setupReceived(const QByteArray &response);

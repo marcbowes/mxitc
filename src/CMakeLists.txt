@@ -12,6 +12,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   network/packets/http.cpp
   network/packets/tcp.cpp
   
+  protocol/handler.cpp
   protocol/handlers/01_login.cpp
   
   network/packet.cpp
@@ -26,6 +27,9 @@ SET(MXIT_CLIENT_SRCS_CXX
 
 # files which need to be moc'd by Qt
 SET(MXIT_CLIENT_MOC_SRCS
+
+  protocol/handler.h
+  protocol/handlers/01_login.h
   
   network/connection.h
   protocol/handshaker.h
