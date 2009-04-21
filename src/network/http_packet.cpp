@@ -80,6 +80,19 @@ HTTPPacket::operator QByteArray() const
   return self;
 }
 
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** sets the HTTP session id
+**
+****************************************************************************/
+void HTTPPacket::setSessionID(int sessionID)
+{
+  this->sessionID = sessionID;
+}
+
 }
 
 }

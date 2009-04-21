@@ -138,8 +138,16 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
 ****************************************************************************/
 MXit::Network::Packet* Client::buildPacket()
 {
+  /* get the base built by the connection */
   MXit::Network::Packet *packet = connection->buildPacket();
+  
+  /* HTTP/TCP setup */
   packet->setCellphone(variables["cellphone"]);
+  
+  /* HTTP only */
+  if (connection->gateway.type == MXit::Network::Gateway::HTTP) {
+    static_cast<MXit::Network::HTTPPacket*>(packet)->setSessionID(variables["sessionid"].toInt());
+  }
   
   return packet;
 }

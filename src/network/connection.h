@@ -64,9 +64,12 @@ class Connection : public QThread
   
   // ..
   
-  private:        /* variables */
+  public:         /* variables */
   
   Gateway         gateway;
+  
+  private:        /* variables */
+  
   GatewayVec      gateways;
   ByteArrayVec    queue;
   QMutex          queueMutex;

@@ -31,6 +31,7 @@ class HTTPPacket : public Packet
   public:           /* methods */
   
   virtual operator QByteArray() const;
+  void setSessionID(int sessionID);
   
   protected:
   
