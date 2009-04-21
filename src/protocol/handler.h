@@ -12,6 +12,7 @@
 #define __MXIT_PROTOCOL_HANDLER_H__
 
 #include <QObject>
+#include <QRegExp>
 
 #include "common/types.h"
 
