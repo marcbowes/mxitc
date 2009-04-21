@@ -22,13 +22,13 @@ namespace MXit
 namespace GUI
 {
 
-class Login : public QMainWindow, private Ui::Login
+class Login : public QDialog, private Ui::Login
 {
   Q_OBJECT
 
   public:         /* class specific */
   
-  Login(QApplication *app, MXit::Client *client);
+  Login(QApplication *app, MXit::Client *client); //FIXME need to specify parent
   ~Login();
 
   private slots:

@@ -119,7 +119,6 @@
    </attribute>
    <addaction name="actionLogon_to_MXIT" />
    <addaction name="actionLogoff" />
-   <addaction name="actionQuit" />
   </widget>
   <action name="actionLogon_to_MXIT" >
    <property name="text" >

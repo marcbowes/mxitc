@@ -11,6 +11,7 @@
 #define __MXIT_GUI_MXITC_H__
 
 #include <QMessageBox>
+#include <QDialogButtonBox>
 
 #include "mxit/client.h"
 #include "gui/login.h"
@@ -34,6 +35,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
 
   private slots:
   
+  void showQuitDialog();
   void openLoginWindow();
   /*void captchaReceived(const QByteArray &captcha);
   void captchaChanged(const QString &text);

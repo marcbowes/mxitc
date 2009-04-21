@@ -1,162 +1,168 @@
 <ui version="4.0" >
  <class>Login</class>
- <widget class="QMainWindow" name="Login" >
+ <widget class="QDialog" name="Login" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>270</width>
-    <height>305</height>
+    <width>261</width>
+    <height>251</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>MXit - Login</string>
+  <property name="minimumSize" >
+   <size>
+    <width>261</width>
+    <height>251</height>
+   </size>
   </property>
-  <widget class="QWidget" name="centralwidget" >
-   <widget class="QWidget" name="layoutWidget" >
-    <property name="geometry" >
-     <rect>
-      <x>4</x>
-      <y>6</y>
-      <width>261</width>
-      <height>251</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout" >
-     <item>
-      <widget class="QLabel" name="label_3" >
-       <property name="font" >
-        <font>
-         <pointsize>11</pointsize>
-         <weight>50</weight>
-         <italic>true</italic>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text" >
-        <string>Please login to continue</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label" >
-       <property name="font" >
-        <font>
-         <family>Verdana</family>
-         <pointsize>11</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text" >
-        <string>Cellphone</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="cellphone" >
-       <property name="font" >
-        <font>
-         <family>Verdana</family>
-         <pointsize>16</pointsize>
-        </font>
-       </property>
-       <property name="toolTip" >
-        <string>Your 10 digit cellphone number</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_2" >
-       <property name="font" >
-        <font>
-         <family>Verdana</family>
-         <pointsize>11</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text" >
-        <string>Password</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="password" >
-       <property name="font" >
-        <font>
-         <family>Verdana</family>
-         <pointsize>16</pointsize>
-        </font>
-       </property>
-       <property name="toolTip" >
-        <string>The MXit password for your cellphone</string>
-       </property>
-       <property name="echoMode" >
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="captchaLabel" >
-       <property name="font" >
-        <font>
-         <family>Verdana</family>
-        </font>
-       </property>
-       <property name="text" >
-        <string>CAPTCHA</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="captcha" >
-       <property name="font" >
-        <font>
-         <family>Verdana</family>
-         <pointsize>16</pointsize>
-        </font>
-       </property>
-       <property name="toolTip" >
-        <string>Please enter the digits from the above image</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" >
-       <item>
-        <widget class="QPushButton" name="loginButton" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="text" >
-          <string>Login</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="helpButton" >
-         <property name="text" >
-          <string>Help</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar" >
+  <property name="maximumSize" >
+   <size>
+    <width>261</width>
+    <height>251</height>
+   </size>
+  </property>
+  <property name="windowTitle" >
+   <string>Login</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget" >
    <property name="geometry" >
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>270</width>
-     <height>24</height>
+     <width>261</width>
+     <height>251</height>
     </rect>
    </property>
+   <layout class="QVBoxLayout" name="verticalLayout" >
+    <item>
+     <widget class="QLabel" name="label_3" >
+      <property name="font" >
+       <font>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <italic>true</italic>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text" >
+       <string>Please login to continue</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label" >
+      <property name="font" >
+       <font>
+        <family>Verdana</family>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text" >
+       <string>Cellphone</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="cellphone" >
+      <property name="font" >
+       <font>
+        <family>Verdana</family>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="toolTip" >
+       <string>Your 10 digit cellphone number</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_2" >
+      <property name="font" >
+       <font>
+        <family>Verdana</family>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text" >
+       <string>Password</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="password" >
+      <property name="font" >
+       <font>
+        <family>Verdana</family>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="toolTip" >
+       <string>The MXit password for your cellphone</string>
+      </property>
+      <property name="echoMode" >
+       <enum>QLineEdit::Password</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="captchaLabel" >
+      <property name="font" >
+       <font>
+        <family>Verdana</family>
+       </font>
+      </property>
+      <property name="text" >
+       <string>CAPTCHA</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="captcha" >
+      <property name="font" >
+       <font>
+        <family>Verdana</family>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="toolTip" >
+       <string>Please enter the digits from the above image</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout" >
+      <item>
+       <widget class="QPushButton" name="loginButton" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="text" >
+         <string>Login</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cancelButton" >
+        <property name="text" >
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="helpButton" >
+        <property name="text" >
+         <string>Help</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar" />
  </widget>
  <resources/>
  <connections/>

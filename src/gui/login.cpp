@@ -45,6 +45,7 @@ Login::Login(QApplication *app, MXit::Client *client)
   connect(password, SIGNAL(returnPressed()), this, SLOT(login()));
   connect(captcha, SIGNAL(returnPressed()), this, SLOT(login()));
   connect(loginButton, SIGNAL(released()), this, SLOT(login()));
+  connect(cancelButton, SIGNAL(released()), this, SLOT(reject ()));
   
   /* when a CAPTCHA is received from the MXit gateway, display it */
   connect(mxit, SIGNAL(captchaReceived(const QByteArray &)), this, SLOT(captchaReceived(const QByteArray &)));
