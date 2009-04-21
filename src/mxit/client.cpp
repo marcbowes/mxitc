@@ -275,8 +275,12 @@ void Client::setupReceived()
   packetToSend->setCellphone(variables["cellphone"]);
   packetToSend->setCommand("1");
   
+  QString key = QString("6170383452343567").replace(0, 8, variables["pid"].right(8));
+  QString pass = "<mxit/>" + variables["_password"];
+  AES encryptor;
+  
   /* see definitions on pg 7 of mxit open protocol*/
-  (*packetToSend) << variables["password"] /* password */
+  (*packetToSend) <<  encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64() /* password */
                << "MXITC-0.0-Y-Generic_PC"          /* version == distributorCode-releaseVersion-archSeries-platform - see pg 7 FIXME ... i think what I've made this should be alright*/ 
                << "0"                               /* getContacts - FIXME just setting to 0 for 'don't return contacts', should be 0|1 */
                << ""                                /* capabilities - FIXME just leaving blank, should fill in as needed - see pg 8*/
