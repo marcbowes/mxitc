@@ -28,8 +28,8 @@ class Gateway
   ~Gateway();
   
   enum Type {
-    TCP,
-    HTTP
+    HTTP,
+    TCP
   };
 
   public:           /* methods */

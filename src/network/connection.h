@@ -23,7 +23,9 @@
 #include "protocol/error_codes.h"
 
 #include "gateway.h"
+#include "http_packet.h"
 #include "tcp_packet.h"
+#include "packet.h"
 
 namespace MXit
 {
@@ -53,10 +55,10 @@ class Connection : public QThread
 
   public:         /* methods */
   
-  Packet* getNewPacket();
-  void addGateway(const QString &connectionString);
-  void enqueue(const Packet &packet);
-  void run();
+  void    addGateway(const QString &connectionString);
+  Packet *buildPacket();
+  void    enqueue(const Packet &packet);
+  void    run();
 
   private:        /* methods */
   
@@ -64,13 +66,13 @@ class Connection : public QThread
   
   private:        /* variables */
   
+  Gateway         gateway;
   GatewayVec      gateways;
   ByteArrayVec    queue;
   QMutex          queueMutex;
   QWaitCondition  queueWait;
-  QString         gateway;
-  QTcpSocket     *socket;
-  // TODO: HTTP support
+  QTcpSocket     *socket;       /* TCP only */
+
 };
 
 }

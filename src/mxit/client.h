@@ -54,6 +54,7 @@ class Client : public QObject
 
   private:        /* methods */
   
+  MXit::Network::Packet* buildPacket();
   void challenge(const QString &cellphone, const QString &captcha);
   void initializationComplete();
   void setupReceived();

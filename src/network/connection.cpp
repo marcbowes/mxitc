@@ -37,21 +37,6 @@ Connection::~Connection()
   delete socket;
 }
 
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** Returns a new (dynamically allocated) Packet of the appopriate subclass 
-** type, this will (should) be cleaned up from memory once sent
-**
-****************************************************************************/
-
-Packet* Connection::getNewPacket() {
-  /* only tcp for now. TODO add http */
-  
-  return new TCPPacket();
-  
-}
 
 /****************************************************************************
 **
@@ -65,6 +50,32 @@ void Connection::addGateway(const QString &connectionString)
 {
   Gateway gateway (connectionString);
   gateways.append(gateway);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** builds a packet of the appropriate sub-class
+** this packet needs to be cleaned up at a later stage
+**
+****************************************************************************/
+Packet* Connection::buildPacket() {
+  /* setup */
+  Packet *packet;
+  
+  /* determine type of packet to be created */
+  switch (gateway.type) {
+    case Gateway::HTTP:
+      packet = new HTTPPacket();
+      break;
+    case Gateway::TCP:
+      packet = new TCPPacket();
+      break;
+  }
+  
+  return packet;
 }
 
 

@@ -113,12 +113,35 @@ void Client::initialize()
 ****************************************************************************/
 void Client::login(const QString &cellphone, const QString &password, const QString &captcha)
 {
+  /* FIXME: easier conversion to QByteArray from QString? */
+  
+  /* need to store cellphone so it can be used as "id" in packets */
+  QByteArray _cellphone; _cellphone.append(cellphone);
+  variables["_cellphone"] = _cellphone;
+  
   /* need to store password so that it can be sent after challenge is complete */
-  QByteArray _password; _password.append(password); /* FIXME: easier conversion? */
+  QByteArray _password; _password.append(password);
   variables["_password"] = _password;
   
   /* begin challenge */
   challenge(cellphone, captcha);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** this method instructs the connection to build a packet and then does some
+** post-build setup based on the client's state
+**
+****************************************************************************/
+MXit::Network::Packet* Client::buildPacket()
+{
+  MXit::Network::Packet *packet = connection->buildPacket();
+  packet->setCellphone(variables["cellphone"]);
+  
+  return packet;
 }
 
 
