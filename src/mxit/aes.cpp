@@ -198,14 +198,12 @@ AES::~AES()
 
 QByteArray AES::encrypt(const QByteArray &orig_key, const QByteArray &data)
 {
-  qDebug() << "start encrypt";
   int length = data.size();
   int total_length = length;
   total_length /= 16;
   total_length++;
   total_length *= 16;
   
-  qDebug() << "creating state";
   unsigned char *state = new unsigned char[total_length];
   
   //pad data
@@ -217,7 +215,7 @@ QByteArray AES::encrypt(const QByteArray &orig_key, const QByteArray &data)
   }
   
   state[total_length-1] = total_length - length;
-  qDebug() << "padded data";
+  
   unsigned char *key = new unsigned char[512];
   
   for (int i=0; i < 512; i++) {
@@ -226,20 +224,20 @@ QByteArray AES::encrypt(const QByteArray &orig_key, const QByteArray &data)
     else
       key[i] = 0;
   }
-  qDebug() << "made key";
+  
   ExpandKey(key);
-  qDebug() << "expanded key";
+  
   for (int i = 0; i < total_length; i += 16 )
 		realEncrypt( state + i, key );
-  qDebug() << "encrypted data";
+  
   QByteArray return_value;
   for (int i=0; i<total_length; i++) {
     return_value[i] = static_cast<char>(state[i]);
   }
-  qDebug() << "more stuff";
+  
   delete[] state;
   delete[] key;
-  qDebug() << "even more stuff";
+  
   return return_value;
 }
 
@@ -252,7 +250,35 @@ QByteArray AES::encrypt(const QByteArray &orig_key, const QByteArray &data)
 
 QByteArray AES::decrypt(const QByteArray &orig_key, const QByteArray &data)
 {
+  unsigned char *state = new unsigned char[data.size()];
   
+  for (int i=0; i < data.size(); i++) {
+    state[i] = static_cast<unsigned char>(data.at(i));
+  }
+  
+  unsigned char *key = new unsigned char[512];
+  
+  for (int i=0; i < 512; i++) {
+    if (i < orig_key.size())
+      key[i] = static_cast<unsigned char>(orig_key.at(i));
+    else
+      key[i] = 0;
+  }
+  
+  ExpandKey(key);
+  
+  for (int i = 0; i < data.size(); i += 16 )
+		realDecrypt( state + i, key );
+  
+  QByteArray return_value;
+  for (int i=0; i<data.size(); i++) {
+    return_value[i] = static_cast<char>(state[i]);
+  }
+  
+  delete[] state;
+  delete[] key;
+  
+  return return_value;
 }
 
 /****************************************************************************
@@ -451,6 +477,21 @@ void AES::realEncrypt(unsigned char *state, unsigned char *expkey)
 			ShiftRows (state);
 
 		AddRoundKey ((unsigned *)state, (unsigned *)expkey + round * Nb);
+	}
+}
+
+void AES::realDecrypt(unsigned char *state, unsigned char *expkey)
+{
+  unsigned round;
+  
+  AddRoundKey ((unsigned *)state, (unsigned *)expkey + Nr * Nb);
+	InvShiftRows(state);
+
+	for( round = Nr; round--; )
+	{
+		AddRoundKey ((unsigned *)state, (unsigned *)expkey + round * Nb);
+		if( round )
+			InvMixSubColumns (state);
 	}
 }
 

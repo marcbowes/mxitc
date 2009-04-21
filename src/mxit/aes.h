@@ -4,7 +4,6 @@
 #define __AES_H__
 
 #include <QByteArray>
-#include <QDebug>
 
 typedef unsigned char uchar;
 
@@ -28,6 +27,7 @@ class AES {
   void InvMixSubColumns(unsigned char *state);
   void AddRoundKey(unsigned *state, unsigned *key);
   void realEncrypt(unsigned char *state, unsigned char *expkey);
+  void realDecrypt(unsigned char *state, unsigned char *expkey);
   
 };
 
