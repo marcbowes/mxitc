@@ -31,8 +31,8 @@ class Packet
   
   Packet& operator<<(const QString &message);
   virtual operator QByteArray() const = 0;
-  void setCellphone(const QString &cellphone);
-  void setCommand(const QString &command);
+  virtual void setCellphone(const QString &cellphone);
+  virtual void setCommand(const QString &command);
 
   protected:         /* methods */
   

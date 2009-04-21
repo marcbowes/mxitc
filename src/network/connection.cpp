@@ -79,8 +79,11 @@ void Connection::addGateway(const QString &connectionString)
 **
 ****************************************************************************/
 Packet* Connection::buildPacket() {
+  /* FIXME HACK */
+  gateway = gateways.first();
+  
   /* setup */
-  Packet *packet;
+  Packet *packet = NULL;
   
   /* determine type of packet to be created */
   switch (gateway.type) {
@@ -122,6 +125,7 @@ void Connection::enqueue(const Packet &packet)
 ****************************************************************************/
 void Connection::run()
 {
+  socket->moveToThread(this);
   TCP_connect();
   
   while (true) {  /* FIXME: check state */
