@@ -4,12 +4,15 @@
 **
 ****************************************************************************/
 
-#include "http_packet.h"
+#include "http.h"
 
 namespace MXit
 {
 
 namespace Network
+{
+
+namespace Packets
 {
 
 /****************************************************************************
@@ -19,7 +22,7 @@ namespace Network
 ** Consructor to set all variables
 **
 ****************************************************************************/
-HTTPPacket::HTTPPacket(int sessionID, const QString &cellphone, const QString &commandNumber)
+HTTP::HTTP(int sessionID, const QString &cellphone, const QString &commandNumber)
   : Packet(cellphone, commandNumber), sequenceNumber (++sequenceCounter), sessionID (sessionID)
 {
   // nothing here
@@ -33,7 +36,7 @@ HTTPPacket::HTTPPacket(int sessionID, const QString &cellphone, const QString &c
 ** HTTPPacket constructor
 **
 ****************************************************************************/
-HTTPPacket::~HTTPPacket()
+HTTP::~HTTP()
 {
   // nothing here
 }
@@ -63,7 +66,7 @@ HTTPPacket::~HTTPPacket()
 **              MXit according to the command number.
 **
 ****************************************************************************/
-HTTPPacket::operator QByteArray() const
+HTTP::operator QByteArray() const
 {
   QByteArray self;
   self.append   (     QString("\"id\"=%1&")   .arg(cellphone)             );
@@ -88,9 +91,11 @@ HTTPPacket::operator QByteArray() const
 ** sets the HTTP session id
 **
 ****************************************************************************/
-void HTTPPacket::setSessionID(int sessionID)
+void HTTP::setSessionID(int sessionID)
 {
   this->sessionID = sessionID;
+}
+
 }
 
 }

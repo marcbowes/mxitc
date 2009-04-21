@@ -16,10 +16,12 @@
 
 #include <QHash>
 
-#include "protocol/handshaker.h"
-#include "aes.h"
-
 #include "network/connection.h"
+
+#include "protocol/handshaker.h"
+#include "protocol/handlers/include.list"
+
+#include "aes.h"
 
 namespace MXit
 {

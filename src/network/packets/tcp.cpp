@@ -4,12 +4,15 @@
 **
 ****************************************************************************/
 
-#include "tcp_packet.h"
+#include "tcp.h"
 
 namespace MXit
 {
 
 namespace Network
+{
+
+namespace Packets
 {
 
 /****************************************************************************
@@ -19,7 +22,7 @@ namespace Network
 ** TCPPacket constructor
 **
 ****************************************************************************/
-TCPPacket::TCPPacket(const QString &cellphone, const QString &commandNumber)
+TCP::TCP(const QString &cellphone, const QString &commandNumber)
  : Packet(cellphone, commandNumber)
 {
   // nothing here
@@ -33,7 +36,7 @@ TCPPacket::TCPPacket(const QString &cellphone, const QString &commandNumber)
 ** TCPPacket constructor
 **
 ****************************************************************************/
-TCPPacket::~TCPPacket()
+TCP::~TCP()
 {
   // nothing here
 }
@@ -60,7 +63,7 @@ TCPPacket::~TCPPacket()
 **              MXit according to the command number.
 **
 ****************************************************************************/
-TCPPacket::operator QByteArray() const
+TCP::operator QByteArray() const
 {
   QByteArray self;
   self.append   (     QString("\"id\"=%1\0")  .arg(cellphone)             );
@@ -70,6 +73,8 @@ TCPPacket::operator QByteArray() const
   /* dont worry about charset as an int is an int no matter what :) */
   
   return self;
+}
+
 }
 
 }
