@@ -22,6 +22,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   mxit/client.cpp
   mxit/aes.cpp
   gui/login.cpp
+  gui/mxitc.cpp
   main.cpp
 )
 
@@ -35,11 +36,13 @@ SET(MXIT_CLIENT_MOC_SRCS
   protocol/handshaker.h
   mxit/client.h
   gui/login.h
+  gui/mxitc.h
 )
 
 SET(MXIT_CLIENT_UI
   
   gui/login.ui
+  gui/mxitc.ui
 )
 
 # build ui_XXX files from the XML-style .ui files
