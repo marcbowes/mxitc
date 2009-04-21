@@ -50,6 +50,7 @@ Gateway::~Gateway()
   // nothing
 }
 
+
 /****************************************************************************
 **
 ** Author: Marc Bowes
@@ -65,12 +66,15 @@ void Gateway::build(const QString &gateway)
    */
   if (gateway.startsWith("http://", Qt::CaseInsensitive)) {
     type = HTTP;
+    
     URL = gateway.mid(7); /* http:// = 7 */
   } else { /* FIXME: just assuming TCP */
     type = TCP;
+    
     QString host_colon_port = gateway.mid(9); /* socket:// = 9 */
     int colon = host_colon_port.indexOf(":");
-    hostName = host_colon_port.left(colon);
+    
+    host = host_colon_port.left(colon);
     port = host_colon_port.mid(colon + 1).toInt();
   }
 }

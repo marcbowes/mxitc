@@ -22,6 +22,9 @@ namespace Network
 Connection::Connection()
 {
   socket = new QTcpSocket();
+  
+  /* TCP reconnect when disconnected */
+  connect(socket, SIGNAL(disconnected()), this, SLOT(TCP_disconnected()));
 }
 
 
@@ -34,7 +37,21 @@ Connection::Connection()
 ****************************************************************************/
 Connection::~Connection()
 {
-  delete socket;
+  delete socket; /* will close if open */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** attempts to reconnect
+** TODO: cycle gateways
+**
+****************************************************************************/
+void Connection::TCP_disconnected()
+{
+  TCP_connect();
 }
 
 
@@ -125,6 +142,19 @@ void Connection::run()
   while (socket->bytesToWrite() && socket->waitForBytesWritten());
   
   queueMutex.unlock();      /* release the mutex */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** TCP connection to a gateway
+**
+****************************************************************************/
+void Connection::TCP_connect()
+{
+  socket->connectToHost(gateway.host, gateway.port);
 }
 
 }

@@ -50,7 +50,7 @@ class Connection : public QThread
 
   private slots:
   
-  // ..
+  void TCP_disconnected();
 
   public:         /* methods */
   
@@ -61,7 +61,7 @@ class Connection : public QThread
 
   private:        /* methods */
   
-  // ..
+  void TCP_connect();
   
   public:         /* variables */
   
