@@ -19,7 +19,6 @@
 
 #include "common/types.h"
 
-#include "protocol/commands.h"
 #include "protocol/error_codes.h"
 
 #include "gateway.h"
