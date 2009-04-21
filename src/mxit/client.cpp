@@ -142,7 +142,7 @@ MXit::Network::Packet* Client::buildPacket()
   MXit::Network::Packet *packet = connection->buildPacket();
   
   /* HTTP/TCP setup */
-  packet->setCellphone(variables["cellphone"]);
+  packet->setCellphone(variables["_cellphone"]);
   
   /* HTTP only */
   if (connection->gateway.type == MXit::Network::Gateway::HTTP) {
@@ -270,17 +270,19 @@ void Client::setupReceived()
   
   // (for login code below) Author: Richard Baxer
   
+  // TODO see page 7 of mxit open protocol, we need to still put in that ["cr"=splashName0 \1 splashName1 \1 ... \1 splashNameN]
+  
   Network::Packet * packetToSend = buildPacket();
   
-  packetToSend->setCellphone(variables["cellphone"]);
+  packetToSend->setCellphone(variables["_cellphone"]);
   packetToSend->setCommand("1");
   
   /* see definitions on pg 7 of mxit open protocol*/
-  (*packetToSend) << variables["password"] /* password */
+  (*packetToSend) << variables["_password"] /* password */
                << "MXITC-0.0-Y-Generic_PC"          /* version == distributorCode-releaseVersion-archSeries-platform - see pg 7 FIXME ... i think what I've made this should be alright*/ 
                << "0"                               /* getContacts - FIXME just setting to 0 for 'don't return contacts', should be 0|1 */
-               << ""                                /* capabilities - FIXME just leaving blank, should fill in as needed - see pg 8*/
-               << ""                                /* dc - distribution code FIXME wtf is this supposed to be ... leaveing blank for now - see pg 7*/
+               << "w=640;h=480;c=65536;utf8=true"   /* capabilities - FIXME just filling in some values - see pg 8*/
+               << "distribution_code"               /* dc - distribution code FIXME wtf is this supposed to be - see pg 7*/
                << "0x0"                             /* features - FIXME 0x0 == no features */
                << variables["defaultDialingCode"]   /* dialingCode - FIXME should we be setting this to something? */
                << "en"                              /* locale - FIXME don't know what to set this to, just set to en*/
