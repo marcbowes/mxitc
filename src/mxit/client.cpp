@@ -159,7 +159,7 @@ void Client::challengeComplete()
         /* Response: 1;captcha */
         
         /* there are two CAPTCHA's in the variables, we need to remove the old one */
-        useVariable("captcha", 0);          /* use latest copy */
+        useVariable("captcha", 0);
         
         /* reporting error to client */
         emit errorEncountered("Wrong answer to CAPTCHA");
@@ -169,7 +169,7 @@ void Client::challengeComplete()
         /* Response: 2;sessionid;captcha or 2;captcha */
         
         /* we need to correct our stored sessionid */
-        variables["sessionid"].isEmpty() ? useVariable("sessionid", 1) : useVariable("sessionid", 0);
+        useVariable("sessionid", variables["sessionid"].isEmpty() ? 1 : 0);
         
         /* there are two captcha's in the variables, we need to remove the old one */
         useVariable("captcha", 0);
@@ -199,7 +199,7 @@ void Client::challengeComplete()
         useVariable("sessionid", 0);
         
         /* there are two captcha's in the variables, we need to remove the old one */
-        useVariable("sessionid", 1);
+        useVariable("captcha", 0);
         
         emit errorEncountered("User is not registered");
         break;
@@ -210,7 +210,7 @@ void Client::challengeComplete()
         useVariable("sessionid", 0);
         
         /* there are two captcha's in the variables, we need to remove the old one */
-        useVariable("sessionid", 1);
+        useVariable("captcha", 0);
         
         emit errorEncountered("User is already registered");
         break;
