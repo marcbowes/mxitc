@@ -9,8 +9,8 @@ INCLUDE(${QT_USE_FILE})
 # .cxx sources
 SET(MXIT_CLIENT_SRCS_CXX
 
-  network/packets/http_packet.cpp
-  network/packets/tcp_packet.cpp
+  network/packets/http.cpp
+  network/packets/tcp.cpp
   network/packet.cpp
   network/gateway.cpp
   network/connection.cpp

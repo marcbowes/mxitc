@@ -85,10 +85,10 @@ Packet* Connection::buildPacket() {
   /* determine type of packet to be created */
   switch (gateway.type) {
     case Gateway::HTTP:
-      packet = new HTTPPacket();
+      packet = new Packets::HTTP();
       break;
     case Gateway::TCP:
-      packet = new TCPPacket();
+      packet = new Packets::TCP();
       break;
   }
   

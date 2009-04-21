@@ -22,8 +22,8 @@
 #include "protocol/error_codes.h"
 
 #include "gateway.h"
-#include "packets/http_packet.h"
-#include "packets/tcp_packet.h"
+#include "packets/http.h"
+#include "packets/tcp.h"
 #include "packet.h"
 
 namespace MXit

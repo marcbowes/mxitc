@@ -146,7 +146,7 @@ MXit::Network::Packet* Client::buildPacket()
   
   /* HTTP only */
   if (connection->gateway.type == MXit::Network::Gateway::HTTP) {
-    static_cast<MXit::Network::HTTPPacket*>(packet)->setSessionID(variables["sessionid"].toInt());
+    static_cast<MXit::Network::Packets::HTTP*>(packet)->setSessionID(variables["sessionid"].toInt());
   }
   
   return packet;
@@ -274,7 +274,7 @@ void Client::setupReceived()
   
   // TODO see page 7 of mxit open protocol, we need to still put in that ["cr"=splashName0 \1 splashName1 \1 ... \1 splashNameN]
   
-  Network::Packet * packetToSend = buildPacket();
+  MXit::Network::Packet *packetToSend = buildPacket();
   
   packetToSend->setCellphone(variables["_cellphone"]);
   packetToSend->setCommand("1");
