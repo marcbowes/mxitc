@@ -15,6 +15,7 @@
 #define __MXIT_CLIENT_H__
 
 #include "protocol/handshaker.h"
+#include "aes.h"
 
 namespace MXit
 {
