@@ -54,10 +54,10 @@ class Connection : public QThread
 
   public:         /* methods */
   
-  void    addGateway(const QString &connectionString);
+  void addGateway(const QString &connectionString);
   Packet *buildPacket();
-  void    enqueue(const Packet &packet);
-  void    run();
+  void enqueue(const Packet &packet);
+  void run();
 
   private:        /* methods */
   

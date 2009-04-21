@@ -13,6 +13,8 @@
 
 #include <QObject>
 
+#include "common/types.h"
+
 namespace MXit
 {
 
