@@ -99,8 +99,15 @@ AES::~AES()
   delete Rcon;
 }
 
+/****************************************************************************
+**
+** Author: Fail Tim
+**
+****************************************************************************/
+
 QByteArray AES::encrypt(const QByteArray &orig_key, const QByteArray &data)
 {
+  qDebug() << "in encrypt()";
   state = new QByteArray(data);
   padData();
   
@@ -113,8 +120,12 @@ QByteArray AES::encrypt(const QByteArray &orig_key, const QByteArray &data)
     AddRoundKey();
     
     for (round = 1; round < (Nr + 1); round++) {
-      if (round < Nr) 
+      if (round < Nr) {
+      
+        /*qDebug() << "currentBlock = " << currentBlock;
+        qDebug() << "round = " << round;*/
         MixSubColumns();
+        }
       else
         ShiftRows();
       
@@ -128,17 +139,33 @@ QByteArray AES::encrypt(const QByteArray &orig_key, const QByteArray &data)
   QByteArray returnArray(*state);
   delete state;
   
+  qDebug() << "returning result - encrypt()";
   return returnArray;
 }
+
+/****************************************************************************
+**
+** Author: Fail Tim
+**
+****************************************************************************/
+
 
 QByteArray AES::decrypt(const QByteArray &orig_key, const QByteArray &data)
 {
   
 }
 
+/****************************************************************************
+**
+** Author: Fail Tim
+**
+****************************************************************************/
+
+
 //CORRECT ISO10126 using a blocklength of 16 (128bit)
 void AES::padData()
 {
+  qDebug() << "in padData()";
   int length = state->size();
   int i;
   for (i=length; (i % 16) != 0; i++)
@@ -148,8 +175,16 @@ void AES::padData()
   numberOfBlocks = (i / 16);
 }
 
+
+/****************************************************************************
+**
+** Author: Fail Tim
+**
+****************************************************************************/
+
 void AES::expandKey()
 {
+  qDebug() << "in expandKey()";
   unsigned char tmp0, tmp1, tmp2, tmp3, tmp4;
   
   for(int i = Nk; i < Nb * (Nr + 1); i++ ) {
@@ -176,8 +211,16 @@ void AES::expandKey()
   }
 }
 
+
+/****************************************************************************
+**
+** Author: Fail Tim
+**
+****************************************************************************/
+
 void AES::ShiftRows()
 {
+  qDebug() << "in ShiftRows()";
   unsigned char tmp;
   
   // just substitute row 0
@@ -187,7 +230,7 @@ void AES::ShiftRows()
   (*state)[currentBlock+12] = (*SBox)[(unsigned char)(*state)[currentBlock+12]];
   
   // rotate row 1
-  tmp = (*SBox)[(*state)[currentBlock+1]];
+  tmp = (*SBox)[(unsigned char)(*state)[currentBlock+1]];
   (*state)[currentBlock+1] = (*SBox)[(unsigned char)(*state)[currentBlock+5]];
   (*state)[currentBlock+5] = (*SBox)[(unsigned char)(*state)[currentBlock+9]];
   (*state)[currentBlock+9] = (*SBox)[(unsigned char)(*state)[currentBlock+13]];
@@ -209,8 +252,16 @@ void AES::ShiftRows()
   (*state)[currentBlock+3] = tmp;
 }
 
+
+/****************************************************************************
+**
+** Author: Fail Tim
+**
+****************************************************************************/
+
 void AES::InvShiftRows()
 {
+  qDebug() << "in InvShiftRows()";
   unsigned char tmp;
   
   // restore row 0
@@ -242,35 +293,56 @@ void AES::InvShiftRows()
   (*state)[currentBlock+15] = tmp;
 }
 
+
+/****************************************************************************
+**
+** Author: Fail Tim
+**
+****************************************************************************/
+
 void AES::MixSubColumns()
 {
+  qDebug() << "in MixSubColumns()";
+
+  /*qDebug() << "Start of WTFFFFF!!!!!! section.";
+  for (int i = 0 ; i < 16 ; i++)
+    qDebug() << i << "\t" << (int)(unsigned char)(*state)[currentBlock+0];*/
+
   // mixing column 0
-  (*state)[currentBlock+0] = (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+0]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+5]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+10]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+15]];
-  (*state)[currentBlock+1] = (*SBox)[(unsigned char)(*state)[currentBlock+0]] ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+5]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+10]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+15]];
-  (*state)[currentBlock+2] = (*SBox)[(unsigned char)(*state)[currentBlock+0]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+5]] ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+10]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+15]];
-  (*state)[currentBlock+3] = (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+0]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+5]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+10]] ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+15]];
+  (*state)[currentBlock+0] = (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+0]]   ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+5]]    ^ (*SBox)[(unsigned char)(*state)[currentBlock+10]]         ^ (*SBox)[(unsigned char)(*state)[currentBlock+15]];
+  (*state)[currentBlock+1] = (*SBox)[(unsigned char)(*state)[currentBlock+0]]         ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+5]]    ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+10]]   ^ (*SBox)[(unsigned char)(*state)[currentBlock+15]];
+  (*state)[currentBlock+2] = (*SBox)[(unsigned char)(*state)[currentBlock+0]]         ^ (*SBox)[(unsigned char)(*state)[currentBlock+5]]          ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+10]]   ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+15]];
+  (*state)[currentBlock+3] = (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+0]]   ^ (*SBox)[(unsigned char)(*state)[currentBlock+5]]          ^ (*SBox)[(unsigned char)(*state)[currentBlock+10]]         ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+15]];
   
   // mixing column 1
-  (*state)[currentBlock+4] = (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+4]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+9]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+14]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+3]];
-  (*state)[currentBlock+5] = (*SBox)[(unsigned char)(*state)[currentBlock+4]] ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+9]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+14]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+3]];
-  (*state)[currentBlock+6] = (*SBox)[(unsigned char)(*state)[currentBlock+4]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+9]] ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+14]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+3]];
-  (*state)[currentBlock+7] = (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+4]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+9]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+14]] ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+3]];
+  (*state)[currentBlock+4] = (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+4]]   ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+9]]    ^ (*SBox)[(unsigned char)(*state)[currentBlock+14]]         ^ (*SBox)[(unsigned char)(*state)[currentBlock+3]];
+  (*state)[currentBlock+5] = (*SBox)[(unsigned char)(*state)[currentBlock+4]]         ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+9]]    ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+14]]   ^ (*SBox)[(unsigned char)(*state)[currentBlock+3]];
+  (*state)[currentBlock+6] = (*SBox)[(unsigned char)(*state)[currentBlock+4]]         ^ (*SBox)[(unsigned char)(*state)[currentBlock+9]]          ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+14]]   ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+3]];
+  (*state)[currentBlock+7] = (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+4]]   ^ (*SBox)[(unsigned char)(*state)[currentBlock+9]]          ^ (*SBox)[(unsigned char)(*state)[currentBlock+14]]         ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+3]];
   
   // mixing column 2
-  (*state)[currentBlock+8] = (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+8]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+13]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+2]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+7]];
-  (*state)[currentBlock+9] = (*SBox)[(unsigned char)(*state)[currentBlock+8]] ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+13]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+2]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+7]];
-  (*state)[currentBlock+10]  = (*SBox)[(unsigned char)(*state)[currentBlock+8]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+13]] ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+2]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+7]];
-  (*state)[currentBlock+11]  = (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+8]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+13]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+2]] ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+7]];
+  (*state)[currentBlock+8] = (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+8]]   ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+13]]   ^ (*SBox)[(unsigned char)(*state)[currentBlock+2]]          ^ (*SBox)[(unsigned char)(*state)[currentBlock+7]];
+  (*state)[currentBlock+9] = (*SBox)[(unsigned char)(*state)[currentBlock+8]]         ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+13]]   ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+2]]    ^ (*SBox)[(unsigned char)(*state)[currentBlock+7]];
+  (*state)[currentBlock+10]  = (*SBox)[(unsigned char)(*state)[currentBlock+8]]       ^ (*SBox)[(unsigned char)(*state)[currentBlock+13]]         ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+2]]    ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+7]];
+  (*state)[currentBlock+11]  = (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+8]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+13]]         ^ (*SBox)[(unsigned char)(*state)[currentBlock+2]]          ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+7]];
 
 	// mixing column 3
-	(*state)[currentBlock+12] = (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+12]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+1]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+6]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+11]];
-	(*state)[currentBlock+13] = (*SBox)[(unsigned char)(*state)[currentBlock+12]] ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+1]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+6]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+11]];
-	(*state)[currentBlock+14] = (*SBox)[(unsigned char)(*state)[currentBlock+12]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+1]] ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+6]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+11]];
-	(*state)[currentBlock+15] = (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+12]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+1]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+6]] ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+11]];
+	(*state)[currentBlock+12] = (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+12]] ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+1]]    ^ (*SBox)[(unsigned char)(*state)[currentBlock+6]]          ^ (*SBox)[(unsigned char)(*state)[currentBlock+11]];
+	(*state)[currentBlock+13] = (*SBox)[(unsigned char)(*state)[currentBlock+12]]       ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+1]]    ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+6]]    ^ (*SBox)[(unsigned char)(*state)[currentBlock+11]];
+	(*state)[currentBlock+14] = (*SBox)[(unsigned char)(*state)[currentBlock+12]]       ^ (*SBox)[(unsigned char)(*state)[currentBlock+1]]          ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+6]]    ^ (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+11]];
+	(*state)[currentBlock+15] = (*Xtime3SBox)[(unsigned char)(*state)[currentBlock+12]] ^ (*SBox)[(unsigned char)(*state)[currentBlock+1]]          ^ (*SBox)[(unsigned char)(*state)[currentBlock+6]]          ^ (*Xtime2SBox)[(unsigned char)(*state)[currentBlock+11]];
 }
+
+
+/****************************************************************************
+**
+** Author: Fail Tim
+**
+****************************************************************************/
 
 void AES::InvMixSubColumns()
 {
+  qDebug() << "in InvMixSubColumns()";
   unsigned char tmp[4 * Nb];
   
   // restore column 0
@@ -301,8 +373,16 @@ void AES::InvMixSubColumns()
     (*state)[currentBlock+i] = (*InvSBox)[tmp[i]];
 }
 
+
+/****************************************************************************
+**
+** Author: Fail Tim
+**
+****************************************************************************/
+
 void AES::AddRoundKey()
 {
+  //qDebug() << "in AddRoundKey()";
   for(int i = 0; i < 16; i++ )
   {
     (*state)[currentBlock+i] = (*state)[currentBlock+i] ^ (*key)[i + (round*Nb)];

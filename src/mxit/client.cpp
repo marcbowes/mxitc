@@ -280,9 +280,10 @@ void Client::setupReceived()
   QString key = QString("6170383452343567").replace(0, 8, variables["pid"].right(8));
   QString pass = "<mxit/>" + variables["_password"];
   AES encryptor;
-  
+  QString encyptedPassword = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
+  qDebug() << "ep " << encyptedPassword;
   /* see definitions on pg 7 of mxit open protocol*/
-  (*packetToSend) <<  encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64() /* password */
+  (*packetToSend) <<  encyptedPassword /* password */
                << "MXITC-0.0-Y-Generic_PC"          /* version == distributorCode-releaseVersion-archSeries-platform - see pg 7 FIXME ... i think what I've made this should be alright*/ 
                << "0"                               /* getContacts - FIXME just setting to 0 for 'don't return contacts', should be 0|1 */
                << "w=640;h=480;c=65536;utf8=true"   /* capabilities - FIXME just filling in some values - see pg 8*/
