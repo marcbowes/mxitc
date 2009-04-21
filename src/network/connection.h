@@ -22,6 +22,7 @@
 #include "protocol/commands.h"
 #include "protocol/error_codes.h"
 
+#include "gateway.h"
 #include "tcp_packet.h"
 
 namespace MXit
@@ -29,6 +30,9 @@ namespace MXit
 
 namespace Network
 {
+
+typedef QVector         <Gateway>  GatewayVec;
+typedef QVectorIterator <Gateway>  GatewayVecItr;
 
 class Connection : public QThread
 {
@@ -50,20 +54,17 @@ class Connection : public QThread
   public:         /* methods */
   
   Packet* getNewPacket();
-    
+  void addGateway(const QString &connectionString);
   void enqueue(const Packet &packet);
   void run();
 
   private:        /* methods */
   
   // ..
-
-  public:         /* variables */
-  
-  StringVec       gateways;
   
   private:        /* variables */
   
+  GatewayVec      gateways;
   ByteArrayVec    queue;
   QMutex          queueMutex;
   QWaitCondition  queueWait;

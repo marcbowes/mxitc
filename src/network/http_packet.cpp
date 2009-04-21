@@ -83,3 +83,4 @@ HTTPPacket::operator QByteArray() const
 }
 
 }
+

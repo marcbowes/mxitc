@@ -70,7 +70,7 @@ void Client::incomingVariables(const VariableHash &params)
       initializationComplete();
       break;
     case CHALLENGING:
-      challengeComplete();
+      setupReceived();
       break;
     default:
       // TODO: what here?
@@ -146,7 +146,7 @@ void Client::challenge(const QString &cellphone, const QString &captcha)
 ** this method is called by the incomingVariables SLOT
 **
 ****************************************************************************/
-void Client::challengeComplete()
+void Client::setupReceived()
 {
   state = IDLE;
   int error = variables["err"].toInt();
@@ -228,6 +228,11 @@ void Client::challengeComplete()
     
     return;
   }
+  
+  connection->addGateway(variables["soc1"]);
+  connection->addGateway(variables["http1"]);
+  connection->addGateway(variables["soc2"]);
+  connection->addGateway(variables["http2"]);
   
   // TODO: complete login process
   
