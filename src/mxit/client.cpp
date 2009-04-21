@@ -266,6 +266,8 @@ void Client::setupReceived()
   connection->addGateway(variables["soc2"]);
   connection->addGateway(variables["http2"]);
   
+  connection->start();
+  
   // TODO probably should put code below this line into it's own method (?)
   
   // (for login code below) Author: Richard Baxer
