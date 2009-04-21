@@ -176,6 +176,7 @@ void Client::challengeComplete()
         
         /* reporting error to client */
         emit errorEncountered("Session Expired");
+        
         break;
       case 3:                               /* Undefined */
         /* Response: 3; */
@@ -186,7 +187,10 @@ void Client::challengeComplete()
       case 4:                               /* Critical error */
         /* Response: 4;mxitid@domain */
         // FIXME: how to handle this?
+        
+        /* reporting error to client */
         emit errorEncountered("Critical Challenge error");
+        
         break;  
       case 5:                               /* Internal Error - Country code not available, select another country */
         /* Response: 5; */
@@ -201,7 +205,9 @@ void Client::challengeComplete()
         /* there are two captcha's in the variables, we need to remove the old one */
         useVariable("captcha", 0);
         
+        /* reporting error to client */
         emit errorEncountered("User is not registered");
+        
         break;
       case 7:                               /* User is already registered (and path=1 was specified) */
         /* Response: 7;sessionid;captcha */
@@ -212,7 +218,9 @@ void Client::challengeComplete()
         /* there are two captcha's in the variables, we need to remove the old one */
         useVariable("captcha", 0);
         
+        /* reporting error to client */
         emit errorEncountered("User is already registered");
+        
         break;
     }
     
