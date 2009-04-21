@@ -22,8 +22,8 @@
 #include "protocol/error_codes.h"
 
 #include "gateway.h"
-#include "http_packet.h"
-#include "tcp_packet.h"
+#include "packets/http_packet.h"
+#include "packets/tcp_packet.h"
 #include "packet.h"
 
 namespace MXit
@@ -74,7 +74,6 @@ class Connection : public QThread
   QMutex          queueMutex;
   QWaitCondition  queueWait;
   QTcpSocket     *socket;       /* TCP only */
-
 };
 
 }

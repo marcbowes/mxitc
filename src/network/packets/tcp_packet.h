@@ -12,7 +12,7 @@
 #ifndef __MXIT_NETWORK_TCP_PACKET_H__
 #define __MXIT_NETWORK_TCP_PACKET_H__
 
-#include "packet.h"
+#include "network/packet.h"
 
 namespace MXit
 {
