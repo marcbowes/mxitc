@@ -55,6 +55,7 @@ class Client : public QObject
   void challenge(const QString &cellphone, const QString &captcha);
   void challengeComplete();
   void initializationComplete();
+  void useVariable(const QString &variable, unsigned int index);
 
   private:        /* variables */
   

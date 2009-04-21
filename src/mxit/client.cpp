@@ -150,36 +150,29 @@ void Client::challengeComplete()
   int error = variables["err"].toInt();
   
   if (error != 0) {                         /* No error */
-  QByteArray captcha;
-  QByteArray sessionid;
+    /* setup */
+    QByteArray captcha;
+    QByteArray sessionid;
+    
     switch (error) {
       case 1:                               /* Wrong answer to captcha */
         /* Response: 1;captcha */
         
-        /* there are two captcha's in the variables, we need to remove the old one */
-        captcha = variables["captcha"];
-        variables.remove("captcha");
-        variables["captcha"] = captcha;
+        /* there are two CAPTCHA's in the variables, we need to remove the old one */
+        useVariable("captcha", 0);          /* use latest copy */
         
         /* reporting error to client */
-        emit errorEncountered("Wrong answer to captcha");
+        emit errorEncountered("Wrong answer to CAPTCHA");
         
         break;
       case 2:                               /* Session expired */
         /* Response: 2;sessionid;captcha or 2;captcha */
         
         /* we need to correct our stored sessionid */
-        VariableHashItr itr = variables.find("sessionid"); /*TODO FIXME WTFF AAHAAAHHAH... marc check this*/
-        if (itr.value().isEmpty()) /* new sessionid is empty, use old */
-          itr.next(); 
-        sessionid = itr.value();
-        variables.remove("sessionid");
-        variables["sessionid"] = sessionid;
+        variables["sessionid"].isEmpty() ? useVariable("sessionid", 1) : useVariable("sessionid", 0);
         
         /* there are two captcha's in the variables, we need to remove the old one */
-        captcha = variables["captcha"];
-        variables.remove("captcha");
-        variables["captcha"] = captcha;
+        useVariable("captcha", 0);
         
         /* reporting error to client */
         emit errorEncountered("Session Expired");
@@ -188,29 +181,25 @@ void Client::challengeComplete()
         /* Response: 3; */
         // FIXME: how to handle this?
         
-        emit errorEncountered("Undefined Challenge error"); /* FFUUUUUUUU */
+        emit errorEncountered("Undefined Challenge error");
         break;
       case 4:                               /* Critical error */
         /* Response: 4;mxitid@domain */
         // FIXME: how to handle this?
-        emit errorEncountered("Critical Challenge error"); /* FFFFFFUUUUUUUUUUUUUUUUU!!!!!!! */
+        emit errorEncountered("Critical Challenge error");
         break;  
       case 5:                               /* Internal Error - Country code not available, select another country */
         /* Response: 5; */
-        emit errorEncountered("Country Code not available"); /* ...ffuuuu ... */
+        emit errorEncountered("Country Code not available");
         break;
       case 6:                               /* User isn't registered (and path=0 was specified) */
         /* Response: 6;sessionid;captcha */
         
         /* there are two sessionid's in the variables, we need to remove the old one */
-        sessionid = variables["sessionid"];
-        variables.remove("sessionid");
-        variables["sessionid"] = sessionid;
+        useVariable("sessionid", 0);
         
         /* there are two captcha's in the variables, we need to remove the old one */
-        captcha = variables["captcha"];
-        variables.remove("captcha");
-        variables["captcha"] = captcha;
+        useVariable("sessionid", 1);
         
         emit errorEncountered("User is not registered");
         break;
@@ -218,14 +207,10 @@ void Client::challengeComplete()
         /* Response: 7;sessionid;captcha */
         
         /* there are two sessionid's in the variables, we need to remove the old one */
-        sessionid = variables["sessionid"];
-        variables.remove("sessionid");
-        variables["sessionid"] = sessionid;
+        useVariable("sessionid", 0);
         
         /* there are two captcha's in the variables, we need to remove the old one */
-        captcha = variables["captcha"];
-        variables.remove("captcha");
-        variables["captcha"] = captcha;
+        useVariable("sessionid", 1);
         
         emit errorEncountered("User is already registered");
         break;
@@ -249,6 +234,37 @@ void Client::initializationComplete()
 {
   state = IDLE;
   emit captchaReceived(QByteArray::fromBase64(variables["captcha"]));
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** uniquely assigns a variable value against an index value
+** does nothing if the variable doesn't exist
+**
+****************************************************************************/
+void Client::useVariable(const QString &variable, unsigned int index)
+{
+  /* find most recent key */
+  VariableHashConstItr itr = variables.find(variable);
+  if (itr == variables.end()) {                   /* no references found */
+    return;
+  }
+  
+  /* try iterate up to index */
+  const QByteArray *ref;
+  unsigned int walk = 0;
+  while (itr != variables.end() && itr.key() == variable && walk < index) {
+    itr++; walk++;
+    ref = &itr.value();
+  }
+  
+  /* assign *only* the found value */
+  QByteArray value = *ref;                        /* make a duplication of desired reference */
+  variables.remove(variable);                     /* remove all copies of the variable */
+  variables[variable] = value;                    /* now assign our unique value */
 }
 
 }

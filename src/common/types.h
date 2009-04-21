@@ -25,12 +25,12 @@
 #include <QVectorIterator>
 
 /* QVector for QString's */
-typedef QVector         <QString>            StringVec;
-typedef QVectorIterator <QString>            StringVecItr;
+typedef QVector         <QString>             StringVec;
+typedef QVectorIterator <QString>             StringVecItr;
 
 /* QVector for QByteArray's */
-typedef QVector         <QByteArray>         ByteArrayVec;
-typedef QVectorIterator <QByteArray>         ByteArrayVecItr;
+typedef QVector         <QByteArray>          ByteArrayVec;
+typedef QVectorIterator <QByteArray>          ByteArrayVecItr;
 
 
 /****************************************************************************
@@ -45,8 +45,10 @@ typedef QVectorIterator <QByteArray>         ByteArrayVecItr;
 #include <QHashIterator>
 
 /* QHash of QString => QByteArray */
-typedef QHash         <QString, QByteArray>  VariableHash;
-typedef QHashIterator <QString, QByteArray>  VariableHashItr;
+typedef QHash         <QString, QByteArray>   VariableHash;
+typedef QHashIterator <QString, QByteArray>   VariableHashItr;
+typedef QHash         <QString, QByteArray>::const_iterator
+                                              VariableHashConstItr;
 
 #endif
 
