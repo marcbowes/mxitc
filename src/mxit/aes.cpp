@@ -202,7 +202,7 @@ void AES::ShiftRows()
   (*state)[currentBlock+14] = tmp;
   
   // rotate row 3
-  tmp = (*SBox)[(*state)[currentBlock+15]];
+  tmp = (*SBox)[(unsigned char)(*state)[currentBlock+15]];
   (*state)[currentBlock+15] = (*SBox)[(unsigned char)(*state)[currentBlock+11]];
   (*state)[currentBlock+11] = (*SBox)[(unsigned char)(*state)[currentBlock+7]];
   (*state)[currentBlock+7] = (*SBox)[(unsigned char)(*state)[currentBlock+3]];
@@ -235,7 +235,7 @@ void AES::InvShiftRows()
   (*state)[currentBlock+14] = tmp;
   
   // restore row 3
-  tmp = (*InvSBox)[(*state)[currentBlock+3]];
+  tmp = (*InvSBox)[(unsigned char)(*state)[currentBlock+3]];
   (*state)[currentBlock+3] = (*InvSBox)[(unsigned char)(*state)[currentBlock+7]];
   (*state)[currentBlock+7] = (*InvSBox)[(unsigned char)(*state)[currentBlock+11]];
   (*state)[currentBlock+11] = (*InvSBox)[(unsigned char)(*state)[currentBlock+15]];
