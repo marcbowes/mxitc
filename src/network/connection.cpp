@@ -19,10 +19,9 @@ namespace Network
 ** Connection constructor
 **
 ****************************************************************************/
-Connection::Connection(const QString &gateway)
-  : gateway (gateway)
+Connection::Connection()
 {
-  start();
+  socket = new QTcpSocket();
 }
 
 

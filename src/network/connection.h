@@ -36,7 +36,7 @@ class Connection : public QThread
 
   public:         /* class specific */
 	
-  Connection(const QString &gateway);
+  Connection();
   ~Connection();
 
   signals:
@@ -56,6 +56,10 @@ class Connection : public QThread
   
   // ..
 
+  public:         /* variables */
+  
+  StringVec       gateways;
+  
   private:        /* variables */
   
   ByteArrayVec    queue;

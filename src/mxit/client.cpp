@@ -22,6 +22,7 @@ namespace MXit
 Client::Client()
   : state (IDLE)
 {
+  connection = new MXit::Network::Connection();
   handshaker = new MXit::Protocol::Handshaker();
   
   /* variable passing */
@@ -39,6 +40,7 @@ Client::Client()
 ****************************************************************************/
 Client::~Client()
 {
+  delete connection;
   delete handshaker;
 }
 

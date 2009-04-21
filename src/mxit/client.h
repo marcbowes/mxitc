@@ -18,6 +18,8 @@
 
 #include "protocol/handshaker.h"
 
+#include "network/connection.h"
+
 namespace MXit
 {
 
@@ -59,6 +61,7 @@ class Client : public QObject
 
   private:        /* variables */
   
+  MXit::Network::Connection  *connection;
   MXit::Protocol::Handshaker *handshaker;
   Status                      state;
   VariableHash                variables;
