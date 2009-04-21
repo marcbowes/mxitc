@@ -14,6 +14,33 @@ namespace Network
 
 /****************************************************************************
 **
+** Author: Richard Baxter
+**
+** TCPPacket constructor
+**
+****************************************************************************/
+TCPPacket::TCPPacket(const QString &cellphone, const QString &commandNumber)
+ : Packet(cellphone, commandNumber)
+{
+  // nothing here
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** TCPPacket constructor
+**
+****************************************************************************/
+TCPPacket::~TCPPacket()
+{
+  // nothing here
+}
+
+
+/****************************************************************************
+**
 ** Author: Marc Bowes
 **
 ** turns this TCPPacket into a QByteArray:
@@ -40,7 +67,7 @@ TCPPacket::operator QByteArray() const
   self.append   (     QString("\"cm\"=%1\0")  .arg(command)               );
   self.append   (     QString("\"ms\"=%1")    .arg(getData())             );
   self.prepend  (     QString("\"ln\"=%1\0")  .arg(self.size()).toLatin1());
-  /* FIXME: right charset? (there is no QByteArray#prepend(QString)-- odd..?) */
+  /* dont worry about charset as an int is an int no matter what :) */
   
   return self;
 }
@@ -48,3 +75,4 @@ TCPPacket::operator QByteArray() const
 }
 
 }
+

@@ -3,16 +3,15 @@
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
 ** Author: Marc Bowes, 2009
-** Author: Richard Baxter, 2009
 **
-** MXit::Network::TCPPacket implements a MXit::Network::Packet for TCP use
+** MXit::Protocol::Gateway encapsulates a MXit gateway (TCP/HTTP)
 **
 ****************************************************************************/
 
-#ifndef __MXIT_NETWORK_TCP_PACKET_H__
-#define __MXIT_NETWORK_TCP_PACKET_H__
+#ifndef __MXIT_PROTOCOL_GATEWAY_H__
+#define __MXIT_PROTOCOL_GATEWAY_H__
 
-#include "packet.h"
+#include <QString>
 
 namespace MXit
 {
@@ -20,16 +19,28 @@ namespace MXit
 namespace Network
 {
 
-class TCPPacket : public Packet
+class Gateway
 {
   public:           /* class specific */
   
-  TCPPacket(const QString &cellphone = "", const QString &commandNumber = "");
-  virtual ~TCPPacket();
+  Gateway();
+  Gateway(const QString &gateway);
+  ~Gateway();
   
+  enum Type {
+    HTTP,
+    TCP
+  };
+
   public:           /* methods */
   
-  virtual operator QByteArray() const;
+  void build(const QString &gateway);
+  
+  public:           /* variables */
+  
+  QString hostName;
+  quint16 port;
+  Type    type;
 };
 
 }

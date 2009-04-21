@@ -8,9 +8,12 @@ INCLUDE(${QT_USE_FILE})
 
 # .cxx sources
 SET(MXIT_CLIENT_SRCS_CXX
-  
-  network/packet.cpp
+
+  network/http_packet.cpp
   network/tcp_packet.cpp
+  network/packet.cpp
+  network/gateway.cpp
+  network/connection.cpp
   protocol/handshaker.cpp
   mxit/client.cpp
   mxit/aes.cpp
@@ -21,6 +24,7 @@ SET(MXIT_CLIENT_SRCS_CXX
 # files which need to be moc'd by Qt
 SET(MXIT_CLIENT_MOC_SRCS
   
+  network/connection.h
   protocol/handshaker.h
   mxit/client.h
   gui/login.h
@@ -37,7 +41,7 @@ QT4_WRAP_UI(MXIT_CLIENT_SRCS_CXX ${MXIT_CLIENT_UI})
 QT4_WRAP_CPP(MXIT_CLIENT_SRCS_CXX ${MXIT_CLIENT_MOC_SRCS})
 
 IF(HANDSHAKER_DEBUG)
-  add_definitions("-DHANDSHAKER_DEBUG")
+  ADD_DEFINITIONS("-DHANDSHAKER_DEBUG")
 ENDIF(HANDSHAKER_DEBUG)
 
 ADD_EXECUTABLE(

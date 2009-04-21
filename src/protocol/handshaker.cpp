@@ -9,7 +9,6 @@
 #include <QDebug>
 
 #include "handshaker.h"
-#include "error_codes.h"
 
 #define DEBUG(x) qDebug() << #x << ":\t" << x;
 
@@ -27,7 +26,7 @@ namespace Protocol
 **
 ****************************************************************************/
 Handshaker::Handshaker()
-  : state (NONE)
+  : state (IDLE)
 {
   http = new QHttp(this);
   
@@ -57,12 +56,12 @@ Handshaker::~Handshaker()
 ** this SLOT is triggered when an HTTP request completes
 **
 ****************************************************************************/
-void Handshaker::requestComplete(int requestId, bool error)
+void Handshaker::requestComplete(int id, bool error)
 {
 #ifdef HANDSHAKER_DEBUG
   qDebug() << "Request Finished";
-  DEBUG(httpGetId);
-  DEBUG(requestId);
+  DEBUG(currentRequest);
+  DEBUG(id);
   DEBUG(http->lastResponse().statusCode());
 #endif
   
@@ -75,8 +74,10 @@ void Handshaker::requestComplete(int requestId, bool error)
   }
   
   /* ensure the request that completed is the one we expected */
-  if (requestId != httpGetId) {
-    qDebug() << "unexpected request id";
+  if (id != currentRequest) {
+  #ifdef HANDSHAKER_DEBUG
+    qDebug() << "ignoring unexpected request id";
+  #endif
     
     return;
   }
@@ -87,13 +88,17 @@ void Handshaker::requestComplete(int requestId, bool error)
 #endif
   
   switch (state) {
-    case CHALLENGE_INITIAL:
-      captchaReceived(response);
+    case INITIALIZING:
+      challengeReceived(response);
       break;
+    case CHALLENGING:
+      setupReceived(response);
     default:
-      // TODO: CHALLENGE_RESPONSE
+      // TODO: what here?
       break;
   }
+  
+  state = IDLE;
 }
 
 
@@ -102,7 +107,7 @@ void Handshaker::requestComplete(int requestId, bool error)
 ** Author: Richard Baxter
 ** Author: Marc Bowes
 **
-** utility method to find data at an index defined by a ; delimiter
+** sends initialization request to MXit
 **
 ****************************************************************************/
 void Handshaker::initialize()
@@ -111,17 +116,19 @@ void Handshaker::initialize()
   QUrl url("http://www.mxit.com/res/");
   http->setHost(url.host(), 80);
   
-  QByteArray query;
-  query += url.path();
-  query += "?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=" + timestamp;
+  QString query =
+    QString("%1?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=%2")
+    .arg(url.path())
+    .arg(timestamp)
+  ;
 
 #ifdef HANDSHAKER_DEBUG
   DEBUG(url.host());
   DEBUG(query);
 #endif
   
-  state = CHALLENGE_INITIAL;
-  httpGetId = http->get(query);
+  state = INITIALIZING;
+  currentRequest = http->get(query);
 }
 
 
@@ -130,19 +137,21 @@ void Handshaker::initialize()
 ** Author: Richard Baxter
 ** Author: Marc Bowes
 **
-** utility method to find data at an index defined by a ; delimiter
+** sends challenge response to MXit
+** variables starting with an underscore were set by a previous response
 **
 ****************************************************************************/
-void Handshaker::requestPID(const QString &cellphone, const QString &captcha)
+void Handshaker::challenge(const QString &cellphone, const QString &captcha,
+  const QString &_url, const QString &_sessionid) /* from initialization */
 {
-  QUrl url(challengeResponseURL);
-  QString sessionID_STR(sessionID);
+  QUrl url(_url);
+  http->setHost(url.host(), 80);
   
   // FIXME: **way** more environment variables needed here
   QString query =
     QString("%1?type=getpid&sessionid=%2&ver=5.8.2&login=%3&cat=Y&chalresp=%4&cc=ZA&loc=en&brand=LPM&model=StrioClient&path=1")
     .arg(url.path())
-    .arg(sessionID_STR)
+    .arg(_sessionid)
     .arg(cellphone)
     .arg(captcha)
   ;
@@ -151,11 +160,9 @@ void Handshaker::requestPID(const QString &cellphone, const QString &captcha)
   DEBUG(url.host());
   DEBUG(query);
 #endif
-  
-  http->setHost(url.host(), 80);
 
-  state = CHALLENGE_RESPONSE;
-  httpGetId = http->get(query);
+  state = CHALLENGING;
+  currentRequest = http->get(query);
 }
 
 
@@ -164,48 +171,207 @@ void Handshaker::requestPID(const QString &cellphone, const QString &captcha)
 ** Author: Richard Baxter
 ** Author: Marc Bowes
 **
-** this method is called by the requestComplete SLOT and is specific for when
-** the request was for a CAPTCHA
-**
-** emits outgoingCaptcha if the CAPTCHA was successfully received
+** this method is called by the requestComplete SLOT
 **
 ****************************************************************************/
-void Handshaker::captchaReceived(const QByteArray &response)
+void Handshaker::challengeReceived(const QByteArray &response)
 {
-  if (extractDataFromResponse(response, 0) != MXit::Protocol::ErrorCodes::NoError) {
+  int error = responseError(response);
+  
+  if (error != 0) {                         /* No error */
     // FIXME: how to handle this?
+    
+    return;
   }
   
-  challengeResponseURL = extractDataFromResponse(response, 1);
-  sessionID = extractDataFromResponse(response, 2);
+  /* variable declarations for this response type */
+  StringVec variables;
+  variables.append("err");                  /* 0 = success, else failed */
+  variables.append("url");                  /* URL that should be used for the Get PID request */
+  variables.append("sessionid");            /* unique identifier to identify the session for code image answer */
+  variables.append("captcha");              /* base64 encoded image data */
+  variables.append("countries");            /* list of available countries (countrycode|countryname)
+                                             * the list of country names should be presented to the user in order to
+                                             * find the country code that should be used later on */
+  variables.append("languages");            /* list of supported languages (locale|languagename)
+                                             * the list of language names should be presented to the user and the
+                                             * corresponding locale saved by the client to be used later on */
+  variables.append("defaultCountryName");   /* country name of the country detenced from the requestors IP */
+  variables.append("defaultCountryCode");   /* country code associated with the defaultCountryName */
+  variables.append("regions");              /* a '|' seperated list of regions if requested */
+  variables.append("defaultDialingCode");   /* dialing code associated with the defaultCountryName */
+  variables.append("defaultRegion");        /* a region of the detected IP */
+  variables.append("defaultNPF");           /* the national dialing prefix for the defaultCountryName, e.g. 0 */
+  variables.append("defaultIPF");           /* the international dialing prefix for the defaultCountryName, e.g. 00 */
+  variables.append("cities");               /* NOT IMPLEMENTED YET */
+  variables.append("defaultCity");          /* the city of the detected IP */
+  
+  /* now to assign variable values from the response */
+  VariableHash params = hashResponse(response, variables);
+  
+  emit outgoingVariables(params);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+** Author: Richard Baxter
+**
+** returns a VariableHash
+**
+****************************************************************************/
+VariableHash Handshaker::hashResponse(const QByteArray &response, const StringVec &variables,
+  const QString &delimiter)
+{
+  /* setup */
+  VariableHash params;                    /* to be returned */
+  StringVecItr itr(variables);            /* for iteration */
+  unsigned int start  = 0;                /* stores index of a value start */
+  unsigned int end    = response.indexOf(delimiter);
+                                          /* stores index of a value end */
+  /* iterate over variable list */
+  while (itr.hasNext()) {
+    const QString &key = itr.next();      /* current variable name */
+    
+    /* end will be -1 if the indexOf returns -1 */
+    if (end != -1) {
+      /* store string between delimiters as the value of the variable */
+      params[key] = response.mid(start, end - start);
+      
+      /* next iteration setup */
+      start = end + 1;
+      end = response.indexOf(delimiter, start);
+    } else {
+      /* i.e. we want to have empty values for the remaining variables */
+      params[key] = "";
+    }
+  }
   
 #ifdef HANDSHAKER_DEBUG
-  DEBUG(challengeResponseURL);
-  DEBUG(sessionID);
+  VariableHashItr i(params);
+  while (i.hasNext()) {
+    i.next();
+    qDebug() << i.key() << ":\t" << i.value();
+  }
 #endif
   
-  emit outgoingCaptcha(QByteArray::fromBase64(extractDataFromResponse(response, 3)));
+  return params;
 }
 
 
 /****************************************************************************
 **
-** Author: Richard Baxter
 ** Author: Marc Bowes
 **
-** utility method to find data at an index defined by a ; delimiter
+** extracts the error code from a response
 **
 ****************************************************************************/
-QByteArray Handshaker::extractDataFromResponse(const QByteArray &response, unsigned int index, const QString &delimiter)
+int Handshaker::responseError(const QByteArray &response,
+  const QString &delimiter)
 {
-  unsigned int start = 0;
-  unsigned int end = response.indexOf(delimiter);
-  for (unsigned int i = 0 ; i < index ; i++) {
-    start = end + 1;
-    end = response.indexOf(delimiter, start);
+  return response.left(response.indexOf(delimiter)).toInt();
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** this method is called by the requestComplete SLOT
+**
+****************************************************************************/
+void Handshaker::setupReceived(const QByteArray &response)
+{
+  /* setup */
+  StringVec variables;
+  VariableHash params;
+  
+  int error = responseError(response);
+  
+  if (error != 0) {                         /* No error */
+    /* == Note
+     * MXit::Protocol::ErrorCodes does not cover these errors
+     */
+    switch (error) {
+      case 1:                               /* Wrong answer to captcha */
+        /* Response: 1;captcha */
+        
+        /* variable declarations for this response type */
+        variables.append("err");            /* 0 = success, else failed */
+        variables.append("captcha");        /* the captcha image */
+        
+        /* now to assign variable values from the response */
+        params = hashResponse(response, variables);
+        
+        emit outgoingVariables(params);
+        break;
+      case 2:                               /* Session expired */
+        /* Response: 2;sessionid;captcha or 2;captcha */
+        
+        /* variable declarations for this response type */
+        variables.append("err");            /* 0 = success, else failed */
+        variables.append("sessionid");      /* the session ID */
+        variables.append("captcha");        /* the captcha image */
+        
+        /* now to assign variable values from the response */
+        params = hashResponse(response, variables);
+        
+        /* if captcha is empty, then we are re-using our sessionid */
+        if (params["captcha"].isEmpty()) {
+          params["captcha"] = params["sessionid"];
+          params["sessionid"] = "";
+        }
+        
+        emit outgoingVariables(params);
+        break;
+      case 3:                               /* Undefined */
+        /* Response: 3; */
+        // FIXME: how to handle this?
+        break;
+      case 4:                               /* Critical error */
+        /* Response: 4;mxitid@domain */
+        // FIXME: how to handle this?
+        break;  
+      case 5:                               /* Internal Error - Country code not available, select another country */
+        /* Response: 5; */
+        // TODO
+        break;
+      case 6:                               /* User isn't registered (and path=0 was specified) */
+        /* Response: 6;sessionid;captcha */
+        // TODO
+        break;
+      case 7:                               /* User is already registered (and path=1 was specified) */
+        /* Response: 7;sessionid;captcha */
+        // TODO
+        break;
+    }
+    
+    return;
   }
   
-  return response.mid(start, end - start);
+  /* variable declarations for this response type */
+  variables.append("err");                  /* 0 = success, else failed */
+  variables.append("pid");                  /* the product ID */
+  variables.append("soc1");                 /* the socket connection string */
+  variables.append("http1");                /* the http connection string */
+  variables.append("dial");                 /* country dialing code */
+  variables.append("npf");                  /* country national prefix */
+  variables.append("ipf");                  /* country international prefix */
+  variables.append("soc2");                 /* fallback socket connection string */
+  variables.append("http2");                /* fallback http connection string */
+  variables.append("keepalive");            /* socket keepalive time */
+  variables.append("loginname");            /* the normalized loginname (checked against MXit database) */
+  variables.append("cc");                   /* the country code of the user if already registered, otherwise the
+                                             * country code passed during the request */
+  variables.append("region");               /* the region of the user in the database, else the region passed during
+                                             * the request */
+  variables.append("isUtf8Disable");        /* whether UTF-8 should be disabled in the client */
+  
+  /* now to assign variable values from the response */
+  params = hashResponse(response, variables);
+  
+  emit outgoingVariables(params);
 }
 
 }

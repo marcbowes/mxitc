@@ -10,6 +10,8 @@
 #ifndef __MXIT_GUI_LOGIN_H__
 #define __MXIT_GUI_LOGIN_H__
 
+#include <QMessageBox>
+
 #include "mxit/client.h"
 
 #include "ui_login.h"
@@ -34,6 +36,7 @@ class Login : public QMainWindow, private Ui::Login
   void captchaReceived(const QByteArray &captcha);
   void captchaChanged(const QString &text);
   void cellphoneChanged(const QString &text);
+  void error(const QString &text);
   void login();
   void passwordChanged(const QString &text);
   

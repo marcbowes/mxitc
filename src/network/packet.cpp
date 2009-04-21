@@ -14,6 +14,32 @@ namespace Network
 
 /****************************************************************************
 **
+** Author: Richard Baxter
+**
+** Packet constructor
+**
+****************************************************************************/
+Packet::Packet(const QString &cellphone , const QString &commandNumber)
+  : cellphone (cellphone), command (commandNumber)
+{
+  // nothing else
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Packet deconstructor -- required for inheritance to work properly
+**
+****************************************************************************/
+Packet::~Packet()
+{
+  // nothing
+}
+
+/****************************************************************************
+**
 ** Author: Marc Bowes
 **
 ** turns the data vector into a single QString seperated by \1
@@ -22,7 +48,7 @@ namespace Network
 QString Packet::getData() const
 {
   QString message;
-  DataVecItr itr(data);
+  StringVecItr itr(data);
   
   while (itr.hasNext()) {
     const QString &d = itr.next();
@@ -64,11 +90,13 @@ void Packet::setCommand(const QString &command)
 ** appends the message to this packet's data
 **
 ****************************************************************************/
-void Packet::operator<<(const QString &message)
+Packet& Packet::operator<<(const QString &message)
 {
   data.append(message);
+  return *this;
 }
 
 }
 
 }
+

@@ -2,9 +2,9 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
+** Author: Marc Bowes, 2009
 ** Author: Richard Baxter, 2009
 ** Author: Timothy Sjoberg, 2009
-** Author: Marc Bowes, 2009
 **
 ** MXit::Protocol::Handshaker provides functionality to get a PID via a 
 ** CAPTCHA negotiation
@@ -15,6 +15,8 @@
 #define __MXIT_PROTOCOL_HANDSHAKER_H__
 
 #include <QHttp>
+
+#include "common/types.h"
 
 namespace MXit
 {
@@ -32,35 +34,38 @@ class Handshaker : public QObject
   ~Handshaker();
   
   enum Status {
-    NONE,
-    CHALLENGE_INITIAL,
-    CHALLENGE_RESPONSE
+    IDLE,
+    INITIALIZING,
+    CHALLENGING
   };
 
   signals:
         
-  void outgoingCaptcha(const QByteArray &);
+  void outgoingVariables(const VariableHash &);
         
   private slots:
   
-  void requestComplete(int requestId, bool error);
+  void requestComplete(int id, bool error);
 
   public:         /* methods */
   
+  void challenge(const QString &cellphone, const QString &captcha,
+    const QString &_url, const QString &_sessionid);
   void initialize();
-  void requestPID(const QString &cellphone, const QString &captcha);
   
   private:        /* methods */
   
-  void captchaReceived(const QByteArray &response);
-  QByteArray extractDataFromResponse(const QByteArray &response, unsigned int index, const QString &delimiter = ";");
+  void challengeReceived(const QByteArray &response);
+  VariableHash hashResponse(const QByteArray &response, const StringVec &variables,
+    const QString &delimiter = ";");
+  int responseError(const QByteArray &response,
+    const QString &delimiter = ";");
+  void setupReceived(const QByteArray &response);
 
   private:        /* variables */
         
-  QByteArray      challengeResponseURL;
+  int             currentRequest;
   QHttp          *http;
-  int             httpGetId;
-  QByteArray      sessionID;
   Status          state;
 };
 
