@@ -21,10 +21,8 @@ namespace Network
 ****************************************************************************/
 Connection::Connection()
 {
-  socket = new QTcpSocket();
-  
-  /* TCP reconnect when disconnected */
-  connect(socket, SIGNAL(disconnected()), this, SLOT(TCP_disconnected()));
+  /* instantiation done by thread start to ensure objects belong to correct
+    thread */
 }
 
 
@@ -125,9 +123,12 @@ void Connection::enqueue(const Packet &packet)
 ****************************************************************************/
 void Connection::run()
 {
-  socket->moveToThread(this);
+  socket = new QTcpSocket();
   TCP_connect();
   
+  /* TCP reconnect when disconnected */
+  connect(socket, SIGNAL(disconnected()), this, SLOT(TCP_disconnected()));
+    
   while (true) {  /* FIXME: check state */
     queueMutex.lock();        /* wait for a lock on the queue */
     
