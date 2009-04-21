@@ -30,18 +30,14 @@ namespace Protocol
 ** extracts the error code from a response
 **
 ****************************************************************************/
-static int packetError(const QByteArray &packet,
-  const QString &delimiter = "\0");
-
-static int packetError(const QByteArray &packet,
-  const QString &delimiter)
+static int packetError(const QByteArray &packet)
 {
   /* == Example
    * 1\0
    * errorCode [\1errorMessage]\0
    * ... etc
    */
-  QString error = packet.mid(packet.indexOf(delimiter), packet.indexOf(delimiter, 1));
+  QString error = packet.mid(packet.indexOf("\0"), packet.indexOf("\0", 1));
   
   /* now need to check for \1 */
   int idx1 = error.indexOf("\1");

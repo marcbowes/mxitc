@@ -243,9 +243,6 @@ void Handshaker::setupReceived(const QByteArray &response)
   int error = responseError(response);
   
   if (error != 0) {                         /* No error */
-    /* == Note
-     * MXit::Protocol::ErrorCodes does not cover these errors
-     */
     switch (error) {
       case 1:                               /* Wrong answer to captcha */
         /* Response: 1;captcha */
