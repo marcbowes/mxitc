@@ -266,9 +266,9 @@ void Client::setupReceived()
   connection->addGateway(variables["soc2"]);
   connection->addGateway(variables["http2"]);
   
-  // TODO: complete login process (TODO probably should put into it's own method (?))
+  // TODO probably should put code below this line into it's own method (?)
   
-  // (for below) Author: Richard Baxer
+  // (for login code below) Author: Richard Baxer
   
   Network::Packet * packetToSend = buildPacket();
   
@@ -286,7 +286,7 @@ void Client::setupReceived()
                << "en"                              /* locale - FIXME don't know what to set this to, just set to en*/
                ;
   connection->enqueue(*packetToSend);
-     
+  delete packetToSend;
 }
 
 
