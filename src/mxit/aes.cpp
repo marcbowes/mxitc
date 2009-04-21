@@ -102,27 +102,31 @@ AES::~AES()
 QByteArray AES::encrypt(const QByteArray &orig_key, const QByteArray &data)
 {
   state = new QByteArray(data);
-  key = new QByteArray(orig_key);
-  
-  expandKey();
   padData();
-  round = 0;
-  AddRoundKey();
   
-  for (round = 1; round < (Nr + 1); round++) {
-    if (round < Nr)
-      MixSubColumns();
-    else
-      ShiftRows();
+  for (currentBlock = 0; currentBlock < numberOfBlocks; currentBlock++) {
+    key = new QByteArray(orig_key);
     
+    expandKey();
+    
+    round = 0;
     AddRoundKey();
+    
+    for (round = 1; round < (Nr + 1); round++) {
+      if (round < Nr)
+        MixSubColumns();
+      else
+        ShiftRows();
+      
+      AddRoundKey();
+    }
+    
+    delete key;
   }
   
   QByteArray returnArray(*state);
   
   delete state;
-  delete key;
-  
   return returnArray;
 }
 
@@ -137,9 +141,9 @@ void AES::padData()
   int length = state->size();
   int i;
   for (i=length; (i % 16) != 0; i++)
-    (*state)[i] = 'X';
+    (*state)[currentBlock+i] = 'X';
   if (i != length)
-    (*state)[i-1] = (i - length);
+    (*state)[currentBlock+i-1] = (i - length);
   numberOfBlocks = (i / 16);
 }
 
@@ -177,32 +181,32 @@ void AES::ShiftRows()
   char tmp;
   
   // just substitute row 0
-  (*state)[0] = (*SBox)[(*state)[0]];
-  (*state)[4] = (*SBox)[(*state)[4]];
-  (*state)[8] = (*SBox)[(*state)[8]];
-  (*state)[12] = (*SBox)[(*state)[12]];
+  (*state)[currentBlock+0] = (*SBox)[(*state)[currentBlock+0]];
+  (*state)[currentBlock+4] = (*SBox)[(*state)[currentBlock+4]];
+  (*state)[currentBlock+8] = (*SBox)[(*state)[currentBlock+8]];
+  (*state)[currentBlock+12] = (*SBox)[(*state)[currentBlock+12]];
   
   // rotate row 1
-  tmp = (*SBox)[(*state)[1]];
-  (*state)[1] = (*SBox)[(*state)[5]];
-  (*state)[5] = (*SBox)[(*state)[9]];
-  (*state)[9] = (*SBox)[(*state)[13]];
-  (*state)[13] = tmp;
+  tmp = (*SBox)[(*state)[currentBlock+1]];
+  (*state)[currentBlock+1] = (*SBox)[(*state)[currentBlock+5]];
+  (*state)[currentBlock+5] = (*SBox)[(*state)[currentBlock+9]];
+  (*state)[currentBlock+9] = (*SBox)[(*state)[currentBlock+13]];
+  (*state)[currentBlock+13] = tmp;
   
   // rotate row 2
-  tmp = (*SBox)[(*state)[2]];
-  (*state)[2] = (*SBox)[(*state)[10]];
-  (*state)[10] = tmp;
-  tmp = (*SBox)[(*state)[6]];
-  (*state)[6] = (*SBox)[(*state)[14]];
-  (*state)[14] = tmp;
+  tmp = (*SBox)[(*state)[currentBlock+2]];
+  (*state)[currentBlock+2] = (*SBox)[(*state)[currentBlock+10]];
+  (*state)[currentBlock+10] = tmp;
+  tmp = (*SBox)[(*state)[currentBlock+6]];
+  (*state)[currentBlock+6] = (*SBox)[(*state)[currentBlock+14]];
+  (*state)[currentBlock+14] = tmp;
   
   // rotate row 3
-  tmp = (*SBox)[(*state)[15]];
-  (*state)[15] = (*SBox)[(*state)[11]];
-  (*state)[11] = (*SBox)[(*state)[7]];
-  (*state)[7] = (*SBox)[(*state)[3]];
-  (*state)[3] = tmp;
+  tmp = (*SBox)[(*state)[currentBlock+15]];
+  (*state)[currentBlock+15] = (*SBox)[(*state)[currentBlock+11]];
+  (*state)[currentBlock+11] = (*SBox)[(*state)[currentBlock+7]];
+  (*state)[currentBlock+7] = (*SBox)[(*state)[currentBlock+3]];
+  (*state)[currentBlock+3] = tmp;
 }
 
 void AES::InvShiftRows()
@@ -210,59 +214,59 @@ void AES::InvShiftRows()
   char tmp;
   
   // restore row 0
-  (*state)[0] = (*InvSBox)[(*state)[0]];
-  (*state)[4] = (*InvSBox)[(*state)[4]];
-  (*state)[8] = (*InvSBox)[(*state)[8]];
-  (*state)[12] = (*InvSBox)[(*state)[12]];
+  (*state)[currentBlock+0] = (*InvSBox)[(*state)[currentBlock+0]];
+  (*state)[currentBlock+4] = (*InvSBox)[(*state)[currentBlock+4]];
+  (*state)[currentBlock+8] = (*InvSBox)[(*state)[currentBlock+8]];
+  (*state)[currentBlock+12] = (*InvSBox)[(*state)[currentBlock+12]];
   
   // restore row 1
-  tmp = (*InvSBox)[(*state)[13]];
-  (*state)[13] = (*InvSBox)[(*state)[9]];
-  (*state)[9] = (*InvSBox)[(*state)[5]];
-  (*state)[5] = (*InvSBox)[(*state)[1]];
-  (*state)[1] = tmp;
+  tmp = (*InvSBox)[(*state)[currentBlock+13]];
+  (*state)[currentBlock+13] = (*InvSBox)[(*state)[currentBlock+9]];
+  (*state)[currentBlock+9] = (*InvSBox)[(*state)[currentBlock+5]];
+  (*state)[currentBlock+5] = (*InvSBox)[(*state)[currentBlock+1]];
+  (*state)[currentBlock+1] = tmp;
   
   // restore row 2
-  tmp = (*InvSBox)[(*state)[2]];
-  (*state)[2] = (*InvSBox)[(*state)[10]];
-  (*state)[10] = tmp;
-  tmp = (*InvSBox)[(*state)[6]];
-  (*state)[6] = (*InvSBox)[(*state)[14]];
-  (*state)[14] = tmp;
+  tmp = (*InvSBox)[(*state)[currentBlock+2]];
+  (*state)[currentBlock+2] = (*InvSBox)[(*state)[currentBlock+10]];
+  (*state)[currentBlock+10] = tmp;
+  tmp = (*InvSBox)[(*state)[currentBlock+6]];
+  (*state)[currentBlock+6] = (*InvSBox)[(*state)[currentBlock+14]];
+  (*state)[currentBlock+14] = tmp;
   
   // restore row 3
-  tmp = (*InvSBox)[(*state)[3]];
-  (*state)[3] = (*InvSBox)[(*state)[7]];
-  (*state)[7] = (*InvSBox)[(*state)[11]];
-  (*state)[11] = (*InvSBox)[(*state)[15]];
-  (*state)[15] = tmp;
+  tmp = (*InvSBox)[(*state)[currentBlock+3]];
+  (*state)[currentBlock+3] = (*InvSBox)[(*state)[currentBlock+7]];
+  (*state)[currentBlock+7] = (*InvSBox)[(*state)[currentBlock+11]];
+  (*state)[currentBlock+11] = (*InvSBox)[(*state)[currentBlock+15]];
+  (*state)[currentBlock+15] = tmp;
 }
 
 void AES::MixSubColumns()
 {
   // mixing column 0
-  (*state)[0] = (*Xtime2SBox)[(*state)[0]] ^ (*Xtime3SBox)[(*state)[5]] ^ (*SBox)[(*state)[10]] ^ (*SBox)[(*state)[15]];
-  (*state)[1] = (*SBox)[(*state)[0]] ^ (*Xtime2SBox)[(*state)[5]] ^ (*Xtime3SBox)[(*state)[10]] ^ (*SBox)[(*state)[15]];
-  (*state)[2] = (*SBox)[(*state)[0]] ^ (*SBox)[(*state)[5]] ^ (*Xtime2SBox)[(*state)[10]] ^ (*Xtime3SBox)[(*state)[15]];
-  (*state)[3] = (*Xtime3SBox)[(*state)[0]] ^ (*SBox)[(*state)[5]] ^ (*SBox)[(*state)[10]] ^ (*Xtime2SBox)[(*state)[15]];
+  (*state)[currentBlock+0] = (*Xtime2SBox)[(*state)[currentBlock+0]] ^ (*Xtime3SBox)[(*state)[currentBlock+5]] ^ (*SBox)[(*state)[currentBlock+10]] ^ (*SBox)[(*state)[currentBlock+15]];
+  (*state)[currentBlock+1] = (*SBox)[(*state)[currentBlock+0]] ^ (*Xtime2SBox)[(*state)[currentBlock+5]] ^ (*Xtime3SBox)[(*state)[currentBlock+10]] ^ (*SBox)[(*state)[currentBlock+15]];
+  (*state)[currentBlock+2] = (*SBox)[(*state)[currentBlock+0]] ^ (*SBox)[(*state)[currentBlock+5]] ^ (*Xtime2SBox)[(*state)[currentBlock+10]] ^ (*Xtime3SBox)[(*state)[currentBlock+15]];
+  (*state)[currentBlock+3] = (*Xtime3SBox)[(*state)[currentBlock+0]] ^ (*SBox)[(*state)[currentBlock+5]] ^ (*SBox)[(*state)[currentBlock+10]] ^ (*Xtime2SBox)[(*state)[currentBlock+15]];
   
   // mixing column 1
-  (*state)[4] = (*Xtime2SBox)[(*state)[4]] ^ (*Xtime3SBox)[(*state)[9]] ^ (*SBox)[(*state)[14]] ^ (*SBox)[(*state)[3]];
-  (*state)[5] = (*SBox)[(*state)[4]] ^ (*Xtime2SBox)[(*state)[9]] ^ (*Xtime3SBox)[(*state)[14]] ^ (*SBox)[(*state)[3]];
-  (*state)[6] = (*SBox)[(*state)[4]] ^ (*SBox)[(*state)[9]] ^ (*Xtime2SBox)[(*state)[14]] ^ (*Xtime3SBox)[(*state)[3]];
-  (*state)[7] = (*Xtime3SBox)[(*state)[4]] ^ (*SBox)[(*state)[9]] ^ (*SBox)[(*state)[14]] ^ (*Xtime2SBox)[(*state)[3]];
+  (*state)[currentBlock+4] = (*Xtime2SBox)[(*state)[currentBlock+4]] ^ (*Xtime3SBox)[(*state)[currentBlock+9]] ^ (*SBox)[(*state)[currentBlock+14]] ^ (*SBox)[(*state)[currentBlock+3]];
+  (*state)[currentBlock+5] = (*SBox)[(*state)[currentBlock+4]] ^ (*Xtime2SBox)[(*state)[currentBlock+9]] ^ (*Xtime3SBox)[(*state)[currentBlock+14]] ^ (*SBox)[(*state)[currentBlock+3]];
+  (*state)[currentBlock+6] = (*SBox)[(*state)[currentBlock+4]] ^ (*SBox)[(*state)[currentBlock+9]] ^ (*Xtime2SBox)[(*state)[currentBlock+14]] ^ (*Xtime3SBox)[(*state)[currentBlock+3]];
+  (*state)[currentBlock+7] = (*Xtime3SBox)[(*state)[currentBlock+4]] ^ (*SBox)[(*state)[currentBlock+9]] ^ (*SBox)[(*state)[currentBlock+14]] ^ (*Xtime2SBox)[(*state)[currentBlock+3]];
   
   // mixing column 2
-  (*state)[8] = (*Xtime2SBox)[(*state)[8]] ^ (*Xtime3SBox)[(*state)[13]] ^ (*SBox)[(*state)[2]] ^ (*SBox)[(*state)[7]];
-  (*state)[9] = (*SBox)[(*state)[8]] ^ (*Xtime2SBox)[(*state)[13]] ^ (*Xtime3SBox)[(*state)[2]] ^ (*SBox)[(*state)[7]];
-  (*state)[10]  = (*SBox)[(*state)[8]] ^ (*SBox)[(*state)[13]] ^ (*Xtime2SBox)[(*state)[2]] ^ (*Xtime3SBox)[(*state)[7]];
-  (*state)[11]  = (*Xtime3SBox)[(*state)[8]] ^ (*SBox)[(*state)[13]] ^ (*SBox)[(*state)[2]] ^ (*Xtime2SBox)[(*state)[7]];
+  (*state)[currentBlock+8] = (*Xtime2SBox)[(*state)[currentBlock+8]] ^ (*Xtime3SBox)[(*state)[currentBlock+13]] ^ (*SBox)[(*state)[currentBlock+2]] ^ (*SBox)[(*state)[currentBlock+7]];
+  (*state)[currentBlock+9] = (*SBox)[(*state)[currentBlock+8]] ^ (*Xtime2SBox)[(*state)[currentBlock+13]] ^ (*Xtime3SBox)[(*state)[currentBlock+2]] ^ (*SBox)[(*state)[currentBlock+7]];
+  (*state)[currentBlock+10]  = (*SBox)[(*state)[currentBlock+8]] ^ (*SBox)[(*state)[currentBlock+13]] ^ (*Xtime2SBox)[(*state)[currentBlock+2]] ^ (*Xtime3SBox)[(*state)[currentBlock+7]];
+  (*state)[currentBlock+11]  = (*Xtime3SBox)[(*state)[currentBlock+8]] ^ (*SBox)[(*state)[currentBlock+13]] ^ (*SBox)[(*state)[currentBlock+2]] ^ (*Xtime2SBox)[(*state)[currentBlock+7]];
 
 	// mixing column 3
-	(*state)[12] = (*Xtime2SBox)[(*state)[12]] ^ (*Xtime3SBox)[(*state)[1]] ^ (*SBox)[(*state)[6]] ^ (*SBox)[(*state)[11]];
-	(*state)[13] = (*SBox)[(*state)[12]] ^ (*Xtime2SBox)[(*state)[1]] ^ (*Xtime3SBox)[(*state)[6]] ^ (*SBox)[(*state)[11]];
-	(*state)[14] = (*SBox)[(*state)[12]] ^ (*SBox)[(*state)[1]] ^ (*Xtime2SBox)[(*state)[6]] ^ (*Xtime3SBox)[(*state)[11]];
-	(*state)[15] = (*Xtime3SBox)[(*state)[12]] ^ (*SBox)[(*state)[1]] ^ (*SBox)[(*state)[6]] ^ (*Xtime2SBox)[(*state)[11]];
+	(*state)[currentBlock+12] = (*Xtime2SBox)[(*state)[currentBlock+12]] ^ (*Xtime3SBox)[(*state)[currentBlock+1]] ^ (*SBox)[(*state)[currentBlock+6]] ^ (*SBox)[(*state)[currentBlock+11]];
+	(*state)[currentBlock+13] = (*SBox)[(*state)[currentBlock+12]] ^ (*Xtime2SBox)[(*state)[currentBlock+1]] ^ (*Xtime3SBox)[(*state)[currentBlock+6]] ^ (*SBox)[(*state)[currentBlock+11]];
+	(*state)[currentBlock+14] = (*SBox)[(*state)[currentBlock+12]] ^ (*SBox)[(*state)[currentBlock+1]] ^ (*Xtime2SBox)[(*state)[currentBlock+6]] ^ (*Xtime3SBox)[(*state)[currentBlock+11]];
+	(*state)[currentBlock+15] = (*Xtime3SBox)[(*state)[currentBlock+12]] ^ (*SBox)[(*state)[currentBlock+1]] ^ (*SBox)[(*state)[currentBlock+6]] ^ (*Xtime2SBox)[(*state)[currentBlock+11]];
 }
 
 void AES::InvMixSubColumns()
@@ -270,38 +274,38 @@ void AES::InvMixSubColumns()
   char tmp[4 * Nb];
   
   // restore column 0
-  tmp[0] = (*XtimeE)[(*state)[0]] ^ (*XtimeB)[(*state)[1]] ^ (*XtimeD)[(*state)[2]] ^ (*Xtime9)[(*state)[3]];
-  tmp[5] = (*Xtime9)[(*state)[0]] ^ (*XtimeE)[(*state)[1]] ^ (*XtimeB)[(*state)[2]] ^ (*XtimeD)[(*state)[3]];
-  tmp[10] = (*XtimeD)[(*state)[0]] ^ (*Xtime9)[(*state)[1]] ^ (*XtimeE)[(*state)[2]] ^ (*XtimeB)[(*state)[3]];
-  tmp[15] = (*XtimeB)[(*state)[0]] ^ (*XtimeD)[(*state)[1]] ^ (*Xtime9)[(*state)[2]] ^ (*XtimeE)[(*state)[3]];
+  tmp[0] = (*XtimeE)[(*state)[currentBlock+0]] ^ (*XtimeB)[(*state)[currentBlock+1]] ^ (*XtimeD)[(*state)[currentBlock+2]] ^ (*Xtime9)[(*state)[currentBlock+3]];
+  tmp[5] = (*Xtime9)[(*state)[currentBlock+0]] ^ (*XtimeE)[(*state)[currentBlock+1]] ^ (*XtimeB)[(*state)[currentBlock+2]] ^ (*XtimeD)[(*state)[currentBlock+3]];
+  tmp[10] = (*XtimeD)[(*state)[currentBlock+0]] ^ (*Xtime9)[(*state)[currentBlock+1]] ^ (*XtimeE)[(*state)[currentBlock+2]] ^ (*XtimeB)[(*state)[currentBlock+3]];
+  tmp[15] = (*XtimeB)[(*state)[currentBlock+0]] ^ (*XtimeD)[(*state)[currentBlock+1]] ^ (*Xtime9)[(*state)[currentBlock+2]] ^ (*XtimeE)[(*state)[currentBlock+3]];
   
   // restore column 1
-  tmp[4] = (*XtimeE)[(*state)[4]] ^ (*XtimeB)[(*state)[5]] ^ (*XtimeD)[(*state)[6]] ^ (*Xtime9)[(*state)[7]];
-  tmp[9] = (*Xtime9)[(*state)[4]] ^ (*XtimeE)[(*state)[5]] ^ (*XtimeB)[(*state)[6]] ^ (*XtimeD)[(*state)[7]];
-  tmp[14] = (*XtimeD)[(*state)[4]] ^ (*Xtime9)[(*state)[5]] ^ (*XtimeE)[(*state)[6]] ^ (*XtimeB)[(*state)[7]];
-  tmp[3] = (*XtimeB)[(*state)[4]] ^ (*XtimeD)[(*state)[5]] ^ (*Xtime9)[(*state)[6]] ^ (*XtimeE)[(*state)[7]];
+  tmp[4] = (*XtimeE)[(*state)[currentBlock+4]] ^ (*XtimeB)[(*state)[currentBlock+5]] ^ (*XtimeD)[(*state)[currentBlock+6]] ^ (*Xtime9)[(*state)[currentBlock+7]];
+  tmp[9] = (*Xtime9)[(*state)[currentBlock+4]] ^ (*XtimeE)[(*state)[currentBlock+5]] ^ (*XtimeB)[(*state)[currentBlock+6]] ^ (*XtimeD)[(*state)[currentBlock+7]];
+  tmp[14] = (*XtimeD)[(*state)[currentBlock+4]] ^ (*Xtime9)[(*state)[currentBlock+5]] ^ (*XtimeE)[(*state)[currentBlock+6]] ^ (*XtimeB)[(*state)[currentBlock+7]];
+  tmp[3] = (*XtimeB)[(*state)[currentBlock+4]] ^ (*XtimeD)[(*state)[currentBlock+5]] ^ (*Xtime9)[(*state)[currentBlock+6]] ^ (*XtimeE)[(*state)[currentBlock+7]];
   
   // restore column 2
-  tmp[8] = (*XtimeE)[(*state)[8]] ^ (*XtimeB)[(*state)[9]] ^ (*XtimeD)[(*state)[10]] ^ (*Xtime9)[(*state)[11]];
-  tmp[13] = (*Xtime9)[(*state)[8]] ^ (*XtimeE)[(*state)[9]] ^ (*XtimeB)[(*state)[10]] ^ (*XtimeD)[(*state)[11]];
-  tmp[2]  = (*XtimeD)[(*state)[8]] ^ (*Xtime9)[(*state)[9]] ^ (*XtimeE)[(*state)[10]] ^ (*XtimeB)[(*state)[11]];
-  tmp[7]  = (*XtimeB)[(*state)[8]] ^ (*XtimeD)[(*state)[9]] ^ (*Xtime9)[(*state)[10]] ^ (*XtimeE)[(*state)[11]];
+  tmp[8] = (*XtimeE)[(*state)[currentBlock+8]] ^ (*XtimeB)[(*state)[currentBlock+9]] ^ (*XtimeD)[(*state)[currentBlock+10]] ^ (*Xtime9)[(*state)[currentBlock+11]];
+  tmp[13] = (*Xtime9)[(*state)[currentBlock+8]] ^ (*XtimeE)[(*state)[currentBlock+9]] ^ (*XtimeB)[(*state)[currentBlock+10]] ^ (*XtimeD)[(*state)[currentBlock+11]];
+  tmp[2]  = (*XtimeD)[(*state)[currentBlock+8]] ^ (*Xtime9)[(*state)[currentBlock+9]] ^ (*XtimeE)[(*state)[currentBlock+10]] ^ (*XtimeB)[(*state)[currentBlock+11]];
+  tmp[7]  = (*XtimeB)[(*state)[currentBlock+8]] ^ (*XtimeD)[(*state)[currentBlock+9]] ^ (*Xtime9)[(*state)[currentBlock+10]] ^ (*XtimeE)[(*state)[currentBlock+11]];
   
   // restore column 3
-  tmp[12] = (*XtimeE)[(*state)[12]] ^ (*XtimeB)[(*state)[13]] ^ (*XtimeD)[(*state)[14]] ^ (*Xtime9)[(*state)[15]];
-  tmp[1] = (*Xtime9)[(*state)[12]] ^ (*XtimeE)[(*state)[13]] ^ (*XtimeB)[(*state)[14]] ^ (*XtimeD)[(*state)[15]];
-  tmp[6] = (*XtimeD)[(*state)[12]] ^ (*Xtime9)[(*state)[13]] ^ (*XtimeE)[(*state)[14]] ^ (*XtimeB)[(*state)[15]];
-  tmp[11] = (*XtimeB)[(*state)[12]] ^ (*XtimeD)[(*state)[13]] ^ (*Xtime9)[(*state)[14]] ^ (*XtimeE)[(*state)[15]];
+  tmp[12] = (*XtimeE)[(*state)[currentBlock+12]] ^ (*XtimeB)[(*state)[currentBlock+13]] ^ (*XtimeD)[(*state)[currentBlock+14]] ^ (*Xtime9)[(*state)[currentBlock+15]];
+  tmp[1] = (*Xtime9)[(*state)[currentBlock+12]] ^ (*XtimeE)[(*state)[currentBlock+13]] ^ (*XtimeB)[(*state)[currentBlock+14]] ^ (*XtimeD)[(*state)[currentBlock+15]];
+  tmp[6] = (*XtimeD)[(*state)[currentBlock+12]] ^ (*Xtime9)[(*state)[currentBlock+13]] ^ (*XtimeE)[(*state)[currentBlock+14]] ^ (*XtimeB)[(*state)[currentBlock+15]];
+  tmp[11] = (*XtimeB)[(*state)[currentBlock+12]] ^ (*XtimeD)[(*state)[currentBlock+13]] ^ (*Xtime9)[(*state)[currentBlock+14]] ^ (*XtimeE)[(*state)[currentBlock+15]];
   
   for(int i=0; i < (4 * Nb); i++)
-    (*state)[i] = (*InvSBox)[tmp[i]];
+    (*state)[currentBlock+i] = (*InvSBox)[tmp[i]];
 }
 
 void AES::AddRoundKey()
 {
   for(int i = 0; i < 16; i++ )
   {
-    (*state)[i] = (*state)[i] ^ (*key)[i + (round*Nb)];
+    (*state)[currentBlock+i] = (*state)[currentBlock+i] ^ (*key)[i + (round*Nb)];
   }
 }
 

@@ -29,6 +29,7 @@ class AES {
   void AddRoundKey();
   
   int numberOfBlocks;
+  int currentBlock;
   int round;
   
   QByteArray *state;
