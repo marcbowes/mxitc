@@ -230,6 +230,20 @@ void Client::challengeComplete()
   }
   
   // TODO: complete login process
+  
+  Packet * packetToSend = connection->getNewPacket();
+  
+  packet_to_send.setCellphone(variables["cellphone"]);
+  packet_to_send.setCommand("1");
+  
+  /* see definitions on pg 7 of mxit open protocol*/
+  packet_to_send << variables["password"] /* password */
+                 << "MXITC-0.0-Y-Generic_PC" /* version == distributorCode-releaseVersion-archSeries-platform - see pg 7*/ 
+                 << "0"                   /* getContacts - FIXME just seting to 0 for 'don't return contacts', should be 0|1 */
+                 << ""                    /* capabilities - FIXME just leaving blank, should fill in as needed - see pg 8*/
+                 << variables[""]         /* dc */
+                 << variables[""]
+                 << variables[""]
 }
 
 

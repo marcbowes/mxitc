@@ -49,6 +49,8 @@ class Connection : public QThread
 
   public:         /* methods */
   
+  Packet* getNewPacket();
+    
   void enqueue(const Packet &packet);
   void run();
 

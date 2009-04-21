@@ -37,6 +37,21 @@ Connection::~Connection()
   delete socket;
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Returns a new (dynamically allocated) Packet of the appopriate subclass 
+** type, this will (should) be cleaned up from memory once sent
+**
+****************************************************************************/
+
+Packet* Connection::getNewPacket() {
+  /* only tcp for now. TODO add http */
+  
+  return new TCPPacket();
+  
+}
 
 /****************************************************************************
 **
