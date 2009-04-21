@@ -4,7 +4,7 @@
 **
 ** Author: Marc Bowes, 2009
 **
-** MXit::Network::Handler is a blueprint for building command handlers
+** MXit::Protocol::Handler is a blueprint for building command handlers
 **
 ****************************************************************************/
 
@@ -29,7 +29,7 @@ class Handler : public QObject
   
   signals:
   
-  void handled(); /* used to deleteLater() */
+  void outgoingVariables(const VariableHash &variables);
   
   public:         /* methods */
   

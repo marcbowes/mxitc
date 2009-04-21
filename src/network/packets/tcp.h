@@ -9,8 +9,8 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_NETWORK_TCP_PACKET_H__
-#define __MXIT_NETWORK_TCP_PACKET_H__
+#ifndef __MXIT_NETWORK_PACKETS_TCP_H__
+#define __MXIT_NETWORK_PACKETS_TCP_H__
 
 #include "network/packet.h"
 

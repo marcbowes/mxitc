@@ -11,6 +11,9 @@ SET(MXIT_CLIENT_SRCS_CXX
 
   network/packets/http.cpp
   network/packets/tcp.cpp
+  
+  protocol/handlers/01_login.cpp
+  
   network/packet.cpp
   network/gateway.cpp
   network/connection.cpp

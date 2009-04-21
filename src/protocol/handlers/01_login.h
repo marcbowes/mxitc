@@ -4,7 +4,8 @@
 **
 ** Author: Marc Bowes, 2009
 **
-** MXit::Network::Handler is a blueprint for building command handlers
+** MXit::Network::Handlers::Login deals with logging into MXit
+** see build/handle definitions in .cpp file for implementation details
 **
 ****************************************************************************/
 
@@ -13,7 +14,7 @@
 
 #include <QObject>
 
-#include "protocol/handlers.h"
+#include "protocol/handler.h"
 
 namespace MXit
 {
@@ -28,14 +29,14 @@ class Login : public Handler
 {
   Q_OBJECT
   
-  signals:
-  
-  void handled(); /* used to deleteLater() */
-  
   public:         /* methods */
   
-  virtual void build(MXit::Network::Packet *packet, const VariableHash &variables) = 0;
-  virtual void handle(const QByteArray &packet) = 0;
+  virtual void build(MXit::Network::Packet *packet, const VariableHash &variables);
+  virtual void handle(const QByteArray &packet);
+  
+  public:         /* variables */
+  
+  static const unsigned int command = 1;
 };
 
 }
