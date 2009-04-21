@@ -90,9 +90,10 @@ void Packet::setCommand(const QString &command)
 ** appends the message to this packet's data
 **
 ****************************************************************************/
-void Packet::operator<<(const QString &message)
+Packet& Packet::operator<<(const QString &message)
 {
   data.append(message);
+  return *this;
 }
 
 }

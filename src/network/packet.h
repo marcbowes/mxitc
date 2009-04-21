@@ -29,7 +29,7 @@ class Packet
 
   public:           /* methods */
   
-  void operator<<(const QString &message);
+  Packet& operator<<(const QString &message);
   virtual operator QByteArray() const = 0;
   void setCellphone(const QString &cellphone);
   void setCommand(const QString &command);
