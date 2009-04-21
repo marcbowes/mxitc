@@ -15,6 +15,8 @@
 
 #include "common/types.h"
 
+#include "network/packet.h"
+
 namespace MXit
 {
 
@@ -31,7 +33,8 @@ class Handler : public QObject
   
   public:         /* methods */
   
-  virtual void handle() = 0;
+  virtual void build(MXit::Network::Packet *packet) = 0;
+  virtual void handle(const QByteArray &packet) = 0;
 };
 
 }
