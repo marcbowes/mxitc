@@ -4,7 +4,11 @@
 #define Nk 4			// number of columns in a key
 #define Nr 10			// number of rounds in encryption
 
-namespace MXit {
+namespace MXit
+{
+
+namespace Protocol
+{
 
   static unsigned char Sbox[256] = {		// forward s-box
 0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
@@ -493,6 +497,8 @@ void AES::realDecrypt(unsigned char *state, unsigned char *expkey)
 		if( round )
 			InvMixSubColumns (state);
 	}
+}
+
 }
 
 }
