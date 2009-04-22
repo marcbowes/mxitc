@@ -66,17 +66,17 @@ TCP::~TCP()
 TCP::operator QByteArray() const
 {
   QByteArray self;
-  self.append   ( QString("\"id\"=%1")  .arg(cellphone) ); self.append('\0');
-  self.append   ( QString("\"cm\"=%1")  .arg(command)   ); self.append('\0');
-  self.append   ( QString("\"ms\"=%1")  .arg(getData()) );
-  if (msTerminator != 'N')  /* some packets terminate the ms field */
+  self.append   ( QString("id=%1")  .arg(cellphone) ); self.append('\0');
+  self.append   ( QString("cm=%1")  .arg(command)   ); self.append('\0');
+  self.append   ( QString("ms=%1")  .arg(getData()) );
+  if (msTerminator != 'N') /* some packets terminate the ms field */
     self.append (msTerminator);
   self.append   ("\2"); /* TCP record terminator */
   
   /* prepend length */
   int bytes = self.size();
   self.prepend  ('\0');
-  self.prepend  ( QString("\"ln\"=%1")  .arg(bytes).toLatin1());
+  self.prepend  ( QString("ln=%1")  .arg(bytes).toLatin1());
   /* dont worry about charset as an int is an int no matter what :) */
   
   return self;

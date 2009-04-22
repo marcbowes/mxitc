@@ -69,17 +69,17 @@ HTTP::~HTTP()
 HTTP::operator QByteArray() const
 {
   QByteArray self;
-  self.append   (     QString("\"id\"=%1&")   .arg(cellphone)             );
+  self.append   ( QString("id=%1&")   .arg(cellphone)      );
   
   /* next three lines of code creates the {"s"=[ sesid \1 ] seqno &} part */
-  self.append   (     QString("\"s\"=")                                   );
+  self.append   ( QString("s=")                            );
   if (sessionID != -1)
-    self.append (     QString("%1\1")         .arg(sessionID)             );
-  self.append   (     QString("%1&")          .arg(sequenceNumber)        );
+    self.append ( QString("%1\1")     .arg(sessionID)      );
+  self.append   ( QString("%1&")      .arg(sequenceNumber) );
     
-  self.append   (     QString("\"cm\"=%1&")   .arg(command)               );
-  self.append   (     QString("\"ms\"=%1")    .arg(getData())             );
-  if (msTerminator != 'N')  /* some packets terminate the ms field */
+  self.append   ( QString("cm=%1&")   .arg(command)        );
+  self.append   ( QString("ms=%1")    .arg(getData())      );
+  if (msTerminator != 'N') /* some packets terminate the ms field */
     self.append (msTerminator == '\0' ? '&' : msTerminator); /* convert \0 to & */
   self.append   ("&"); /* HTTP record terminator */
   
