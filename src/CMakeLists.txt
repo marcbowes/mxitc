@@ -15,6 +15,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/aes.cpp
   protocol/handler.cpp
   protocol/handlers/01_login.cpp
+  protocol/handlers/02_logout.cpp
   
   network/packet.cpp
   network/gateway.cpp
@@ -31,6 +32,7 @@ SET(MXIT_CLIENT_MOC_SRCS
 
   protocol/handler.h
   protocol/handlers/01_login.h
+  protocol/handlers/02_logout.h
   
   network/connection.h
   protocol/handshaker.h
