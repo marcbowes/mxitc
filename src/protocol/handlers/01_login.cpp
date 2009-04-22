@@ -109,11 +109,11 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
   
   /* write data to packet */
   (*packet) << encyptedPassword
-            << "E-5.1.1-Y-Qt"
+            << "T-0.0.1-Y-PC"
             << "0"                               /* FIXME: getContacts */
             << "w=640;h=480;c=65536;utf8=true"   /* FIXME: capabilities */
             << "E"                               /* FIXME: dc */
-            << "0x1"                             /* FIXME: features */
+            << "1"                               /* FIXME: features */
             << variables["defaultDialingCode"]   /* FIXME: dialingCode */
             << "en"                              /* FIXME: locale */
   ;

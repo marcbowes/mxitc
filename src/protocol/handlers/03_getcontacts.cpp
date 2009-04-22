@@ -24,7 +24,21 @@ namespace Handlers
 ****************************************************************************/
 void GetContacts::build(MXit::Network::Packet *packet, const VariableHash &variables)
 {
+  /*
+  == PACKET FORMAT
+  ***************************************************************************
+  **
+  **  “id”=loginname [ \1 sesid ] \0
+  **  “cm”=3
+  **
+  ***************************************************************************
+  */
   
+  /* packet header setup */
+  packet->setCommand("1");
+  packet->setCellphone(variables["_cellphone"]);
+  
+  /* no data */
 }
 
 /****************************************************************************
@@ -36,7 +50,15 @@ void GetContacts::build(MXit::Network::Packet *packet, const VariableHash &varia
 ****************************************************************************/
 void GetContacts::handle(const QByteArray &packet)
 {
-  
+  /*
+  == PACKET FORMAT
+  ***************************************************************************
+  **
+  **  3\0
+  **  errorCode [ \1 errorMessage ]
+  **
+  ***************************************************************************
+  */
 }
 
 }
