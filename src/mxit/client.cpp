@@ -25,6 +25,10 @@ Client::Client()
   connection = new MXit::Network::Connection();
   handshaker = new MXit::Protocol::Handshaker();
   
+  /* incoming packets */
+  connect(connection, SIGNAL(outgoingPacket(const QByteArray &)),
+    this, SLOT(incomingPacket(const QByteArray &)));
+  
   /* variable passing */
   connect(handshaker, SIGNAL(outgoingVariables(const VariableHash &)),
     this, SLOT(incomingVariables(const VariableHash &)));
@@ -42,6 +46,19 @@ Client::~Client()
 {
   delete connection;
   delete handshaker;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** this SLOT is triggered by the connection receiving a packet
+**
+****************************************************************************/
+void Client::incomingPacket(const QByteArray &packet)
+{
+  // TODO: assign to handler
 }
 
 
@@ -274,6 +291,7 @@ void Client::setupReceived()
   MXit::Network::Packet *packet = buildPacket();
   MXit::Protocol::Handlers::Login login;
   login.build(packet, variables);
+  connection->enqueue(*packet);
   delete packet;
 }
 

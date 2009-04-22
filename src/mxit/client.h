@@ -47,6 +47,7 @@ class Client : public QObject
   
   private slots:
   
+  void incomingPacket(const QByteArray &);
   void incomingVariables(const VariableHash &);
 
   public:         /* methods */
