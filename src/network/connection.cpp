@@ -22,6 +22,9 @@ namespace Network
 Connection::Connection()
 {
   socket = new QTcpSocket();
+  
+  /* TCP reconnect when disconnected */
+  connect(socket, SIGNAL(disconnected()), this, SLOT(TCP_disconnected()));
 }
 
 
@@ -34,7 +37,21 @@ Connection::Connection()
 ****************************************************************************/
 Connection::~Connection()
 {
-  delete socket;
+  delete socket; /* will close if open */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** attempts to reconnect
+** TODO: cycle gateways
+**
+****************************************************************************/
+void Connection::TCP_disconnected()
+{
+  TCP_connect();
 }
 
 
@@ -68,10 +85,10 @@ Packet* Connection::buildPacket() {
   /* determine type of packet to be created */
   switch (gateway.type) {
     case Gateway::HTTP:
-      packet = new HTTPPacket();
+      packet = new Packets::HTTP();
       break;
     case Gateway::TCP:
-      packet = new TCPPacket();
+      packet = new Packets::TCP();
       break;
   }
   
@@ -105,26 +122,46 @@ void Connection::enqueue(const Packet &packet)
 ****************************************************************************/
 void Connection::run()
 {
-  queueMutex.lock();        /* wait for a lock on the queue */
+  TCP_connect();
   
-  /* check for messages to send */
-  if (queue.isEmpty()) {
-    queueWait.wait(&queueMutex);
+  while (true) {  /* FIXME: check state */
+    queueMutex.lock();        /* wait for a lock on the queue */
+    
+    /* check for messages to send */
+    if (queue.isEmpty()) {
+      queueWait.wait(&queueMutex);
+    }
+    
+    /* FIXME: this is a hack */
+    socket->waitForConnected();
+    
+    /* write all messages into a stream */
+    QTextStream out(socket);
+    ByteArrayVecItr itr(queue);
+    while (itr.hasNext()) {   /* iterate over queue */
+      out << itr.next();      /* write to stream */
+    }
+    
+    /* need to flush the stream, otherwise data will go out of scope before
+     * it is actually sent */
+    out.flush();
+    while (socket->bytesToWrite() && socket->waitForBytesWritten());
+    
+    queueMutex.unlock();      /* release the mutex */
   }
-  
-  /* write all messages into a stream */
-  QTextStream out(socket);
-  ByteArrayVecItr itr(queue);
-  while (itr.hasNext()) {   /* iterate over queue */
-    out << itr.next();      /* write to stream */
-  }
-  
-  /* need to flush the stream, otherwise data will go out of scope before
-   * it is actually sent */
-  out.flush();
-  while (socket->bytesToWrite() && socket->waitForBytesWritten());
-  
-  queueMutex.unlock();      /* release the mutex */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** TCP connection to a gateway
+**
+****************************************************************************/
+void Connection::TCP_connect()
+{
+  socket->connectToHost(gateway.host, gateway.port);
 }
 
 }

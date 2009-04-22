@@ -38,8 +38,13 @@ class Gateway
   
   public:           /* variables */
   
-  QString hostName;
+  /* TCP */
+  QString host;
   quint16 port;
+  
+  /* HTML */
+  QString URL;  
+  
   Type    type;
 };
 
