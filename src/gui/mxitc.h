@@ -12,6 +12,7 @@
 
 #include <QMessageBox>
 #include <QDialogButtonBox>
+#include <QCloseEvent>
 
 #include "mxit/client.h"
 #include "gui/login.h"
@@ -30,25 +31,27 @@ class MXitC : public QMainWindow, private Ui::MXitC
 
   public:         /* class specific */
   
-  MXitC(QApplication *app, MXit::Client *client);
+  MXitC(QApplication *app, MXit::Client *client = 0);
   ~MXitC();
+
+
+  public slots:
+  
+  void incomingMessage(const QString & message);
+  void outgoingMessage(const QString & message);
+
+  protected slots:
+  
+  virtual void closeEvent(QCloseEvent *event);
 
   private slots:
   
-  void showQuitDialog();
   void openLoginWindow();
-  /*void captchaReceived(const QByteArray &captcha);
-  void captchaChanged(const QString &text);
-  void cellphoneChanged(const QString &text);
-  void error(const QString &text);
-  void login();
-  void passwordChanged(const QString &text);*/
   
   private:        /* variables */
   
   MXit::Client *mxit;
-  
-  QApplication *parentApp;
+  QApplication *application;
 };
 
 }

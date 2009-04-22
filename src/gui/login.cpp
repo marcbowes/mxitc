@@ -24,7 +24,7 @@ namespace GUI
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-Login::Login(QApplication *app, MXit::Client *client)
+Login::Login(QWidget *parent, MXit::Client *client) : QDialog (parent)
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   mxit = client;      /* store a copy */
