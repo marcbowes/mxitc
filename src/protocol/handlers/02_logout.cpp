@@ -28,9 +28,9 @@ void Logout::build(MXit::Network::Packet *packet, const VariableHash &variables)
   == PACKET FORMAT
   ***************************************************************************
   **
-  **  “id”=loginname [ \1 sesid ] \0
-  **  “cm”=2 \0
-  **  “ms”=deprecated
+  **  "id"=loginname [ \1 sesid ] \0
+  **  "cm"=2 \0
+  **  "ms"=deprecated
   **
   ***************************************************************************
   
@@ -68,12 +68,6 @@ void Logout::handle(const QByteArray &packet)
   **
   ***************************************************************************
   */
-  int errorCode = packetError(packet);
-  if (errorCode != 0) {                     /* No error */
-    // FIXME: how to do proper error reporting?
-    
-    return;
-  }
   
 }
 
