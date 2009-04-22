@@ -18,10 +18,9 @@
 
 #include "network/connection.h"
 
+#include "protocol/aes.h"
 #include "protocol/handshaker.h"
 #include "protocol/handlers/include.list"
-
-#include "aes.h"
 
 namespace MXit
 {

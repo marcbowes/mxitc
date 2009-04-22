@@ -12,6 +12,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   network/packets/http.cpp
   network/packets/tcp.cpp
   
+  protocol/aes.cpp
   protocol/handler.cpp
   protocol/handlers/01_login.cpp
   
@@ -20,7 +21,6 @@ SET(MXIT_CLIENT_SRCS_CXX
   network/connection.cpp
   protocol/handshaker.cpp
   mxit/client.cpp
-  mxit/aes.cpp
   gui/login.cpp
   gui/mxitc.cpp
   main.cpp

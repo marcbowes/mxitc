@@ -281,7 +281,7 @@ void Client::setupReceived()
   
   QString key = QString("6170383452343567").replace(0, 8, variables["pid"].right(8));
   QString pass = "<mxit/>" + variables["_password"];
-  AES encryptor;
+  MXit::Protocol::AES encryptor;
   QString encyptedPassword = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
   qDebug() << "ep " << encyptedPassword;
   /* see definitions on pg 7 of mxit open protocol*/
