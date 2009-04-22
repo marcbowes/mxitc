@@ -24,7 +24,7 @@ namespace GUI
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-MXitC::MXitC(QApplication *app, MXit::Client *client): QMainWindow ( 0 )
+MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 )
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   mxit = client;      /* store a copy */
@@ -33,7 +33,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client): QMainWindow ( 0 )
   connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginWindow()));
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
   
-  //connect(sendButton, released(), chat);
+  connect(chatInput,  SIGNAL(returnPressed ()), this, SLOT(sendMessageFromChatInput()));
   
   //connect(app, SIGNAL(lastWindowClosed()), this, SLOT(showQuitDialog()));
 }
@@ -52,6 +52,19 @@ MXitC::~MXitC()
 }
 
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Sends the chatInput to the ougoing slot and clears the chat lineText object
+**
+****************************************************************************/
+
+void MXitC::sendMessageFromChatInput()
+{
+  outgoingMessage(chatInput->text());
+  chatInput->setText("");
+}
 
 /****************************************************************************
 **
@@ -63,7 +76,7 @@ MXitC::~MXitC()
 
 void MXitC::incomingMessage(const QString & message)
 {
-
+  mainTextArea->append ( "Incoming: " + message );
 }
 
 /****************************************************************************
@@ -76,7 +89,8 @@ void MXitC::incomingMessage(const QString & message)
 
 void MXitC::outgoingMessage(const QString & message)
 {
-
+  mainTextArea->append ( "Outgoing: " + message );
+  emit incomingMessage (message); /*FIXME, this is just to test the signal, should be deleted*/
 }
 
 /****************************************************************************

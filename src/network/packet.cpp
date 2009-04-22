@@ -77,6 +77,17 @@ void Packet::setCommand(const QString &command)
 **
 ** Author: Marc Bowes
 **
+****************************************************************************/
+void Packet::setMsTerminator(char terminator)
+{
+  msTerminator = terminator;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** appends the message to this packet's data
 **
 ****************************************************************************/

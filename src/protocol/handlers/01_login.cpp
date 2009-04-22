@@ -97,7 +97,7 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
   
   /* packet header setup */
   packet->setCommand("1");
-  packet->setCellphone(variables["_cellphone"]);
+  packet->setCellphone(variables["loginname"]);
   
   /* packet data setup */
   
@@ -108,15 +108,17 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
   QString encyptedPassword = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
   
   /* write data to packet */
-  (*packet) <<  encyptedPassword
-            << "MXITC-0.0-Y-Generic_PC"
+  (*packet) << encyptedPassword
+            << "E-5.1.1-Y-Qt"
             << "0"                               /* FIXME: getContacts */
             << "w=640;h=480;c=65536;utf8=true"   /* FIXME: capabilities */
-            << "distribution_code"               /* FIXME: dc */
-            << "0x0"                             /* FIXME: features */
+            << "E"                               /* FIXME: dc */
+            << "0x1"                             /* FIXME: features */
             << variables["defaultDialingCode"]   /* FIXME: dialingCode */
             << "en"                              /* FIXME: locale */
   ;
+  
+  packet->setMsTerminator('\0');
 }
 
 

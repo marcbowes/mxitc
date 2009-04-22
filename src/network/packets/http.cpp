@@ -25,7 +25,7 @@ namespace Packets
 HTTP::HTTP(int sessionID, const QString &cellphone, const QString &commandNumber)
   : Packet(cellphone, commandNumber), sequenceNumber (++sequenceCounter), sessionID (sessionID)
 {
-  // nothing here
+  msTerminator = 'N'; /* for NULL */
 }
 
 
@@ -55,7 +55,7 @@ HTTP::~HTTP()
 **
 ** where
 **  loginname   is the unique username that identifies the user. Currently the 
-**              user’s cell number.
+**              user's cell number.
 **  s           is the session information.
 **  sesid       is a session ID that is returned upon completion of a 
 **              login/register call
@@ -79,6 +79,9 @@ HTTP::operator QByteArray() const
     
   self.append   (     QString("\"cm\"=%1&")   .arg(command)               );
   self.append   (     QString("\"ms\"=%1")    .arg(getData())             );
+  if (msTerminator != 'N')  /* some packets terminate the ms field */
+    self.append (msTerminator == '\0' ? '&' : msTerminator); /* convert \0 to & */
+  self.append   ("&"); /* HTTP record terminator */
   
   return self;
 }

@@ -161,12 +161,6 @@ void Connection::run()
    * a call to moveToThread */
   socket = new QTcpSocket();
   TCP_connect(); /* FIXME: move to abstraction layer */
-  
-  /* TCP reconnect when disconnected */
-  connect(socket, SIGNAL(disconnected()), this, SLOT(TCP_disconnected()));
-  
-  /* TCP reading */
-  connect(socket, SIGNAL(readyRead()), this, SLOT(TCP_read()));
     
   while (true) {  /* FIXME: check state */
     queueMutex.lock();        /* wait for a lock on the queue */
@@ -179,19 +173,21 @@ void Connection::run()
     /* FIXME: this is a hack */
     socket->waitForConnected();
     
-    /* write all messages into a stream */
-    QTextStream out(socket);
-    ByteArrayVecItr itr(queue);
-    while (itr.hasNext()) {   /* iterate over queue */
-      out << itr.next();      /* write to stream */
-    }
+    /* write first message in queue */
+    socket->write(queue.first());      /* write to stream */
     
     /* need to flush the stream, otherwise data will go out of scope before
      * it is actually sent */
-    out.flush();
     while (socket->bytesToWrite() && socket->waitForBytesWritten());
     
+    /* dequeue message */
+    queue.erase(queue.begin());
+    
     queueMutex.unlock();      /* release the mutex */
+    
+    /* wait for reply */
+    socket->waitForReadyRead();
+    TCP_read();
   }
 }
 
