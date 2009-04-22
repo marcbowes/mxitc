@@ -34,11 +34,13 @@ class MXitC : public QMainWindow, private Ui::MXitC
   MXitC(QApplication *app, MXit::Client *client = 0);
   ~MXitC();
 
+  private:\
+  void outgoingMessage(const QString & message);  
 
   public slots:
   
+  void sendMessageFromChatInput();
   void incomingMessage(const QString & message);
-  void outgoingMessage(const QString & message);
 
   protected slots:
   
