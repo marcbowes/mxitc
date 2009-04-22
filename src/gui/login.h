@@ -28,7 +28,7 @@ class Login : public QDialog, private Ui::Login
 
   public:         /* class specific */
   
-  Login(QApplication *app, MXit::Client *client); //FIXME need to specify parent
+  Login(QWidget *parent = 0, MXit::Client *client = 0);
   ~Login();
 
   private slots:
