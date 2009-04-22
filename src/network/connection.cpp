@@ -67,6 +67,7 @@ void Connection::TCP_read()
   QTextStream in (socket);
   buffer.append(in.readAll());
   
+  qDebug() << "Buffer : " << buffer.replace(QChar('\0'), QString("\\0")).replace(QChar('\1'), QString("\\1")).replace(QChar('\2'), QString("\\2"));
   /* split by packets (record terminator is \2) */
   QStringList packets = buffer.split("\2");
   
@@ -77,7 +78,11 @@ void Connection::TCP_read()
   Q_FOREACH(const QString &packet, packets) {
     /* ensure the packet is terminated */
     if (packet.indexOf("\2") != -1) {
+    
+      
       QByteArray _packet; _packet.append(packet);
+      qDebug() << "Incoming : " << _packet.replace(('\0'), ("\\0")).replace(('\1'), ("\\1")).replace(('\2'), ("\\2"));
+  
       emit outgoingPacket(_packet);
     } else {
       /* rebuffer it */
@@ -174,6 +179,8 @@ void Connection::run()
     socket->waitForConnected();
     
     /* write first message in queue */
+    qDebug() << "Outgoing : " << queue.first().replace(('\0'), ("\\0")).replace(('\1'), ("\\1")).replace(('\2'), ("\\2"));
+  
     socket->write(queue.first());      /* write to stream */
     
     /* need to flush the stream, otherwise data will go out of scope before
