@@ -33,9 +33,10 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
 ** Author: Marc Bowes
 **
 ** Extracts variable information from the login packet
+** FIXME: Poll data looks fishy
 **
 ****************************************************************************/
-void handle(const QByteArray &packet)
+void Login::handle(const QByteArray &packet)
 {
   /*
   == PACKET FORMAT
@@ -94,6 +95,36 @@ void handle(const QByteArray &packet)
   **
   ***************************************************************************
   */
+  
+  StringVec variables;
+  
+  /* first break up packet by \0 into variable sections */
+  variables.append("command");              /* 1\0 */
+  variables.append("error");                /* errorCode[\1errorMessage]\0 */
+  variables.append("sesid");                /* sesid\0 */
+  variables.append("data");                 /* deprecated..flags\0 */
+  variables.append("poll data");            /* [\0Poll data] */
+  
+  /* extract \0 seperated values */
+  VariableHash pass1 = hashVariables(packet, variables, "\0");
+  pass1.remove("command");                  /* we know this is 1 */
+  pass1.remove("error");                    /* no error, handled earlier */
+  
+  /* need to expand data section */
+  variables.clear();
+  variables.append("deprecated");
+  variables.append("loginname");
+  variables.append("dateTime");
+  variables.append("URL");
+  variables.append("maxSuppertedVer");
+  variables.append("pricePlan");
+  variables.append("flags");
+  
+  /* extract \1 seperated values */
+  VariableHash pass2 = hashVariables(pass1["data"], variables, "\1");
+  
+  /* no clean-up needed, just return the variables */
+  emit outgoingVariables(pass1.unite(pass2));
 }
 
 }
