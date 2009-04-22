@@ -21,38 +21,13 @@ class AES {
   
   private:
   
-  void padData();
-  void expandKey();
-  void ShiftRows();
-  void InvShiftRows();
-  void MixSubColumns();
-  void InvMixSubColumns();
-  void AddRoundKey();
-  
-  int numberOfBlocks;
-  int currentBlock;
-  int round;
-  
-  QByteArray *state;
-  QByteArray *key;
-  
-  QByteArray *SBox; //forward s-box
-  QByteArray *InvSBox; //inverse s-box
-  QByteArray *Xtime2SBox; //combined Xtimes2[Sbox[]]
-  QByteArray *Xtime3SBox; //combined Xtimes3[Sbox[]]
-  
-// modular multiplication tables
-// based on:
-
-// Xtime2[x] = (x & 0x80 ? 0x1b : 0) ^ (x + x)
-// Xtime3[x] = x^Xtime2[x];
-  QByteArray *Xtime2;
-  QByteArray *Xtime9;
-  QByteArray *XtimeB;
-  QByteArray *XtimeD;
-  QByteArray *XtimeE;
-
-  QByteArray *Rcon;
+  void ExpandKey(unsigned char *expkey);
+  void ShiftRows(unsigned char *state);
+  void InvShiftRows(unsigned char *state);
+  void MixSubColumns(unsigned char *state);
+  void InvMixSubColumns(unsigned char *state);
+  void AddRoundKey(unsigned *state, unsigned *key);
+  void realEncrypt(unsigned char *state, unsigned char *expkey);
   
 };
 
