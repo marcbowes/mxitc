@@ -261,17 +261,20 @@ void Client::setupReceived()
     return;
   }
   
+  /* gateway setup so the connection can connect */
   connection->addGateway(variables["soc1"]);
   connection->addGateway(variables["http1"]);
   connection->addGateway(variables["soc2"]);
   connection->addGateway(variables["http2"]);
   
+  /* start the connection */
   connection->start();
   
-  MXit::Network::Packet *packetToSend = buildPacket();
-  // TODO invoke login builder
-  
-  delete packetToSend;
+  /* send off a login packet */
+  MXit::Network::Packet *packet = buildPacket();
+  MXit::Protocol::Handlers::Login login;
+  login.build(packet, variables);
+  delete packet;
 }
 
 

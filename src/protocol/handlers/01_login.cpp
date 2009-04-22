@@ -95,12 +95,19 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
   ***************************************************************************
   */
   
-  /* Appendix B - password encryption */
+  /* packet header setup */
+  packet->setCommand("1");
+  packet->setCellphone(variables["_cellphone"]);
+  
+  /* packet data setup */
+  
+  /* first - password encryption (Appendix B) */
   QString key = QString("6170383452343567").replace(0, 8, variables["pid"].right(8));
   QString pass = "<mxit/>" + variables["_password"];
   MXit::Protocol::AES encryptor;
   QString encyptedPassword = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
   
+  /* write data to packet */
   (*packet) <<  encyptedPassword
             << "MXITC-0.0-Y-Generic_PC"
             << "0"                               /* FIXME: getContacts */
