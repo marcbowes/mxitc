@@ -43,11 +43,11 @@ void Logout::build(MXit::Network::Packet *packet, const VariableHash &variables)
   */
   
   /* packet header setup */
-  //packet->setCommand("1");
-  //packet->setCellphone(variables["_cellphone"]);
+  packet->setCommand("1");
+  packet->setCellphone(variables["_cellphone"]);
   
   /* packet data setup */
-  
+  (*packet) << "0";
 }
 
 /****************************************************************************
@@ -68,6 +68,12 @@ void Logout::handle(const QByteArray &packet)
   **
   ***************************************************************************
   */
+  int errorCode = packetError(packet);
+  if (errorCode != 0) {                     /* No error */
+    // FIXME: how to do proper error reporting?
+    
+    return;
+  }
   
 }
 
