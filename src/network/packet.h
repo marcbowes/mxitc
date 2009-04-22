@@ -12,6 +12,8 @@
 #ifndef __MXIT_NETWORK_PACKET_H__
 #define __MXIT_NETWORK_PACKET_H__
 
+#include <QStringList>
+
 #include "common/types.h"
 
 namespace MXit
@@ -40,9 +42,9 @@ class Packet
   
   protected:       /* variables */
   
-  QString   cellphone;
-  QString   command;
-  StringVec data;
+  QString     cellphone;
+  QString     command;
+  QStringList data;
 };
 
 }

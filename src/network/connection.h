@@ -46,11 +46,13 @@ class Connection : public QThread
 
   signals:
   
-  void error(QTcpSocket::SocketError error);
+  void TCP_error(QTcpSocket::SocketError error);
+  void outgoingPacket(const QByteArray &packet);
 
   private slots:
   
   void TCP_disconnected();
+  void TCP_read();
 
   public:         /* methods */
   
@@ -69,6 +71,7 @@ class Connection : public QThread
   
   private:        /* variables */
   
+  QString         buffer;
   GatewayVec      gateways;
   ByteArrayVec    queue;
   QMutex          queueMutex;

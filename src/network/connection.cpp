@@ -57,6 +57,40 @@ void Connection::TCP_disconnected()
 **
 ** Author: Marc Bowes
 **
+** emits read data
+** FIXME: this seems dirtier than need be
+**
+****************************************************************************/
+void Connection::TCP_read()
+{
+  /* read all available data */
+  QTextStream in (socket);
+  buffer.append(in.readAll());
+  
+  /* split by packets (record terminator is \2) */
+  QStringList packets = buffer.split("\2");
+  
+  /* clear the buffer */
+  buffer.clear();
+  
+  /* for each record, need to emit a signal */
+  Q_FOREACH(const QString &packet, packets) {
+    /* ensure the packet is terminated */
+    if (packet.indexOf("\2") != -1) {
+      QByteArray _packet; _packet.append(packet);
+      emit outgoingPacket(_packet);
+    } else {
+      /* rebuffer it */
+      buffer.append(packet);
+    }
+  }
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** adds a gateway to the connection
 ** (not thread-safe)
 **
@@ -123,11 +157,16 @@ void Connection::enqueue(const Packet &packet)
 ****************************************************************************/
 void Connection::run()
 {
+  /* Qt requires objects to be in the same thread - construction here saves
+   * a call to moveToThread */
   socket = new QTcpSocket();
-  TCP_connect();
+  TCP_connect(); /* FIXME: move to abstraction layer */
   
   /* TCP reconnect when disconnected */
   connect(socket, SIGNAL(disconnected()), this, SLOT(TCP_disconnected()));
+  
+  /* TCP reading */
+  connect(socket, SIGNAL(readyRead()), this, SLOT(TCP_read()));
     
   while (true) {  /* FIXME: check state */
     queueMutex.lock();        /* wait for a lock on the queue */
