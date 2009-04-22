@@ -12,6 +12,8 @@
 #ifndef __MXIT_NETWORK_PACKETS_TCP_H__
 #define __MXIT_NETWORK_PACKETS_TCP_H__
 
+#include <QDebug>
+
 #include "network/packet.h"
 
 namespace MXit
