@@ -47,17 +47,7 @@ Packet::~Packet()
 ****************************************************************************/
 QString Packet::getData() const
 {
-  QString message;
-  StringVecItr itr(data);
-  
-  while (itr.hasNext()) {
-    const QString &d = itr.next();
-    message.append(d);
-    if (itr.hasNext()) /* append \1 if there is another message */
-      message.append("\1");
-  }
-  
-  return message;
+  return data.join("\1");
 }
 
 
@@ -92,7 +82,7 @@ void Packet::setCommand(const QString &command)
 ****************************************************************************/
 Packet& Packet::operator<<(const QString &message)
 {
-  data.append(message);
+  data << message;
   return *this;
 }
 
