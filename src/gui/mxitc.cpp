@@ -35,6 +35,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 )
   
   connect(chatInput,  SIGNAL(returnPressed ()), this, SLOT(sendMessageFromChatInput()));
   
+  connect(mxit, SIGNAL(outgoingError(int, const QString &)), this, SLOT(incomingError(int, const QString &)));
   //connect(app, SIGNAL(lastWindowClosed()), this, SLOT(showQuitDialog()));
 }
 
@@ -77,6 +78,19 @@ void MXitC::sendMessageFromChatInput()
 void MXitC::incomingMessage(const QString & message)
 {
   mainTextArea->append ( "Incoming: " + message );
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Handles an incoming error (recieved from the client)
+**
+****************************************************************************/
+
+void MXitC::incomingError(int errorCode, const QString & errorString)
+{
+  qDebug() << "Error: ("<<errorCode << ") - " << errorString;
 }
 
 /****************************************************************************
