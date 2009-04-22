@@ -44,6 +44,7 @@ class Client : public QObject
   
   void captchaReceived(const QByteArray &);
   void errorEncountered(const QString &);
+  void outgoingError(int code, const QString &message);
   
   private slots:
   

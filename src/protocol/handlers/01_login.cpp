@@ -193,17 +193,8 @@ void Login::handle(const QByteArray &packet)
   /* setup */
   StringVec variables;
   
-  /* error checking */
-  int errorCode = packetError(packet);
-  if (errorCode != 0) {                     /* No error */
-    // FIXME: how to do proper error reporting?
-    
-    return;
-  }
-  
-  /* continue with error-free reply */
-  
   /* first break up packet by \0 into variable sections */
+  variables.append("ln");                   /* ln=X\0 */
   variables.append("command");              /* 1\0 */
   variables.append("error");                /* errorCode[\1errorMessage]\0 */
   variables.append("sesid");                /* sesid\0 */
