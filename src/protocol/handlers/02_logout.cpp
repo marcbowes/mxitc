@@ -28,23 +28,23 @@ void Logout::build(MXit::Network::Packet *packet, const VariableHash &variables)
   == PACKET FORMAT
   ***************************************************************************
   **
-  **  "id"=loginname [ \1 sesid ] \0
-  **  "cm"=2 \0
-  **  "ms"=deprecated
+  **  id=loginname[\1sesid]\0
+  **  cm=2 \0
+  **  ms=deprecated
   **
   ***************************************************************************
   
   == DEFINITIONS
   ***************************************************************************
   **
-  ** deprecated           Should be 0
+  **  deprecated          should be 0
   **
   ***************************************************************************
   */
   
   /* packet header setup */
   packet->setCommand("1");
-  packet->setCellphone(variables["_cellphone"]);
+  packet->setCellphone(variables["loginname"]);
   
   /* packet data setup */
   (*packet) << "0";
@@ -64,11 +64,10 @@ void Logout::handle(const QByteArray &packet)
   ***************************************************************************
   **
   **  2\0
-  **  errorCode [ \1 errorMessage ]
+  **  errorCode[\1errorMessage]
   **
   ***************************************************************************
   */
-  
 }
 
 }

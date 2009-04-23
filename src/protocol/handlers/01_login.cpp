@@ -31,12 +31,11 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
   == PACKET FORMAT
   ***************************************************************************
   **
-  **  "id"=loginname\0
-  **  "cm"=1\0
-  **  "ms"=password\1version\1getContacts\1capabilities\1
-  **       dc\1features\1dialingCode\1locale\0
-  **  ["cr"=splashName0\1splashName1\1...\1splashNameN]
-  **  [\0Poll data]
+  **  id=loginname\0
+  **  cm=1\0
+  **  ms=password\1version\1getContacts\1capabilities\1
+  **     dc\1features\1dialingCode\1locale\0
+  **  [cr=splashName0\1splashName1\1...\1splashNameN]
   **
   ***************************************************************************
   
@@ -137,10 +136,10 @@ void Login::handle(const QByteArray &packet)
   ***************************************************************************
   **
   **  1\0
-  **  errorCode [\1errorMessage]\0
+  **  errorCode[\1errorMessage]\0
   **  sesid\0
   **  deprecated\1loginname\1dateTime\1URL\1
-  **  maxSupportedVer\1pricePlan\1flags\0
+  **  maxSupportedVer\1pricePlan\1flags
   **  [\0Poll data]
   **
   ***************************************************************************

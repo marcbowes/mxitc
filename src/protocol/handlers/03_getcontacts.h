@@ -4,7 +4,7 @@
 **
 ** Author: Tim Sjoberg, 2009
 **
-** MXit::Network::Handlers::Logout deals with logging out of MXit
+** MXit::Network::Handlers::GetContacts deals with logging out of MXit
 ** see build/handle definitions in .cpp file for implementation details
 **
 ****************************************************************************/
