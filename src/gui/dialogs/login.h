@@ -2,13 +2,13 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
-** MXit::GUI::Login provides a login window.
+** MXit::GUI::Dialog::Login provides a login window.
 ** This is an extension of the generated dialog, made with Designer.
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_LOGIN_H__
-#define __MXIT_GUI_LOGIN_H__
+#ifndef __MXIT_GUI_DIALOG_LOGIN_H__
+#define __MXIT_GUI_DIALOG_LOGIN_H__
 
 #include <QMessageBox>
 
@@ -20,6 +20,9 @@ namespace MXit
 {
 
 namespace GUI
+{
+
+namespace Dialog
 {
 
 class Login : public QDialog, private Ui::Login
@@ -45,9 +48,11 @@ class Login : public QDialog, private Ui::Login
   MXit::Client *mxit;
 };
 
-}
+} /* end of Dialog namespace */
 
-}
+} /* end of GUI namespace */
+
+} /* end of MXit namespace */
  
 #endif
 

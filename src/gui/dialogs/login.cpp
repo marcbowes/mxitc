@@ -10,7 +10,9 @@ namespace MXit
 {
 
 namespace GUI
+{
 
+namespace Dialog
 {
 
 /****************************************************************************
@@ -149,7 +151,10 @@ void Login::passwordChanged(const QString &text)
   loginButton->setDisabled(text.isEmpty() ? true : false);
 }
 
-}
 
-}
+} /* end of Dialog namespace */
+
+} /* end of GUI namespace */
+
+} /* end of MXit namespace */
 

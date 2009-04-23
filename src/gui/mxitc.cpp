@@ -30,7 +30,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 )
   mxit = client;      /* store a copy */
   application = app;  /* store a copy */
 
-  connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginWindow()));
+  connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginDialog()));
+  connect(actionAddContact, SIGNAL(triggered()), this, SLOT(openAddContactDialog()));
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
   
   connect(chatInput,  SIGNAL(returnPressed ()), this, SLOT(sendMessageFromChatInput()));
@@ -140,13 +141,40 @@ void MXitC::closeEvent(QCloseEvent *event)
 **
 ****************************************************************************/
 
-void MXitC::openLoginWindow(){
+void MXitC::openLoginDialog(){
   
-  MXit::GUI::Login login(this, mxit);
+  MXit::GUI::Dialog::Login login(this, mxit);
   login.exec();
   
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Opens the add contact dialog
+**
+****************************************************************************/
+
+void MXitC::openAddContactDialog(){
+  
+  MXit::GUI::Dialog::AddContact addContact(this, mxit);
+  addContact.exec();
+  
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Adds a contact to the contact tree
+**
+****************************************************************************/
+void MXitC::addContact(const Contact& contact)
+{
+  
+}
   
   
 }

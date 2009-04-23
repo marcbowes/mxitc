@@ -63,7 +63,6 @@ void Connection::TCP_disconnected()
 ****************************************************************************/
 void Connection::TCP_read()
 {
-  /* read all available data */
   emit outgoingPacket(socket->readAll());
 }
 
