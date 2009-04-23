@@ -149,7 +149,7 @@ void Handshaker::challenge(const QString &cellphone, const QString &captcha,
   
   // FIXME: **way** more environment variables needed here
   QString query =
-    QString("%1?type=getpid&sessionid=%2&ver=5.8.2&login=%3&cat=Y&chalresp=%4&cc=ZA&loc=en&brand=LPM&model=StrioClient&path=1")
+    QString("%1?type=getpid&sessionid=%2&ver=5.8.2&login=%3&cat=E&chalresp=%4&cc=ZA&loc=en&brand=Nokia&model=E51&path=1")
     .arg(url.path())
     .arg(_sessionid)
     .arg(cellphone)

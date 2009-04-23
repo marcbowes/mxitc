@@ -70,7 +70,7 @@ TCP::operator QByteArray() const
   self.append   ( QString("cm=%1")  .arg(command)   ); self.append('\0');
   self.append   ( QString("ms=%1")  .arg(getData()) );
   self.append   ( extra );
-  self.append   ("\2"); /* TCP record terminator */
+  //self.append   ("\2"); /* TCP record terminator */
   
   /* prepend length */
   int bytes = self.size();
