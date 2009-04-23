@@ -59,17 +59,9 @@ Client::~Client()
 void Client::incomingPacket(const QByteArray &packet)
 {
   /* error checking */
-  int errorCode = MXit::Protocol::packetError(packet);
-  if (errorCode != 0) {                     /* No error */
-    StringVec pvariables;
-    pvariables.append("ln");                 /* ln=X\0 */
-    pvariables.append("error");              /* errorCode[\1errorMessage]\0 */
-    
-    QString error = hashVariables(packet, pvariables)["error"]; /* the entire error record */
-    QString errorMessage = error.mid(error.indexOf("\1") + 1);  /* after the \1 */
-    
-    emit outgoingError(errorCode, errorMessage);
-    
+  VariableHash errorHash = MXit::Protocol::packetError(packet);
+  if (errorHash["code"] != "0") {    
+    emit outgoingError(errorHash["code"].toInt(), errorHash["message"]);
     return;
   }
 }
@@ -172,7 +164,7 @@ MXit::Network::Packet* Client::buildPacket()
   MXit::Network::Packet *packet = connection->buildPacket();
   
   /* HTTP/TCP setup */
-  packet->setCellphone(variables["_cellphone"]);
+  packet->setCellphone(variables["loginname"]);
   
   /* HTTP only */
   if (connection->gateway.type == MXit::Network::Gateway::HTTP) {
@@ -306,6 +298,11 @@ void Client::setupReceived()
   login.build(packet, variables);
   connection->enqueue(*packet);
   delete packet;
+  
+  /* cleanup */
+  variables.remove("sessionid");
+  variables.remove("_cellphone");
+  variables.remove("_password");
 }
 
 

@@ -12,6 +12,7 @@
 #define __MXIT_PROTOCOL_HANDLER_H__
 
 #include <QObject>
+#include <QDebug>
 
 #include "common/hash_variables.h"
 
@@ -30,20 +31,38 @@ namespace Protocol
 ** extracts the error code from a response
 **
 ****************************************************************************/
-static int packetError(const QByteArray &packet)
+static VariableHash packetError(const QByteArray &packet)
 {
   /* == Example
+   * ln=x\0                           TCP only
    * 1\0
-   * errorCode [\1errorMessage]\0
+   * errorCode[\1errorMessage]\0
    * ... etc
    */
-  QString error = packet.mid(packet.indexOf("\0"), packet.indexOf("\0", 1));
+  
+  /* skip ln=x\0 and command */
+  int idx0, idx1, idx2;
+  idx0 = packet.indexOf('\0');
+  if (packet.startsWith("ln="))
+    idx0 = packet.indexOf('\0', idx0 + 1);
+  idx1 = packet.indexOf('\0', idx0 + 1);
+  
+  /* errorCode[\1errorMessage] */
+  QByteArray error = packet.mid(idx0 + 1, idx1);
   
   /* now need to check for \1 */
-  int idx1 = error.indexOf("\1");
+  idx2 = error.indexOf("\1");
   
-  /* return errorCode only */
-  return error.left(idx1 == -1 ? error.indexOf("\0") : idx1).toInt();
+  VariableHash ret;
+  if (idx2 == -1) { /* no errorMessage */
+    ret["code"] = error;
+    ret["message"] = "";
+  } else {
+    ret["code"] = error.left(idx2);
+    ret["message"] = error.mid(idx2 + 1);
+  }
+  
+  return ret;
 }
 
 class Handler : public QObject

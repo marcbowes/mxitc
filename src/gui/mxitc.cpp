@@ -91,7 +91,8 @@ void MXitC::incomingMessage(const QString & message)
 
 void MXitC::incomingError(int errorCode, const QString & errorString)
 {
-  qDebug() << "Error: ("<<errorCode << ") - " << errorString;
+  QMessageBox error; error.setText(QString("(%1) %2").arg(errorCode).arg(errorString));
+  error.exec();
 }
 
 /****************************************************************************

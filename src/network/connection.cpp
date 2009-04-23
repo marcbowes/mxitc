@@ -63,32 +63,7 @@ void Connection::TCP_disconnected()
 ****************************************************************************/
 void Connection::TCP_read()
 {
-  /* read all available data */
-  QTextStream in (socket);
-  buffer.append(in.readAll());
-  
-  qDebug() << "Buffer : " << buffer.replace(QChar('\0'), QString("\\0")).replace(QChar('\1'), QString("\\1")).replace(QChar('\2'), QString("\\2"));
-  /* split by packets (record terminator is \2) */
-  QStringList packets = buffer.split("\2");
-  
-  /* clear the buffer */
-  buffer.clear();
-  
-  /* for each record, need to emit a signal */
-  Q_FOREACH(const QString &packet, packets) {
-    /* ensure the packet is terminated */
-    if (packet.indexOf("\2") != -1) {
-    
-      
-      QByteArray _packet; _packet.append(packet);
-      qDebug() << "Incoming : " << QByteArray(_packet).replace(('\0'), ("\\0")).replace(('\1'), ("\\1")).replace(('\2'), ("\\2"));
-  
-      emit outgoingPacket(_packet);
-    } else {
-      /* rebuffer it */
-      buffer.append(packet);
-    }
-  }
+  emit outgoingPacket(socket->readAll());
 }
 
 
@@ -178,9 +153,7 @@ void Connection::run()
     /* FIXME: this is a hack */
     socket->waitForConnected();
     
-    /* write first message in queue */
-    qDebug() << "Outgoing : " << queue.first().replace(('\0'), ("\\0")).replace(('\1'), ("\\1")).replace(('\2'), ("\\2"));
-  
+    /* write first message in queue */  
     socket->write(queue.first());      /* write to stream */
     
     /* need to flush the stream, otherwise data will go out of scope before

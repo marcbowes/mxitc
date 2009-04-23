@@ -21,8 +21,8 @@ namespace MXit
 namespace Protocol
 {
 
-class AES {
-
+class AES
+{
   public:         /* class specific */
   
   AES();

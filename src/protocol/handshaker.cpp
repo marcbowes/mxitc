@@ -168,8 +168,8 @@ void Handshaker::challenge(const QString &cellphone, const QString &captcha,
 
 /****************************************************************************
 **
-** Author: Richard Baxter
 ** Author: Marc Bowes
+** Author: Richard Baxter
 **
 ** this method is called by the requestComplete SLOT
 **

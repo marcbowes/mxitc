@@ -35,7 +35,7 @@ class Packet
   virtual operator QByteArray() const = 0;
   virtual void setCellphone(const QString &cellphone);
   virtual void setCommand(const QString &command);
-  virtual void setMsTerminator(char terminator);
+  virtual void setPostMs(const QByteArray &extra);
 
   protected:         /* methods */
   
@@ -46,7 +46,7 @@ class Packet
   QString     cellphone;
   QString     command;
   QStringList data;
-  char        msTerminator;
+  QByteArray  extra;
 };
 
 }
