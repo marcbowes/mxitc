@@ -25,7 +25,7 @@ namespace Packets
 HTTP::HTTP(int sessionID, const QString &cellphone, const QString &commandNumber)
   : Packet(cellphone, commandNumber), sequenceNumber (sequenceCounter++), sessionID (sessionID)
 {
-  msTerminator = 'N'; /* for NULL */
+  // nothing here
 }
 
 
@@ -79,8 +79,7 @@ HTTP::operator QByteArray() const
     
   self.append   ( QString("cm=%1&")   .arg(command)        );
   self.append   ( QString("ms=%1")    .arg(getData())      );
-  if (msTerminator != 'N') /* some packets terminate the ms field */
-    self.append (msTerminator == '\0' ? '&' : msTerminator); /* convert \0 to & */
+  self.append   ( extra );
   self.append   ("&"); /* HTTP record terminator */
   
   return self;

@@ -25,7 +25,7 @@ namespace Packets
 TCP::TCP(const QString &cellphone, const QString &commandNumber)
  : Packet(cellphone, commandNumber)
 {
-  msTerminator = 'N'; /* for NULL */
+  // nothing here
 }
 
 
@@ -69,8 +69,7 @@ TCP::operator QByteArray() const
   self.append   ( QString("id=%1")  .arg(cellphone) ); self.append('\0');
   self.append   ( QString("cm=%1")  .arg(command)   ); self.append('\0');
   self.append   ( QString("ms=%1")  .arg(getData()) );
-  if (msTerminator != 'N') /* some packets terminate the ms field */
-    self.append (msTerminator);
+  self.append   ( extra );
   self.append   ("\2"); /* TCP record terminator */
   
   /* prepend length */

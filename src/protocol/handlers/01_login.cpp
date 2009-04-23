@@ -107,16 +107,22 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
   
   /* write data to packet */
   (*packet) << encyptedPassword
-            << "T-0.0.1-Y-PC"
-            << "0"                               /* FIXME: getContacts */
-            << "w=640;h=480;c=65536;utf8=true"   /* FIXME: capabilities */
-            << "E"                               /* FIXME: dc */
-            << "1"                               /* FIXME: features */
+            << "E-5.8.2-L-Nokia/E51"
+            << "1"                               /* FIXME: getContacts */
+            << "w=240;h=320;dmem=371;lmem=1;c=16777216;a=256;ctype=8129;fmem=130657726;capd=4202496;utf8=false;cc=ZA;cid=0;imei=354193022441666;la=0;enc=ISO-8859-1;ploc=en;mcc=0;mnc=0;lac=0"
+                                                 /* FIXME: capabilities */
+            << "25AABCAC-1AE7-414E-AB32-24DA79B04CD4"
+                                                 /* FIXME: dc */
+            << "524287"                          /* FIXME: features */
             << variables["defaultDialingCode"]   /* FIXME: dialingCode */
             << "en"                              /* FIXME: locale */
   ;
   
-  packet->setMsTerminator('\0');
+  QByteArray postMs;
+  postMs.append('\0');
+  postMs.append("cr=");
+  
+  packet->setPostMs(postMs);
 }
 
 
