@@ -36,7 +36,6 @@ void GetContacts::build(MXit::Network::Packet *packet, const VariableHash &varia
   
   /* packet header setup */
   packet->setCommand("1");
-  packet->setCellphone(variables["loginname"]);
   
   /* no data */
 }

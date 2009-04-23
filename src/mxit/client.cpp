@@ -164,7 +164,7 @@ MXit::Network::Packet* Client::buildPacket()
   MXit::Network::Packet *packet = connection->buildPacket();
   
   /* HTTP/TCP setup */
-  packet->setCellphone(variables["_cellphone"]);
+  packet->setCellphone(variables["loginname"]);
   
   /* HTTP only */
   if (connection->gateway.type == MXit::Network::Gateway::HTTP) {
@@ -291,6 +291,11 @@ void Client::setupReceived()
   
   /* start the connection */
   connection->start();
+  
+  /* cleanup */
+  variables.remove("sessionid");
+  variables.remove("_cellphone");
+  variables.remove("_password");
   
   /* send off a login packet */
   MXit::Network::Packet *packet = buildPacket();

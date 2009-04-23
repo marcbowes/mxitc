@@ -29,7 +29,7 @@ void Logout::build(MXit::Network::Packet *packet, const VariableHash &variables)
   ***************************************************************************
   **
   **  id=loginname[\1sesid]\0
-  **  cm=2 \0
+  **  cm=2\0
   **  ms=deprecated
   **
   ***************************************************************************
@@ -44,7 +44,6 @@ void Logout::build(MXit::Network::Packet *packet, const VariableHash &variables)
   
   /* packet header setup */
   packet->setCommand("1");
-  packet->setCellphone(variables["loginname"]);
   
   /* packet data setup */
   (*packet) << "0";

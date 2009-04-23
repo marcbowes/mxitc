@@ -23,7 +23,7 @@ namespace Packets
 **
 ****************************************************************************/
 HTTP::HTTP(int sessionID, const QString &cellphone, const QString &commandNumber)
-  : Packet(cellphone, commandNumber), sequenceNumber (++sequenceCounter), sessionID (sessionID)
+  : Packet(cellphone, commandNumber), sequenceNumber (sequenceCounter++), sessionID (sessionID)
 {
   msTerminator = 'N'; /* for NULL */
 }

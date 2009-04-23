@@ -96,7 +96,6 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
   
   /* packet header setup */
   packet->setCommand("1");
-  packet->setCellphone(variables["loginname"]);
   
   /* packet data setup */
   
