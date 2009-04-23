@@ -15,7 +15,9 @@
 #include <QCloseEvent>
 
 #include "mxit/client.h"
-#include "gui/login.h"
+#include "gui/dialogs/login.h"
+#include "gui/dialogs/addContact.h"
+#include "var/contact.h"
 
 #include "ui_mxitc.h"
 
@@ -34,8 +36,13 @@ class MXitC : public QMainWindow, private Ui::MXitC
   MXitC(QApplication *app, MXit::Client *client = 0);
   ~MXitC();
 
-  private:
-  void outgoingMessage(const QString & message);  
+  private: /* methods */
+  void outgoingMessage(const QString & message);
+  
+  /* contact specific methods TODO should be delegated to it's own class*/
+  void addContact(const Contact& contact);
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public slots:
   
@@ -49,7 +56,10 @@ class MXitC : public QMainWindow, private Ui::MXitC
 
   private slots:
   
-  void openLoginWindow();
+  void openLoginDialog();
+  void openAddContactDialog();
+  
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
   private:        /* variables */
   

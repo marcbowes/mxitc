@@ -81,7 +81,7 @@ void Connection::TCP_read()
     
       
       QByteArray _packet; _packet.append(packet);
-      qDebug() << "Incoming : " << _packet.replace(('\0'), ("\\0")).replace(('\1'), ("\\1")).replace(('\2'), ("\\2"));
+      qDebug() << "Incoming : " << QByteArray(_packet).replace(('\0'), ("\\0")).replace(('\1'), ("\\1")).replace(('\2'), ("\\2"));
   
       emit outgoingPacket(_packet);
     } else {

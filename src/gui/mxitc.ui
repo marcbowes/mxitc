@@ -74,7 +74,14 @@
     <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
+   <widget class="QMenu" name="menuContacts" >
+    <property name="title" >
+     <string>Contacts</string>
+    </property>
+    <addaction name="actionAddContact" />
+   </widget>
    <addaction name="menuFile" />
+   <addaction name="menuContacts" />
   </widget>
   <widget class="QStatusBar" name="statusbar" />
   <widget class="QDockWidget" name="dockWidget" >
@@ -93,7 +100,7 @@
       <number>0</number>
      </property>
      <item row="0" column="0" >
-      <widget class="QListView" name="listView" />
+      <widget class="QTreeView" name="contactList" />
      </item>
     </layout>
    </widget>
@@ -130,6 +137,14 @@
    </property>
    <property name="shortcut" >
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionAddContact" >
+   <property name="text" >
+    <string>Add Contact</string>
+   </property>
+   <property name="shortcut" >
+    <string>Alt+A</string>
    </property>
   </action>
  </widget>
