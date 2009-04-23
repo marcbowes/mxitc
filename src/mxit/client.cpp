@@ -292,17 +292,17 @@ void Client::setupReceived()
   /* start the connection */
   connection->start();
   
-  /* cleanup */
-  variables.remove("sessionid");
-  variables.remove("_cellphone");
-  variables.remove("_password");
-  
   /* send off a login packet */
   MXit::Network::Packet *packet = buildPacket();
   MXit::Protocol::Handlers::Login login;
   login.build(packet, variables);
   connection->enqueue(*packet);
   delete packet;
+  
+  /* cleanup */
+  variables.remove("sessionid");
+  variables.remove("_cellphone");
+  variables.remove("_password");
 }
 
 
