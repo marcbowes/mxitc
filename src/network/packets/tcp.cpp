@@ -68,7 +68,7 @@ TCP::operator QByteArray() const
   QByteArray self;
   self.append   ( QString("id=%1")  .arg(cellphone) ); self.append('\0');
   self.append   ( QString("cm=%1")  .arg(command)   ); self.append('\0');
-  self.append   ( QString("ms=%1")  .arg(getData()) );
+  self.append   ( QString("ms=%1")  .arg(getData()) ); //FIXME: not all packets have this
   self.append   ( extra );
   //self.append   ("\2"); /* TCP record terminator */
   

@@ -103,19 +103,32 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
   QString key = QString("6170383452343567").replace(0, 8, variables["pid"].right(8));
   QString pass = "<mxit/>" + variables["_password"];
   MXit::Protocol::AES encryptor;
-  QString encyptedPassword = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
+  QString encryptedPassword = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
+  QString dc = variables["pid"];
+  dc.replace(0, 2, "");
+  dc = dc.left(dc.length() - 8);
   
   /* write data to packet */
-  (*packet) << "cPptvk6QwDWjqDvrWLaiJA=="
+  /*(*packet) << "cPptvk6QwDWjqDvrWLaiJA=="
             << "E-5.8.2-L-Nokia/E51"
-            << "1"                               /* FIXME: getContacts */
+            << "1"                               // FIXME: getContacts
             << "w=240;h=320;dmem=371;lmem=1;c=16777216;a=256;ctyp=8129;fmem=130657726;capd=4202496;utf8=false;cc=ZA;cid=0;imei=354193022441666;la=0;enc=ISO-8859-1;ploc=en;mcc=0;mnc=0;lac=0"
-                                                 /* FIXME: capabilities */
+                                                 // FIXME: capabilities 
             << "25AABCAC-1AE7-414E-AB32-24DA79B04CD4"
-                                                 /* FIXME: dc */
-            << "524287"                          /* FIXME: features */
-            << variables["defaultDialingCode"]   /* FIXME: dialingCode */
-            << "en"                              /* FIXME: locale */
+                                                 // FIXME: dc 
+            << "524287"                          // FIXME: features
+            << variables["defaultDialingCode"]   // FIXME: dialingCode
+            << "en"                              // FIXME: locale
+  ;*/
+  
+  (*packet) << encryptedPassword
+            << "E-5.8.2-Y-LPM"                    // version
+            << "0"                                // getcontacts
+            << "utf8=false;ctyp=8129"             // capabilities
+            << dc                                 // dc
+            << "1"                                // features
+            << variables["defaultDialingCode"]    // dialingCode
+            << "en"                               // locale
   ;
   
   QByteArray postMs;
