@@ -35,7 +35,7 @@ void GetContacts::build(MXit::Network::Packet *packet, VariableHash &variables)
   */
   
   /* packet header setup */
-  packet->setCommand("1");
+  packet->setCommand("3");
   
   /* no data */
 }
@@ -54,13 +54,24 @@ void GetContacts::handle(const QByteArray &packet)
   ***************************************************************************
   **
   **  3\0
-  **  errorCode[\1errorMessage]
+  **  errorCode[\1errorMessage]\0
   **  group0[\1contactAddress0\1nickname0\1presence0\1type0\1mood\0
   **  ..
   **  groupN[\1contactAddressN\1nicknameN\1presenceN\1typeN\1mood
   **
   ***************************************************************************
   */
+  
+  int i, count = 0;
+  for (i=0; (count < 1)||(packet.at(i) != '\0'); i++) {
+    if (packet.at(i) == '\0')
+      count++;
+    //FIXME: remove when proven to be working
+    if (i > packet.size())
+      qDebug() << "AH FUCK!";
+  }
+  
+  
 }
 
 }
