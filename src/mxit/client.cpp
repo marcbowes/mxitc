@@ -54,10 +54,8 @@ Client::~Client()
   delete handshaker;
   
   /* free handlers */
-  MXit::Protocol::HandlerHashItr itr (handlers);
-  while (itr.hasNext()) {
-    delete itr.next();
-  }
+  Q_FOREACH(MXit::Protocol::Handler *h, handlers)
+    delete h;
 }
 
 
