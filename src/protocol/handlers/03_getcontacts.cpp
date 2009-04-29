@@ -44,7 +44,7 @@ void GetContacts::build(MXit::Network::Packet *packet, VariableHash &variables)
 **
 ** Author: Tim Sjoberg
 **
-** Extracts variable information from the logout packet
+** Extracts variable information from the get contacts packet
 **
 ****************************************************************************/
 VariableHash GetContacts::handle(const QByteArray &packet)
@@ -60,6 +60,64 @@ VariableHash GetContacts::handle(const QByteArray &packet)
   **  groupN[\1contactAddressN\1nicknameN\1presenceN\1typeN\1mood
   **
   ***************************************************************************
+  
+  == DEFINITIONS
+  ***************************************************************************
+  **
+  **  group               specifies the group the contact belongs to (maximum
+  **                      length = 32 characters)
+  **  contactAddress      identifies the contact uniquely (maximum length =  
+  **                      64 characters)
+  **  nickname            a nickname the user wants displayed for this 
+  **                      contact instead of the full jid (maximum length = 
+  **                      48 characters)
+  **  presence            specifies the state of the contact (see below)
+  **  type                specifies the type of the contact (see below)
+  **  mood                specifies the mood of the contact (see below)
+  **
+  ***************************************************************************
+  
+  == NOTES
+  ***************************************************************************
+  **  
+  **  Presence:
+  **    The following presence states are defined:
+  **      0 - offline
+  **      1 - online
+  **      2 - away (but still online)
+  **      4 - do not disturb
+  **  
+  **  Type:
+  **    The following contact types are defined:
+  **      0 - MXit
+  **      1 - Jabber
+  **      2 - MSN
+  **      3 - Yahoo
+  **      4 - ICQ
+  **      5 - AIM
+  **      8 - Bot
+  **      9 - Chat room
+  **      12 - Gallery
+  **      13 - Info
+  **      14 - MultiMx
+  **      18 - Google Talk
+  **  
+  **  Mood:
+  **    The following moods are defined:
+  **      0 - None
+  **      1 - Angry
+  **      2 - Excited
+  **      3 - Grumpy
+  **      4 - Happy
+  **      5 - In love
+  **      6 - Invincible
+  **      7 - Sad
+  **      8 - Hot
+  **      9 - Sick
+  **      10 - Sleepy
+  **
+  ***************************************************************************
+  
   */
   
   int i, count = 0;
