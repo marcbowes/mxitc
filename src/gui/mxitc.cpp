@@ -75,8 +75,16 @@ void MXitC::poke(Action action)
       {
         /* TODO get the PID and encrypted password*/
         
-        settings->setValue("encryptedpassword", mxit->variableValue("encryptedpassword"));
-        settings->setValue("dc",  mxit->variableValue("dc"));
+        StringVec variableNames;
+        variableNames.push("encryptedpassword");
+        variableNames.push("dc");
+        variableNames.push("soc1");
+        variableNames.push("http1");
+        variableNames.push("soc2");
+        variableNames.push("http2");
+        /* saveing variables to settings */
+        for (int i = 0 ; i < variableNames.size() ; i++)
+          settings->setValue(variableNames[i], mxit->variableValue(variableNames[i]));
         
         currentState = LOGGED_IN;
         
@@ -103,7 +111,10 @@ void MXitC::poke(Action action)
       
     //--------------------------------------
     case CONTACTS_RECEIVED:
-      ;/* TODO */
+        /* TODO remove the message box */
+        QMessageBox msgbox; 
+        msgbox.setText(QString("Contacts received mofo!"));
+        msgbox.exec();
       break;
       
   

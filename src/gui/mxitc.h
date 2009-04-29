@@ -69,6 +69,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   private:        /* variables */
   
+  
+  
   MXit::Client *mxit;
   QApplication *application;
   
