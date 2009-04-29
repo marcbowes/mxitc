@@ -16,6 +16,8 @@
 
 #include <QHash>
 
+#include "common/actions.h"
+
 #include "network/connection.h"
 
 #include "protocol/aes.h"
@@ -44,6 +46,7 @@ class Client : public QObject
   
   void captchaReceived(const QByteArray &);
   void errorEncountered(const QString &);
+  void outgoingAction(Action);
   void outgoingError(int code, const QString &message);
   
   private slots:

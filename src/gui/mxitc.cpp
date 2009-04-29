@@ -37,6 +37,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(chatInput,  SIGNAL(returnPressed ()), this, SLOT(sendMessageFromChatInput()));
   
   connect(mxit, SIGNAL(outgoingError(int, const QString &)), this, SLOT(incomingError(int, const QString &)));
+  connect(mxit, SIGNAL(outgoingAction(Action)), this, SLOT(incomingAction(Action)));
   //connect(app, SIGNAL(lastWindowClosed()), this, SLOT(showQuitDialog()));
   
   settings = new QSettings ( "Strio", "MXit PC", this );
@@ -63,11 +64,11 @@ MXitC::~MXitC()
 **
 ****************************************************************************/
 
-void MXitC::poke(Action action)
+void MXitC::incomingAction(Action action)
 {
   switch(action) {
     //--------------------------------------
-    case SUCCESSFUL_LOG_IN:
+    case LOGGED_IN:
       
       if (currentState == LOGGED_IN)
         ;/* do nothing TODO */
@@ -96,7 +97,7 @@ void MXitC::poke(Action action)
       break;
       
     //--------------------------------------
-    case SUCCESSFUL_LOG_OUT:
+    case LOGGED_OUT:
       
       if (currentState == LOGGED_OUT)
         ;/* do nothing TODO */
@@ -214,7 +215,12 @@ void MXitC::openLoginDialog(){
   
   if (settings->contains("encryptedpassword") && settings->contains("dc")) {
     
-    mxit->authenticate(settings->value("cellphone").toString(), settings->value("encryptedpassword").toString(), settings->value("dc").toString());
+        StringVec gateways;
+        gateways.append(settings->value("soc1").toString());
+        gateways.append(settings->value("http1").toString());
+        gateways.append(settings->value("soc2").toString());
+        gateways.append(settings->value("http2").toString());
+    mxit->authenticate(settings->value("cellphone").toString(), settings->value("encryptedpassword").toString(), settings->value("dc").toString(), gateways);
   }
   else 
   {
