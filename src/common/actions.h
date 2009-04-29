@@ -1,3 +1,10 @@
+/****************************************************************************
+**
+** For Copyright & Licensing information, see COPYRIGHT in project root
+**
+** Author: Richard Baxter, 2009
+**
+****************************************************************************/
 
   
 #ifndef __MXIT_POKES_H__
@@ -10,8 +17,11 @@
 ** enum definition for actions
 **
 ****************************************************************************/
-
-enum Action {SUCCESSFUL_LOG_IN, SUCCESSFUL_LOG_OUT, CONTACTS_RECEIVED};
+enum Action {
+  LOGGED_IN,
+  LOGGED_OUT,
+  CONTACTS_RECEIVED
+};
 
 
 #endif

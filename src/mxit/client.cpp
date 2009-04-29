@@ -78,6 +78,13 @@ void Client::incomingPacket(const QByteArray &packet)
   }
   
   // MXit::Protocol::Handler &handler = handlerFor(packetHeader["command"]);
+  // handler.handle(packet);
+  
+  switch (packetHeader["command"].toUInt()) {
+    case 1: /* FIXME: duplication */
+      emit outgoingAction(LOGGED_IN);
+      break;
+  }
 }
 
 

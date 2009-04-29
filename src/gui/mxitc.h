@@ -16,7 +16,7 @@
 #include <QSettings>
 
 #include "common/types.h"
-#include "common/pokes.h"
+#include "common/actions.h"
 #include "mxit/client.h"
 #include "gui/dialogs/login.h"
 #include "gui/dialogs/addContact.h"

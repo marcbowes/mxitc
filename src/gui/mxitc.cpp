@@ -68,7 +68,7 @@ void MXitC::incomingAction(Action action)
 {
   switch(action) {
     //--------------------------------------
-    case SUCCESSFUL_LOG_IN:
+    case LOGGED_IN:
       
       if (currentState == LOGGED_IN)
         ;/* do nothing TODO */
@@ -97,7 +97,7 @@ void MXitC::incomingAction(Action action)
       break;
       
     //--------------------------------------
-    case SUCCESSFUL_LOG_OUT:
+    case LOGGED_OUT:
       
       if (currentState == LOGGED_OUT)
         ;/* do nothing TODO */
