@@ -29,16 +29,12 @@ namespace Handlers
 
 class RemoveContact : public Handler
 {
-  Q_OBJECT
+  public:
   
-  public:         /* methods */
+  RemoveContact() { command = REMOVECONTACT; }
   
   virtual void build(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);
-  
-  public:         /* variables */
-  
-  static const unsigned int command = REMOVECONTACT;
 };
 
 }

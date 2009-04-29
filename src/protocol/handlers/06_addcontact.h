@@ -30,16 +30,12 @@ namespace Handlers
 
 class AddContact : public Handler
 {
-  Q_OBJECT
+  public:
   
-  public:         /* methods */
+  AddContact() { command = ADDCONTACT; }
   
   virtual void build(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);
-  
-  public:         /* variables */
-  
-  static const unsigned int command = ADDCONTACT;
 };
 
 }

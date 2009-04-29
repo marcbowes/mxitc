@@ -29,16 +29,12 @@ namespace Handlers
 
 class GetContacts : public Handler
 {
-  Q_OBJECT
+  public:
   
-  public:         /* methods */
+  GetContacts() { command = GETCONTACTS; }
   
   virtual void build(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);
-  
-  public:         /* variables */
-  
-  static const unsigned int command = GETCONTACTS;
 };
 
 }
