@@ -100,16 +100,20 @@ void Login::build(MXit::Network::Packet *packet, VariableHash &variables)
   /* packet data setup */
   
   /* first - password encryption (Appendix B) */
-  QString key = QString("6170383452343567").replace(0, 8, variables["pid"].right(8));
-  QString pass = "<mxit/>" + variables["_password"];
-  MXit::Protocol::AES encryptor;
-  variables["encryptedpassword"] = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
+  if (variables["encryptedpassword"].isEmpty()) {
+    QString key = QString("6170383452343567").replace(0, 8, variables["pid"].right(8));
+    QString pass = "<mxit/>" + variables["_password"];
+    MXit::Protocol::AES encryptor;
+    variables["encryptedpassword"] = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
+  }
   
   /* next - get distributor code from pid */
-  QByteArray dc = variables["pid"];
-  dc.replace(0, 2, "");
-  dc = dc.left(dc.length() - 8);
-  variables["dc"] = dc;
+  if (variables["dc"].isEmpty()) {
+    QByteArray dc = variables["pid"];
+    dc.replace(0, 2, "");
+    dc = dc.left(dc.length() - 8);
+    variables["dc"] = dc;
+  }
   
   /* write data to packet */
   

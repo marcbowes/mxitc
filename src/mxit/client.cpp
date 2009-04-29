@@ -81,7 +81,7 @@ void Client::incomingPacket(const QByteArray &packet)
   // handler.handle(packet);
   
   switch (packetHeader["command"].toUInt()) {
-    case 1: /* FIXME: duplication */
+    case LOGIN:
       emit outgoingAction(LOGGED_IN);
       break;
   }
@@ -138,8 +138,13 @@ void Client::incomingVariables(const VariableHash &params)
 ** same as login, but skips the handshaking phase
 **
 ****************************************************************************/
-void Client::authenticate(const QString &cellphone, const QString &encryptedPassword, const QString &dc, const StringVec &gateways)
+void Client::authenticate(const QByteArray &cellphone, const QByteArray &encryptedPassword, const QByteArray &dc, const StringVec &gateways)
 {
+  variables["loginname"] = cellphone;
+  variables["ecryptedpassword"] = encryptedPassword;
+  variables["dc"] = dc;
+  variables["defaultDialingCode"] = "27"; /* FIXME ddc */
+  
   /* gateway setup so the connection can connect */
   StringVecItr itr (gateways);
   while (itr.hasNext()) {

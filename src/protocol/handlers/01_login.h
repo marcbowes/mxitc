@@ -17,6 +17,8 @@
 
 #include "protocol/handler.h"
 
+#define LOGIN 1
+
 namespace MXit
 {
 
@@ -37,7 +39,7 @@ class Login : public Handler
   
   public:         /* variables */
   
-  static const unsigned int command = 1;
+  static const unsigned int command = LOGIN;
 };
 
 }

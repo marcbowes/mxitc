@@ -56,7 +56,7 @@ class Client : public QObject
 
   public:         /* methods */
   
-  void authenticate(const QString &cellphone, const QString &encryptedPassword, const QString &dc, const StringVec &gateways);
+  void authenticate(const QByteArray &cellphone, const QByteArray &encryptedPassword, const QByteArray &dc, const StringVec &gateways);
   void initialize();
   void login(const QString &cellphone, const QString &password, const QString &captcha);
   QByteArray variableValue(const QString &name);

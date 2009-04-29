@@ -16,6 +16,8 @@
 
 #include "protocol/handler.h"
 
+#define LOGOUT 3
+
 namespace MXit
 {
 
@@ -36,7 +38,7 @@ class Logout : public Handler
   
   public:         /* variables */
   
-  static const unsigned int command = 2;
+  static const unsigned int command = LOGOUT;
 };
 
 }
