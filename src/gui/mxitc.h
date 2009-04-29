@@ -16,6 +16,7 @@
 #include <QSettings>
 
 #include "common/types.h"
+#include "common/pokes.h"
 #include "mxit/client.h"
 #include "gui/dialogs/login.h"
 #include "gui/dialogs/addContact.h"
@@ -38,7 +39,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   MXitC(QApplication *app, MXit::Client *client = 0);
   ~MXitC();
   
-  enum Action {SUCCESSFUL_LOG_IN, SUCCESSFUL_LOG_OUT, CONTACTS_RECEIVED};
   enum State  {LOGGED_IN, LOGGED_OUT};
 
   private: /* methods */
@@ -64,7 +64,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void openLoginDialog();
   void openAddContactDialog();
   
-  void poke(Action action);
+  void incomingAction(Action action);
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
