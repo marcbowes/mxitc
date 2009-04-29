@@ -63,7 +63,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void openLoginDialog();
   void openAddContactDialog();
   
-  void informOfAction(Action action);
+  void poke(Action action);
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
