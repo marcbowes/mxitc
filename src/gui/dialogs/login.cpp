@@ -26,10 +26,9 @@ namespace Dialog
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-Login::Login(QWidget *parent, MXit::Client *client, QSettings* settings) : QDialog (parent), settings(settings)
+Login::Login(QWidget *parent, MXit::Client *client, QSettings* settings) : MXitDialog (parent, client, settings)
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
-  mxit = client;      /* store a copy */
   
   /* add in an image to display the login CAPTCHA */
   mxit->initialize();

@@ -11,9 +11,9 @@
 #define __MXIT_GUI_DIALOG_LOGIN_H__
 
 #include <QMessageBox>
-#include <QSettings>
 
 #include "mxit/client.h"
+#include "gui/mxit_dialog.h"
 
 #include "ui_login.h"
 
@@ -26,7 +26,7 @@ namespace GUI
 namespace Dialog
 {
 
-class Login : public QDialog, private Ui::Login
+class Login : public MXitDialog, private Ui::Login
 {
   Q_OBJECT
 
@@ -44,11 +44,6 @@ class Login : public QDialog, private Ui::Login
   void login();
   void passwordChanged(const QString &text);
   
-  private:        /* variables */
-  
-  MXit::Client *mxit;
-  
-  QSettings *settings;
 };
 
 } /* end of Dialog namespace */

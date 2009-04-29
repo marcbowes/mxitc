@@ -164,6 +164,17 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
 
 /****************************************************************************
 **
+** Author: Richard Baxter
+**
+****************************************************************************/
+void Client::authenticate(const QString &cellphone, const QString &encryptedpassword, const QString &pid)
+{
+ /* TODO make it*/
+
+}
+
+/****************************************************************************
+**
 ** Author: Marc Bowes
 **
 ** this method instructs the connection to build a packet and then does some

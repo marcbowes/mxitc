@@ -13,6 +13,7 @@
 #include <QMessageBox>
 
 #include "mxit/client.h"
+#include "gui/mxit_dialog.h"
 
 #include "ui_addContact.h"
 
@@ -25,20 +26,17 @@ namespace GUI
 namespace Dialog
 {
 
-class AddContact : public QDialog, private Ui::AddContact
+class AddContact : public MXitDialog, private Ui::AddContact
 {
   Q_OBJECT
 
   public:         /* class specific */
   
-  AddContact(QWidget *parent = 0, MXit::Client *client = 0);
+  AddContact(QWidget *parent = 0, MXit::Client *client = 0, QSettings* settings = 0);
   ~AddContact();
 
   private slots:
   
-  private:        /* variables */
-  
-  MXit::Client *mxit; /* FIXME should this be here, if so, should this not be generalised out of all the dialogs?*/
 };
 
 } /* end of Dialog namespace */

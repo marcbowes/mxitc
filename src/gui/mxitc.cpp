@@ -203,7 +203,7 @@ void MXitC::openLoginDialog(){
   
   if (settings->contains("encryptedpassword") && settings->contains("dc")) {
     
-    //mxit->authenticate(settings->value("cellphone"), settings->value("encryptedpassword") && settings->value("dc"));
+    mxit->authenticate(settings->value("cellphone").toString(), settings->value("encryptedpassword").toString(), settings->value("dc").toString());
   }
   else 
   {
