@@ -48,10 +48,10 @@ TCP::~TCP()
 **
 ** turns this TCPPacket into a QByteArray:
 **
-**  "ln"=nnn\0
-**  "id"=loginname\0
-**  "cm"=cmdNr\0
-**  "ms"=msg0\1msg\1...\1msgN
+**  ln=nnn\0
+**  id=loginname\0
+**  cm=cmdNr\0
+**  ms=msg0\1msg\1...\1msgN
 **
 ** where
 **  nnn         is the length (in bytes) of the request as measured from after
