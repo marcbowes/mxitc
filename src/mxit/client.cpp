@@ -292,12 +292,6 @@ void Client::setupReceived()
   /* start the connection */
   connection->start();
   
-  /* HACK */
-  variables.remove("_cellphone");
-  variables.remove("_password");
-  variables["_cellphone"] = "0845895814";
-  variables["_password"] = "2875";
-  
   /* send off a login packet */
   MXit::Network::Packet *packet = buildPacket();
   MXit::Protocol::Handlers::Login login;

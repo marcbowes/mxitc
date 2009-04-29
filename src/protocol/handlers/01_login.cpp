@@ -104,11 +104,15 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
   QString pass = "<mxit/>" + variables["_password"];
   MXit::Protocol::AES encryptor;
   QString encryptedPassword = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
+  
+  /* next - get distributor code from pid */
   QString dc = variables["pid"];
   dc.replace(0, 2, "");
   dc = dc.left(dc.length() - 8);
   
   /* write data to packet */
+  
+  /* FIXME: remove this */
   /*(*packet) << "cPptvk6QwDWjqDvrWLaiJA=="
             << "E-5.8.2-L-Nokia/E51"
             << "1"                               // FIXME: getContacts
@@ -123,10 +127,10 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
   
   (*packet) << encryptedPassword
             << "E-5.8.2-Y-LPM"                    // version
-            << "0"                                // getcontacts
+            << "1"                                // getcontacts
             << "utf8=false;ctyp=8129"             // capabilities
             << dc                                 // dc
-            << "1"                                // features
+            << "524287"                           // features
             << variables["defaultDialingCode"]    // dialingCode
             << "en"                               // locale
   ;
