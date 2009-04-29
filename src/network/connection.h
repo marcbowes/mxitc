@@ -12,10 +12,7 @@
 #ifndef __MXIT_NETWORK_CONNECTION_H__
 #define __MXIT_NETWORK_CONNECTION_H__
 
-#include <QMutex>
 #include <QTcpSocket>
-#include <QThread>
-#include <QWaitCondition>
 
 #include "common/types.h"
 
@@ -35,7 +32,7 @@ namespace Network
 typedef QVector         <Gateway>  GatewayVec;
 typedef QVectorIterator <Gateway>  GatewayVecItr;
 
-class Connection : public QThread
+class Connection : public QObject
 {
   Q_OBJECT
 
@@ -43,6 +40,12 @@ class Connection : public QThread
 	
   Connection();
   ~Connection();
+  
+  enum State {
+    CONNECTED,
+    CONNECTING,
+    DISCONNECTED
+  };
 
   signals:
   
@@ -51,6 +54,9 @@ class Connection : public QThread
 
   private slots:
   
+  void incomingPacket();
+  void TCP_connect();
+  void TCP_connected();
   void TCP_disconnected();
   void TCP_read();
 
@@ -58,12 +64,7 @@ class Connection : public QThread
   
   void addGateway(const QString &connectionString);
   Packet *buildPacket();
-  void enqueue(const Packet &packet);
-  void run();
-
-  private:        /* methods */
-  
-  void TCP_connect();
+  void sendPacket(const Packet &packet);
   
   public:         /* variables */
   
@@ -71,12 +72,9 @@ class Connection : public QThread
   
   private:        /* variables */
   
-  QString         buffer;
   GatewayVec      gateways;
-  ByteArrayVec    queue;
-  QMutex          queueMutex;
-  QWaitCondition  queueWait;
   QTcpSocket     *socket;       /* TCP only */
+  State           state;
 };
 
 }

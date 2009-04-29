@@ -289,14 +289,11 @@ void Client::setupReceived()
   connection->addGateway(variables["soc2"]);
   connection->addGateway(variables["http2"]);
   
-  /* start the connection */
-  connection->start();
-  
   /* send off a login packet */
   MXit::Network::Packet *packet = buildPacket();
   MXit::Protocol::Handlers::Login login;
   login.build(packet, variables);
-  connection->enqueue(*packet);
+  connection->sendPacket(*packet);
   delete packet;
   
   /* cleanup */
