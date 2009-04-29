@@ -83,7 +83,7 @@ class Handler : public QObject
   virtual void build(MXit::Network::Packet *packet, VariableHash &variables) = 0;
   virtual VariableHash handle(const QByteArray &packet) = 0;
   
-  static const unsigned int command;
+  unsigned int command;
 };
 
 typedef QHash         <QString, Handler*> HandlerHash;

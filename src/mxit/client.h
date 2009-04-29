@@ -65,6 +65,7 @@ class Client : public QObject
   
   MXit::Network::Packet* buildPacket();
   void challenge(const QString &cellphone, const QString &captcha);
+  MXit::Protocol::Handler* handlerFor(const QByteArray &command);
   void initializationComplete();
   void setupReceived();
   void useVariable(const QString &variable, unsigned int index);
