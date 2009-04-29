@@ -81,14 +81,14 @@ void Client::incomingPacket(const QByteArray &packet)
   
   /* deal with unknown packets */
   if (!handler) {
-    emit outgoingError(99, QString("Uknown packet handler for command %1").arg(QString(packetHeader["command"])));
+    emit outgoingError(99, QString("Unkown packet handler for command %1").arg(QString(packetHeader["command"])));
     return;
   }
   
   /* pass on to handler */
   handler->handle(packet);
   
-  /* variable scrubbing */
+  /* post packet-level handling */
   switch (packetHeader["command"].toUInt()) {
     case LOGIN:
       emit outgoingAction(LOGGED_IN);

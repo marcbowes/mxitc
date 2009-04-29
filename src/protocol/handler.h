@@ -70,15 +70,11 @@ static VariableHash packetHeader(const QByteArray &packet)
   return ret;
 }
 
-class Handler : public QObject
+class Handler
 {
-  Q_OBJECT
+  public:
   
-  signals:
-  
-  void outgoingVariables(const VariableHash &variables);
-  
-  public:         /* methods */
+  Handler() : command(0) {}
   
   virtual void build(MXit::Network::Packet *packet, VariableHash &variables) = 0;
   virtual VariableHash handle(const QByteArray &packet) = 0;

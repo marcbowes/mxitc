@@ -36,14 +36,6 @@ SET(MXIT_CLIENT_SRCS_CXX
 
 # files which need to be moc'd by Qt
 SET(MXIT_CLIENT_MOC_SRCS
-
-  protocol/handler.h
-  protocol/handlers/01_login.h
-  protocol/handlers/02_logout.h
-  protocol/handlers/03_getcontacts.h
-  protocol/handlers/05_updatecontact.h
-  protocol/handlers/06_addcontact.h
-  protocol/handlers/08_removecontact.h
   
   network/connection.h
   protocol/handshaker.h
