@@ -56,7 +56,7 @@ void Logout::build(MXit::Network::Packet *packet, VariableHash &variables)
 ** Extracts variable information from the logout packet
 **
 ****************************************************************************/
-void Logout::handle(const QByteArray &packet)
+VariableHash Logout::handle(const QByteArray &packet)
 {
   /*
   == PACKET FORMAT

@@ -47,7 +47,7 @@ void GetContacts::build(MXit::Network::Packet *packet, VariableHash &variables)
 ** Extracts variable information from the logout packet
 **
 ****************************************************************************/
-void GetContacts::handle(const QByteArray &packet)
+VariableHash GetContacts::handle(const QByteArray &packet)
 {
   /*
   == PACKET FORMAT

@@ -152,7 +152,7 @@ void Login::build(MXit::Network::Packet *packet, VariableHash &variables)
 ** FIXME: Poll data looks fishy
 **
 ****************************************************************************/
-void Login::handle(const QByteArray &packet)
+VariableHash Login::handle(const QByteArray &packet)
 {
   /*
   == PACKET FORMAT
@@ -242,7 +242,7 @@ void Login::handle(const QByteArray &packet)
   VariableHash pass2 = hashVariables(pass1["data"], variables, "\1");
   
   /* no clean-up needed, just return the variables */
-  emit outgoingVariables(pass1.unite(pass2));
+  return outgoingVariables(pass1.unite(pass2));
 }
 
 }

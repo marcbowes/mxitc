@@ -76,7 +76,9 @@ class Handler : public QObject
   public:         /* methods */
   
   virtual void build(MXit::Network::Packet *packet, VariableHash &variables) = 0;
-  virtual void handle(const QByteArray &packet) = 0;
+  virtual VariableHash handle(const QByteArray &packet) = 0;
+  
+  static const unsigned int command;
 };
 
 }
