@@ -25,7 +25,7 @@ namespace Handlers
 ** Populates a packet with the information required to login
 **
 ****************************************************************************/
-void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
+void Login::build(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -103,12 +103,13 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
   QString key = QString("6170383452343567").replace(0, 8, variables["pid"].right(8));
   QString pass = "<mxit/>" + variables["_password"];
   MXit::Protocol::AES encryptor;
-  QString encryptedPassword = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
+  variables["encryptedpassword"] = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
   
   /* next - get distributor code from pid */
-  QString dc = variables["pid"];
+  QByteArray dc = variables["pid"];
   dc.replace(0, 2, "");
   dc = dc.left(dc.length() - 8);
+  variables["dc"] = dc;
   
   /* write data to packet */
   
@@ -125,11 +126,11 @@ void Login::build(MXit::Network::Packet *packet, const VariableHash &variables)
             << "en"                              // FIXME: locale
   ;*/
   
-  (*packet) << encryptedPassword
+  (*packet) << variables["encryptedpassword"]
             << "E-5.8.2-Y-LPM"                    // version
             << "1"                                // getcontacts
             << "utf8=false;ctyp=8129"             // capabilities
-            << dc                                 // dc
+            << variables["dc"]                    // dc
             << "524287"                           // features
             << variables["defaultDialingCode"]    // dialingCode
             << "en"                               // locale

@@ -177,6 +177,19 @@ MXit::Network::Packet* Client::buildPacket()
 
 /****************************************************************************
 **
+** Author: Marc Bowes
+**
+** returns (most recent) value of a variable
+**
+****************************************************************************/
+QByteArray Client::variableValue(const QString &name)
+{
+  return variables[name];
+}
+
+
+/****************************************************************************
+**
 ** Author: Richard Baxter
 ** Author: Marc Bowes
 **

@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to request contacts
 **
 ****************************************************************************/
-void GetContacts::build(MXit::Network::Packet *packet, const VariableHash &variables)
+void GetContacts::build(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT

@@ -31,7 +31,7 @@ class GetContacts : public Handler
   
   public:         /* methods */
   
-  virtual void build(MXit::Network::Packet *packet, const VariableHash &variables);
+  virtual void build(MXit::Network::Packet *packet, VariableHash &variables);
   virtual void handle(const QByteArray &packet);
   
   public:         /* variables */

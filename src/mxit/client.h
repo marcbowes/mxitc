@@ -55,6 +55,7 @@ class Client : public QObject
   
   void initialize();
   void login(const QString &cellphone, const QString &password, const QString &captcha);
+  QByteArray variableValue(const QString &name);
 
   private:        /* methods */
   

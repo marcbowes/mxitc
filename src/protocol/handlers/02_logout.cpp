@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to logout
 **
 ****************************************************************************/
-void Logout::build(MXit::Network::Packet *packet, const VariableHash &variables)
+void Logout::build(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
