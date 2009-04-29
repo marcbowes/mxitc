@@ -39,7 +39,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   MXitC(QApplication *app, MXit::Client *client = 0);
   ~MXitC();
   
-  enum State  {LOGGED_IN, LOGGED_OUT};
+  enum State  {LOGGED_IN, LOGGED_OUT, LOGGING_IN};
 
   private: /* methods */
   void outgoingMessage(const QString & message);
@@ -61,6 +61,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
 
   private slots:
   
+  void loggingIn();
   void openLoginDialog();
   void openAddContactDialog();
   
