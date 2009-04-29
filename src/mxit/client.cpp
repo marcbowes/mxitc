@@ -32,6 +32,12 @@ Client::Client()
   /* variable passing */
   connect(handshaker, SIGNAL(outgoingVariables(const VariableHash &)),
     this, SLOT(incomingVariables(const VariableHash &)));
+  
+  /* create handlers */
+  using namespace MXit::Protocol::Handlers;
+  handlers["login"] = new Login();
+  handlers["logout"] = new Logout();
+  handlers["getcontacts"] = new GetContacts();
 }
 
 
@@ -46,6 +52,12 @@ Client::~Client()
 {
   delete connection;
   delete handshaker;
+  
+  /* free handlers */
+  MXit::Protocol::HandlerHashItr itr (handlers);
+  while (itr.hasNext()) {
+    delete itr.next();
+  }
 }
 
 
@@ -304,8 +316,7 @@ void Client::setupReceived()
   
   /* send off a login packet */
   MXit::Network::Packet *packet = buildPacket();
-  MXit::Protocol::Handlers::Login login;
-  login.build(packet, variables);
+  handlers["login"]->build(packet, variables);
   connection->sendPacket(*packet);
   delete packet;
   
