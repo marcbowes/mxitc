@@ -11,6 +11,7 @@
 #define __MXIT_GUI_DIALOG_LOGIN_H__
 
 #include <QMessageBox>
+#include <QSettings>
 
 #include "mxit/client.h"
 
@@ -31,7 +32,7 @@ class Login : public QDialog, private Ui::Login
 
   public:         /* class specific */
   
-  Login(QWidget *parent = 0, MXit::Client *client = 0);
+  Login(QWidget *parent = 0, MXit::Client *client = 0, QSettings* settings = 0);
   ~Login();
 
   private slots:
@@ -46,6 +47,8 @@ class Login : public QDialog, private Ui::Login
   private:        /* variables */
   
   MXit::Client *mxit;
+  
+  QSettings *settings;
 };
 
 } /* end of Dialog namespace */

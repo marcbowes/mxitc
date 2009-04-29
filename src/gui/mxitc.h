@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QDialogButtonBox>
 #include <QCloseEvent>
+#include <QSettings>
 
 #include "mxit/client.h"
 #include "gui/dialogs/login.h"
@@ -35,6 +36,9 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   MXitC(QApplication *app, MXit::Client *client = 0);
   ~MXitC();
+  
+  enum Action {SUCCESSFUL_LOG_IN, SUCCESSFUL_LOG_OUT, CONTACTS_RECEIVED};
+  enum State  {LOGGED_IN, LOGGED_OUT};
 
   private: /* methods */
   void outgoingMessage(const QString & message);
@@ -59,12 +63,18 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void openLoginDialog();
   void openAddContactDialog();
   
+  void informOfAction(Action action);
+  
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
   private:        /* variables */
   
   MXit::Client *mxit;
   QApplication *application;
+  
+  QSettings *settings;
+  
+  State currentState;
 };
 
 }

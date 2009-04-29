@@ -24,7 +24,7 @@ namespace GUI
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 )
+MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentState(LOGGED_OUT)
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   mxit = client;      /* store a copy */
@@ -38,6 +38,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 )
   
   connect(mxit, SIGNAL(outgoingError(int, const QString &)), this, SLOT(incomingError(int, const QString &)));
   //connect(app, SIGNAL(lastWindowClosed()), this, SLOT(showQuitDialog()));
+  
+  settings = new QSettings ( "Strio", "MXit PC", this );
 }
 
 
@@ -51,8 +53,54 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 )
 MXitC::~MXitC()
 {
   // nothing here
+  delete settings;
 }
 
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::informOfAction(Action action)
+{
+  switch(action) {
+    //--------------------------------------
+    case SUCCESSFUL_LOG_IN:
+      
+      if (currentState == LOGGED_IN)
+        ;/* do nothing TODO */
+      else /* if (currentState == LOGGED_OUT) */
+      {
+        /* TODO get the PID and encrypted password*/
+        
+        currentState = LOGGED_IN;
+      }
+      
+      break;
+      
+    //--------------------------------------
+    case SUCCESSFUL_LOG_OUT:
+      
+      if (currentState == LOGGED_OUT)
+        ;/* do nothing TODO */
+      else /* if (currentState == LOGGED_IN) */
+      {
+        currentState = LOGGED_OUT;
+      }
+      break;
+      
+    //--------------------------------------
+    case CONTACTS_RECEIVED:
+      ;/* TODO */
+      break;
+      
+  
+  
+  }
+
+}
 
 /****************************************************************************
 **
@@ -143,7 +191,7 @@ void MXitC::closeEvent(QCloseEvent *event)
 
 void MXitC::openLoginDialog(){
   
-  MXit::GUI::Dialog::Login login(this, mxit);
+  MXit::GUI::Dialog::Login login(this, mxit, settings);
   login.exec();
   
 }

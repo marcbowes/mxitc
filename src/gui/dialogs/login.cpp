@@ -26,7 +26,7 @@ namespace Dialog
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-Login::Login(QWidget *parent, MXit::Client *client) : QDialog (parent)
+Login::Login(QWidget *parent, MXit::Client *client, QSettings* settings) : QDialog (parent), settings(settings)
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   mxit = client;      /* store a copy */
@@ -51,6 +51,9 @@ Login::Login(QWidget *parent, MXit::Client *client) : QDialog (parent)
   
   /* when a CAPTCHA is received from the MXit gateway, display it */
   connect(mxit, SIGNAL(captchaReceived(const QByteArray &)), this, SLOT(captchaReceived(const QByteArray &)));
+  
+  if(settings->contains ("cellphone"))
+    cellphone->setText(settings->value("cellphone").toString());
 }
 
 
@@ -135,6 +138,8 @@ void Login::login()
     loginButton->setDisabled(true);
     loginButton->setText("Logging in..");
     mxit->login(cellphone->text(), password->text(), captcha->text());
+    
+    settings->setValue("cellphone", cellphone->text());
   }
 }
 
