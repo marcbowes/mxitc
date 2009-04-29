@@ -30,7 +30,7 @@ void RemoveContact::build(MXit::Network::Packet *packet, VariableHash &variables
   **
   **  id=loginname[\1sesid]\0
   **  cm=8\0
-  **  ms=group \1 contact_loginname \1 nickname \1 type \1 msg
+  **  ms=contactAddress
   **
   ***************************************************************************
   
@@ -62,7 +62,7 @@ VariableHash RemoveContact::handle(const QByteArray &packet)
   == PACKET FORMAT
   ***************************************************************************
   **
-  **  6\0
+  **  8\0
   **  errorCode[\1errorMessage]
   **
   ***************************************************************************
