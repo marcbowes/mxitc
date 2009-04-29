@@ -104,9 +104,13 @@ void MXitC::incomingAction(Action action)
         variables.append("http1");
         variables.append("soc2");
         variables.append("http2");
+        
         /* saveing variables to settings */
-        for (int i = 0 ; i < variables.size() ; i++)
-          settings->setValue(variables[i], mxit->variableValue(variables[i]));
+        
+        Q_FOREACH(const QString &var, variables) {
+          settings->setValue(var, mxit->variableValue(var));
+        }
+        
         
         currentState = LOGGED_IN;
         
@@ -236,12 +240,41 @@ void MXitC::openLoginDialog(){
   
   if (settings->contains("encryptedpassword") && settings->contains("dc")) {
     
-    StringVec gateways;
-    gateways.append(settings->value("soc1").toByteArray());
-    gateways.append(settings->value("http1").toByteArray());
-    gateways.append(settings->value("soc2").toByteArray());
-    gateways.append(settings->value("http2").toByteArray());
-    mxit->authenticate(settings->value("cellphone").toByteArray(), settings->value("encryptedpassword").toByteArray(), settings->value("dc").toByteArray(), gateways);
+    StringVec variables;
+    variables.append("err");                  /* 0 = success, else failed */
+    variables.append("url");                  /* URL that should be used for the Get PID request */
+    variables.append("sessionid");            /* unique identifier to identify the session for code image answer */
+    variables.append("captcha");              /* base64 encoded image data */
+    variables.append("countries");            /* list of available countries (countrycode|countryname)
+                                          * the list of country names should be presented to the user in order to
+                                          * find the country code that should be used later on */
+    variables.append("languages");            /* list of supported languages (locale|languagename)
+                                          * the list of language names should be presented to the user and the
+                                          * corresponding locale saved by the client to be used later on */
+    variables.append("defaultCountryName");   /* country name of the country detenced from the requestors IP */
+    variables.append("defaultCountryCode");   /* country code associated with the defaultCountryName */
+    variables.append("regions");              /* a '|' seperated list of regions if requested */
+    variables.append("defaultDialingCode");   /* dialing code associated with the defaultCountryName */
+    variables.append("defaultRegion");        /* a region of the detected IP */
+    variables.append("defaultNPF");           /* the national dialing prefix for the defaultCountryName, e.g. 0 */
+    variables.append("defaultIPF");           /* the international dialing prefix for the defaultCountryName, e.g. 00 */
+    variables.append("cities");               /* NOT IMPLEMENTED YET */
+    variables.append("defaultCity");          /* the city of the detected IP */
+
+    variables.append("encryptedpassword");
+    variables.append("dc");
+    variables.append("soc1");
+    variables.append("http1");
+    variables.append("soc2");
+    variables.append("http2");
+    
+    VariableHash variableHash;
+    
+    Q_FOREACH(const QString &var, variables) {
+      variableHash[var] = settings->value(var).toByteArray();
+    }
+            
+    mxit->authenticate(variableHash);
   }
   else 
   {
