@@ -19,6 +19,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handlers/03_getcontacts.cpp
   protocol/handlers/05_updatecontact.cpp
   protocol/handlers/06_addcontact.cpp
+  protocol/handlers/08_removecontact.cpp
   
   network/packet.cpp
   network/gateway.cpp
@@ -42,6 +43,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   protocol/handlers/03_getcontacts.h
   protocol/handlers/05_updatecontact.h
   protocol/handlers/06_addcontact.h
+  protocol/handlers/08_removecontact.h
   
   network/connection.h
   protocol/handshaker.h
