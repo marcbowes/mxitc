@@ -128,7 +128,30 @@ void Client::incomingVariables(const VariableHash &params)
 ** Author: Marc Bowes
 ** Author: Richard Baxter
 **
-  variables.remove("err");
+** same as login, but skips the handshaking phase
+**
+****************************************************************************/
+void Client::authenticate(const QString &cellphone, const QString &encryptedPassword, const QString &dc, const StringVec &gateways)
+{
+  /* gateway setup so the connection can connect */
+  StringVecItr itr (gateways);
+  while (itr.hasNext()) {
+    connection->addGateway(itr.next());
+  }
+  
+  /* send off a login packet */
+  MXit::Network::Packet *packet = buildPacket();
+  handlers["login"]->build(packet, variables);
+  connection->sendPacket(*packet);
+  delete packet;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+** Author: Richard Baxter
+**
 ** this method instructs the handshaker to request initial information
 ** see Handshaker#challengeReceived for a list of variables
 **
@@ -163,17 +186,6 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
   challenge(cellphone, captcha);
 }
 
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-void Client::authenticate(const QString &cellphone, const QString &encryptedpassword, const QString &pid)
-{
- /* TODO make it*/
-
-}
 
 /****************************************************************************
 **
@@ -337,6 +349,10 @@ void Client::setupReceived()
   variables.remove("sessionid");
   variables.remove("_cellphone");
   variables.remove("_password");
+  variables.remove("soc1");
+  variables.remove("http1");
+  variables.remove("soc2");
+  variables.remove("http2");
 }
 
 
