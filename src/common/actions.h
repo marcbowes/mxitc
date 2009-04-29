@@ -7,8 +7,11 @@
 ****************************************************************************/
 
   
-#ifndef __MXIT_POKES_H__
-#define __MXIT_POKES_H__
+#ifndef __MXIT_ACTIONS_H__
+#define __MXIT_ACTIONS_H__
+
+namespace MXit
+{
 
 /****************************************************************************
 **
@@ -23,5 +26,7 @@ enum Action {
   CONTACTS_RECEIVED
 };
 
+
+} /* end of MXit namespace */
 
 #endif
