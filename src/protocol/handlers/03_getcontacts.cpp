@@ -63,7 +63,7 @@ VariableHash GetContacts::handle(const QByteArray &packet)
   */
   
   int i, count = 0;
-  for (i=0; (count < 1)||(packet.at(i) != '\0'); i++) {
+  for (i=0; (count < 4)||(packet.at(i) != '\0'); i++) {
     if (packet.at(i) == '\0')
       count++;
     //FIXME: remove when proven to be working
@@ -71,7 +71,15 @@ VariableHash GetContacts::handle(const QByteArray &packet)
       qDebug() << "AH FUCK!";
   }
   
+  QByteArray contactData = packet.right(packet.size() - i);
+  //FIXME: remove when proven to be working
+  if (contactData.at(0) == '\0')
+    qDebug() << "l2count noob!";
   
+  VariableHash variable;
+  variable["contacts"] = contactData;
+  
+  return variable;
 }
 
 }
