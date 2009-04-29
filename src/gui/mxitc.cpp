@@ -41,6 +41,53 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   //connect(app, SIGNAL(lastWindowClosed()), this, SLOT(showQuitDialog()));
   
   settings = new QSettings ( "Strio", "MXit PC", this );
+  
+  
+  StringVec variables;
+  variables.append("err");                  /* 0 = success, else failed */
+  variables.append("url");                  /* URL that should be used for the Get PID request */
+  variables.append("sessionid");            /* unique identifier to identify the session for code image answer */
+  variables.append("captcha");              /* base64 encoded image data */
+  variables.append("countries");            /* list of available countries (countrycode|countryname)
+                                        * the list of country names should be presented to the user in order to
+                                        * find the country code that should be used later on */
+  variables.append("languages");            /* list of supported languages (locale|languagename)
+                                        * the list of language names should be presented to the user and the
+                                        * corresponding locale saved by the client to be used later on */
+  variables.append("defaultCountryName");   /* country name of the country detenced from the requestors IP */
+  variables.append("defaultCountryCode");   /* country code associated with the defaultCountryName */
+  variables.append("regions");              /* a '|' seperated list of regions if requested */
+  variables.append("defaultDialingCode");   /* dialing code associated with the defaultCountryName */
+  variables.append("defaultRegion");        /* a region of the detected IP */
+  variables.append("defaultNPF");           /* the national dialing prefix for the defaultCountryName, e.g. 0 */
+  variables.append("defaultIPF");           /* the international dialing prefix for the defaultCountryName, e.g. 00 */
+  variables.append("cities");               /* NOT IMPLEMENTED YET */
+  variables.append("defaultCity");          /* the city of the detected IP */
+
+  variables.append("encryptedpassword");
+  variables.append("dc");
+  variables.append("soc1");
+  variables.append("http1");
+  variables.append("soc2");
+  variables.append("http2");
+  
+  VariableHash variableHash;
+  
+  bool hasAllVariables = true;
+  
+  Q_FOREACH(const QString &var, variables) {
+    if (!settings->contains(var)) {
+      hasAllVariables = false;
+      break;
+    }
+    variableHash[var] = settings->value(var).toByteArray();
+  }
+  
+  if (hasAllVariables) {
+    loggingIn();
+    mxit->authenticate(variableHash);
+  }
+  
 }
 
 
@@ -168,7 +215,7 @@ void MXitC::sendMessageFromChatInput()
 **
 ** Author: Richard Baxter
 **
-** Handles an incoming message (recieved from the network controller)
+** Handles an incoming message (received from the network controller)
 **
 ****************************************************************************/
 
@@ -209,7 +256,7 @@ void MXitC::outgoingMessage(const QString & message)
 **
 ** Author: Richard Baxter
 **
-** The close even so that it displays the cose ialog before closeing
+** The close event so that it displays the close dialog before closeing
 **
 ****************************************************************************/
 
@@ -233,56 +280,28 @@ void MXitC::closeEvent(QCloseEvent *event)
 **
 ** Author: Richard Baxter
 **
+** tells the gui that it's state shoudl be logging in
+**
+****************************************************************************/
+
+void MXitC::loggingIn(){
+  currentState = LOGGING_IN;
+  qDebug() << "state set to LOGGING_IN";
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
 ** Opens the login dialog
 **
 ****************************************************************************/
 
 void MXitC::openLoginDialog(){
-  
-  if (settings->contains("encryptedpassword") && settings->contains("dc")) {
-    
-    StringVec variables;
-    variables.append("err");                  /* 0 = success, else failed */
-    variables.append("url");                  /* URL that should be used for the Get PID request */
-    variables.append("sessionid");            /* unique identifier to identify the session for code image answer */
-    variables.append("captcha");              /* base64 encoded image data */
-    variables.append("countries");            /* list of available countries (countrycode|countryname)
-                                          * the list of country names should be presented to the user in order to
-                                          * find the country code that should be used later on */
-    variables.append("languages");            /* list of supported languages (locale|languagename)
-                                          * the list of language names should be presented to the user and the
-                                          * corresponding locale saved by the client to be used later on */
-    variables.append("defaultCountryName");   /* country name of the country detenced from the requestors IP */
-    variables.append("defaultCountryCode");   /* country code associated with the defaultCountryName */
-    variables.append("regions");              /* a '|' seperated list of regions if requested */
-    variables.append("defaultDialingCode");   /* dialing code associated with the defaultCountryName */
-    variables.append("defaultRegion");        /* a region of the detected IP */
-    variables.append("defaultNPF");           /* the national dialing prefix for the defaultCountryName, e.g. 0 */
-    variables.append("defaultIPF");           /* the international dialing prefix for the defaultCountryName, e.g. 00 */
-    variables.append("cities");               /* NOT IMPLEMENTED YET */
-    variables.append("defaultCity");          /* the city of the detected IP */
-
-    variables.append("loginname");
-    variables.append("encryptedpassword");
-    variables.append("dc");
-    variables.append("soc1");
-    variables.append("http1");
-    variables.append("soc2");
-    variables.append("http2");
-    
-    VariableHash variableHash;
-    
-    Q_FOREACH(const QString &var, variables) {
-      variableHash[var] = settings->value(var).toByteArray();
-    }
-            
-    mxit->authenticate(variableHash);
-  }
-  else 
-  {
-    MXit::GUI::Dialog::Login login(this, mxit, settings);
-    login.exec();
-  }
+  MXit::GUI::Dialog::Login login(this, mxit, settings);
+  connect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
+  login.exec();
+  disconnect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
 }
 
 /****************************************************************************
