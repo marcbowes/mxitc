@@ -44,7 +44,7 @@ void UpdateContact::build(MXit::Network::Packet *packet, VariableHash &variables
   */
   
   /* packet header setup */
-  packet->setCommand("1");
+  packet->setCommand("5");
   
   /* packet data setup */
   (*packet) << variables["group"];

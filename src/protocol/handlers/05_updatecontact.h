@@ -9,14 +9,14 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_PROTOCOL_HANDLERS_UPDATECONTACTS_H__
-#define __MXIT_PROTOCOL_HANDLERS_UPDATECONTACTS_H__
+#ifndef __MXIT_PROTOCOL_HANDLERS_UPDATECONTACT_H__
+#define __MXIT_PROTOCOL_HANDLERS_UPDATECONTACT_H__
 
 #include <QObject>
 
 #include "protocol/handler.h"
 
-#define UPDATECONTACTS 5
+#define UPDATECONTACT 5
 
 namespace MXit
 {
@@ -38,7 +38,7 @@ class UpdateContact : public Handler
   
   public:         /* variables */
   
-  static const unsigned int command = UPDATECONTACTS;
+  static const unsigned int command = UPDATECONTACT;
 };
 
 }
