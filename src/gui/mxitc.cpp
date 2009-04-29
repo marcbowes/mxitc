@@ -63,7 +63,7 @@ MXitC::~MXitC()
 **
 ****************************************************************************/
 
-void MXitC::informOfAction(Action action)
+void MXitC::poke(Action action)
 {
   switch(action) {
     //--------------------------------------
@@ -75,7 +75,14 @@ void MXitC::informOfAction(Action action)
       {
         /* TODO get the PID and encrypted password*/
         
+        settings->setValue("encryptedpassword", mxit->variableValue("encryptedpassword"));
+        settings->setValue("dc",  mxit->variableValue("dc"));
+        
         currentState = LOGGED_IN;
+        
+        QMessageBox logged_in; 
+        logged_in.setText(QString("Logged in to mxit network"));
+        logged_in.exec();
       }
       
       break;
@@ -88,6 +95,9 @@ void MXitC::informOfAction(Action action)
       else /* if (currentState == LOGGED_IN) */
       {
         currentState = LOGGED_OUT;
+        QMessageBox logged_out; 
+        logged_out.setText(QString("Logged out of mxit network"));
+        logged_out.exec();
       }
       break;
       
@@ -191,9 +201,15 @@ void MXitC::closeEvent(QCloseEvent *event)
 
 void MXitC::openLoginDialog(){
   
-  MXit::GUI::Dialog::Login login(this, mxit, settings);
-  login.exec();
-  
+  if (settings->contains("encryptedpassword") && settings->contains("dc")) {
+    
+    mxit->authenticate(settings->value("cellphone").toString(), settings->value("encryptedpassword").toString(), settings->value("dc").toString());
+  }
+  else 
+  {
+    MXit::GUI::Dialog::Login login(this, mxit, settings);
+    login.exec();
+  }
 }
 
 /****************************************************************************

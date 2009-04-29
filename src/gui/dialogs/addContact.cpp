@@ -28,10 +28,9 @@ namespace Dialog
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-AddContact::AddContact(QWidget *parent, MXit::Client *client) : QDialog (parent)
+AddContact::AddContact(QWidget *parent, MXit::Client *client, QSettings* settings) : MXitDialog (parent, client, settings)
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
-  mxit = client;      /* store a copy */
 }
 
 
