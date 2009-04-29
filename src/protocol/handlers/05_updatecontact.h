@@ -9,12 +9,14 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_PROTOCOL_HANDLERS_LOGOUT_H__
-#define __MXIT_PROTOCOL_HANDLERS_LOGOUT_H__
+#ifndef __MXIT_PROTOCOL_HANDLERS_UPDATECONTACTS_H__
+#define __MXIT_PROTOCOL_HANDLERS_UPDATECONTACTS_H__
 
 #include <QObject>
 
 #include "protocol/handler.h"
+
+#define UPDATECONTACTS 5
 
 namespace MXit
 {
@@ -36,7 +38,7 @@ class UpdateContact : public Handler
   
   public:         /* variables */
   
-  static const unsigned int command = 5;
+  static const unsigned int command = UPDATECONTACTS;
 };
 
 }
