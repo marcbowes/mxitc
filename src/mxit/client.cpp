@@ -349,10 +349,6 @@ void Client::setupReceived()
   variables.remove("sessionid");
   variables.remove("_cellphone");
   variables.remove("_password");
-  variables.remove("soc1");
-  variables.remove("http1");
-  variables.remove("soc2");
-  variables.remove("http2");
 }
 
 
