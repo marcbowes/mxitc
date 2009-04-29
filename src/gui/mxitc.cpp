@@ -76,12 +76,12 @@ void MXitC::poke(Action action)
         /* TODO get the PID and encrypted password*/
         
         StringVec variableNames;
-        variableNames.push("encryptedpassword");
-        variableNames.push("dc");
-        variableNames.push("soc1");
-        variableNames.push("http1");
-        variableNames.push("soc2");
-        variableNames.push("http2");
+        variableNames.append("encryptedpassword");
+        variableNames.append("dc");
+        variableNames.append("soc1");
+        variableNames.append("http1");
+        variableNames.append("soc2");
+        variableNames.append("http2");
         /* saveing variables to settings */
         for (int i = 0 ; i < variableNames.size() ; i++)
           settings->setValue(variableNames[i], mxit->variableValue(variableNames[i]));

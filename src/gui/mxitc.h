@@ -15,6 +15,7 @@
 #include <QCloseEvent>
 #include <QSettings>
 
+#include "common/types.h"
 #include "mxit/client.h"
 #include "gui/dialogs/login.h"
 #include "gui/dialogs/addContact.h"
