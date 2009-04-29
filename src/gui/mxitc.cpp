@@ -145,6 +145,7 @@ void MXitC::incomingAction(Action action)
         variables.append("cities");               /* NOT IMPLEMENTED YET */
         variables.append("defaultCity");          /* the city of the detected IP */
   
+        variables.append("loginname");
         variables.append("encryptedpassword");
         variables.append("dc");
         variables.append("soc1");

@@ -77,9 +77,18 @@ void Client::incomingPacket(const QByteArray &packet)
     return;
   }
   
-  // MXit::Protocol::Handler &handler = handlerFor(packetHeader["command"]);
-  // handler.handle(packet);
+  MXit::Protocol::Handler *handler = handlerFor(packetHeader["command"]);
   
+  /* deal with unknown packets */
+  if (!handler) {
+    emit outgoingError(99, QString("Uknown packet handler for command %1").arg(QString(packetHeader["command"])));
+    return;
+  }
+  
+  /* pass on to handler */
+  handler->handle(packet);
+  
+  /* variable scrubbing */
   switch (packetHeader["command"].toUInt()) {
     case LOGIN:
       emit outgoingAction(LOGGED_IN);
@@ -248,6 +257,24 @@ void Client::challenge(const QString &cellphone, const QString &captcha)
 {
   state = CHALLENGING;
   handshaker->challenge(cellphone, captcha, variables["url"], variables["sessionid"]);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** finds a handler by command
+**
+****************************************************************************/
+MXit::Protocol::Handler* Client::handlerFor(const QByteArray &command)
+{
+  unsigned int c = command.toUInt();
+  Q_FOREACH(MXit::Protocol::Handler *h, handlers) {
+    if (h->command == c) return h;
+  }
+  
+  return NULL; /* no packet found */
 }
 
 

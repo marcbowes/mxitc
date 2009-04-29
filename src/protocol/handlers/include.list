@@ -2,4 +2,5 @@
 #include "02_logout.h"
 #include "03_getcontacts.h"
 #include "05_updatecontact.h"
-
+#include "06_addcontact.h"
+#include "08_removecontact.h"
