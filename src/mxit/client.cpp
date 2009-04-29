@@ -81,7 +81,7 @@ void Client::incomingPacket(const QByteArray &packet)
   // handler.handle(packet);
   
   switch (packetHeader["command"].toUInt()) {
-    case 1: /* FIXME: duplication */
+    case LOGIN:
       emit outgoingAction(LOGGED_IN);
       break;
   }
@@ -138,13 +138,15 @@ void Client::incomingVariables(const VariableHash &params)
 ** same as login, but skips the handshaking phase
 **
 ****************************************************************************/
-void Client::authenticate(const QString &cellphone, const QString &encryptedPassword, const QString &dc, const StringVec &gateways)
+void Client::authenticate(const VariableHash &settings)
 {
+  variables.unite(settings);
+  
   /* gateway setup so the connection can connect */
-  StringVecItr itr (gateways);
-  while (itr.hasNext()) {
-    connection->addGateway(itr.next());
-  }
+  connection->addGateway(variables["soc1"]);
+  connection->addGateway(variables["http1"]);
+  connection->addGateway(variables["soc2"]);
+  connection->addGateway(variables["http2"]);
   
   /* send off a login packet */
   MXit::Network::Packet *packet = buildPacket();

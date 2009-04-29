@@ -2,22 +2,21 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
-** Author: Marc Bowes, 2009
-** Author: Richard Baxter, 2009
+** Author: Tim Sjoberg, 2009
 **
-** MXit::Network::Handlers::Login deals with logging into MXit
+** MXit::Network::Handlers::UpdateContact deals with updating a specific contacts details
 ** see build/handle definitions in .cpp file for implementation details
 **
 ****************************************************************************/
 
-#ifndef __MXIT_PROTOCOL_HANDLERS_LOGIN_H__
-#define __MXIT_PROTOCOL_HANDLERS_LOGIN_H__
+#ifndef __MXIT_PROTOCOL_HANDLERS_UPDATECONTACTS_H__
+#define __MXIT_PROTOCOL_HANDLERS_UPDATECONTACTS_H__
 
 #include <QObject>
 
 #include "protocol/handler.h"
 
-#define LOGIN 1
+#define UPDATECONTACTS 5
 
 namespace MXit
 {
@@ -28,7 +27,7 @@ namespace Protocol
 namespace Handlers
 {
 
-class Login : public Handler
+class UpdateContact : public Handler
 {
   Q_OBJECT
   
@@ -39,7 +38,7 @@ class Login : public Handler
   
   public:         /* variables */
   
-  static const unsigned int command = LOGIN;
+  static const unsigned int command = UPDATECONTACTS;
 };
 
 }
@@ -49,4 +48,3 @@ class Login : public Handler
 }
 
 #endif
-

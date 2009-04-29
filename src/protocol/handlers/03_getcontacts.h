@@ -16,6 +16,8 @@
 
 #include "protocol/handler.h"
 
+#define GETCONTACTS 3
+
 namespace MXit
 {
 
@@ -36,7 +38,7 @@ class GetContacts : public Handler
   
   public:         /* variables */
   
-  static const unsigned int command = 3;
+  static const unsigned int command = GETCONTACTS;
 };
 
 }
