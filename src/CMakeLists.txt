@@ -25,7 +25,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   network/connection.cpp
   protocol/handshaker.cpp
   mxit/client.cpp
-  var/contact.cpp
+  gui/contact.cpp
   gui/dialogs/addContact.cpp
   gui/dialogs/login.cpp
   gui/mxitc.cpp
@@ -46,7 +46,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   network/connection.h
   protocol/handshaker.h
   mxit/client.h
-  var/contact.h
+  gui/contact.h
   gui/dialogs/addContact.h
   gui/dialogs/login.h
   gui/mxitc.h

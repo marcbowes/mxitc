@@ -20,7 +20,7 @@
 #include "mxit/client.h"
 #include "gui/dialogs/login.h"
 #include "gui/dialogs/addContact.h"
-#include "var/contact.h"
+#include "gui/contact.h"
 
 #include "ui_mxitc.h"
 
