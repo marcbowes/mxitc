@@ -138,18 +138,15 @@ void Client::incomingVariables(const VariableHash &params)
 ** same as login, but skips the handshaking phase
 **
 ****************************************************************************/
-void Client::authenticate(const QByteArray &cellphone, const QByteArray &encryptedPassword, const QByteArray &dc, const StringVec &gateways)
+void Client::authenticate(const VariableHash &settings)
 {
-  variables["loginname"] = cellphone;
-  variables["ecryptedpassword"] = encryptedPassword;
-  variables["dc"] = dc;
-  variables["defaultDialingCode"] = "27"; /* FIXME ddc */
+  variables.unite(settings);
   
   /* gateway setup so the connection can connect */
-  StringVecItr itr (gateways);
-  while (itr.hasNext()) {
-    connection->addGateway(itr.next());
-  }
+  connection->addGateway(variables["soc1"]);
+  connection->addGateway(variables["http1"]);
+  connection->addGateway(variables["soc2"]);
+  connection->addGateway(variables["http2"]);
   
   /* send off a login packet */
   MXit::Network::Packet *packet = buildPacket();
