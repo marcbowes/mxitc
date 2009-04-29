@@ -31,7 +31,7 @@ namespace Protocol
 ** extracts the error code from a response
 **
 ****************************************************************************/
-static VariableHash packetError(const QByteArray &packet)
+static VariableHash packetHeader(const QByteArray &packet)
 {
   /* == Example
    * ln=x\0                           TCP only
@@ -39,27 +39,32 @@ static VariableHash packetError(const QByteArray &packet)
    * errorCode[\1errorMessage]\0
    * ... etc
    */
+  VariableHash ret;
   
   /* skip ln=x\0 and command */
   int idx0, idx1, idx2;
-  idx0 = packet.indexOf('\0');              /* skip either ln or command */
-  if (packet.startsWith("ln="))             /* skip was on ln */
-    idx0 = packet.indexOf('\0', idx0 + 1);  /* skip command as well */
-  idx1 = packet.indexOf('\0', idx0 + 1);    /* \0 after errorCode */
+  idx0 = packet.indexOf('\0');                    /* skip either ln or command */
+  if (packet.startsWith("ln=")) {                 /* skip was on ln */
+    int temp = packet.indexOf('\0', idx0 + 1);    /* skip command as well */
+    ret["command"] = packet.mid(idx0 + 1, temp - idx0 - 1);
+    idx0 = temp;
+  } else {
+    ret["command"] = packet.left(idx0);
+  }
+  idx1 = packet.indexOf('\0', idx0 + 1);          /* \0 after errorCode */
   
   /* errorCode[\1errorMessage] */         /* this is 'len' */
   QByteArray error = packet.mid(idx0 + 1, idx1 - idx0 - 1);
   
   /* now need to check for \1 */
-  idx2 = error.indexOf("\1");               /* a \1 indicates an errorMessage */
+  idx2 = error.indexOf("\1");                     /* a \1 indicates an errorMessage */
   
-  VariableHash ret;
   if (idx2 == -1) { /* no errorMessage */
-    ret["code"] = error;
-    ret["message"] = "";
+    ret["errorCode"] = error;
+    ret["errorMessage"] = "";
   } else {
-    ret["code"] = error.left(idx2);
-    ret["message"] = error.mid(idx2 + 1);
+    ret["errorCode"] = error.left(idx2);
+    ret["errorMessage"] = error.mid(idx2 + 1);
   }
   
   return ret;

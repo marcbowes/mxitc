@@ -71,11 +71,13 @@ Client::~Client()
 void Client::incomingPacket(const QByteArray &packet)
 {
   /* error checking */
-  VariableHash errorHash = MXit::Protocol::packetError(packet);
-  if (errorHash["code"] != "0") {    
-    emit outgoingError(errorHash["code"].toInt(), errorHash["message"]);
+  VariableHash packetHeader = MXit::Protocol::packetHeader(packet);
+  if (packetHeader["errorCode"] != "0") {    
+    emit outgoingError(packetHeader["errorCode"].toInt(), packetHeader["errorMessage"]);
     return;
   }
+  
+  // MXit::Protocol::Handler &handler = handlerFor(packetHeader["command"]);
 }
 
 
