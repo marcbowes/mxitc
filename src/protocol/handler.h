@@ -81,6 +81,8 @@ class Handler : public QObject
   static const unsigned int command;
 };
 
+typedef QHash<QString, Handler> HandlerHash;
+
 }
 
 }

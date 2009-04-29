@@ -68,6 +68,7 @@ class Client : public QObject
   private:        /* variables */
   
   MXit::Network::Connection  *connection;
+  HandlerHash                 handlers;
   MXit::Protocol::Handshaker *handshaker;
   Status                      state;
   VariableHash                variables;
