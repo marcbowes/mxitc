@@ -42,16 +42,16 @@ static VariableHash packetError(const QByteArray &packet)
   
   /* skip ln=x\0 and command */
   int idx0, idx1, idx2;
-  idx0 = packet.indexOf('\0');
-  if (packet.startsWith("ln="))
-    idx0 = packet.indexOf('\0', idx0 + 1);
-  idx1 = packet.indexOf('\0', idx0 + 1);
+  idx0 = packet.indexOf('\0');              /* skip either ln or command */
+  if (packet.startsWith("ln="))             /* skip was on ln */
+    idx0 = packet.indexOf('\0', idx0 + 1);  /* skip command as well */
+  idx1 = packet.indexOf('\0', idx0 + 1);    /* \0 after errorCode */
   
-  /* errorCode[\1errorMessage] */
-  QByteArray error = packet.mid(idx0 + 1, idx1);
+  /* errorCode[\1errorMessage] */         /* this is 'len' */
+  QByteArray error = packet.mid(idx0 + 1, idx1 - idx0 - 1);
   
   /* now need to check for \1 */
-  idx2 = error.indexOf("\1");
+  idx2 = error.indexOf("\1");               /* a \1 indicates an errorMessage */
   
   VariableHash ret;
   if (idx2 == -1) { /* no errorMessage */
