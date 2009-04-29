@@ -38,7 +38,11 @@ void AddContact::build(MXit::Network::Packet *packet, VariableHash &variables)
   == DEFINITIONS
   ***************************************************************************
   **
-  **  deprecated          should be 0
+  **  group               is the group the contact should be entered into
+  **  contact_loginname   identifies the contact uniquely
+  **  nickname            the contact’s nickname
+  **  type                specifies the type of contact (see 3. Get Contacts)
+  **  msg                 an optional invitation message
   **
   ***************************************************************************
   */

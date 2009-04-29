@@ -38,7 +38,9 @@ void UpdateContact::build(MXit::Network::Packet *packet, VariableHash &variables
   == DEFINITIONS
   ***************************************************************************
   **
-  **  deprecated          should be 0
+  **  group               is the new group the contact should be moved to
+  **  contactAddress      identifies the contact to update
+  **  nickname            is the contact’s new nickname
   **
   ***************************************************************************
   */

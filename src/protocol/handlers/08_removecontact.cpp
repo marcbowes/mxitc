@@ -37,7 +37,7 @@ void RemoveContact::build(MXit::Network::Packet *packet, VariableHash &variables
   == DEFINITIONS
   ***************************************************************************
   **
-  **  deprecated          should be 0
+  **  contactAddress      identifies the contact uniquely
   **
   ***************************************************************************
   */
