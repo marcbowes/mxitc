@@ -16,7 +16,7 @@
 
 #include "protocol/handler.h"
 
-#define LOGOUT 3
+#define LOGOUT 2
 
 namespace MXit
 {

@@ -91,6 +91,13 @@ void Client::incomingPacket(const QByteArray &packet)
     case LOGIN:
       emit outgoingAction(LOGGED_IN);
       break;
+    case LOGOUT:
+      emit outgoingAction(LOGGED_OUT);
+      connection->close();
+      break;
+    case GETCONTACTS:
+      emit outgoingAction(CONTACTS_RECEIVED);
+      useVariable("contacts", 0); /* remove old copies */
   }
 }
 

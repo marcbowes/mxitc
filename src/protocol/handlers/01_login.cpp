@@ -245,6 +245,8 @@ VariableHash Login::handle(const QByteArray &packet)
   /* extract \1 seperated values */
   VariableHash pass2 = hashVariables(pass1["data"], variables, "\1");
   
+  /* TODO poll data */
+  
   /* no clean-up needed, just return the variables */
   return pass1.unite(pass2);
 }
