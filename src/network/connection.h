@@ -57,6 +57,7 @@ class Connection : public QObject
   void incomingPacket();
   void TCP_connect();
   void TCP_connected();
+  void TCP_disconnect();
   void TCP_disconnected();
   void TCP_read();
 
@@ -64,6 +65,7 @@ class Connection : public QObject
   
   void addGateway(const QString &connectionString);
   Packet *buildPacket();
+  void close();
   void sendPacket(const Packet &packet);
   
   public:         /* variables */

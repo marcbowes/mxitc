@@ -76,13 +76,28 @@ void Connection::TCP_connected()
 **
 ** Author: Marc Bowes
 **
-** attempts to reconnect
+** closes the socket
+**
+****************************************************************************/
+void Connection::TCP_disconnect()
+{
+  socket->disconnectFromHost();
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** attempts to reconnect if connection was dropped
 **
 ****************************************************************************/
 void Connection::TCP_disconnected()
 {
-  state = DISCONNECTED;
-  TCP_connect();
+  if (state != DISCONNECTED) {
+    state = DISCONNECTED;
+    TCP_connect();
+  }
 }
 
 
@@ -152,6 +167,20 @@ Packet* Connection::buildPacket() {
   }
   
   return packet;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** drops an active TCP connection
+**
+****************************************************************************/
+void Connection::close()
+{
+  state = DISCONNECTED;
+  TCP_disconnect();
 }
 
 
