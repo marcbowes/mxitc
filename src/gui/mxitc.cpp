@@ -40,7 +40,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(mxit, SIGNAL(outgoingAction(Action)), this, SLOT(incomingAction(Action)));
   //connect(app, SIGNAL(lastWindowClosed()), this, SLOT(showQuitDialog()));
   
-  settings = new QSettings ( "Strio", "MXit PC", this );
+  settings = new QSettings ( "mxitc", "env", this );
   
   
   StringVec variables;
@@ -64,6 +64,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   variables.append("cities");               /* NOT IMPLEMENTED YET */
   variables.append("defaultCity");          /* the city of the detected IP */
 
+  variables.append("loginname");
   variables.append("encryptedpassword");
   variables.append("dc");
   variables.append("soc1");
