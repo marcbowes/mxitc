@@ -40,7 +40,7 @@ void UpdateContact::build(MXit::Network::Packet *packet, VariableHash &variables
   **
   **  group               is the new group the contact should be moved to
   **  contactAddress      identifies the contact to update
-  **  nickname            is the contact’s new nickname
+  **  nickname            is the contact's new nickname
   **
   ***************************************************************************
   */
