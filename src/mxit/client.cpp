@@ -227,7 +227,7 @@ MXit::Network::Packet* Client::buildPacket()
   packet->setCellphone(variables["loginname"]);
   
   /* HTTP only */
-  if (connection->gateway.type == MXit::Network::Gateway::HTTP) {
+  if (connection->isHTTP()) {
     static_cast<MXit::Network::Packets::HTTP*>(packet)->setSessionID(variables["sessionid"].toInt());
   }
   
