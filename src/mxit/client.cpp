@@ -84,7 +84,7 @@ void Client::incomingPacket(const QByteArray &packet)
   }
   
   /* pass on to handler */
-  handler->handle(packet);
+  variables.unite(handler->handle(packet));
   
   /* post packet-level handling */
   switch (packetHeader["command"].toUInt()) {
@@ -98,7 +98,16 @@ void Client::incomingPacket(const QByteArray &packet)
     case GETCONTACTS:
       emit outgoingAction(CONTACTS_RECEIVED);
       useVariable("contacts", 0); /* remove old copies */
+      break;
+    case GETMESSAGES:
+      variables.remove("contactData");
+      break;
   }
+  
+  /* global scrubbing */
+  variables.remove("ln");
+  variables.remove("command");
+  variables.remove("error");
 }
 
 
