@@ -30,6 +30,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/contact.cpp
   gui/dialogs/addContact.cpp
   gui/dialogs/login.cpp
+  gui/dialogs/debug_dialog.cpp
   gui/mxitc.cpp
   gui/mxit_dialog.cpp
   main.cpp
@@ -44,6 +45,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   gui/contact.h
   gui/dialogs/addContact.h
   gui/dialogs/login.h
+  gui/dialogs/debug_dialog.h
   gui/mxitc.h
   gui/mxit_dialog.h
 )
@@ -52,6 +54,7 @@ SET(MXIT_CLIENT_UI
   
   gui/dialogs/login.ui
   gui/dialogs/addContact.ui
+  gui/dialogs/debug_dialog.ui
   gui/mxitc.ui
 )
 
