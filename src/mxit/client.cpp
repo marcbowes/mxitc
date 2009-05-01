@@ -38,6 +38,8 @@ Client::Client()
   handlers["login"] = new Login();
   handlers["logout"] = new Logout();
   handlers["getcontacts"] = new GetContacts();
+  
+  
 }
 
 

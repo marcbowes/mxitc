@@ -11,6 +11,7 @@
 
 #include <QDialog>
 #include <QSettings>
+#include <QMessageBox>
 
 #include "mxit/client.h"
 

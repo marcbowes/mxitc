@@ -10,9 +10,6 @@
 #ifndef __MXIT_GUI_DIALOG_ADD_CONTACT_H__
 #define __MXIT_GUI_DIALOG_ADD_CONTACT_H__
 
-#include <QMessageBox>
-
-#include "mxit/client.h"
 #include "gui/mxit_dialog.h"
 
 #include "ui_addContact.h"

@@ -42,6 +42,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   settings = new QSettings ( "mxitc", "env", this );
   
+  MXit::GUI::Dialog::DebugDialog debugDialog(this, mxit, settings);
+  debugDialog.exec();
   
   StringVec variables;
   variables.append("err");                  /* 0 = success, else failed */
