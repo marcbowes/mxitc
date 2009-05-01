@@ -50,6 +50,7 @@ class Connection : public QObject
   signals:
   
   void TCP_error(QTcpSocket::SocketError error);
+  void outgoingError(const QString &message);
   void outgoingPacket(const QByteArray &packet);
 
   private slots:
@@ -57,6 +58,7 @@ class Connection : public QObject
   void incomingPacket();
   void TCP_connect();
   void TCP_connected();
+  void TCP_disconnect();
   void TCP_disconnected();
   void TCP_read();
 
@@ -64,15 +66,15 @@ class Connection : public QObject
   
   void addGateway(const QString &connectionString);
   Packet *buildPacket();
+  void close();
+  bool isHTTP();
   void sendPacket(const Packet &packet);
-  
-  public:         /* variables */
-  
-  Gateway         gateway;
   
   private:        /* variables */
   
+  Gateway         gateway;
   GatewayVec      gateways;
+  GatewayVecItr   itr;
   QTcpSocket     *socket;       /* TCP only */
   State           state;
 };

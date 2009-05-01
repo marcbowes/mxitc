@@ -20,6 +20,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handlers/05_updatecontact.cpp
   protocol/handlers/06_addcontact.cpp
   protocol/handlers/08_removecontact.cpp
+  protocol/handlers/09_getmessages.cpp
   
   network/packet.cpp
   network/gateway.cpp

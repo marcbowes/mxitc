@@ -129,7 +129,7 @@ VariableHash GetContacts::handle(const QByteArray &packet)
       qDebug() << "AH FUCK!";
   }
   
-  QByteArray contactData = packet.right(packet.size() - i);
+  QByteArray contactData = packet.right(packet.size() - i - 1);
   //FIXME: remove when proven to be working
   if (contactData.at(0) == '\0')
     qDebug() << "l2count noob!";

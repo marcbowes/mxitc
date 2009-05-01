@@ -20,9 +20,10 @@ namespace Network
 **
 ****************************************************************************/
 Connection::Connection()
-  : state (DISCONNECTED)
+  : state (DISCONNECTED), itr (gateways)
 {
-  socket = new QTcpSocket(); /* FIXME: not here */
+  /* TCP setup */
+  socket = new QTcpSocket();
   connect(socket, SIGNAL(readyRead()), this, SLOT(incomingPacket()));
   connect(socket, SIGNAL(connected()), this, SLOT(TCP_connected()));
   connect(socket, SIGNAL(disconnected()), this, SLOT(TCP_connect()));
@@ -47,13 +48,24 @@ Connection::~Connection()
 ** Author: Marc Bowes
 **
 ** TCP connection to a gateway
-** TODO: cycle gateways
 **
 ****************************************************************************/
 void Connection::TCP_connect()
 {
-  /* FIXME HACK */
-  gateway = gateways.first();
+  /* gateway cycling */
+  if (itr.hasNext())
+    gateway = itr.next();
+  else {
+    itr = gateways;
+    if (itr.hasNext())
+      gateway = itr.next();
+    else {
+      emit outgoingError("Could not find a gateway to connect to");
+      qDebug() << "no gateways to connect to";
+      return;
+    }
+  }
+  
   socket->connectToHost(gateway.host, gateway.port);
   state = CONNECTING;
 }
@@ -76,13 +88,28 @@ void Connection::TCP_connected()
 **
 ** Author: Marc Bowes
 **
-** attempts to reconnect
+** closes the socket
+**
+****************************************************************************/
+void Connection::TCP_disconnect()
+{
+  socket->disconnectFromHost();
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** attempts to reconnect if connection was dropped
 **
 ****************************************************************************/
 void Connection::TCP_disconnected()
 {
-  state = DISCONNECTED;
-  TCP_connect();
+  if (state != DISCONNECTED) {
+    state = DISCONNECTED;
+    TCP_connect();
+  }
 }
 
 
@@ -152,6 +179,33 @@ Packet* Connection::buildPacket() {
   }
   
   return packet;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** drops an active TCP connection
+**
+****************************************************************************/
+void Connection::close()
+{
+  state = DISCONNECTED;
+  TCP_disconnect();
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** returns true if current gateway is of type HTTP
+**
+****************************************************************************/
+bool Connection::isHTTP()
+{
+  return gateway.type == Gateway::HTTP;
 }
 
 

@@ -84,14 +84,30 @@ void Client::incomingPacket(const QByteArray &packet)
   }
   
   /* pass on to handler */
-  handler->handle(packet);
+  variables.unite(handler->handle(packet));
   
   /* post packet-level handling */
   switch (packetHeader["command"].toUInt()) {
     case LOGIN:
       emit outgoingAction(LOGGED_IN);
       break;
+    case LOGOUT:
+      emit outgoingAction(LOGGED_OUT);
+      connection->close();
+      break;
+    case GETCONTACTS:
+      emit outgoingAction(CONTACTS_RECEIVED);
+      useVariable("contacts", 0); /* remove old copies */
+      break;
+    case GETMESSAGES:
+      variables.remove("contactData");
+      break;
   }
+  
+  /* global scrubbing */
+  variables.remove("ln");
+  variables.remove("command");
+  variables.remove("error");
 }
 
 
@@ -220,7 +236,7 @@ MXit::Network::Packet* Client::buildPacket()
   packet->setCellphone(variables["loginname"]);
   
   /* HTTP only */
-  if (connection->gateway.type == MXit::Network::Gateway::HTTP) {
+  if (connection->isHTTP()) {
     static_cast<MXit::Network::Packets::HTTP*>(packet)->setSessionID(variables["sessionid"].toInt());
   }
   
