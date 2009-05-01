@@ -32,6 +32,8 @@ Client::Client()
   /* variable passing */
   connect(handshaker, SIGNAL(outgoingVariables(const VariableHash &)),
     this, SLOT(incomingVariables(const VariableHash &)));
+    
+  
   
   /* create handlers */
   using namespace MXit::Protocol::Handlers;
@@ -60,6 +62,19 @@ Client::~Client()
     delete h;
 }
 
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** this SLOT is triggered by variableHash changes
+**
+****************************************************************************/
+
+void Client::variableHashUpdated()
+{
+  emit outgoingVariableHash(variables);
+}
 
 /****************************************************************************
 **
@@ -110,6 +125,8 @@ void Client::incomingPacket(const QByteArray &packet)
   variables.remove("ln");
   variables.remove("command");
   variables.remove("error");
+  
+  variableHashUpdated();
 }
 
 
@@ -152,6 +169,7 @@ void Client::incomingVariables(const VariableHash &params)
    */
   variables.remove("err");
   variables.remove("captcha");
+  variableHashUpdated();
 }
 
 
@@ -166,6 +184,7 @@ void Client::incomingVariables(const VariableHash &params)
 void Client::authenticate(const VariableHash &settings)
 {
   variables.unite(settings);
+  variableHashUpdated();
   
   /* gateway setup so the connection can connect */
   connection->addGateway(variables["soc1"]);
@@ -218,6 +237,7 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
   
   /* begin challenge */
   challenge(cellphone, captcha);
+  variableHashUpdated();
 }
 
 
@@ -401,6 +421,7 @@ void Client::setupReceived()
   variables.remove("sessionid");
   variables.remove("_cellphone");
   variables.remove("_password");
+  variableHashUpdated();
 }
 
 
@@ -446,6 +467,8 @@ void Client::useVariable(const QString &variable, unsigned int index)
   QByteArray value = *ref;                        /* make a duplication of desired reference */
   variables.remove(variable);                     /* remove all copies of the variable */
   variables[variable] = value;                    /* now assign our unique value */
+  
+  variableHashUpdated();
 }
 
 }

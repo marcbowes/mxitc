@@ -11,6 +11,10 @@
 #define __MXIT_GUI_DEBUG_WIDGET_H__
 
 #include <QDockWidget>
+#include <QHash>
+#include <QDebug>
+
+#include "common/types.h"
 
 #include "ui_debugWidget.h"
 
@@ -29,7 +33,17 @@ class DebugDockWidget : public QDockWidget, private Ui::DebugDockWidget
 
   DebugDockWidget(QWidget* parent = 0);
   ~DebugDockWidget();
+  
+  signals:
+  void requestVariableHashRefresh();
 
+  public slots:
+  
+  void incomingVaraibleHash(const VariableHash& variables);
+  
+  
+  private slots:
+  void refreshRequested();
 
 
 };

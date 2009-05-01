@@ -42,12 +42,16 @@ class Client : public QObject
     CHALLENGING
   };
 
+  public slots:
+  void variableHashUpdated();
+  
   signals:
   
   void captchaReceived(const QByteArray &);
   void errorEncountered(const QString &);
   void outgoingAction(Action);
   void outgoingError(int code, const QString &message);
+  void outgoingVariableHash(const VariableHash&);
   
   private slots:
   
