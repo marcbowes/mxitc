@@ -18,9 +18,9 @@
 #include "common/types.h"
 #include "common/actions.h"
 #include "mxit/client.h"
+#include "gui/debugWidget.h"
 #include "gui/dialogs/login.h"
 #include "gui/dialogs/addContact.h"
-#include "gui/dialogs/debug_dialog.h"
 #include "gui/contact.h"
 
 #include "ui_mxitc.h"
@@ -80,6 +80,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   QSettings *settings;
   
   State currentState;
+  
+  DebugDockWidget * debugWidget;
 };
 
 }

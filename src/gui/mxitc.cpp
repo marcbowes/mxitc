@@ -29,6 +29,10 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   mxit = client;      /* store a copy */
   application = app;  /* store a copy */
+  
+  debugWidget = new DebugDockWidget (this);
+  debugWidget->setFeatures (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+  addDockWidget(Qt::RightDockWidgetArea, debugWidget);
 
   connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginDialog()));
   connect(actionAddContact, SIGNAL(triggered()), this, SLOT(openAddContactDialog()));
@@ -42,8 +46,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   settings = new QSettings ( "mxitc", "env", this );
   
-  MXit::GUI::Dialog::DebugDialog debugDialog(this, mxit, settings);
-  debugDialog.exec();
   
   StringVec variables;
   variables.append("err");                  /* 0 = success, else failed */
@@ -301,6 +303,7 @@ void MXitC::loggingIn(){
 ****************************************************************************/
 
 void MXitC::openLoginDialog(){
+
   MXit::GUI::Dialog::Login login(this, mxit, settings);
   connect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
   login.exec();
