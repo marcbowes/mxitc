@@ -20,7 +20,7 @@ namespace MXit
 **
 ****************************************************************************/
 Client::Client()
-  : state (IDLE)
+  : state (IDLE), variables()
 {
   connection = new MXit::Network::Connection();
   handshaker = new MXit::Protocol::Handshaker();
@@ -45,7 +45,7 @@ Client::Client()
 **
 ** Author: Marc Bowes
 **
-** Client deconstructor
+** Csrclient deconstructor
 **
 ****************************************************************************/
 Client::~Client()
