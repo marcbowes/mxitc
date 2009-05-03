@@ -54,7 +54,7 @@ void DebugDockWidget::refreshRequested()
 ** Author: Richard Baxter
 **
 ****************************************************************************/
-void DebugDockWidget::incomingVaraibleHash(const VariableHash& variables)
+void DebugDockWidget::incomingVariableHash(const VariableHash& variables)
 {
   //qDebug() << "DebugDockWidget::incomingVaraibleHash(const VariableHash& variables)";
   

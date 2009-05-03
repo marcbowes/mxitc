@@ -41,9 +41,6 @@ class Client : public QObject
     INITIALIZING,
     CHALLENGING
   };
-
-  public slots:
-  void variableHashUpdated();
   
   signals:
   

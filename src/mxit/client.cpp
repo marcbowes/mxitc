@@ -32,16 +32,12 @@ Client::Client()
   /* variable passing */
   connect(handshaker, SIGNAL(outgoingVariables(const VariableHash &)),
     this, SLOT(incomingVariables(const VariableHash &)));
-    
-  
   
   /* create handlers */
   using namespace MXit::Protocol::Handlers;
   handlers["login"] = new Login();
   handlers["logout"] = new Logout();
   handlers["getcontacts"] = new GetContacts();
-  
-  
 }
 
 
@@ -62,19 +58,6 @@ Client::~Client()
     delete h;
 }
 
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** this SLOT is triggered by variableHash changes
-**
-****************************************************************************/
-
-void Client::variableHashUpdated()
-{
-  emit outgoingVariableHash(variables);
-}
 
 /****************************************************************************
 **
@@ -126,7 +109,7 @@ void Client::incomingPacket(const QByteArray &packet)
   variables.remove("command");
   variables.remove("error");
   
-  variableHashUpdated();
+  emit outgoingVariableHash(variables);
 }
 
 
@@ -169,7 +152,8 @@ void Client::incomingVariables(const VariableHash &params)
    */
   variables.remove("err");
   variables.remove("captcha");
-  variableHashUpdated();
+  
+  emit outgoingVariableHash(variables);
 }
 
 
@@ -184,7 +168,7 @@ void Client::incomingVariables(const VariableHash &params)
 void Client::authenticate(const VariableHash &settings)
 {
   variables.unite(settings);
-  variableHashUpdated();
+  emit outgoingVariableHash(variables);
   
   /* gateway setup so the connection can connect */
   connection->addGateway(variables["soc1"]);
@@ -237,7 +221,7 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
   
   /* begin challenge */
   challenge(cellphone, captcha);
-  variableHashUpdated();
+  emit outgoingVariableHash(variables);
 }
 
 
@@ -421,7 +405,8 @@ void Client::setupReceived()
   variables.remove("sessionid");
   variables.remove("_cellphone");
   variables.remove("_password");
-  variableHashUpdated();
+  
+  emit outgoingVariableHash(variables);
 }
 
 
@@ -468,7 +453,7 @@ void Client::useVariable(const QString &variable, unsigned int index)
   variables.remove(variable);                     /* remove all copies of the variable */
   variables[variable] = value;                    /* now assign our unique value */
   
-  variableHashUpdated();
+  emit outgoingVariableHash(variables);
 }
 
 }

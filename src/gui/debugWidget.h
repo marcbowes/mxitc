@@ -39,7 +39,7 @@ class DebugDockWidget : public QDockWidget, private Ui::DebugDockWidget
 
   public slots:
   
-  void incomingVaraibleHash(const VariableHash& variables);
+  void incomingVariableHash(const VariableHash& variables);
   
   
   private slots:
