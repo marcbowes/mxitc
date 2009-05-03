@@ -82,6 +82,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   State currentState;
   
   DebugDockWidget * debugWidget;
+ 
+  Dialog::Login * login;
 };
 
 }

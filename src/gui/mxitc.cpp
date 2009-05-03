@@ -30,6 +30,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   mxit = client;      /* store a copy */
   application = app;  /* store a copy */
   
+  login = NULL;
+  
   /* adding the debug window */
   debugWidget = new DebugDockWidget (this);
   debugWidget->setFeatures (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
@@ -171,10 +173,16 @@ void MXitC::incomingAction(Action action)
         
         
         currentState = LOGGED_IN;
+        qDebug() << "state set to LOGGED_IN";
         
         QMessageBox logged_in; 
         logged_in.setText(QString("Logged in to mxit network"));
         logged_in.exec();
+        
+        /* closing the login window if it is open (i.e. login != NULL)*/
+        if (login != NULL) {
+          login->close();
+        }
       }
       
       break;
@@ -187,6 +195,8 @@ void MXitC::incomingAction(Action action)
       else /* if (currentState == LOGGED_IN) */
       {
         currentState = LOGGED_OUT;
+        qDebug() << "state set to LOGGED_OUT";
+        
         QMessageBox logged_out; 
         logged_out.setText(QString("Logged out of mxit network"));
         logged_out.exec();
@@ -199,6 +209,8 @@ void MXitC::incomingAction(Action action)
         QMessageBox msgbox; 
         msgbox.setText(QString("Contacts received mofo!"));
         msgbox.exec();
+        /* fetch contacts */
+        /* refresh contacts list */
       break;
       
   
@@ -309,10 +321,12 @@ void MXitC::loggingIn(){
 
 void MXitC::openLoginDialog(){
 
-  MXit::GUI::Dialog::Login login(this, mxit, settings);
-  connect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
-  login.exec();
-  disconnect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
+  login = new Dialog::Login(this, mxit, settings);
+  connect(login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
+  login->exec();
+  disconnect(login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
+  delete login;
+  login = NULL;
 }
 
 /****************************************************************************
