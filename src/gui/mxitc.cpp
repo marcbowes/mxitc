@@ -31,6 +31,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   application = app;  /* store a copy */
   
   login = NULL;
+  //setStatusBar();
+  //statusBar->setText("LOGGING_OUT");
   
   /* adding the debug window */
   debugWidget = new DebugDockWidget (this);
@@ -170,7 +172,7 @@ void MXitC::incomingAction(Action action)
         Q_FOREACH(const QString &var, variables) {
           settings->setValue(var, mxit->variableValue(var));
         }
-        
+        settings->sync();
         
         currentState = LOGGED_IN;
         qDebug() << "state set to LOGGED_IN";

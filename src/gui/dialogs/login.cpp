@@ -139,6 +139,7 @@ void Login::login()
     emit loggingIn();
     mxit->login(cellphone->text(), password->text(), captcha->text());
     settings->setValue("cellphone", cellphone->text());
+    settings->sync();
   }
 }
 
