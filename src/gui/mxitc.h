@@ -14,6 +14,7 @@
 #include <QDialogButtonBox>
 #include <QCloseEvent>
 #include <QSettings>
+#include <QLabel>
 
 #include "common/types.h"
 #include "common/actions.h"
@@ -47,6 +48,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   /* contact specific methods TODO should be delegated to it's own class*/
   void addContact(const Contact& contact);
+  void setStatusBar();
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -84,6 +86,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   DebugDockWidget * debugWidget;
  
   Dialog::Login * login;
+  QLabel * statusLabel;
 };
 
 }

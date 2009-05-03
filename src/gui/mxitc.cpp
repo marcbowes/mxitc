@@ -31,8 +31,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   application = app;  /* store a copy */
   
   login = NULL;
-  //setStatusBar();
-  //statusBar->setText("LOGGING_OUT");
+  statusLabel = new QLabel("No status set!");
+  statusbar->addPermanentWidget(statusLabel);
+  setStatusBar();
   
   /* adding the debug window */
   debugWidget = new DebugDockWidget (this);
@@ -116,6 +117,8 @@ MXitC::~MXitC()
 {
   // nothing here
   delete settings;
+  statusbar->removeWidget(statusLabel);
+  delete statusLabel;
 }
 
 
@@ -175,7 +178,7 @@ void MXitC::incomingAction(Action action)
         settings->sync();
         
         currentState = LOGGED_IN;
-        qDebug() << "state set to LOGGED_IN";
+        setStatusBar();
         
         QMessageBox logged_in; 
         logged_in.setText(QString("Logged in to mxit network"));
@@ -197,7 +200,7 @@ void MXitC::incomingAction(Action action)
       else /* if (currentState == LOGGED_IN) */
       {
         currentState = LOGGED_OUT;
-        qDebug() << "state set to LOGGED_OUT";
+        setStatusBar();
         
         QMessageBox logged_out; 
         logged_out.setText(QString("Logged out of mxit network"));
@@ -219,6 +222,25 @@ void MXitC::incomingAction(Action action)
   
   }
 
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Sets the status bar text based on the state of the application
+**
+****************************************************************************/
+
+void MXitC::setStatusBar()
+{
+  switch (currentState) {
+  
+    case LOGGED_IN:  statusLabel->setText("LOGGED_IN");  break;
+    case LOGGED_OUT: statusLabel->setText("LOGGED_OUT"); break;
+    case LOGGING_IN: statusLabel->setText("LOGGING_IN"); break;
+  
+  }
 }
 
 /****************************************************************************
@@ -260,6 +282,12 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
 {
   QMessageBox error; error.setText(QString("(%1) %2").arg(errorCode).arg(errorString));
   error.exec();
+  
+  
+  if (login != NULL) {
+    login->resetButtons();  
+    
+  }
 }
 
 /****************************************************************************
@@ -310,7 +338,7 @@ void MXitC::closeEvent(QCloseEvent *event)
 
 void MXitC::loggingIn(){
   currentState = LOGGING_IN;
-  qDebug() << "state set to LOGGING_IN";
+  setStatusBar();
 }
 
 /****************************************************************************

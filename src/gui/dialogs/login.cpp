@@ -146,6 +146,22 @@ void Login::login()
 
 /****************************************************************************
 **
+** Author: Richard Baxter
+**
+** this resets the buttons for relogin
+**
+****************************************************************************/
+void Login::resetButtons()
+{
+  loginButton->setDisabled(false);
+  loginButton->setText("Login");
+}
+
+
+
+
+/****************************************************************************
+**
 ** Author: Marc Bowes
 **
 ** this SLOT is triggered when password input text is changed

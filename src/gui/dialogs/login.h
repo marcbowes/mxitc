@@ -33,6 +33,10 @@ class Login : public MXitDialog, private Ui::Login
   Login(QWidget *parent = 0, MXit::Client *client = 0, QSettings* settings = 0);
   ~Login();
   
+  public: /* methods */
+  
+  void resetButtons();
+  
   signals:
   
   void loggingIn();
