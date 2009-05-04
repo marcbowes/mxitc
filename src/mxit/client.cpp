@@ -181,6 +181,8 @@ void Client::authenticate(const VariableHash &settings)
   handlers["login"]->build(packet, variables);
   connection->sendPacket(*packet);
   delete packet;
+  
+  emit outgoingAction(CONTACTS_RECEIVED);
 }
 
 
