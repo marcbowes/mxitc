@@ -442,7 +442,7 @@ void Client::useVariable(const QString &variable, unsigned int index)
   }
   
   /* try iterate up to index */
-  const QByteArray *ref;
+  const QByteArray *ref = &itr.value(); /* Initialise this, index was set to 0 and ref was NULL*/
   unsigned int walk = 0;
   while (itr != variables.end() && itr.key() == variable && walk < index) {
     itr++; walk++;
