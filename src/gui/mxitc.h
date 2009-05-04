@@ -15,6 +15,8 @@
 #include <QCloseEvent>
 #include <QSettings>
 #include <QLabel>
+#include <QListWidget>
+#include <QListWidgetItem>
 
 #include "common/types.h"
 #include "common/actions.h"
@@ -46,9 +48,9 @@ class MXitC : public QMainWindow, private Ui::MXitC
   private: /* methods */
   void outgoingMessage(const QString & message);
   
-  /* contact specific methods TODO should be delegated to it's own class*/
-  void addContact(const Contact& contact);
+  void updateContactsList(const QVector<Contact>& contacts);
   void setStatusBar();
+  
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -69,12 +71,15 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void openAddContactDialog();
   
   void incomingAction(Action action);
+  void setChatBoxText(QListWidgetItem * item);
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
   private:        /* variables */
   
+  QHash<QString, Contact*> contactsHash; // identified by nickname
   
+  Contact * currentContact;
   
   MXit::Client *mxit;
   QApplication *application;
