@@ -117,13 +117,50 @@ void Connection::TCP_disconnected()
 **
 ** Author: Marc Bowes
 **
-** attempts to reconnect
-** TODO: cycle gateways
+** emits one TCP packet at a time
 **
 ****************************************************************************/
 void Connection::TCP_read()
-{
-  emit outgoingPacket(socket->readAll());
+{ 
+  forever { /* break statements for exit */
+    buffer.append(socket->readAll());     /* buffer all input */
+    
+    if (buffer.isEmpty())
+      break;
+    
+    /* need to find a packet starting with ln= */
+    int idx_ln = buffer.indexOf("ln=");
+    
+    /* no ln= means our buffer is meaningless - this should not happen, but we
+     * cannot recover from it */
+    if (idx_ln < 0) {
+      break;
+    }
+    
+    /* x gives us the size of the packet, need to work out what x is */
+    int idx_dl = buffer.indexOf('\0', idx_ln + 1);
+    
+    /* ensure \0 was found */
+    if (idx_dl < 0) {
+      /* need to wait on more data */
+      break;
+    }
+    
+    int ln = buffer.mid(idx_ln + 3, idx_dl - idx_ln - 3).toInt();
+    int real_length = idx_dl + 1 + ln;
+    
+    /* now to check if all the data in the packet has been read */
+    if (buffer.size() < real_length) {
+      break;
+    }
+    
+    QByteArray packet = buffer.mid(idx_ln, real_length);
+    qDebug() << "emitting packet of length" << packet.size();
+    emit outgoingPacket(packet);
+    buffer.remove(0, idx_ln + packet.size());
+    qDebug() << "buffer size is now" << buffer.size();
+  }
+  qDebug() << "chz";
 }
 
 

@@ -72,6 +72,7 @@ class Connection : public QObject
   
   private:        /* variables */
   
+  QByteArray      buffer;
   Gateway         gateway;
   GatewayVec      gateways;
   GatewayVecItr   itr;

@@ -40,7 +40,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   debugWidget->setFeatures (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
   addDockWidget(Qt::RightDockWidgetArea, debugWidget);
   
-  connect(mxit, SIGNAL(outgoingVariableHash(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
+  connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
 
   connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginDialog()));

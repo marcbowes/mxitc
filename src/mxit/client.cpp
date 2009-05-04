@@ -109,7 +109,7 @@ void Client::incomingPacket(const QByteArray &packet)
   variables.remove("command");
   variables.remove("error");
   
-  emit outgoingVariableHash(variables);
+  emit outgoingVariables(variables);
 }
 
 
@@ -153,7 +153,7 @@ void Client::incomingVariables(const VariableHash &params)
   variables.remove("err");
   variables.remove("captcha");
   
-  emit outgoingVariableHash(variables);
+  emit outgoingVariables(variables);
 }
 
 
@@ -168,7 +168,7 @@ void Client::incomingVariables(const VariableHash &params)
 void Client::authenticate(const VariableHash &settings)
 {
   variables.unite(settings);
-  emit outgoingVariableHash(variables);
+  emit outgoingVariables(variables);
   
   /* gateway setup so the connection can connect */
   connection->addGateway(variables["soc1"]);
@@ -221,7 +221,7 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
   
   /* begin challenge */
   challenge(cellphone, captcha);
-  emit outgoingVariableHash(variables);
+  emit outgoingVariables(variables);
 }
 
 
@@ -406,7 +406,7 @@ void Client::setupReceived()
   variables.remove("_cellphone");
   variables.remove("_password");
   
-  emit outgoingVariableHash(variables);
+  emit outgoingVariables(variables);
 }
 
 
@@ -453,7 +453,7 @@ void Client::useVariable(const QString &variable, unsigned int index)
   variables.remove(variable);                     /* remove all copies of the variable */
   variables[variable] = value;                    /* now assign our unique value */
   
-  emit outgoingVariableHash(variables);
+  emit outgoingVariables(variables);
 }
 
 }

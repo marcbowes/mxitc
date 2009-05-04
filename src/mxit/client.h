@@ -48,7 +48,7 @@ class Client : public QObject
   void errorEncountered(const QString &);
   void outgoingAction(Action);
   void outgoingError(int code, const QString &message);
-  void outgoingVariableHash(const VariableHash&);
+  void outgoingVariables(const VariableHash&);
   
   private slots:
   
