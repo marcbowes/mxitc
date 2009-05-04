@@ -217,19 +217,19 @@ void MXitC::incomingAction(Action action)
     case CONTACTS_RECEIVED:
         /* TODO remove the message box */
         
-        //QMessageBox msgbox; 
-        //msgbox.setText(QString("Contacts received mofo!"));
-        //msgbox.exec();
+        QMessageBox msgbox; 
+        msgbox.setText(QString("Contacts received mofo!"));
+        msgbox.exec();
         
         /* fetch contacts */
         /*  group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood \0
             ...
             groupN \1 contactAddressN \1 nicknameN \1 presenceN \1 typeN \1 mood
         */
-        QByteArray contacts; /* = mxit->variableValue("contacts"); FIXME*/
+        QByteArray contacts = mxit->variableValue("contacts");
         
         /* manually entering data */
-        contacts.append("group1");          contacts.append('\1');
+        /*contacts.append("group1");          contacts.append('\1');
         contacts.append("uniqueAddy1");     contacts.append('\1');
         contacts.append("raxter_dude");     contacts.append('\1');
         contacts.append("1");               contacts.append('\1');
@@ -261,9 +261,9 @@ void MXitC::incomingAction(Action action)
         contacts.append("tim_or_someone");  contacts.append('\1');
         contacts.append("3");               contacts.append('\1');
         contacts.append("3");               contacts.append('\1');
-        contacts.append("3");               contacts.append('\1');
+        contacts.append("3");               contacts.append('\1');*/
         
-        //qDebug() << contacts;
+        qDebug() << QByteArray(contacts).replace('\1', "\\1").replace('\0', "\\0");
         
         QByteArray contactInfo [6];
         
@@ -274,15 +274,16 @@ void MXitC::incomingAction(Action action)
           for (int i = 0 ; i < 6 ; i++) 
           {
             int nextIndex = contacts.indexOf ( i == 5?'\0':'\1', lastIndex + 1);
-            if (nextIndex == -1) 
+            if (nextIndex == -1 || nextIndex == contacts.length() -1) 
             {
               nextIndex = contacts.length()-1;
               noMoreContacts = true;
             }
 
-            contactInfo [i] = contacts.mid( lastIndex+1, nextIndex - lastIndex -1 );
+            //qDebug() << contacts.length();
             //qDebug() << lastIndex;
             //qDebug() << nextIndex;
+            contactInfo [i] = contacts.mid( lastIndex+1, nextIndex - lastIndex -1 );
             //qDebug() << contactInfo [i];
             lastIndex = nextIndex;
           }
@@ -293,7 +294,7 @@ void MXitC::incomingAction(Action action)
              contact = contactsHash[QString(contactInfo [2])];
           }
           else {
-            qDebug() << "new contact";
+            qDebug() << "new contact ->" << contactInfo [2];
             contact = new Contact();
                       
           }
