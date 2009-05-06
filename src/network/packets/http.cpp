@@ -48,10 +48,10 @@ HTTP::~HTTP()
 **
 ** turns this HTTPPacket into a QByteArray:
 **
-**  "id"=loginname &
-**  "s"=[ sesid \1 ] seqno &
-**  "cm"=cmdNr &
-**  "ms"=msg0 \1 msg1 \1 ... \1 msgN
+**  id=loginname &
+**  s=[ sesid \1 ] seqno &
+**  cm=cmdNr &
+**  ms=msg0 \1 msg1 \1 ... \1 msgN
 **
 ** where
 **  loginname   is the unique username that identifies the user. Currently the 
