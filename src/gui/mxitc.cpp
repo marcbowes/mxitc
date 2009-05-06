@@ -263,7 +263,7 @@ void MXitC::incomingAction(Action action)
         contacts.append("3");               contacts.append('\1');
         contacts.append("3");               contacts.append('\1');*/
         
-        qDebug() << QByteArray(contacts).replace('\1', "\\1").replace('\0', "\\0");
+        // qDebug() << QByteArray(contacts).replace('\1', "\\1").replace('\0', "\\0");
         
         QByteArray contactInfo [6];
         
@@ -294,7 +294,7 @@ void MXitC::incomingAction(Action action)
              contact = contactsHash[QString(contactInfo [2])];
           }
           else {
-            qDebug() << "new contact ->" << contactInfo [2];
+            // qDebug() << "new contact ->" << contactInfo [2];
             contact = new Contact();
                       
           }

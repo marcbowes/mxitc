@@ -94,6 +94,7 @@ void Client::incomingPacket(const QByteArray &packet)
   /* post packet-level handling */
   switch (packetHeader["command"].toUInt()) {
     case LOGIN:
+      useVariable("loginname", 0);
       emit outgoingAction(LOGGED_IN);
       break;
     case LOGOUT:
@@ -101,8 +102,8 @@ void Client::incomingPacket(const QByteArray &packet)
       connection->close();
       break;
     case GETCONTACTS:
+      useVariable("contacts", 0);
       emit outgoingAction(CONTACTS_RECEIVED);
-      useVariable("contacts", 0); /* remove old copies */
       break;
     case GETMESSAGES:
       variables.remove("contactData");
