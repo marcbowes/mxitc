@@ -155,12 +155,9 @@ void Connection::TCP_read()
     }
     
     QByteArray packet = buffer.mid(idx_ln, real_length);
-    qDebug() << "emitting packet of length" << packet.size();
     emit outgoingPacket(packet);
     buffer.remove(0, idx_ln + packet.size());
-    qDebug() << "buffer size is now" << buffer.size();
   }
-  qDebug() << "chz";
 }
 
 
