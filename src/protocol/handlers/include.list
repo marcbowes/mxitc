@@ -5,3 +5,4 @@
 #include "06_addcontact.h"
 #include "08_removecontact.h"
 #include "09_getmessages.h"
+#include "10_sendnewmessage.h"

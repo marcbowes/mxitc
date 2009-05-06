@@ -35,9 +35,14 @@ Client::Client()
   
   /* create handlers */
   using namespace MXit::Protocol::Handlers;
-  handlers["login"] = new Login();
-  handlers["logout"] = new Logout();
-  handlers["getcontacts"] = new GetContacts();
+  /* 01 */ handlers["login"] = new Login();
+  /* 02 */ handlers["logout"] = new Logout();
+  /* 03 */ handlers["getcontacts"] = new GetContacts();
+  /* 05 */ handlers["updatecontact"] = new UpdateContact();
+  /* 06 */ handlers["addcontact"] = new AddContact();
+  /* 08 */ handlers["removecontact"] = new RemoveContact();
+  /* 09 */ handlers["getmessages"] = new GetMessages();
+  /* 10 */ handlers["sendnewmessage"] = new SendNewMessage();
 }
 
 
