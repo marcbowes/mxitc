@@ -23,6 +23,7 @@
 #include "protocol/aes.h"
 #include "protocol/handshaker.h"
 #include "protocol/handlers/include.list"
+#include "protocol/message_type.h"
 
 namespace MXit
 {
@@ -60,6 +61,7 @@ class Client : public QObject
   void authenticate(const VariableHash &settings);
   void initialize();
   void login(const QString &cellphone, const QString &password, const QString &captcha);
+  void sendMessage(const QString &contactAddress, const QString &message, MXit::Protocol::MessageType, unsigned int flags);
   QByteArray variableValue(const QString &name);
 
   private:        /* methods */

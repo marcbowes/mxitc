@@ -425,7 +425,7 @@ void MXitC::outgoingMessage(const QString & message)
 {
   currentContact->chatHistory.append( "Outgoing: " + message );
   mainTextArea->append ( "Outgoing: " + message );
-  emit incomingMessage (message); /*FIXME, this is just to test the signal, should be deleted*/
+  mxit->sendMessage("contactAddress", message, MXit::Protocol::MessageTypeNormal, 0);
 }
 
 /****************************************************************************

@@ -230,6 +230,30 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
 **
 ** Author: Marc Bowes
 **
+** Passes parameters onto a packet handler and transmits result
+**
+****************************************************************************/
+void Client::sendMessage(const QString &contactAddress, const QString &message, MXit::Protocol::MessageType type, unsigned int flags)
+{
+  /* build variables for login packet */
+  VariableHash messageVariables;
+  messageVariables["contactAddress"]  = contactAddress.toUtf8();
+  messageVariables["message"]         = message.toUtf8();
+  messageVariables["type"]            = QString("%1").arg(type).toUtf8();
+  messageVariables["flags"]           = QString("%1").arg(flags).toUtf8();
+  
+  /* send off a login packet */
+  MXit::Network::Packet *packet = buildPacket();
+  handlers["sendnewmessage"]->build(packet, messageVariables);
+  connection->sendPacket(*packet);
+  delete packet;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** this method instructs the connection to build a packet and then does some
 ** post-build setup based on the client's state
 **
