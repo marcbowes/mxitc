@@ -228,7 +228,7 @@ VariableHash Login::handle(const QByteArray &packet)
   variables.append("poll data");            /* [\0Poll data] */
   
   /* extract \0 seperated values */
-  VariableHash pass1 = hashVariables(packet, variables, "\0");
+  VariableHash pass1 = hashVariables(packet, variables, '\0');
   pass1.remove("command");                  /* we know this is 1 */
   pass1.remove("error");                    /* no error, handled earlier */
   
@@ -243,7 +243,7 @@ VariableHash Login::handle(const QByteArray &packet)
   variables.append("flags");
   
   /* extract \1 seperated values */
-  VariableHash pass2 = hashVariables(pass1["data"], variables, "\1");
+  VariableHash pass2 = hashVariables(pass1["data"], variables, '\1');
   
   /* TODO poll data */
   

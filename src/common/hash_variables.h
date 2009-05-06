@@ -23,10 +23,10 @@
 **
 ****************************************************************************/
 static VariableHash hashVariables(const QByteArray &data, const StringVec &variables,
-    const QString &delimiter = ";");
+    char delimiter = ';');
 
 static VariableHash hashVariables(const QByteArray &data, const StringVec &variables,
-  const QString &delimiter)
+  char delimiter)
 {
   /* setup */
   VariableHash params;                    /* to be returned */
@@ -48,7 +48,7 @@ static VariableHash hashVariables(const QByteArray &data, const StringVec &varia
       end = data.indexOf(delimiter, start);
     } else {
       /* i.e. we want to have empty values for the remaining variables */
-      params[key] = "";
+      params[key] = data.mid(start);
     }
   }
   

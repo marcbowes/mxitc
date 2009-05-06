@@ -115,7 +115,7 @@ VariableHash GetMessages::handle(const QByteArray &packet)
   variables.append("message");              /* msg */
   
   /* extract \0 seperated values */
-  VariableHash rawMessage = hashVariables(packet, variables, "\0");
+  VariableHash rawMessage = hashVariables(packet, variables, '\0');
   
   variables.clear();
   variables.append("contactAddress");
@@ -124,7 +124,7 @@ VariableHash GetMessages::handle(const QByteArray &packet)
   variables.append("id");
   variables.append("flags");
   
-  VariableHash contactDetails = hashVariables(rawMessage["contactData"], variables, "\1");
+  VariableHash contactDetails = hashVariables(rawMessage["contactData"], variables, '\1');
   
   return rawMessage.unite(contactDetails);
 }

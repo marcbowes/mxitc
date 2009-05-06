@@ -184,10 +184,11 @@ void MXitC::incomingAction(Action action)
         
         currentState = LOGGED_IN;
         setStatusBar();
-        
+        /*
         QMessageBox logged_in; 
         logged_in.setText(QString("Logged in to mxit network"));
         logged_in.exec();
+        */
         
         /* closing the login window if it is open (i.e. login != NULL)*/
         if (login != NULL) {
@@ -216,10 +217,11 @@ void MXitC::incomingAction(Action action)
     //--------------------------------------
     case CONTACTS_RECEIVED:
         /* TODO remove the message box */
-        
+        /*
         QMessageBox msgbox; 
         msgbox.setText(QString("Contacts received mofo!"));
         msgbox.exec();
+        */
         
         /* fetch contacts */
         /*  group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood \0
