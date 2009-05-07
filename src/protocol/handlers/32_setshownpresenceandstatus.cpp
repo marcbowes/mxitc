@@ -55,6 +55,9 @@ void SetShownPresenceAndStatus::build(MXit::Network::Packet *packet, VariableHas
   ***************************************************************************
   */
   
+  /* packet header setup */
+  packet->setCommand("32");
+  
   (*packet) << variables["show"]
             << variables["status"]
   ;

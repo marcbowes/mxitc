@@ -97,6 +97,12 @@ void Client::incomingPacket(const QByteArray &packet)
     case LOGIN:
       useVariable("loginname", 0);
       emit outgoingAction(LOGGED_IN);
+      
+      /* need to send presence to remain online */
+      variables["show"]   = "1";        /* online */
+      variables["status"] = "mxitc";
+      
+      sendPacket("setshownpresenceandstatus");
       break;
     case LOGOUT:
       emit outgoingAction(LOGGED_OUT);
@@ -183,6 +189,7 @@ void Client::authenticate(const VariableHash &settings)
   connection->addGateway(variables["soc2"]);
   connection->addGateway(variables["http2"]);
   
+  /* send login packet */
   sendPacket("login");
 }
 
