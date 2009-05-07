@@ -67,11 +67,13 @@ TCP::operator QByteArray() const
 {
   QByteArray self;
   self.append   ( QString("id=%1")  .arg(cellphone) ); self.append('\0');
-  self.append   ( QString("cm=%1")  .arg(command)   ); self.append('\0');
+  self.append   ( QString("cm=%1")  .arg(command)   ); 
   
   QString ms = getData();
-  if (!ms.isEmpty())
-    self.append   ( QString("ms=%1")  .arg(ms) ); //FIXME: not all packets have this
+  if (!ms.isEmpty()) {
+    self.append('\0');
+    self.append   ( QString("ms=%1")  .arg(ms) ); 
+  }
   
   self.append   ( extra );
   //self.append   ("\2"); /* TCP record terminator */
