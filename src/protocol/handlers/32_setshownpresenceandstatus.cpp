@@ -55,7 +55,9 @@ void SetShownPresenceAndStatus::build(MXit::Network::Packet *packet, VariableHas
   ***************************************************************************
   */
   
-  
+  (*packet) << variables["show"]
+            << variables["status"]
+  ;
 }
 
 
