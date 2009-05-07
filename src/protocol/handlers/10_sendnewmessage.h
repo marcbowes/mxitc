@@ -12,8 +12,6 @@
 #ifndef __MXIT_PROTOCOL_HANDLERS_SENDNEWMESSAGE_H__
 #define __MXIT_PROTOCOL_HANDLERS_SENDNEWMESSAGE_H__
 
-#include <QObject>
-
 #include "protocol/handler.h"
 
 #define SENDNEWMESSAGE 10

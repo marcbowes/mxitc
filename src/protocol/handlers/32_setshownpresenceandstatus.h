@@ -2,19 +2,20 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
-** Author: Tim Sjoberg, 2009
+** Author: Marc Bowes, 2009
+** Author: Richard Baxter, 2009
 **
-** MXit::Network::Handlers::GetContacts deals with logging out of MXit
+** MXit::Network::Handlers::Login deals with logging into MXit
 ** see build/handle definitions in .cpp file for implementation details
 **
 ****************************************************************************/
 
-#ifndef __MXIT_PROTOCOL_HANDLERS_GETCONTACTS_H__
-#define __MXIT_PROTOCOL_HANDLERS_GETCONTACTS_H__
+#ifndef __MXIT_PROTOCOL_HANDLERS_SETSHOWNPRESENCEANDSTATUS_H__
+#define __MXIT_PROTOCOL_HANDLERS_SETSHOWNPRESENCEANDSTATUS_H__
 
 #include "protocol/handler.h"
 
-#define GETCONTACTS 3
+#define SETSHOWNPRESENCEANDSTATUS 1
 
 namespace MXit
 {
@@ -25,11 +26,11 @@ namespace Protocol
 namespace Handlers
 {
 
-class GetContacts : public Handler
+class SetShownPresenceAndStatus : public Handler
 {
   public:
   
-  GetContacts() { command = GETCONTACTS; }
+  SetShownPresenceAndStatus() { command = SETSHOWNPRESENCEANDSTATUS; }
   
   virtual void build(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);
@@ -42,3 +43,4 @@ class GetContacts : public Handler
 }
 
 #endif
+

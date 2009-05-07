@@ -13,8 +13,6 @@
 #ifndef __MXIT_PROTOCOL_HANDLERS_LOGIN_H__
 #define __MXIT_PROTOCOL_HANDLERS_LOGIN_H__
 
-#include <QObject>
-
 #include "protocol/handler.h"
 
 #define LOGIN 1

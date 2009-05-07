@@ -12,8 +12,6 @@
 #ifndef __MXIT_PROTOCOL_HANDLERS_LOGOUT_H__
 #define __MXIT_PROTOCOL_HANDLERS_LOGOUT_H__
 
-#include <QObject>
-
 #include "protocol/handler.h"
 
 #define LOGOUT 2

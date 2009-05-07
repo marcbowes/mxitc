@@ -12,8 +12,6 @@
 #ifndef __MXIT_PROTOCOL_HANDLERS_REMOVECONTACT_H__
 #define __MXIT_PROTOCOL_HANDLERS_REMOVECONTACT_H__
 
-#include <QObject>
-
 #include "protocol/handler.h"
 
 #define REMOVECONTACT 8
