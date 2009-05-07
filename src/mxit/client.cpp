@@ -182,12 +182,7 @@ void Client::authenticate(const VariableHash &settings)
   connection->addGateway(variables["soc2"]);
   connection->addGateway(variables["http2"]);
   
-  /* send off a login packet */
-  MXit::Network::Packet *packet = buildPacket();
-  handlers["login"]->build(packet, variables);
-  connection->sendPacket(*packet);
-  delete packet;
-  
+  sendPacket("login");
 }
 
 
@@ -248,11 +243,7 @@ void Client::sendMessage(const QString &contactAddress, const QString &message, 
   messageVariables["type"]            = QString("%1").arg(type).toUtf8();
   messageVariables["flags"]           = QString("%1").arg(flags).toUtf8();
   
-  /* send off a login packet */
-  MXit::Network::Packet *packet = buildPacket();
-  handlers["sendnewmessage"]->build(packet, messageVariables);
-  connection->sendPacket(*packet);
-  delete packet;
+  sendPacket("sendnewmessage", messageVariables);
 }
 
 
@@ -427,10 +418,7 @@ void Client::setupReceived()
   connection->addGateway(variables["http2"]);
   
   /* send off a login packet */
-  MXit::Network::Packet *packet = buildPacket();
-  handlers["login"]->build(packet, variables);
-  connection->sendPacket(*packet);
-  delete packet;
+  sendPacket("login");
   
   /* cleanup */
   variables.remove("sessionid");
@@ -452,6 +440,35 @@ void Client::initializationComplete()
 {
   state = IDLE;
   emit captchaReceived(QByteArray::fromBase64(variables["captcha"]));
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** convenience method for packets using class variables
+**
+****************************************************************************/
+void Client::sendPacket(const QString &handler)
+{
+  sendPacket(handler, variables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** builds and sends a packet of the specified type from a variable hash
+**
+****************************************************************************/
+void Client::sendPacket(const QString &handler, VariableHash &packetVariables)
+{
+  MXit::Network::Packet *packet = buildPacket();
+  handlers[handler]->build(packet, packetVariables);
+  connection->sendPacket(*packet);
+  delete packet;
 }
 
 

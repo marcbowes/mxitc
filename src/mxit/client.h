@@ -70,6 +70,8 @@ class Client : public QObject
   void challenge(const QString &cellphone, const QString &captcha);
   MXit::Protocol::Handler* handlerFor(const QByteArray &command);
   void initializationComplete();
+  void sendPacket(const QString &handler);
+  void sendPacket(const QString &handler, VariableHash &packetVariables);
   void setupReceived();
   void useVariable(const QString &variable, unsigned int index);
 
