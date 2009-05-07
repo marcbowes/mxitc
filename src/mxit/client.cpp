@@ -38,10 +38,10 @@ Client::Client()
   /* 01 */ handlers["login"] = new Login();
   /* 02 */ handlers["logout"] = new Logout();
   /* 03 */ handlers["getcontacts"] = new GetContacts();
-  /* 05 */ handlers["updatecontact"] = new UpdateContact();
-  /* 06 */ handlers["addcontact"] = new AddContact();
+  /* 05 */ handlers["updatecontactinfo"] = new UpdateContactInfo();
+  /* 06 */ handlers["subscribetoanewcontact"] = new SubscribeToANewContact();
   /* 08 */ handlers["removecontact"] = new RemoveContact();
-  /* 09 */ handlers["getmessages"] = new GetMessages();
+  /* 09 */ handlers["getnewmessages"] = new GetNewMessages();
   /* 10 */ handlers["sendnewmessage"] = new SendNewMessage();
   /* 32 */ handlers["setshownpresenceandstatus"] = new SetShownPresenceAndStatus();
 }
@@ -95,24 +95,27 @@ void Client::incomingPacket(const QByteArray &packet)
   /* post packet-level handling */
   switch (packetHeader["command"].toUInt()) {
     case LOGIN:
+      /* variable scrubbing */
       useVariable("loginname", 0);
-      emit outgoingAction(LOGGED_IN);
       
       /* need to send presence to remain online */
       variables["show"]   = "1";        /* online */
       variables["status"] = "mxitc";
-      
       sendPacket("setshownpresenceandstatus");
+            
+      emit outgoingAction(LOGGED_IN);
       break;
     case LOGOUT:
-      emit outgoingAction(LOGGED_OUT);
       connection->close();
+      
+      emit outgoingAction(LOGGED_OUT);
       break;
     case GETCONTACTS:
       useVariable("contacts", 0);
+      
       emit outgoingAction(CONTACTS_RECEIVED);
       break;
-    case GETMESSAGES:
+    case GETNEWMESSAGES:
       variables.remove("contactData");
       break;
   }

@@ -17,10 +17,10 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handlers/01_login.cpp
   protocol/handlers/02_logout.cpp
   protocol/handlers/03_getcontacts.cpp
-  protocol/handlers/05_updatecontact.cpp
-  protocol/handlers/06_addcontact.cpp
+  protocol/handlers/05_updatecontactinfo.cpp
+  protocol/handlers/06_subscribetoanewcontact.cpp
   protocol/handlers/08_removecontact.cpp
-  protocol/handlers/09_getmessages.cpp
+  protocol/handlers/09_getnewmessages.cpp
   protocol/handlers/10_sendnewmessage.cpp
   protocol/handlers/32_setshownpresenceandstatus.cpp
   

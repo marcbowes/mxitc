@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include "09_getmessages.h"
+#include "09_getnewmessages.h"
 
 namespace MXit
 {
@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to request new messages
 **
 ****************************************************************************/
-void GetMessages::build(MXit::Network::Packet *packet, VariableHash &variables)
+void GetNewMessages::build(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -47,7 +47,7 @@ void GetMessages::build(MXit::Network::Packet *packet, VariableHash &variables)
 ** Extracts variable information from the get messages packet
 **
 ****************************************************************************/
-VariableHash GetMessages::handle(const QByteArray &packet)
+VariableHash GetNewMessages::handle(const QByteArray &packet)
 {
   /*
   == PACKET FORMAT

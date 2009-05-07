@@ -9,12 +9,12 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_PROTOCOL_HANDLERS_GETMESSAGES_H__
-#define __MXIT_PROTOCOL_HANDLERS_GETMESSAGES_H__
+#ifndef __MXIT_PROTOCOL_HANDLERS_GETNEWMESSAGES_H__
+#define __MXIT_PROTOCOL_HANDLERS_GETNEWMESSAGES_H__
 
 #include "protocol/handler.h"
 
-#define GETMESSAGES 9
+#define GETNEWMESSAGES 9
 
 namespace MXit
 {
@@ -25,11 +25,11 @@ namespace Protocol
 namespace Handlers
 {
 
-class GetMessages : public Handler
+class GetNewMessages : public Handler
 {
   public:
   
-  GetMessages() { command = GETMESSAGES; }
+  GetNewMessages() { command = GETNEWMESSAGES; }
   
   virtual void build(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);

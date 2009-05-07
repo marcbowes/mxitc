@@ -4,18 +4,17 @@
 **
 ** Author: Tim Sjoberg, 2009
 **
-** MXit::Network::Handlers::AddContact deals with requesting the addition of
-** a new contact
+** MXit::Network::Handlers::UpdateContact deals with updating a specific contacts details
 ** see build/handle definitions in .cpp file for implementation details
 **
 ****************************************************************************/
 
-#ifndef __MXIT_PROTOCOL_HANDLERS_ADDCONTACT_H__
-#define __MXIT_PROTOCOL_HANDLERS_ADDCONTACT_H__
+#ifndef __MXIT_PROTOCOL_HANDLERS_UPDATECONTACTINFO_H__
+#define __MXIT_PROTOCOL_HANDLERS_UPDATECONTACTINFO_H__
 
 #include "protocol/handler.h"
 
-#define ADDCONTACT 6
+#define UPDATECONTACTINFO 5
 
 namespace MXit
 {
@@ -26,11 +25,11 @@ namespace Protocol
 namespace Handlers
 {
 
-class AddContact : public Handler
+class UpdateContactInfo : public Handler
 {
   public:
   
-  AddContact() { command = ADDCONTACT; }
+  UpdateContactInfo() { command = UPDATECONTACTINFO; }
   
   virtual void build(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);

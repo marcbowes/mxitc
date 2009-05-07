@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include "05_updatecontact.h"
+#include "06_subscribetoanewcontact.h"
 
 namespace MXit
 {
@@ -19,55 +19,59 @@ namespace Handlers
 **
 ** Author: Tim Sjoberg
 **
-** Populates a packet with the information required to update a contacts
-** information
+** Populates a packet with the information required to request a contact
+** addition
 **
 ****************************************************************************/
-void UpdateContact::build(MXit::Network::Packet *packet, VariableHash &variables)
+void SubscribeToANewContact::build(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
   ***************************************************************************
   **
   **  id=loginname[\1sesid]\0
-  **  cm=5\0
-  **  ms=group \1 contactAddress \1 nickname
+  **  cm=6\0
+  **  ms=group \1 contact_loginname \1 nickname \1 type \1 msg
   **
   ***************************************************************************
   
   == DEFINITIONS
   ***************************************************************************
   **
-  **  group               is the new group the contact should be moved to
-  **  contactAddress      identifies the contact to update
-  **  nickname            is the contact's new nickname
+  **  group               is the group the contact should be entered into
+  **  contact_loginname   identifies the contact uniquely
+  **  nickname            the contact's nickname
+  **  type                specifies the type of contact (see 3. Get Contacts)
+  **  msg                 an optional invitation message
   **
   ***************************************************************************
   */
   
   /* packet header setup */
-  packet->setCommand("5");
+  packet->setCommand("6");
   
   /* packet data setup */
   (*packet) << variables["group"];
-  (*packet) << variables["contactAddress"];
+  (*packet) << variables["contact_loginname"];
   (*packet) << variables["nickname"];
+  (*packet) << variables["type"];
+  (*packet) << variables["msg"];
 }
 
 /****************************************************************************
 **
 ** Author: Tim Sjoberg
 **
-** Extracts variable information from the update contact packet reply
+** Extracts variable information from the add contact packet reply
 **
 ****************************************************************************/
-VariableHash UpdateContact::handle(const QByteArray &packet)
+VariableHash SubscribeToANewContact::handle(const QByteArray &packet)
 {
   /*
   == PACKET FORMAT
   ***************************************************************************
   **
-  **  5\0
+  **  6\0
   **  errorCode[\1errorMessage]
   **
   ***************************************************************************
