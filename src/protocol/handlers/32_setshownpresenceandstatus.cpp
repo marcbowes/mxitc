@@ -24,7 +24,38 @@ namespace Handlers
 ****************************************************************************/
 void SetShownPresenceAndStatus::build(MXit::Network::Packet *packet, VariableHash &variables)
 {
-  // stub
+  /*
+  == PACKET FORMAT
+  ***************************************************************************
+  **
+  **  id=loginname [\1sesid]\0
+  **  cm=32\0
+  **  ms=show\1status
+  **
+  ***************************************************************************
+  
+   == DEFINITIONS
+  ***************************************************************************
+  **
+  **  show[1]             indicates the availability of the user
+  **  status              a natural language description of presence status
+  **                      to provide detailed description of an availability
+  **                      state
+  **
+  ***************************************************************************
+  
+  == NOTES
+  ***************************************************************************
+  **
+  **  [1] Show
+  **    1                 online
+  **    2                 away
+  **    4                 dnd (do not disturb)
+  **
+  ***************************************************************************
+  */
+  
+  
 }
 
 
@@ -37,7 +68,15 @@ void SetShownPresenceAndStatus::build(MXit::Network::Packet *packet, VariableHas
 ****************************************************************************/
 VariableHash SetShownPresenceAndStatus::handle(const QByteArray &packet)
 {
-  // stub
+  /*
+  == PACKET FORMAT
+  ***************************************************************************
+  **
+  **  10\0
+  **  errorCode[\1errorMessage]
+  **
+  ***************************************************************************
+  */
 }
 
 }
