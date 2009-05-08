@@ -14,7 +14,6 @@
 
 #include <QHttp>
 #include <QTcpSocket>
-#include <QUrl>
 
 #include "common/types.h"
 
@@ -56,7 +55,7 @@ class Connection : public QObject
   private slots:
   
   void HTTP_connect();
-  void HTTP_read();
+  void HTTP_read(int id, bool error);
   void TCP_connect();
   void TCP_connected();
   void TCP_disconnect();

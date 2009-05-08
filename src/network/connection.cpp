@@ -4,6 +4,8 @@
 **
 ****************************************************************************/
 
+#include <QUrl>
+
 #include "connection.h"
 
 namespace MXit
@@ -22,6 +24,10 @@ namespace Network
 Connection::Connection()
   : state (DISCONNECTED)
 {
+  /* HTTP setup */
+  connect(&http,    SIGNAL(requestFinished(int, bool)),
+          this,     SLOT(HTTP_read(int, bool)));
+  
   /* TCP setup */
   socket = new QTcpSocket();
   connect(socket,   SIGNAL(readyRead()),    this,   SLOT(TCP_read()));
@@ -70,9 +76,10 @@ void Connection::HTTP_connect()
 ** emits one HTTP packet at a time
 **
 ****************************************************************************/
-void Connection::HTTP_read()
+void Connection::HTTP_read(int id, bool error)
 { 
-  // stub
+  QByteArray in = http.readAll();
+  qDebug() << in;
 }
 
 
@@ -276,7 +283,7 @@ void Connection::open(const Packet *login)
   /* determine type of connection to open */
   switch (gateway.type) {
     case Gateway::HTTP:
-      /* FIXME: anything in particular? */
+      HTTP_connect();
       break;
     case Gateway::TCP:
       TCP_connect();
@@ -321,7 +328,7 @@ void Connection::sendPacket(const Packet *packet)
   /* determine type of connection to open */
   switch (gateway.type) {
     case Gateway::HTTP:
-      http.get(QUrl::toPercentEncoding(QString(*packet)));
+      http.get(QString("%1?%2").arg(gateway.host).arg(QString(*packet)));
       break;
     case Gateway::TCP:
       socket->write(*packet);
