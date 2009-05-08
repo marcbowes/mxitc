@@ -29,8 +29,10 @@ SET(MXIT_CLIENT_SRCS_CXX
   network/connection.cpp
   protocol/handshaker.cpp
   mxit/client.cpp
+  
   gui/contact.cpp
   gui/message.cpp
+  gui/dock_widgets/options.cpp
   gui/dialogs/addContact.cpp
   gui/dialogs/login.cpp
   gui/debugWidget.cpp
@@ -45,8 +47,10 @@ SET(MXIT_CLIENT_MOC_SRCS
   network/connection.h
   protocol/handshaker.h
   mxit/client.h
+  
   gui/message.h
   gui/contact.h
+  gui/dock_widgets/options.h
   gui/dialogs/addContact.h
   gui/dialogs/login.h
   gui/debugWidget.h
@@ -56,6 +60,7 @@ SET(MXIT_CLIENT_MOC_SRCS
 
 SET(MXIT_CLIENT_UI
   
+  gui/dock_widgets/options.ui
   gui/dialogs/login.ui
   gui/dialogs/addContact.ui
   gui/debugWidget.ui

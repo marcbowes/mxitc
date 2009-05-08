@@ -22,6 +22,7 @@
 #include "common/actions.h"
 #include "mxit/client.h"
 #include "gui/debugWidget.h"
+#include "gui/dock_widgets/options.h"
 #include "gui/dialogs/login.h"
 #include "gui/dialogs/addContact.h"
 #include "gui/contact.h"
@@ -56,7 +57,12 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void contactsReceived();
   void messageReceived();
+  
 
+  void toggleDockWidget(QDockWidget * widget);
+  private slots:
+  void debugToggle();
+  void optionsToggle();
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public slots:
@@ -77,6 +83,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void incomingAction(Action action);
   void setCurrentUser(QListWidgetItem * item);
   void refreshChatBox(); /*FIXME slot ? - rax*/
+  
+  
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
@@ -100,6 +108,9 @@ class MXitC : public QMainWindow, private Ui::MXitC
  
   Dialog::Login * login;
   QLabel * statusLabel;
+  
+  /* Dockable Widgets*/
+  DockWidget::Options * optionWidget;
 };
 
 }

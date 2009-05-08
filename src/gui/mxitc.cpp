@@ -37,12 +37,23 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   /* adding the debug window */
   debugWidget = new DebugDockWidget (this);
-  debugWidget->setFeatures (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+  debugWidget->setFeatures (QDockWidget::AllDockWidgetFeatures);
   addDockWidget(Qt::RightDockWidgetArea, debugWidget);
+  
+  /* adding the options window */
+  optionWidget = new DockWidget::Options (this);
+  optionWidget->setFeatures (QDockWidget::AllDockWidgetFeatures);
+  addDockWidget(Qt::RightDockWidgetArea, optionWidget);
+  //optionWidget->setFloating ( true );
+  optionWidget->setVisible ( false );
+  
+  
+  connect(actionDebug_Variables, SIGNAL(triggered()), this, SLOT(debugToggle()));
+  connect(actionOptions, SIGNAL(triggered()), this, SLOT(optionsToggle()));
   
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
-
+  /*TODO integrate into QT designer*/
   connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginDialog()));
   connect(actionAddContact, SIGNAL(triggered()), this, SLOT(openAddContactDialog()));
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
@@ -107,6 +118,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
 }
 
 
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
@@ -121,8 +133,46 @@ MXitC::~MXitC()
   statusbar->removeWidget(statusLabel);
   delete statusLabel;
   
+  delete debugWidget;
+  delete optionWidget;
+  
+}
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::toggleDockWidget(QDockWidget * widget) {
+  
+  /*TODO make a trigger raise if not raised else show if not shown else not show if shown( and raised)*/
+  /*qDebug() << widget->isVisible();
+  if (!widget->isActiveWindow()) {
+    widget->show();
+    widget->raise();
+    widget->activateWindow();
+  }
+  else {*/
+  
+  
+  if (widget->isVisible()) {
+    widget->setVisible(false);
+  }
+  else {
+    widget->setVisible(true);
+    widget->raise();
+  }
+  
+  //}
 }
 
+
+void MXitC::debugToggle() {
+  toggleDockWidget(debugWidget);
+}
+void MXitC::optionsToggle() {
+  toggleDockWidget(optionWidget);
+}
 
 /****************************************************************************
 **
