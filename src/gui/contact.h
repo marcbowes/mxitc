@@ -8,17 +8,23 @@
 **
 ****************************************************************************/
 
+#ifndef __MXIT_GUI_CONTACT_H__
+#define __MXIT_GUI_CONTACT_H__
+
 #include <QObject>
 #include "common/types.h"
+#include "message.h"
 
 namespace MXit
 {
 
+namespace GUI
+{
 
 class Contact : public QObject
 {
   Q_OBJECT
-
+  
   public:         /* class specific */
 	
   Contact(
@@ -119,8 +125,8 @@ class Contact : public QObject
   void setMood(int mood);
 
 
-  StringVec chatHistory; // TODO make private, too lazy to do all the methods right now - rax
-  /*also TODO change the chatHistory from string to a ChatLine class or something (that'll hold who sent the message and the message and any other relavant information)*/
+  QVector <Message> chatHistory; // TODO make private, too lazy to do all the methods right now - rax
+
   QString chatInputText; /* an area to save what the user has types in the input line */
 
   /* group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood \0 */
@@ -137,10 +143,12 @@ class Contact : public QObject
 };
 
 
+} /* end namespace GUI */
+
 } /* end namespace MXit */
 
 
-
+#endif
 
 
 

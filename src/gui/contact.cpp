@@ -11,6 +11,9 @@
 namespace MXit
 {
 
+namespace GUI
+{
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
@@ -163,6 +166,8 @@ void Contact::setMood(int mood)
   this->mood = mood;
 }
 
+
+} /* end namespace GUI */
 
 } /* end namespace MXit */
 

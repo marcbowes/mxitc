@@ -53,13 +53,15 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void updateContactsList(const QVector<Contact>& contacts);
   void setStatusBar();
   
+  
+  void contactsReceived();
+  void messageReceived();
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public slots:
   
   void sendMessageFromChatInput();
-  void incomingMessage(const QString & contactAddress, const QString & message);
   void incomingError(int errorCode, const QString & errorString);
 
   protected slots:
@@ -81,8 +83,9 @@ class MXitC : public QMainWindow, private Ui::MXitC
   private:        /* variables */
   
   
-  QHash<QString, QString> contactAddressToNickname; // converts contactAddresses to their unique nickname
-  QHash<QString, Contact*> contactsHash; // identified by nickname (NOT contactAddress)
+  QHash<QString, QString> nicknameToContactAddress; // converts contactAddresses to their unique nickname
+  QHash<QString, Contact> contactsHash; // identified by contactAddress (NOT nickname)
+  
   
   Contact * currentContact;
   

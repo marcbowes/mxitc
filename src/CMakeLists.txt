@@ -22,6 +22,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handlers/08_removecontact.cpp
   protocol/handlers/09_getnewmessages.cpp
   protocol/handlers/10_sendnewmessage.cpp
+  protocol/handlers/27_getmultimediamessage.cpp
   protocol/handlers/32_setshownpresenceandstatus.cpp
   
   network/packet.cpp
@@ -30,6 +31,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handshaker.cpp
   mxit/client.cpp
   gui/contact.cpp
+  gui/message.cpp
   gui/dialogs/addContact.cpp
   gui/dialogs/login.cpp
   gui/debugWidget.cpp
@@ -44,6 +46,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   network/connection.h
   protocol/handshaker.h
   mxit/client.h
+  gui/message.h
   gui/contact.h
   gui/dialogs/addContact.h
   gui/dialogs/login.h

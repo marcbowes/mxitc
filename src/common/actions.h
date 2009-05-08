@@ -23,7 +23,8 @@ namespace MXit
 enum Action {
   LOGGED_IN,
   LOGGED_OUT,
-  CONTACTS_RECEIVED
+  CONTACTS_RECEIVED,
+  MESSAGE_RECEIVED
 };
 
 

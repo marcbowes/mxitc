@@ -51,8 +51,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   connect(mxit, SIGNAL(outgoingError(int, const QString &)), this, SLOT(incomingError(int, const QString &)));
   connect(mxit, SIGNAL(outgoingAction(Action)), this, SLOT(incomingAction(Action)));
-  connect(mxit, SIGNAL(outgoingMessage(const QString &, const QString &)), this, SLOT(incomingMessage(const QString &, const QString &)));
-  //connect(app, SIGNAL(lastWindowClosed()), this, SLOT(showQuitDialog()));
+  
   
   connect(contactList, SIGNAL(itemPressed ( QListWidgetItem *  )), this, SLOT(setCurrentUser( QListWidgetItem *  )));
   
@@ -122,9 +121,6 @@ MXitC::~MXitC()
   statusbar->removeWidget(statusLabel);
   delete statusLabel;
   
-  Q_FOREACH(Contact* c, contactsHash) {
-    delete c;
-  }
 }
 
 
@@ -217,122 +213,169 @@ void MXitC::incomingAction(Action action)
       
     //--------------------------------------
     case CONTACTS_RECEIVED:
-        /* TODO remove the message box */
-        /*
-        QMessageBox msgbox; 
-        msgbox.setText(QString("Contacts received mofo!"));
-        msgbox.exec();
-        */
-        
-        /* fetch contacts */
-        /*  group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood \0
-            ...
-            groupN \1 contactAddressN \1 nicknameN \1 presenceN \1 typeN \1 mood
-        */
-        QByteArray contacts = mxit->variableValue("contacts");
-        
-        /* manually entering data */
-        /*contacts.append("group1");          contacts.append('\1');
-        contacts.append("uniqueAddy1");     contacts.append('\1');
-        contacts.append("raxter_dude");     contacts.append('\1');
-        contacts.append("1");               contacts.append('\1');
-        contacts.append("0");               contacts.append('\1');
-        contacts.append("0");               contacts.append('\1');
-        
-                                            contacts.append('\0');
-                                            
-        contacts.append("group2");          contacts.append('\1');
-        contacts.append("uniqueAddy2");     contacts.append('\1');
-        contacts.append("some_other_dude"); contacts.append('\1');
-        contacts.append("0");               contacts.append('\1');
-        contacts.append("1");               contacts.append('\1');
-        contacts.append("2");               contacts.append('\1');
-        
-                                            contacts.append('\0');
-                                            
-        contacts.append("group3");          contacts.append('\1');
-        contacts.append("uniqueAddy3");     contacts.append('\1');
-        contacts.append("uhh_marc");        contacts.append('\1');
-        contacts.append("3");               contacts.append('\1');
-        contacts.append("2");               contacts.append('\1');
-        contacts.append("2");               contacts.append('\1');
-        
-                                            contacts.append('\0');
-                                            
-        contacts.append("group1");          contacts.append('\1');
-        contacts.append("uniqueAddy4");     contacts.append('\1');
-        contacts.append("tim_or_someone");  contacts.append('\1');
-        contacts.append("3");               contacts.append('\1');
-        contacts.append("3");               contacts.append('\1');
-        contacts.append("3");               contacts.append('\1');*/
-        
-        // qDebug() << QByteArray(contacts).replace('\1', "\\1").replace('\0', "\\0");
-        
-        QByteArray contactInfo [6];
-        
-        int lastIndex = -1;
-        bool noMoreContacts = false;
-        while (!noMoreContacts) 
-        {
-          for (int i = 0 ; i < 6 ; i++) 
-          {
-            int nextIndex = contacts.indexOf ( i == 5?'\0':'\1', lastIndex + 1);
-            if (nextIndex == -1 || nextIndex == contacts.length() -1) 
-            {
-              nextIndex = contacts.length()-1;
-              noMoreContacts = true;
-            }
-
-            //qDebug() << contacts.length();
-            //qDebug() << lastIndex;
-            //qDebug() << nextIndex;
-            contactInfo [i] = contacts.mid( lastIndex+1, nextIndex - lastIndex -1 );
-            //qDebug() << contactInfo [i];
-            lastIndex = nextIndex;
-          }
-          
-          /* FIXME ugly code below... - rax */
-          Contact * contact;
-          if (contactsHash.contains(QString(contactInfo [2]))) {
-             contact = contactsHash[QString(contactInfo [2])];
-          }
-          else {
-            // qDebug() << "new contact ->" << contactInfo [2];
-            contact = new Contact();
-                      
-          }
-          
-          contact->setGroup(          QString(contactInfo [0]));
-          contact->setContactAddress( QString(contactInfo [1]));
-          contact->setNickname(       QString(contactInfo [2]));
-          contact->setPresence(       QString(contactInfo [3]).toInt());
-          contact->setType(           QString(contactInfo [4]).toInt());
-          contact->setMood(           QString(contactInfo [5]).toInt());
-                
-          if (!contactsHash.contains(QString(contactInfo [2]))) { 
-            contact->chatHistory.append("User: "+contact->getNickname());
-            contact->chatHistory.append("CA: "+contact->getContactAddress());
-            contactsHash[contact->getNickname()] = contact;
-            contactAddressToNickname[contact->getContactAddress()] = contact->getNickname();
-            
-          }                   
-        }
-        
-        /* resetting contacts list*/
-        contactList->clear();/* FIXME make a tree view */
-        Q_FOREACH(Contact* c, contactsHash) {
-          contactList->addItem( c->getNickname() );
-        }
-        
-        
+      contactsReceived();
       break;
       
-  
-  
+    //--------------------------------------
+    case MESSAGE_RECEIVED:
+      messageReceived();
+    break;
   }
 
 }
 
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+
+void MXitC::contactsReceived(){
+
+  /* TODO remove the message box */
+  /*
+  QMessageBox msgbox; 
+  msgbox.setText(QString("Contacts received mofo!"));
+  msgbox.exec();
+  */
+  
+  /* fetch contacts */
+  /*  group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood \0
+      ...
+      groupN \1 contactAddressN \1 nicknameN \1 presenceN \1 typeN \1 mood
+  */
+  QByteArray contacts = mxit->variableValue("contacts");
+  
+  /* manually entering data */
+  /*contacts.append("group1");          contacts.append('\1');
+  contacts.append("uniqueAddy1");     contacts.append('\1');
+  contacts.append("raxter_dude");     contacts.append('\1');
+  contacts.append("1");               contacts.append('\1');
+  contacts.append("0");               contacts.append('\1');
+  contacts.append("0");               contacts.append('\1');
+  
+                                      contacts.append('\0');
+                                      
+  contacts.append("group2");          contacts.append('\1');
+  contacts.append("uniqueAddy2");     contacts.append('\1');
+  contacts.append("some_other_dude"); contacts.append('\1');
+  contacts.append("0");               contacts.append('\1');
+  contacts.append("1");               contacts.append('\1');
+  contacts.append("2");               contacts.append('\1');
+  
+                                      contacts.append('\0');
+                                      
+  contacts.append("group3");          contacts.append('\1');
+  contacts.append("uniqueAddy3");     contacts.append('\1');
+  contacts.append("uhh_marc");        contacts.append('\1');
+  contacts.append("3");               contacts.append('\1');
+  contacts.append("2");               contacts.append('\1');
+  contacts.append("2");               contacts.append('\1');
+  
+                                      contacts.append('\0');
+                                      
+  contacts.append("group1");          contacts.append('\1');
+  contacts.append("uniqueAddy4");     contacts.append('\1');
+  contacts.append("tim_or_someone");  contacts.append('\1');
+  contacts.append("3");               contacts.append('\1');
+  contacts.append("3");               contacts.append('\1');
+  contacts.append("3");               contacts.append('\1');*/
+  
+  // qDebug() << QByteArray(contacts).replace('\1', "\\1").replace('\0', "\\0");
+  
+  QByteArray contactInfo [6];
+  
+  int lastIndex = -1;
+  bool noMoreContacts = false;
+  while (!noMoreContacts) 
+  {
+    for (int i = 0 ; i < 6 ; i++) 
+    {
+      int nextIndex = contacts.indexOf ( i == 5?'\0':'\1', lastIndex + 1);
+      if (nextIndex == -1 || nextIndex == contacts.length() -1) 
+      {
+        nextIndex = contacts.length()-1;
+        noMoreContacts = true;
+      }
+
+      //qDebug() << contacts.length();
+      //qDebug() << lastIndex;
+      //qDebug() << nextIndex;
+      contactInfo [i] = contacts.mid( lastIndex+1, nextIndex - lastIndex -1 );
+      //qDebug() << contactInfo [i];
+      lastIndex = nextIndex;
+    }
+    
+    /* FIXME ugly code below... - rax */
+    
+    bool newContact = false;
+    QString contactAddress = contactInfo [1];
+    Contact contact;
+                                          
+    if (!contactsHash.contains(contactAddress)) {
+      Contact & c = contactsHash[contactAddress];
+      newContact = true;
+    }        
+    
+    Contact & c = contactsHash[contactAddress];
+    c.setGroup(          QString(contactInfo [0]));
+    c.setContactAddress( QString(contactInfo [1]));
+    c.setNickname(       QString(contactInfo [2]));
+    c.setPresence(       QString(contactInfo [3]).toInt());
+    c.setType(           QString(contactInfo [4]).toInt());
+    c.setMood(           QString(contactInfo [5]).toInt());
+    
+    if(newContact) {
+      nicknameToContactAddress[c.getNickname()] = c.getContactAddress();
+     
+      c.chatHistory.append( Message(0, "User: "+ c.getNickname()));
+      c.chatHistory.append( Message(0, "CA: "+ c.getContactAddress()));
+    }
+  }
+  
+  /* resetting contacts list*/
+  contactList->clear();/* FIXME make a tree view */
+  Q_FOREACH(const Contact & c, contactsHash) {
+    contactList->addItem( c.getNickname() );
+  }
+        
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::messageReceived(){
+
+  /*QHashIterator<QString, Contact> i(contactsHash);
+  while (i.hasNext()) {
+    i.next();
+    qDebug() << i.key() << ": " << i.value().getContactAddress();
+  }*/
+  
+  //QString nickname = contactAddressToNickname[];
+  //qDebug() << "nickname = " << nickname;
+  
+  QString contactAddress = mxit->variableValue("contactAddress");
+  //qDebug() << "contactAddress = " << contactAddress;
+  if (contactsHash.contains(contactAddress)) {
+  
+    Contact& sender = contactsHash[contactAddress];
+    
+    sender.chatHistory.append( Message(&sender, mxit->variableValue("message")) );
+    refreshChatBox();
+  }
+  else {
+    qDebug() << "wtf unknown contact!"; 
+    /*TODO handel this eror case, even though it should NEVER happen - rax*/
+  }
+        
+}
 
 /****************************************************************************
 **
@@ -343,7 +386,9 @@ void MXitC::incomingAction(Action action)
 ****************************************************************************/
 
 void MXitC::setCurrentUser(QListWidgetItem * item){
-  currentContact = contactsHash[item->text()];
+  //qDebug() << item->text();
+  //qDebug() << nicknameToContactAddress[item->text()];
+  currentContact = &contactsHash[nicknameToContactAddress[item->text()]];
   refreshChatBox();
 }
 
@@ -361,8 +406,8 @@ void MXitC::refreshChatBox(){
 
   mainTextArea->clear();
   if (currentContact != NULL) {
-    Q_FOREACH(QString s, currentContact->chatHistory) {
-      mainTextArea->append ( s );
+    Q_FOREACH(const Message& m, currentContact->chatHistory) {
+      mainTextArea->append ( m.getFormattedMsg() );
     }
   }
   
@@ -405,34 +450,6 @@ void MXitC::sendMessageFromChatInput()
 **
 ** Author: Richard Baxter
 **
-** Handles an incoming message (received from the network controller)
-**
-****************************************************************************/
-
-void MXitC::incomingMessage(const QString & contactAddress, const QString & message)
-{
-  /*QHashIterator<QString, Contact*> i(contactsHash);
-  while (i.hasNext()) {
-    i.next();
-    qDebug() << i.key() << ": " << i.value() << ": " << i.value()->getContactAddress();
-  }
-  qDebug() << "incomingMessage(contactAddress = " << contactAddress << ", const QString & = " << message << ")";
-  */
-  QString nickname = contactAddressToNickname[contactAddress];
-  //qDebug() << "nickname = " << nickname;
-  if (contactsHash.contains(nickname)) {
-    //qDebug() << "contactsHash[nickname] = " << contactsHash[nickname];
-    contactsHash[nickname]->chatHistory.append( "Incoming: " + message );
-    refreshChatBox();
-  }
-  else
-    qDebug() << "wtf unknown contact!"; /*TODO handel this eror case, even though it should NEVER happen - rax*/
-}
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
 ** Handles an incoming error (recieved from the client)
 **
 ****************************************************************************/
@@ -460,10 +477,11 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
 void MXitC::outgoingMessage(const QString & message)
 {
   if (currentContact) {
-    currentContact->chatHistory.append( "Outgoing: " + message );
-    mainTextArea->append ( "Outgoing: " + message );
-    qDebug() << currentContact->getContactAddress()<< message<< MXit::Protocol::MessageTypeNormal<< 0;
+    currentContact->chatHistory.append(Message ( 0, message) );
+    
     mxit->sendMessage(currentContact->getContactAddress(), message, MXit::Protocol::MessageTypeNormal, 0);
+    
+    refreshChatBox();
     
   }
 }
