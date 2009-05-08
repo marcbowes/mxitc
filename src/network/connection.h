@@ -29,9 +29,6 @@ namespace MXit
 namespace Network
 {
 
-typedef QVector         <Gateway>  GatewayVec;
-typedef QVectorIterator <Gateway>  GatewayVecItr;
-
 class Connection : public QObject
 {
   Q_OBJECT
@@ -44,14 +41,15 @@ class Connection : public QObject
   enum State {
     CONNECTED,
     CONNECTING,
+    DISCONNECTING,
     DISCONNECTED
   };
 
   signals:
   
-  void TCP_error(QTcpSocket::SocketError error);
   void outgoingError(const QString &message);
   void outgoingPacket(const QByteArray &packet);
+  void outgoingState(const State &outgoing);
 
   private slots:
   
@@ -64,18 +62,19 @@ class Connection : public QObject
 
   public:         /* methods */
   
-  void addGateway(const QString &connectionString);
   Packet *buildPacket();
   void close();
+  State getState();
   bool isHTTP();
-  void sendPacket(const Packet &packet);
+  void open(const Packet *login);
+  void setGateway(const QString &connectionString);
+  void sendPacket(const Packet *packet);
   
   private:        /* variables */
   
   QByteArray      buffer;
   Gateway         gateway;
-  GatewayVec      gateways;
-  GatewayVecItr   itr;
+  Packets::TCP    login;        /* TCP reconnect */
   QTcpSocket     *socket;       /* TCP only */
   State           state;
 };

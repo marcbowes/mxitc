@@ -20,13 +20,13 @@ namespace Network
 **
 ****************************************************************************/
 Connection::Connection()
-  : state (DISCONNECTED), itr (gateways)
+  : state (DISCONNECTED)
 {
   /* TCP setup */
   socket = new QTcpSocket();
-  connect(socket, SIGNAL(readyRead()), this, SLOT(incomingPacket()));
-  connect(socket, SIGNAL(connected()), this, SLOT(TCP_connected()));
-  connect(socket, SIGNAL(disconnected()), this, SLOT(TCP_connect()));
+  connect(socket,   SIGNAL(readyRead()),    this,   SLOT(incomingPacket()));
+  connect(socket,   SIGNAL(connected()),    this,   SLOT(TCP_connected()));
+  connect(socket,   SIGNAL(disconnected()), this,   SLOT(TCP_disconnected()));
 }
 
 
@@ -52,22 +52,13 @@ Connection::~Connection()
 ****************************************************************************/
 void Connection::TCP_connect()
 {
-  /* gateway cycling */
-  if (itr.hasNext())
-    gateway = itr.next();
-  else {
-    itr = gateways;
-    if (itr.hasNext())
-      gateway = itr.next();
-    else {
-      emit outgoingError("Could not find a gateway to connect to");
-      qDebug() << "no gateways to connect to";
-      return;
-    }
+  /* check legitimacy of gateway */
+  if (gateway.host.isEmpty() || gateway.port == 0 || gateway.type != Gateway::TCP) {
+    emit outgoingError("Invalid TCP Gateway");
+    return;
   }
   
   socket->connectToHost(gateway.host, gateway.port);
-  state = CONNECTING;
 }
 
 
@@ -106,10 +97,8 @@ void Connection::TCP_disconnect()
 ****************************************************************************/
 void Connection::TCP_disconnected()
 {
-  if (state != DISCONNECTED) {
-    state = DISCONNECTED;
-    TCP_connect();
-  }
+  state = DISCONNECTED;
+  emit outgoingState(DISCONNECTED);
 }
 
 
@@ -179,21 +168,6 @@ void Connection::incomingPacket()
 **
 ** Author: Marc Bowes
 **
-** adds a gateway to the connection
-** (not thread-safe)
-**
-****************************************************************************/
-void Connection::addGateway(const QString &connectionString)
-{
-  Gateway gateway (connectionString);
-  gateways.append(gateway);
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
 ** builds a packet of the appropriate sub-class
 ** this packet needs to be cleaned up at a later stage
 **
@@ -207,8 +181,11 @@ Packet* Connection::buildPacket() {
     case Gateway::HTTP:
       packet = new Packets::HTTP();
       break;
-    default: /* FIXME !! */
+    case Gateway::TCP:
       packet = new Packets::TCP();
+      break;
+    default:
+      emit outgoingError("Invalid Gateway");
       break;
   }
   
@@ -225,8 +202,33 @@ Packet* Connection::buildPacket() {
 ****************************************************************************/
 void Connection::close()
 {
-  state = DISCONNECTED;
-  TCP_disconnect();
+  state = DISCONNECTING;
+  
+  /* determine type of connection to open */
+  switch (gateway.type) {
+    case Gateway::HTTP:
+      /* TODO: HTTP */
+      break;
+    case Gateway::TCP:
+      TCP_disconnect();
+      break;
+    default:
+      emit outgoingError("Invalid Gateway");
+      return;
+  }
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** returns the current state
+**
+****************************************************************************/
+Connection::State Connection::getState()
+{
+  return state;
 }
 
 
@@ -247,15 +249,84 @@ bool Connection::isHTTP()
 **
 ** Author: Marc Bowes
 **
+** calls the appropriate connect method (based on gateway)
+**
 ****************************************************************************/
-void Connection::sendPacket(const Packet &packet)
+void Connection::open(const Packet *login)
+{
+  /* determine type of connection to open */
+  switch (gateway.type) {
+    case Gateway::HTTP:
+      /* TODO: HTTP */
+      break;
+    case Gateway::TCP:
+      TCP_connect();
+      break;
+    default:
+      emit outgoingError("Invalid Gateway");
+      return;
+  }
+  state = CONNECTING;
+  emit outgoingState(CONNECTING);
+  sendPacket(login);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Connection::sendPacket(const Packet *packet)
 {
   if (state != CONNECTED) {
-    if (state != CONNECTING)
-      TCP_connect();
-    socket->waitForConnected();
+    if (state != CONNECTING) {
+      emit outgoingError("No connection has been opened");
+    }
+    
+    /* determine type of connection to open */
+    switch (gateway.type) {
+      case Gateway::HTTP:
+        /* TODO: HTTP */
+        break;
+      case Gateway::TCP:
+        socket->waitForConnected();
+        break;
+      default:
+        emit outgoingError("Invalid Gateway");
+        delete packet;
+        return;
+    }
   }
-  socket->write(packet);
+  
+  /* determine type of connection to open */
+  switch (gateway.type) {
+    case Gateway::HTTP:
+      /* TODO: HTTP */
+      break;
+    case Gateway::TCP:
+      socket->write(*packet);
+      break;
+    default:
+      emit outgoingError("Invalid Gateway");
+      delete packet;
+      return;
+  }
+  
+  delete packet;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** sets the gateway to connect through
+**
+****************************************************************************/
+void Connection::setGateway(const QString &connectionString)
+{
+  gateway.build(connectionString);
 }
 
 }

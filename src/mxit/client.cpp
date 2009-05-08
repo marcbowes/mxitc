@@ -33,6 +33,10 @@ Client::Client()
   connect(handshaker, SIGNAL(outgoingVariables(const VariableHash &)),
     this, SLOT(incomingVariables(const VariableHash &)));
   
+  /* error bubbling between connection and ui */
+  connect(connection, SIGNAL(outgoingError(const QString &)),
+    this, SLOT(incomingError(const QString &)));
+  
   /* create handlers */
   using namespace MXit::Protocol::Handlers;
   /* 01 */ handlers["login"]                      = new Login();
@@ -69,17 +73,28 @@ Client::~Client()
 **
 ** Author: Marc Bowes
 **
+** this SLOT is triggered by the connection emitting an error
+**
+****************************************************************************/
+void Client::incomingError(const QString &error)
+{
+  qDebug() << error;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** this SLOT is triggered by the connection receiving a packet
 **
 ****************************************************************************/
 void Client::incomingPacket(const QByteArray &packet)
 {
-  qDebug() << "in Client::incomingPacket";
   /* error checking */
   VariableHash packetHeader = MXit::Protocol::packetHeader(packet);
   if (packetHeader["errorCode"] != "0") {    
     emit outgoingError(packetHeader["errorCode"].toInt(), packetHeader["errorMessage"]);
-    qDebug() << "out Client::incomingPacket";
     return;
   }
   
@@ -88,16 +103,11 @@ void Client::incomingPacket(const QByteArray &packet)
   /* deal with unknown packets */
   if (!handler) {
     emit outgoingError(99, QString("Unkown packet handler for command %1").arg(QString(packetHeader["command"])));
-    qDebug() << "out Client::incomingPacket";
     return;
   }
   
-  VariableHash handledPacket = handler->handle(packet);
-  //qDebug() << variables;
-  //qDebug() << "command" << packetHeader["command"];
-  //qDebug() << handledPacket;
-  
   /* pass on to handler */
+  VariableHash handledPacket = handler->handle(packet);
   variables.unite(handledPacket);
   
   /* post packet-level handling */
@@ -139,7 +149,6 @@ void Client::incomingPacket(const QByteArray &packet)
   variables.remove("error");
   
   emit outgoingVariables(variables);
-  qDebug() << "out Client::incomingPacket";
 }
 
 
@@ -200,14 +209,8 @@ void Client::authenticate(const VariableHash &settings)
   variables.unite(settings);
   emit outgoingVariables(variables);
   
-  /* gateway setup so the connection can connect */
-  connection->addGateway(variables["soc1"]);
-  connection->addGateway(variables["http1"]);
-  connection->addGateway(variables["soc2"]);
-  connection->addGateway(variables["http2"]);
-  
-  /* send login packet */
-  sendPacket("login");
+  connection->setGateway(variables["soc1"]);
+  connection->open(getPacket("login"));
 }
 
 
@@ -249,6 +252,23 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
   /* begin challenge */
   challenge(cellphone, captcha);
   emit outgoingVariables(variables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** sets the gateway, and deals with reconnecting
+**
+****************************************************************************/
+void Client::setGateway(const QString &connectionString)
+{
+  if (connection->getState() != MXit::Network::Connection::DISCONNECTED) {
+    sendPacket("logout");
+    connection->close();
+  }
+  connection->open(getPacket("login"));
 }
 
 
@@ -324,6 +344,34 @@ void Client::challenge(const QString &cellphone, const QString &captcha)
 {
   state = CHALLENGING;
   handshaker->challenge(cellphone, captcha, variables["url"], variables["sessionid"]);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** convenience method for packets using class variables
+**
+****************************************************************************/
+MXit::Network::Packet* Client::getPacket(const QString &handler)
+{
+  return getPacket(handler, variables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** builds a packet from the specified handler
+**
+****************************************************************************/
+MXit::Network::Packet* Client::getPacket(const QString &handler, VariableHash &packetVariables)
+{
+  MXit::Network::Packet *packet = buildPacket();
+  handlers[handler]->build(packet, packetVariables);
+  return packet;
 }
 
 
@@ -436,14 +484,8 @@ void Client::setupReceived()
     return;
   }
   
-  /* gateway setup so the connection can connect */
-  connection->addGateway(variables["soc1"]);
-  connection->addGateway(variables["http1"]);
-  connection->addGateway(variables["soc2"]);
-  connection->addGateway(variables["http2"]);
-  
-  /* send off a login packet */
-  sendPacket("login");
+  connection->setGateway(variables["soc1"]);
+  connection->open(getPacket("login"));
   
   /* cleanup */
   variables.remove("sessionid");
@@ -490,11 +532,7 @@ void Client::sendPacket(const QString &handler)
 ****************************************************************************/
 void Client::sendPacket(const QString &handler, VariableHash &packetVariables)
 {
-  qDebug() << "sending packet " << handler << packetVariables;
-  MXit::Network::Packet *packet = buildPacket();
-  handlers[handler]->build(packet, packetVariables);
-  connection->sendPacket(*packet);
-  delete packet;
+  connection->sendPacket(getPacket(handler, packetVariables));
 }
 
 
