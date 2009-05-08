@@ -74,12 +74,12 @@ Client::~Client()
 ****************************************************************************/
 void Client::incomingPacket(const QByteArray &packet)
 {
-  //qDebug() << "in Client::incomingPacket";
+  qDebug() << "in Client::incomingPacket";
   /* error checking */
   VariableHash packetHeader = MXit::Protocol::packetHeader(packet);
   if (packetHeader["errorCode"] != "0") {    
     emit outgoingError(packetHeader["errorCode"].toInt(), packetHeader["errorMessage"]);
-    //qDebug() << "out Client::incomingPacket";
+    qDebug() << "out Client::incomingPacket";
     return;
   }
   
@@ -88,14 +88,14 @@ void Client::incomingPacket(const QByteArray &packet)
   /* deal with unknown packets */
   if (!handler) {
     emit outgoingError(99, QString("Unkown packet handler for command %1").arg(QString(packetHeader["command"])));
-    //qDebug() << "out Client::incomingPacket";
+    qDebug() << "out Client::incomingPacket";
     return;
   }
   
   VariableHash handledPacket = handler->handle(packet);
   //qDebug() << variables;
-  //qDebug() << "command" << packetHeader["command"];
-  //qDebug() << handledPacket;
+  qDebug() << "command" << packetHeader["command"];
+  qDebug() << handledPacket;
   
   /* pass on to handler */
   variables.unite(handledPacket);
@@ -136,7 +136,7 @@ void Client::incomingPacket(const QByteArray &packet)
   variables.remove("error");
   
   emit outgoingVariables(variables);
-  //qDebug() << "out Client::incomingPacket";
+  qDebug() << "out Client::incomingPacket";
 }
 
 
@@ -487,6 +487,7 @@ void Client::sendPacket(const QString &handler)
 ****************************************************************************/
 void Client::sendPacket(const QString &handler, VariableHash &packetVariables)
 {
+  qDebug() << "sending packet " << handler << packetVariables;
   MXit::Network::Packet *packet = buildPacket();
   handlers[handler]->build(packet, packetVariables);
   connection->sendPacket(*packet);
