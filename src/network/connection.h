@@ -12,6 +12,7 @@
 #ifndef __MXIT_NETWORK_CONNECTION_H__
 #define __MXIT_NETWORK_CONNECTION_H__
 
+#include <QHttp>
 #include <QTcpSocket>
 
 #include "common/types.h"
@@ -53,7 +54,8 @@ class Connection : public QObject
 
   private slots:
   
-  void incomingPacket();
+  void HTTP_connect();
+  void HTTP_read(int id, bool error);
   void TCP_connect();
   void TCP_connected();
   void TCP_disconnect();
@@ -74,6 +76,7 @@ class Connection : public QObject
   
   QByteArray      buffer;
   Gateway         gateway;
+  QHttp           http;
   Packets::TCP    login;        /* TCP reconnect */
   QTcpSocket     *socket;       /* TCP only */
   State           state;

@@ -61,13 +61,17 @@ Gateway::~Gateway()
 void Gateway::build(const QString &gateway)
 {
   /* either
-   * http://$1                $1 = URL      OR
+   * http://$1                $1 = URL:port/path    OR
    * socket://$1:$2           $1 = host, $2 = port
    */
   if (gateway.startsWith("http://", Qt::CaseInsensitive)) {
     type = HTTP;
     
-    URL = gateway.mid(7); /* http:// = 7 */
+    int colon = gateway.indexOf(":", 7);
+    int fslash = gateway.indexOf("/", colon + 1);
+    
+    port = gateway.mid(colon + 1, fslash - colon - 1).toUInt();
+    host = QString(gateway).remove(colon, fslash - colon);
   } else { /* FIXME: just assuming TCP */
     type = TCP;
     
@@ -75,7 +79,7 @@ void Gateway::build(const QString &gateway)
     int colon = host_colon_port.indexOf(":");
     
     host = host_colon_port.left(colon);
-    port = host_colon_port.mid(colon + 1).toInt();
+    port = host_colon_port.mid(colon + 1).toUInt();
   }
 }
 

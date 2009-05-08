@@ -4,6 +4,8 @@
 **
 ****************************************************************************/
 
+#include <QUrl>
+
 #include "connection.h"
 
 namespace MXit
@@ -22,9 +24,13 @@ namespace Network
 Connection::Connection()
   : state (DISCONNECTED)
 {
+  /* HTTP setup */
+  connect(&http,    SIGNAL(requestFinished(int, bool)),
+          this,     SLOT(HTTP_read(int, bool)));
+  
   /* TCP setup */
   socket = new QTcpSocket();
-  connect(socket,   SIGNAL(readyRead()),    this,   SLOT(incomingPacket()));
+  connect(socket,   SIGNAL(readyRead()),    this,   SLOT(TCP_read()));
   connect(socket,   SIGNAL(connected()),    this,   SLOT(TCP_connected()));
   connect(socket,   SIGNAL(disconnected()), this,   SLOT(TCP_disconnected()));
 }
@@ -40,6 +46,40 @@ Connection::Connection()
 Connection::~Connection()
 {
   delete socket; /* will close if open */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** HTTP connection to a gateway
+**
+****************************************************************************/
+void Connection::HTTP_connect()
+{
+  /* check legitimacy of gateway */
+  if (gateway.host.isEmpty() || gateway.port == 0 || gateway.type != Gateway::HTTP) {
+    emit outgoingError("Invalid HTTP Gateway");
+    return;
+  }
+  
+  QUrl url(gateway.host);
+  http.setHost(url.host(), gateway.port);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** emits one HTTP packet at a time
+**
+****************************************************************************/
+void Connection::HTTP_read(int id, bool error)
+{ 
+  QByteArray in = http.readAll();
+  qDebug() << in;
 }
 
 
@@ -154,20 +194,6 @@ void Connection::TCP_read()
 **
 ** Author: Marc Bowes
 **
-** forwards read data to the client
-**
-****************************************************************************/
-void Connection::incomingPacket()
-{
-  /* FIXME: TCP/HTTP */
-  TCP_read();
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
 ** builds a packet of the appropriate sub-class
 ** this packet needs to be cleaned up at a later stage
 **
@@ -207,7 +233,7 @@ void Connection::close()
   /* determine type of connection to open */
   switch (gateway.type) {
     case Gateway::HTTP:
-      /* TODO: HTTP */
+      /* FIXME: anything in particular? */
       break;
     case Gateway::TCP:
       TCP_disconnect();
@@ -257,7 +283,7 @@ void Connection::open(const Packet *login)
   /* determine type of connection to open */
   switch (gateway.type) {
     case Gateway::HTTP:
-      /* TODO: HTTP */
+      HTTP_connect();
       break;
     case Gateway::TCP:
       TCP_connect();
@@ -287,7 +313,7 @@ void Connection::sendPacket(const Packet *packet)
     /* determine type of connection to open */
     switch (gateway.type) {
       case Gateway::HTTP:
-        /* TODO: HTTP */
+        /* FIXME: anything in particular? */
         break;
       case Gateway::TCP:
         socket->waitForConnected();
@@ -302,7 +328,7 @@ void Connection::sendPacket(const Packet *packet)
   /* determine type of connection to open */
   switch (gateway.type) {
     case Gateway::HTTP:
-      /* TODO: HTTP */
+      http.get(QString("%1?%2").arg(gateway.host).arg(QString(*packet)));
       break;
     case Gateway::TCP:
       socket->write(*packet);

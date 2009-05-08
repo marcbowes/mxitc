@@ -71,12 +71,11 @@ TCP::operator QByteArray() const
   
   QString ms = getData();
   if (!ms.isEmpty()) {
-    self.append('\0');
-    self.append   ( QString("ms=%1")  .arg(ms) ); 
+    self.append ('\0');
+    self.append ( QString("ms=%1")  .arg(ms) ); 
   }
   
   self.append   ( extra );
-  //self.append   ("\2"); /* TCP record terminator */
   
   /* prepend length */
   int bytes = self.size();

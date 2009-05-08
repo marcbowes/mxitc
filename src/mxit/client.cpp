@@ -209,7 +209,7 @@ void Client::authenticate(const VariableHash &settings)
   variables.unite(settings);
   emit outgoingVariables(variables);
   
-  connection->setGateway(variables["soc1"]);
+  connection->setGateway(variables["http1"]);
   connection->open(getPacket("login"));
 }
 
@@ -268,6 +268,7 @@ void Client::setGateway(const QString &connectionString)
     sendPacket("logout");
     connection->close();
   }
+  connection->setGateway(connectionString);
   connection->open(getPacket("login"));
 }
 
