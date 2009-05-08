@@ -462,6 +462,7 @@ void MXitC::outgoingMessage(const QString & message)
   if (currentContact) {
     currentContact->chatHistory.append( "Outgoing: " + message );
     mainTextArea->append ( "Outgoing: " + message );
+    qDebug() << currentContact->getContactAddress()<< message<< MXit::Protocol::MessageTypeNormal<< 0;
     mxit->sendMessage(currentContact->getContactAddress(), message, MXit::Protocol::MessageTypeNormal, 0);
     
   }
