@@ -74,10 +74,12 @@ Client::~Client()
 ****************************************************************************/
 void Client::incomingPacket(const QByteArray &packet)
 {
+  //qDebug() << "in Client::incomingPacket";
   /* error checking */
   VariableHash packetHeader = MXit::Protocol::packetHeader(packet);
   if (packetHeader["errorCode"] != "0") {    
     emit outgoingError(packetHeader["errorCode"].toInt(), packetHeader["errorMessage"]);
+    //qDebug() << "out Client::incomingPacket";
     return;
   }
   
@@ -86,11 +88,17 @@ void Client::incomingPacket(const QByteArray &packet)
   /* deal with unknown packets */
   if (!handler) {
     emit outgoingError(99, QString("Unkown packet handler for command %1").arg(QString(packetHeader["command"])));
+    //qDebug() << "out Client::incomingPacket";
     return;
   }
   
+  VariableHash handledPacket = handler->handle(packet);
+  //qDebug() << variables;
+  //qDebug() << "command" << packetHeader["command"];
+  //qDebug() << handledPacket;
+  
   /* pass on to handler */
-  variables.unite(handler->handle(packet));
+  variables.unite(handledPacket);
   
   /* post packet-level handling */
   switch (packetHeader["command"].toUInt()) {
@@ -116,6 +124,8 @@ void Client::incomingPacket(const QByteArray &packet)
       emit outgoingAction(CONTACTS_RECEIVED);
       break;
     case GETNEWMESSAGES:
+      
+      emit outgoingMessage(variables["contactAddress"], variables["message"]); /*TODO change to use outgoingAction or whatever, don't know what the vibe is with variables and messages queueing and threading so i made it's own slot to be safe - rax*/
       variables.remove("contactData");
       break;
   }
@@ -126,6 +136,7 @@ void Client::incomingPacket(const QByteArray &packet)
   variables.remove("error");
   
   emit outgoingVariables(variables);
+  //qDebug() << "out Client::incomingPacket";
 }
 
 

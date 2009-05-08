@@ -59,7 +59,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   public slots:
   
   void sendMessageFromChatInput();
-  void incomingMessage(const QString & message);
+  void incomingMessage(const QString & contactAddress, const QString & message);
   void incomingError(int errorCode, const QString & errorString);
 
   protected slots:
@@ -73,13 +73,16 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void openAddContactDialog();
   
   void incomingAction(Action action);
-  void setChatBoxText(QListWidgetItem * item);
+  void setCurrentUser(QListWidgetItem * item);
+  void refreshChatBox(); /*FIXME slot ? - rax*/
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
   private:        /* variables */
   
-  QHash<QString, Contact*> contactsHash; // identified by nickname
+  
+  QHash<QString, QString> contactAddressToNickname; // converts contactAddresses to their unique nickname
+  QHash<QString, Contact*> contactsHash; // identified by nickname (NOT contactAddress)
   
   Contact * currentContact;
   

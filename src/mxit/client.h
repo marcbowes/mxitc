@@ -48,6 +48,7 @@ class Client : public QObject
   void captchaReceived(const QByteArray &);
   void errorEncountered(const QString &);
   void outgoingAction(Action);
+  void outgoingMessage(const QString & contactAddress, const QString & message);
   void outgoingError(int code, const QString &message);
   void outgoingVariables(const VariableHash&);
   

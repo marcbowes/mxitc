@@ -24,7 +24,7 @@ namespace GUI
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentState(LOGGED_OUT)
+MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentState(LOGGED_OUT), currentContact(NULL)
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   mxit = client;      /* store a copy */
@@ -51,9 +51,10 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   connect(mxit, SIGNAL(outgoingError(int, const QString &)), this, SLOT(incomingError(int, const QString &)));
   connect(mxit, SIGNAL(outgoingAction(Action)), this, SLOT(incomingAction(Action)));
+  connect(mxit, SIGNAL(outgoingMessage(const QString &, const QString &)), this, SLOT(incomingMessage(const QString &, const QString &)));
   //connect(app, SIGNAL(lastWindowClosed()), this, SLOT(showQuitDialog()));
   
-  connect(contactList, SIGNAL(itemPressed ( QListWidgetItem *  )), this, SLOT(setChatBoxText( QListWidgetItem *  )));
+  connect(contactList, SIGNAL(itemPressed ( QListWidgetItem *  )), this, SLOT(setCurrentUser( QListWidgetItem *  )));
   
   settings = new QSettings ( "mxitc", "env", this );
   
@@ -310,7 +311,9 @@ void MXitC::incomingAction(Action action)
                 
           if (!contactsHash.contains(QString(contactInfo [2]))) { 
             contact->chatHistory.append("User: "+contact->getNickname());
-            contactsHash[contact->getNickname()] = contact;     
+            contact->chatHistory.append("CA: "+contact->getContactAddress());
+            contactsHash[contact->getNickname()] = contact;
+            contactAddressToNickname[contact->getContactAddress()] = contact->getNickname();
             
           }                   
         }
@@ -335,17 +338,34 @@ void MXitC::incomingAction(Action action)
 **
 ** Author: Richard Baxter
 **
-** Sets the curent contact the user is chatting to and displays their chat history in the main text area
+** Sets the curent contact the user is chatting to
 **
 ****************************************************************************/
 
-void MXitC::setChatBoxText(QListWidgetItem * item){
-  //qDebug() << item->text ();
+void MXitC::setCurrentUser(QListWidgetItem * item){
+  currentContact = contactsHash[item->text()];
+  refreshChatBox();
+}
+
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Refreshes the chatBox area
+**
+****************************************************************************/
+
+void MXitC::refreshChatBox(){
+
   mainTextArea->clear();
-  currentContact = contactsHash[item->text ()];
-  Q_FOREACH(QString s, currentContact->chatHistory) {
-    mainTextArea->append ( s );
+  if (currentContact != NULL) {
+    Q_FOREACH(QString s, currentContact->chatHistory) {
+      mainTextArea->append ( s );
+    }
   }
+  
 }
 
 /****************************************************************************
@@ -389,10 +409,24 @@ void MXitC::sendMessageFromChatInput()
 **
 ****************************************************************************/
 
-void MXitC::incomingMessage(const QString & message)
+void MXitC::incomingMessage(const QString & contactAddress, const QString & message)
 {
-  currentContact->chatHistory.append( "Incoming: " + message );
-  mainTextArea->append ( "Incoming: " + message ); /*TODO change the string to a ChatLine class or something*/
+  /*QHashIterator<QString, Contact*> i(contactsHash);
+  while (i.hasNext()) {
+    i.next();
+    qDebug() << i.key() << ": " << i.value() << ": " << i.value()->getContactAddress();
+  }
+  qDebug() << "incomingMessage(contactAddress = " << contactAddress << ", const QString & = " << message << ")";
+  */
+  QString nickname = contactAddressToNickname[contactAddress];
+  //qDebug() << "nickname = " << nickname;
+  if (contactsHash.contains(nickname)) {
+    //qDebug() << "contactsHash[nickname] = " << contactsHash[nickname];
+    contactsHash[nickname]->chatHistory.append( "Incoming: " + message );
+    refreshChatBox();
+  }
+  else
+    qDebug() << "wtf unknown contact!"; /*TODO handel this eror case, even though it should NEVER happen - rax*/
 }
 
 /****************************************************************************
@@ -425,9 +459,12 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
 
 void MXitC::outgoingMessage(const QString & message)
 {
-  currentContact->chatHistory.append( "Outgoing: " + message );
-  mainTextArea->append ( "Outgoing: " + message );
-  mxit->sendMessage(currentContact->getContactAddress(), message, MXit::Protocol::MessageTypeNormal, 0);
+  if (currentContact) {
+    currentContact->chatHistory.append( "Outgoing: " + message );
+    mainTextArea->append ( "Outgoing: " + message );
+    mxit->sendMessage(currentContact->getContactAddress(), message, MXit::Protocol::MessageTypeNormal, 0);
+    
+  }
 }
 
 /****************************************************************************
