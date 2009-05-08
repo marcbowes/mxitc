@@ -84,6 +84,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void setCurrentUser(QListWidgetItem * item);
   void refreshChatBox(); /*FIXME slot ? - rax*/
   
+  void saveLayout(Qt::DockWidgetArea area); 
   
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

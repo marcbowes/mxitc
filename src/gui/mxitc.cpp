@@ -48,6 +48,11 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   optionWidget->setVisible ( false );
   
   
+  connect(optionWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(saveLayout(Qt::DockWidgetArea)));
+  connect(debugWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(saveLayout(Qt::DockWidgetArea)));
+  connect(contactWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(saveLayout(Qt::DockWidgetArea)));
+  
+  
   connect(actionDebug_Variables, SIGNAL(triggered()), this, SLOT(debugToggle()));
   connect(actionOptions, SIGNAL(triggered()), this, SLOT(optionsToggle()));
   
@@ -68,6 +73,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   settings = new QSettings ( "mxitc", "env", this );
   
+  restoreState(settings->value("gui layout").toByteArray());
   
   StringVec variables;
   variables.append("err");                  /* 0 = success, else failed */
@@ -137,6 +143,17 @@ MXitC::~MXitC()
   delete optionWidget;
   
 }
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::saveLayout(Qt::DockWidgetArea area) {
+  settings->setValue("gui layout", saveState());
+}
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
@@ -382,6 +399,7 @@ void MXitC::contactsReceived(){
      
       c.chatHistory.append( Message(0, "User: "+ c.getNickname()));
       c.chatHistory.append( Message(0, "CA: "+ c.getContactAddress()));
+      c.chatHistory.append( Message(0, "grp: \""+ c.getGroup() + "\""));
     }
   }
   
