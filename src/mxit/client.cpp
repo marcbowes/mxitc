@@ -265,6 +265,7 @@ void Client::setGateway(const QString &connectionString)
     sendPacket("logout");
     connection->close();
   }
+  connection->setGateway(connectionString);
   connection->open(getPacket("login"));
 }
 

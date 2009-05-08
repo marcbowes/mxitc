@@ -76,11 +76,11 @@ HTTP::operator QByteArray() const
   if (sessionID != -1)
     self.append ( QString("%1\1")     .arg(sessionID)      );
   self.append   ( QString("%1&")      .arg(sequenceNumber) );
-  self.append   ( QString("cm=%1&")   .arg(command)        );
+  self.append   ( QString("cm=%1")    .arg(command)        );
   
   QString ms = getData();
   if (!ms.isEmpty())
-    self.append   ( QString("ms=%1")    .arg(ms)      );
+    self.append ( QString("&ms=%1")    .arg(ms)      );
   
   self.append   ( extra );
   self.append   ("&"); /* HTTP record terminator */
