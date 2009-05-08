@@ -94,8 +94,8 @@ void Client::incomingPacket(const QByteArray &packet)
   
   VariableHash handledPacket = handler->handle(packet);
   //qDebug() << variables;
-  qDebug() << "command" << packetHeader["command"];
-  qDebug() << handledPacket;
+  //qDebug() << "command" << packetHeader["command"];
+  //qDebug() << handledPacket;
   
   /* pass on to handler */
   variables.unite(handledPacket);
@@ -125,8 +125,11 @@ void Client::incomingPacket(const QByteArray &packet)
       break;
     case GETNEWMESSAGES:
       
-      emit outgoingMessage(variables["contactAddress"], variables["message"]); /*TODO change to use outgoingAction or whatever, don't know what the vibe is with variables and messages queueing and threading so i made it's own slot to be safe - rax*/
+      emit outgoingAction(MESSAGE_RECEIVED);
+      //variables["contactAddress"], variables["message"]
       variables.remove("contactData");
+      variables.remove("contactAddress");
+      variables.remove("message");
       break;
   }
   
