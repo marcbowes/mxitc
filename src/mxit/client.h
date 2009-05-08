@@ -54,6 +54,7 @@ class Client : public QObject
   
   private slots:
   
+  void incomingError(const QString &);
   void incomingPacket(const QByteArray &);
   void incomingVariables(const VariableHash &);
 
@@ -69,6 +70,8 @@ class Client : public QObject
   
   MXit::Network::Packet* buildPacket();
   void challenge(const QString &cellphone, const QString &captcha);
+  MXit::Network::Packet* getPacket(const QString &handler);
+  MXit::Network::Packet* getPacket(const QString &handler, VariableHash &packetVariables);
   MXit::Protocol::Handler* handlerFor(const QByteArray &command);
   void initializationComplete();
   void sendPacket(const QString &handler);
