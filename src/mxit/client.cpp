@@ -35,15 +35,15 @@ Client::Client()
   
   /* create handlers */
   using namespace MXit::Protocol::Handlers;
-  /* 01 */ handlers["login"] = new Login();
-  /* 02 */ handlers["logout"] = new Logout();
-  /* 03 */ handlers["getcontacts"] = new GetContacts();
-  /* 05 */ handlers["updatecontactinfo"] = new UpdateContactInfo();
-  /* 06 */ handlers["subscribetoanewcontact"] = new SubscribeToANewContact();
-  /* 08 */ handlers["removecontact"] = new RemoveContact();
-  /* 09 */ handlers["getnewmessages"] = new GetNewMessages();
-  /* 10 */ handlers["sendnewmessage"] = new SendNewMessage();
-  /* 32 */ handlers["setshownpresenceandstatus"] = new SetShownPresenceAndStatus();
+  /* 01 */ handlers["login"]                      = new Login();
+  /* 02 */ handlers["logout"]                     = new Logout();
+  /* 03 */ handlers["getcontacts"]                = new GetContacts();
+  /* 05 */ handlers["updatecontactinfo"]          = new UpdateContactInfo();
+  /* 06 */ handlers["subscribetoanewcontact"]     = new SubscribeToANewContact();
+  /* 08 */ handlers["removecontact"]              = new RemoveContact();
+  /* 09 */ handlers["getnewmessages"]             = new GetNewMessages();
+  /* 10 */ handlers["sendnewmessage"]             = new SendNewMessage();
+  /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
 }
 
 
