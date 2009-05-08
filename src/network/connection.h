@@ -64,6 +64,7 @@ class Connection : public QObject
   
   Packet *buildPacket();
   void close();
+  State getState();
   bool isHTTP();
   void open(const Packet *login);
   void setGateway(const QString &connectionString);

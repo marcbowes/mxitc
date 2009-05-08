@@ -256,6 +256,23 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
 **
 ** Author: Marc Bowes
 **
+** sets the gateway, and deals with reconnecting
+**
+****************************************************************************/
+void Client::setGateway(const QString &connectionString)
+{
+  if (connection->getState() != MXit::Network::Connection::DISCONNECTED) {
+    sendPacket("logout");
+    connection->close();
+  }
+  connection->open(getPacket("login"));
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Passes parameters onto a packet handler and transmits result
 **
 ****************************************************************************/

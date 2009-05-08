@@ -223,6 +223,19 @@ void Connection::close()
 **
 ** Author: Marc Bowes
 **
+** returns the current state
+**
+****************************************************************************/
+Connection::State Connection::getState()
+{
+  return state;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** returns true if current gateway is of type HTTP
 **
 ****************************************************************************/

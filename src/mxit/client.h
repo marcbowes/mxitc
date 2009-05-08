@@ -63,6 +63,7 @@ class Client : public QObject
   void authenticate(const VariableHash &settings);
   void initialize();
   void login(const QString &cellphone, const QString &password, const QString &captcha);
+  void setGateway(const QString &connectionString);
   void sendMessage(const QString &contactAddress, const QString &message, MXit::Protocol::MessageType, unsigned int flags);
   QByteArray variableValue(const QString &name);
 
