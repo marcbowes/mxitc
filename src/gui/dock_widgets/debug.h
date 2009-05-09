@@ -24,15 +24,19 @@ namespace MXit
 namespace GUI
 {
 
+namespace DockWidget
+{
 
-class DebugDockWidget : public QDockWidget, private Ui::DebugDockWidget
+
+
+class Debug : public QDockWidget, private Ui::DebugDockWidget
 {
   Q_OBJECT
   
   public: /*class specific */
 
-  DebugDockWidget(QWidget* parent = 0);
-  ~DebugDockWidget();
+  Debug(QWidget* parent = 0);
+  ~Debug();
   
   signals:
   void requestVariableHashRefresh();
@@ -48,6 +52,8 @@ class DebugDockWidget : public QDockWidget, private Ui::DebugDockWidget
 
 };
 
+
+} /* end of DockWidget namespace */
 
 } /* end of GUI namespace */
 

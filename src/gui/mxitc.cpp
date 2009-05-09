@@ -36,7 +36,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   setStatusBar();
   
   /* adding the debug window */
-  debugWidget = new DebugDockWidget (this);
+  debugWidget = new DockWidget::Debug (this);
   debugWidget->setFeatures (QDockWidget::AllDockWidgetFeatures);
   addDockWidget(Qt::RightDockWidgetArea, debugWidget);
   
@@ -73,7 +73,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   settings = new QSettings ( "mxitc", "env", this );
   
-  restoreState(settings->value("gui layout").toByteArray());
   
   StringVec variables;
   variables.append("err");                  /* 0 = success, else failed */
@@ -121,6 +120,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
     mxit->authenticate(variableHash);
   }
   
+  
+  restoreState(settings->value("gui layout").toByteArray());
+  
 }
 
 
@@ -151,6 +153,7 @@ MXitC::~MXitC()
 ****************************************************************************/
 
 void MXitC::saveLayout(Qt::DockWidgetArea area) {
+  
   settings->setValue("gui layout", saveState());
 }
 
