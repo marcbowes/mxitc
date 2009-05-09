@@ -23,8 +23,6 @@ namespace Network
 namespace Packets
 {
 
-static unsigned int sequenceCounter = 0;
-
 class HTTP : public Packet
 {
   public:           /* class specific */

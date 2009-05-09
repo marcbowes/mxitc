@@ -17,6 +17,8 @@ namespace Network
 namespace Packets
 {
 
+static unsigned int sequenceCounter = 0;
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
@@ -25,9 +27,10 @@ namespace Packets
 **
 ****************************************************************************/
 HTTP::HTTP(int sessionID, const QString &cellphone, const QString &commandNumber)
-  : Packet(cellphone, commandNumber), sequenceNumber (sequenceCounter++), sessionID (sessionID)
+  : Packet(cellphone, commandNumber)
 {
-  // nothing here
+  sequenceNumber = sequenceCounter++;
+  sessionID = sessionID;
 }
 
 
