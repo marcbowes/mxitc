@@ -36,7 +36,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   applyStyleSheet("/home/richard/workspace/cpp/mxit/src/var/test.qss");
    
   settings = new QSettings ( "mxitc", "env", this );
-  contactMetaData = new ContactMetaData();
   
   DockWidget::Debug * debugWidget = new DockWidget::Debug (this);
   appendDockWidget(debugWidget,    Qt::RightDockWidgetArea, actionDebug_Variables);
@@ -44,7 +43,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   DockWidget::Options * optionsWidget = new DockWidget::Options (this);
   appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
   
-  contactsWidget = new DockWidget::Contacts (contactMetaData,this);
+  contactsWidget = new DockWidget::Contacts (this);
   appendDockWidget(contactsWidget, Qt::LeftDockWidgetArea, actionContacts);
   
   logWidget = new DockWidget::Log (this);

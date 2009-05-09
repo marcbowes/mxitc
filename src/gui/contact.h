@@ -15,7 +15,10 @@
 #include <QIcon>
 #include "common/types.h"
 #include "message.h"
-#include "contact_metadata.h"
+#include "protocol/enumerables/presence.h"
+#include "protocol/enumerables/contact.h"
+#include "protocol/enumerables/mood.h"
+
 
 namespace MXit
 {
@@ -45,9 +48,6 @@ class Contact : public QObject
   
   Contact& operator=(const Contact&);
 
-
-  ContactMetaData * metaData;
-
   
   public:         /* methods */
 
@@ -70,9 +70,9 @@ class Contact : public QObject
   QVector <Message> chatHistory;
 
   bool unreadMessage;
-  Presence presence;
-  Type type;
-  Mood mood;
+  Protocol::Enumerables::Presence presence;
+  Protocol::Enumerables::Contact type;
+  Protocol::Enumerables::Mood mood;
 
   /* group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood \0 */
   private: /* variables */

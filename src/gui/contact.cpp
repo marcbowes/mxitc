@@ -22,16 +22,20 @@ namespace GUI
 **
 ****************************************************************************/
 
-Contact:: Contact(
+Contact::Contact(
       const QString& group, 
       const QString& contactAddress, 
       const QString& nickname, 
       unsigned int presence, 
       unsigned int type, 
-      unsigned int mood) :
-      group(group), contactAddress(contactAddress), nickname(nickname), presence((Presence)presence), type((Type)type), mood((Mood)mood)
+      unsigned int mood)
+  : group(group),
+    contactAddress(contactAddress),
+    nickname(nickname)
 {
-  /* nothing */
+  setPresence(presence);
+  setType(type);
+  setMood(mood);
 }
 
 
@@ -157,7 +161,7 @@ void Contact::setNickname(const QString& nickname)
 
 void Contact::setPresence(int presence)
 {
-  this->presence = (Presence)presence;
+  this->presence = (Protocol::Enumerables::Presence)presence;
 }
 
 
@@ -169,7 +173,7 @@ void Contact::setPresence(int presence)
 
 void Contact::setType(int type)
 {
-  this->type = (Type)type;
+  this->type = (Protocol::Enumerables::Contact)type;
 }
 
 
@@ -181,7 +185,7 @@ void Contact::setType(int type)
 
 void Contact::setMood(int mood)
 {
-  this->mood = (Mood)mood;
+  this->mood = (Protocol::Enumerables::Mood)mood;
 }
 
 /****************************************************************************

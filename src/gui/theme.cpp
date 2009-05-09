@@ -21,9 +21,9 @@ namespace GUI
 **
 ****************************************************************************/
 Theme::Theme()
+  : presence ()
 {
-  using namespace ThemeComponents;
-  presence = new Presence();
+  // nothing here
 }
 
 /****************************************************************************
@@ -35,7 +35,7 @@ Theme::Theme()
 ****************************************************************************/
 Theme::~Theme()
 {
-  delete presence;
+  // nothing here
 }
 
 }

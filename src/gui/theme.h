@@ -28,7 +28,7 @@ class Theme
   
   public:         /* variables */
   
-  ThemeComponents::Presence  *presence;
+  ThemeComponents::Presence   presence;
 };
 
 }

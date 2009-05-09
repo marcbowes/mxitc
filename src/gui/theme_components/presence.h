@@ -4,7 +4,6 @@
 **
 ** Author: Marc Bowes, 2009
 **
-** MXit::GUI::ThemeComponents::Presence provides methods for displaying
 ** contact presence info
 **
 ****************************************************************************/
@@ -12,6 +11,10 @@
 
 #ifndef __MXIT_GUI_THEMECOMPONENTS_PRESENCE_H__
 #define __MXIT_GUI_THEMECOMPONENTS_PRESENCE_H__
+
+#include <QPixmap>
+
+#include "protocol/enumerables/presence.h"
 
 namespace MXit
 {
@@ -24,7 +27,24 @@ namespace ThemeComponents
 
 class Presence
 {
-
+  public:         /* class specific */
+  
+  Presence();
+  ~Presence();
+  
+  public:         /* methods */
+  
+  QPixmap pixmap(Protocol::Enumerables::Presence presence,
+    const QString &extensions = "png");
+  
+  private:        /* variables */
+  
+  QPixmap available,
+          away,
+          dnd,
+          offline,
+          online
+  ;
 };
 
 }

@@ -48,7 +48,6 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/dialogs/addContact.cpp
   gui/dialogs/login.cpp
   
-  gui/contact_metadata.cpp
   gui/mxitc.cpp
   gui/mxit_dialog.cpp
   gui/theme.cpp
@@ -75,7 +74,6 @@ SET(MXIT_CLIENT_MOC_SRCS
   gui/dialogs/addContact.h
   gui/dialogs/login.h
   
-  gui/contact_metadata.h
   gui/mxitc.h
   gui/mxit_dialog.h
 )

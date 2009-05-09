@@ -20,7 +20,7 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Contacts::Contacts(const ContactMetaData * metadata, QWidget* parent) : MXitDockWidget(parent), metadata(metadata)
+Contacts::Contacts(QWidget* parent) : MXitDockWidget(parent)
 {
   setupUi(this);
   
@@ -66,7 +66,30 @@ void Contacts::clearList(){
 
 void Contacts::addContact(const Contact & c){
 
-  QListWidgetItem * item = new QListWidgetItem(metadata->presenceIcons()[c.presence], QString().setNum(metadata->presencePrecedence()[c.presence])+c.getNickname());
+  QPixmap pixmap; /* FIXME: theme */
+  QChar   sortPrefix;
+  switch (c.presence) {
+    case Protocol::Enumerables::Available:
+      sortPrefix = '0';
+      break;
+    case Protocol::Enumerables::Online:
+      sortPrefix = '1';
+      break;
+    case Protocol::Enumerables::Away:
+      sortPrefix = '2';
+      break;
+    case Protocol::Enumerables::DoNotDisturb:
+      sortPrefix = '3';
+      break;
+    case Protocol::Enumerables::Offline:
+      sortPrefix = '4';
+      break;
+    default:
+      sortPrefix = '9';
+      break;
+  }
+  
+  QListWidgetItem *item = new QListWidgetItem(pixmap, QString("%1%2").arg(sortPrefix).arg(c.getNickname()));
   contactList->addItem(item);
 }
 

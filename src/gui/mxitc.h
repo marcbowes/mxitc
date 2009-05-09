@@ -103,8 +103,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   QHash<QString, QString> nicknameToContactAddress; // converts contactAddresses to their unique nickname
   QHash<QString, Contact> contactsHash; // identified by contactAddress (NOT nickname)
   
-  ContactMetaData * contactMetaData;
-  
   Contact * currentContact;
   
   MXit::Client *mxit;
