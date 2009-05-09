@@ -34,6 +34,8 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handshaker.cpp
   mxit/client.cpp
   
+  gui/theme/presence.cpp
+  
   gui/mxit_dock_widget.cpp
   gui/contact.cpp
   gui/message.cpp
@@ -49,6 +51,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/contact_metadata.cpp
   gui/mxitc.cpp
   gui/mxit_dialog.cpp
+  gui/theme.cpp
   
   main.cpp
 )
