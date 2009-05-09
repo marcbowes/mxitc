@@ -118,6 +118,19 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   }
   
   
+  /* setting up QIcons for presence*/
+  
+  QPixmap gray =    QPixmap ( 30, 30 ); gray  .fill(Qt::gray);
+  QPixmap green =   QPixmap ( 30, 30 ); green .fill(Qt::green);
+  QPixmap orange =  QPixmap ( 30, 30 ); orange.fill(QColor(255,215,0));
+  QPixmap blue =    QPixmap ( 30, 30 ); blue  .fill(Qt::blue);
+  QPixmap red =     QPixmap ( 30, 30 ); red   .fill(Qt::red);
+  
+  presenceIcons[Contact::OFFLINE]         = gray;
+  presenceIcons[Contact::ONLINE]          = green;
+  presenceIcons[Contact::AWAY]            = orange;
+  presenceIcons[Contact::AVAILABLE]       = blue;
+  presenceIcons[Contact::DO_NOT_DISTURB]  = red;
   
 }
 
@@ -139,8 +152,7 @@ MXitC::~MXitC()
   
   
   Q_FOREACH(const QDockWidget * dw, dockWidgets) {
-    
-    delete dw; /*FIXME - check if contactWidget is cleaned up already - if it's a problem it should be made into another dockwidget separate from the mxitc.ui file*/
+    delete dw;
   }
 }
 
@@ -189,6 +201,11 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
 void MXitC::saveLayout(Qt::DockWidgetArea area) {
   
   settings->setValue("gui layout", saveState());
+  
+  /*<QObject*> children = findChildren<QObject *>();
+  Q_FOREACH(const QObject * ob, children) {
+    qDebug() << ob;
+  }*/
 }
 
 
@@ -403,15 +420,9 @@ void MXitC::contactsReceived(){
     }
   }
   
-  /* resetting contacts list*/
-  contactsWidget->clearList();/* FIXME make a tree view */
-  Q_FOREACH(const Contact & c, contactsHash) {
-    QString nn = c.getNickname();
-    contactsWidget->addItemToList( nn );
-  }
+  refreshContactsList();
         
 }
-
 
 /****************************************************************************
 **
@@ -468,6 +479,27 @@ void MXitC::setCurrentUser(QListWidgetItem * item){
 }
 
 
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::refreshContactsList() {
+
+  /* resetting contacts list*/
+  contactsWidget->clearList();/* FIXME make a tree view ?*/
+  Q_FOREACH(const Contact & c, contactsHash) {
+  
+    contactsWidget->addItemToList( QListWidgetItem ( presenceIcons[c.presence], c.getNickname()) );
+  }
+  
+  for (int i = 0 ; i < 5 ; i++)
+    qDebug() << i << " " << presenceIcons[(Contact::Presence)i];
+    
+
+}
 
 /****************************************************************************
 **
@@ -627,19 +659,6 @@ void MXitC::openAddContactDialog(){
   
   MXit::GUI::Dialog::AddContact addContact(this, mxit, settings);
   addContact.exec();
-  
-}
-
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** Adds a contact to the contact tree
-**
-****************************************************************************/
-void MXitC::updateContactsList(const QVector<Contact>& contacts)
-{
   
 }
   

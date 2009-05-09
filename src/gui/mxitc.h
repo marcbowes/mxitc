@@ -55,7 +55,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   private: /* methods */
   void outgoingMessage(const QString & message);
   
-  void updateContactsList(const QVector<Contact>& contacts);
   void setStatusBar();
   
   
@@ -89,6 +88,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void sendGateway(bool http);
   
+  void refreshContactsList();
+  
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
@@ -98,6 +99,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   QHash<QString, QString> nicknameToContactAddress; // converts contactAddresses to their unique nickname
   QHash<QString, Contact> contactsHash; // identified by contactAddress (NOT nickname)
   
+  QHash<Contact::Presence, QIcon> presenceIcons; // identified by contactAddress (NOT nickname)
   
   Contact * currentContact;
   

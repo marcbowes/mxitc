@@ -28,10 +28,10 @@ class Contact : public QObject
   public:         /* class specific */
 	
   Contact(
-      const QString& group = "", 
-      const QString& contactAddress = "", 
-      const QString& nickname = "", 
-      unsigned int presence = 0, 
+      const QString& group = "",
+      const QString& contactAddress = "",
+      const QString& nickname = "",
+      unsigned int presence = 0,
       unsigned int type = 0, 
       unsigned int mood = 0);
       
@@ -76,39 +76,43 @@ class Contact : public QObject
           9 – Sick
           10 – Sleepy 
         */
+        
   /* Presence */
-  static const unsigned int OFFLINE         = 0;
-  static const unsigned int ONLINE          = 1;
-  static const unsigned int AWAY            = 2;
-  static const unsigned int AVAILABLE       = 3;
-  static const unsigned int DO_NOT_DISTURB  = 4;
+  enum Presence {
+  OFFLINE         = 0,
+  ONLINE          = 1,
+  AWAY            = 2,
+  AVAILABLE       = 3,
+  DO_NOT_DISTURB  = 4};
   
   /* Type */
-  static const unsigned int MXIT        = 0;
-  static const unsigned int JABBER      = 1;
-  static const unsigned int MSN         = 2;
-  static const unsigned int YAHOO       = 3;
-  static const unsigned int ICQ         = 4;
-  static const unsigned int AIM         = 5;
-  static const unsigned int BOT         = 8;
-  static const unsigned int CHAT_ROOM   = 9;
-  static const unsigned int GALLARY     = 12;
-  static const unsigned int INFO        = 13;
-  static const unsigned int MULTIMX     = 14;
-  static const unsigned int GOOGLE_TALK = 18;
+  enum Type {
+  MXIT        = 0,
+  JABBER      = 1,
+  MSN         = 2,
+  YAHOO       = 3,
+  ICQ         = 4,
+  AIM         = 5,
+  BOT         = 8,
+  CHAT_ROOM   = 9,
+  GALLARY     = 12,
+  INFO        = 13,
+  MULTIMX     = 14,
+  GOOGLE_TALK = 18};
   
   /* Mood */
-  static const unsigned int NONE        = 0;
-  static const unsigned int ANGRY       = 1;
-  static const unsigned int EXCITED     = 2;
-  static const unsigned int GRUMPY      = 3;
-  static const unsigned int HAPPY       = 4;
-  static const unsigned int IN_LOVE     = 5;
-  static const unsigned int INVINCIBLE  = 6;
-  static const unsigned int SAD         = 7;
-  static const unsigned int HOT         = 8;
-  static const unsigned int SICK        = 9;
-  static const unsigned int SLEEPY      = 10;
+  enum Mood {
+  NONE        = 0,
+  ANGRY       = 1,
+  EXCITED     = 2,
+  GRUMPY      = 3,
+  HAPPY       = 4,
+  IN_LOVE     = 5,
+  INVINCIBLE  = 6,
+  SAD         = 7,
+  HOT         = 8,
+  SICK        = 9,
+  SLEEPY      = 10};
   
   public:         /* methods */
 
@@ -128,19 +132,21 @@ class Contact : public QObject
   QString getChatInputText();
 
 
-  QVector <Message> chatHistory; // TODO make private, too lazy to do all the methods right now - rax
+  QVector <Message> chatHistory;
 
+  bool unreadMessage;
+  Presence presence;
+  Type type;
+  Mood mood;
 
   /* group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood \0 */
   private: /* variables */
   QString group;
   QString contactAddress;
   QString nickname;
-  unsigned int presence;
-  unsigned int type;
-  unsigned int mood;
   
   QString chatInputText; /* an area to save what the user has types in the input line */
+  
 
 
 };

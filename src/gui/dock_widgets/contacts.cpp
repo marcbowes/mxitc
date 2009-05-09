@@ -39,7 +39,7 @@ Contacts::Contacts(QWidget* parent) : MXitDockWidget(parent)
 ****************************************************************************/
 Contacts::~Contacts()
 {
-
+  clearList();
 }
 
 
@@ -50,6 +50,11 @@ Contacts::~Contacts()
 ****************************************************************************/
 
 void Contacts::clearList(){
+
+  while(contactList->count()) {
+    delete contactList->takeItem (0);
+  }
+  
   contactList->clear();
 }
 
@@ -59,8 +64,9 @@ void Contacts::clearList(){
 **
 ****************************************************************************/
 
-void Contacts::addItemToList(QString& nickname){
-  contactList->addItem(nickname);
+void Contacts::addItemToList(const QListWidgetItem & liw){
+  QListWidgetItem * item = new QListWidgetItem(liw);
+  contactList->addItem(item);
 }
 
 

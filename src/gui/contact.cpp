@@ -29,7 +29,7 @@ Contact:: Contact(
       unsigned int presence, 
       unsigned int type, 
       unsigned int mood) :
-      group(group), contactAddress(contactAddress), nickname(nickname), presence(presence), type(type), mood(mood)
+      group(group), contactAddress(contactAddress), nickname(nickname), presence((Presence)presence), type((Type)type), mood((Mood)mood)
 {
   /* nothing */
 }
@@ -44,7 +44,7 @@ Contact:: Contact(
 ****************************************************************************/
 
 Contact:: Contact(const Contact& c) :
-      group(c.group), contactAddress(c.contactAddress), nickname(c.nickname), presence(c.presence), type(c.type), mood(c.mood)
+      group(c.group), contactAddress(c.contactAddress), nickname(c.nickname), presence(c.presence), type(c.type), mood(c.mood), unreadMessage(true)
 {
   /* nothing */
 }
@@ -139,7 +139,7 @@ void Contact::setNickname(const QString& nickname)
 
 void Contact::setPresence(int presence)
 {
-  this->presence = presence;
+  this->presence = (Presence)presence;
 }
 
 
@@ -151,7 +151,7 @@ void Contact::setPresence(int presence)
 
 void Contact::setType(int type)
 {
-  this->type = type;
+  this->type = (Type)type;
 }
 
 
@@ -163,7 +163,7 @@ void Contact::setType(int type)
 
 void Contact::setMood(int mood)
 {
-  this->mood = mood;
+  this->mood = (Mood)mood;
 }
 
 /****************************************************************************
