@@ -21,7 +21,7 @@
 #include "common/types.h"
 #include "common/actions.h"
 #include "mxit/client.h"
-#include "gui/debugWidget.h"
+#include "gui/dock_widgets/debug.h"
 #include "gui/dock_widgets/options.h"
 #include "gui/dialogs/login.h"
 #include "gui/dialogs/addContact.h"
@@ -105,12 +105,12 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   State currentState;
   
-  DebugDockWidget * debugWidget;
  
   Dialog::Login * login;
   QLabel * statusLabel;
   
   /* Dockable Widgets*/
+  DockWidget::Debug * debugWidget;
   DockWidget::Options * optionWidget;
 };
 

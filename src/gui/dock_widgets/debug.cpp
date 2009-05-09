@@ -1,6 +1,6 @@
 
 
-#include "debugWidget.h"
+#include "debug.h"
 
 namespace MXit
 {
@@ -8,6 +8,8 @@ namespace MXit
 namespace GUI
 {
 
+namespace DockWidget
+{
 
 /****************************************************************************
 **
@@ -16,7 +18,7 @@ namespace GUI
 ** Widget constructor
 **
 ****************************************************************************/
-DebugDockWidget::DebugDockWidget(QWidget* parent) : QDockWidget(parent)
+Debug::Debug(QWidget* parent) : QDockWidget(parent)
 {
   setupUi(this);
   
@@ -33,7 +35,7 @@ DebugDockWidget::DebugDockWidget(QWidget* parent) : QDockWidget(parent)
 ** Widget destructor
 **
 ****************************************************************************/
-DebugDockWidget::~DebugDockWidget()
+Debug::~Debug()
 {
 
 }
@@ -44,7 +46,7 @@ DebugDockWidget::~DebugDockWidget()
 **
 ****************************************************************************/
 
-void DebugDockWidget::refreshRequested()
+void Debug::refreshRequested()
 {
   emit requestVariableHashRefresh();
 }
@@ -54,7 +56,7 @@ void DebugDockWidget::refreshRequested()
 ** Author: Richard Baxter
 **
 ****************************************************************************/
-void DebugDockWidget::incomingVariableHash(const VariableHash& variables)
+void Debug::incomingVariableHash(const VariableHash& variables)
 {
   //qDebug() << "DebugDockWidget::incomingVaraibleHash(const VariableHash& variables)";
   
@@ -65,6 +67,8 @@ void DebugDockWidget::incomingVariableHash(const VariableHash& variables)
   
 }
 
+
+} /* end of DockWidget namespace */
 
 } /* end of GUI namespace */
 
