@@ -18,9 +18,9 @@ namespace MXit
 ****************************************************************************/
 Contact::Contact()
 {
-  this->presence        = Protocol::Enumerables::Offline;
-  this->type            = Protocol::Enumerables::MXit;
-  this->mood            = Protocol::Enumerables::None;
+  this->presence        = Protocol::Enumerables::Contact::Offline;
+  this->type            = Protocol::Enumerables::Contact::MXit;
+  this->mood            = Protocol::Enumerables::Contact::None;
 }
 
 
@@ -37,9 +37,9 @@ Contact::Contact(const QString &group, const QString &contactAddress, const QStr
   this->group           = group;
   this->contactAddress  = contactAddress;
   this->nickname        = nickname;
-  this->presence        = (Protocol::Enumerables::Presence)presence;
-  this->type            = (Protocol::Enumerables::Contact)type;
-  this->mood            = (Protocol::Enumerables::Mood)mood;
+  this->presence        = (Protocol::Enumerables::Contact::Presence)presence;
+  this->type            = (Protocol::Enumerables::Contact::Type)type;
+  this->mood            = (Protocol::Enumerables::Contact::Mood)mood;
 }
 
 

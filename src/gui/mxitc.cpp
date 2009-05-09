@@ -416,9 +416,9 @@ void MXitC::contactsReceived(){
     c.group           = contactInfo[0];
     c.contactAddress  = contactInfo[1];
     c.nickname        = contactInfo[2];
-    c.presence        = (Protocol::Enumerables::Presence)contactInfo[3].toUInt();
-    c.type            = (Protocol::Enumerables::Contact)contactInfo[4].toUInt();
-    c.mood            = (Protocol::Enumerables::Mood)contactInfo[5].toUInt();
+    c.presence        = (Protocol::Enumerables::Contact::Presence)contactInfo[3].toUInt();
+    c.type            = (Protocol::Enumerables::Contact::Type)contactInfo[4].toUInt();
+    c.mood            = (Protocol::Enumerables::Contact::Mood)contactInfo[5].toUInt();
     
     if(newContact) {
       nicknameToContactAddress[c.nickname] = c.contactAddress;
@@ -577,7 +577,7 @@ void MXitC::outgoingMessage(const QString & message)
 {
   if (currentContact) {
     currentContact->chatHistory.append(Message ( 0, message) );
-    mxit->sendMessage(currentContact->contactAddress, message, MXit::Protocol::MessageTypeNormal, 0);
+    mxit->sendMessage(currentContact->contactAddress, message, Protocol::Enumerables::Message::Normal, 0);
     refreshChatBox();
   }
 }

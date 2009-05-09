@@ -287,7 +287,7 @@ void Client::setGateway(const QString &connectionString)
 ** Passes parameters onto a packet handler and transmits result
 **
 ****************************************************************************/
-void Client::sendMessage(const QString &contactAddress, const QString &message, MXit::Protocol::MessageType type, unsigned int flags)
+void Client::sendMessage(const QString &contactAddress, const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags)
 {
   /* build variables for login packet */
   VariableHash messageVariables;

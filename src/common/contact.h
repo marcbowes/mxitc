@@ -13,9 +13,7 @@
 
 #include <QString>
 
-#include "protocol/enumerables/presence.h"
 #include "protocol/enumerables/contact.h"
-#include "protocol/enumerables/mood.h"
 
 namespace MXit
 {
@@ -31,9 +29,9 @@ class Contact
   
   public:         /* variables */
 
-  Protocol::Enumerables::Presence presence;
-  Protocol::Enumerables::Contact  type;
-  Protocol::Enumerables::Mood     mood;
+  Protocol::Enumerables::Contact::Presence presence;
+  Protocol::Enumerables::Contact::Type     type;
+  Protocol::Enumerables::Contact::Mood     mood;
 
   public:        /* variables */
   

@@ -34,7 +34,7 @@
 #include "gui/dialogs/addContact.h"
 #include "gui/contact.h"
 
-#include "protocol/message_type.h"
+#include "protocol/enumerables/message.h"
 
 #include "ui_mxitc.h"
 

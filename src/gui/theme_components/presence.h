@@ -14,7 +14,7 @@
 
 #include <QPixmap>
 
-#include "protocol/enumerables/presence.h"
+#include "protocol/enumerables/contact.h"
 
 namespace MXit
 {
@@ -34,7 +34,7 @@ class Presence
   
   public:         /* methods */
   
-  QPixmap pixmap(Protocol::Enumerables::Presence presence,
+  QPixmap pixmap(Protocol::Enumerables::Contact::Presence presence,
     const QString &extensions = "png");
   
   private:        /* variables */

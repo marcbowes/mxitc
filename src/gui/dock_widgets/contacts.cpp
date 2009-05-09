@@ -70,19 +70,19 @@ void Contacts::addContact(const Contact & c){
   QPixmap pixmap; /* FIXME: theme */
   QChar   sortPrefix;
   switch (c.presence) {
-    case Protocol::Enumerables::Available:
+    case Protocol::Enumerables::Contact::Available:
       sortPrefix = '0';
       break;
-    case Protocol::Enumerables::Online:
+    case Protocol::Enumerables::Contact::Online:
       sortPrefix = '1';
       break;
-    case Protocol::Enumerables::Away:
+    case Protocol::Enumerables::Contact::Away:
       sortPrefix = '2';
       break;
-    case Protocol::Enumerables::DoNotDisturb:
+    case Protocol::Enumerables::Contact::DoNotDisturb:
       sortPrefix = '3';
       break;
-    case Protocol::Enumerables::Offline:
+    case Protocol::Enumerables::Contact::Offline:
       sortPrefix = '4';
       break;
     default:
