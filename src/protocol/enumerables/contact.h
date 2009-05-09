@@ -22,7 +22,7 @@ namespace Enumerables
 {
 
 enum Contact {
-  Mxit        = 0,
+  MXit        = 0,
   Jabber      = 1,
   Msn         = 2,
   Yahoo       = 3,

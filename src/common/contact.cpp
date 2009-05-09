@@ -13,6 +13,21 @@ namespace MXit
 **
 ** Author: Marc Bowes
 **
+** Contact default constructor
+**
+****************************************************************************/
+Contact::Contact()
+{
+  this->presence        = Protocol::Enumerables::Offline;
+  this->type            = Protocol::Enumerables::MXit;
+  this->mood            = Protocol::Enumerables::None;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Contact constructor
 **
 ****************************************************************************/
@@ -24,7 +39,7 @@ Contact::Contact(const QString &group, const QString &contactAddress, const QStr
   this->nickname        = nickname;
   this->presence        = (Protocol::Enumerables::Presence)presence;
   this->type            = (Protocol::Enumerables::Contact)type;
-  this->mood            = (Protocol::Enumerables::Mood)mood;  
+  this->mood            = (Protocol::Enumerables::Mood)mood;
 }
 
 

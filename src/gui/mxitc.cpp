@@ -412,20 +412,20 @@ void MXitC::contactsReceived(){
       newContact = true;
     }        
     
-    Contact & c = contactsHash[contactAddress];
-    c.setGroup(          QString(contactInfo [0]));
-    c.setContactAddress( QString(contactInfo [1]));
-    c.setNickname(       QString(contactInfo [2]));
-    c.setPresence(       QString(contactInfo [3]).toInt());
-    c.setType(           QString(contactInfo [4]).toInt());
-    c.setMood(           QString(contactInfo [5]).toInt());
+    Contact &c = contactsHash[contactAddress];
+    c.group           = contactInfo[0];
+    c.contactAddress  = contactInfo[1];
+    c.nickname        = contactInfo[2];
+    c.presence        = (Protocol::Enumerables::Presence)contactInfo[3].toUInt();
+    c.type            = (Protocol::Enumerables::Contact)contactInfo[4].toUInt();
+    c.mood            = (Protocol::Enumerables::Mood)contactInfo[5].toUInt();
     
     if(newContact) {
-      nicknameToContactAddress[c.getNickname()] = c.getContactAddress();
+      nicknameToContactAddress[c.nickname] = c.contactAddress;
      
-      c.chatHistory.append( Message(0, "User: "+ c.getNickname()));
-      c.chatHistory.append( Message(0, "CA: "+ c.getContactAddress()));
-      c.chatHistory.append( Message(0, "grp: \""+ c.getGroup() + "\""));
+      c.chatHistory.append( Message(0, "User: "+ c.nickname));
+      c.chatHistory.append( Message(0, "CA: "+ c.contactAddress));
+      c.chatHistory.append( Message(0, "grp: \""+ c.group + "\""));
     }
   }
   
@@ -479,12 +479,12 @@ void MXitC::setCurrentUser(QListWidgetItem * item){
   //qDebug() << nicknameToContactAddress[item->text()];
   
   if (currentContact)
-    currentContact->setChatInputText(chatInput->text());
+    currentContact->chatInputText = chatInput->text();
   
   currentContact = &contactsHash[nicknameToContactAddress[item->text()]];
   refreshChatBox();
   
-  chatInput->setText(currentContact->getChatInputText());
+  chatInput->setText(currentContact->chatInputText);
 }
 
 
@@ -577,7 +577,7 @@ void MXitC::outgoingMessage(const QString & message)
 {
   if (currentContact) {
     currentContact->chatHistory.append(Message ( 0, message) );
-    mxit->sendMessage(currentContact->getContactAddress(), message, MXit::Protocol::MessageTypeNormal, 0);
+    mxit->sendMessage(currentContact->contactAddress, message, MXit::Protocol::MessageTypeNormal, 0);
     refreshChatBox();
   }
 }

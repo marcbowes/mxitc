@@ -65,7 +65,6 @@ SET(MXIT_CLIENT_MOC_SRCS
   
   gui/mxit_dock_widget.h
   gui/message.h
-  gui/contact.h
   
   gui/dock_widgets/log.h
   gui/dock_widgets/options.h

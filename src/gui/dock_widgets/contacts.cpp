@@ -90,7 +90,7 @@ void Contacts::addContact(const Contact & c){
       break;
   }
   
-  QListWidgetItem *item = new QListWidgetItem(pixmap, QString("%1%2").arg(sortPrefix).arg(c.getNickname()));
+  QListWidgetItem *item = new QListWidgetItem(pixmap, QString("%1%2").arg(sortPrefix).arg(c.nickname));
   contactList->addItem(item);
 }
 

@@ -3,7 +3,6 @@
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
 ** Author: Marc Bowes, 2009
-** Author: Richard Baxter, 2009
 **
 ** Provides functionality to store contacts as an object
 **
@@ -25,6 +24,7 @@ class Contact
 {
   public:         /* class specific */
 	
+	Contact();
   Contact(const QString &group, const QString &contactAddress, const QString &nickname,
     quint16 presence, quint16 type, quint16 mood);
   ~Contact();
@@ -35,7 +35,7 @@ class Contact
   Protocol::Enumerables::Contact  type;
   Protocol::Enumerables::Mood     mood;
 
-  private:        /* variables */
+  public:        /* variables */
   
   QString group;
   QString contactAddress;

@@ -103,7 +103,7 @@ QString Message::getMessage() const
 
 QString Message::getFormattedMsg() const
 {
-  return (sender?sender->getNickname():QString("You")) + ": " + message;
+  return (sender?sender->nickname:QString("You")) + ": " + message;
 }
 
 } /* end namespace GUI */
