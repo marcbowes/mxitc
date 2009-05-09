@@ -67,6 +67,24 @@ Contact::~Contact()
 **
 ****************************************************************************/
 
+Contact& Contact::operator=(const Contact& c) {
+  group = c.group;
+  contactAddress = c.contactAddress;
+  nickname = c.nickname;
+  presence = c.presence;
+  type = c.type;
+  mood = c.mood;
+  unreadMessage = true;
+  
+  return *this;
+}
+  
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
 QString Contact::getNickname() const
 {
   return nickname;

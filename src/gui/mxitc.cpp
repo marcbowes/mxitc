@@ -32,7 +32,11 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   login = NULL;
   
+  /*apply styleing!*/
+  applyStyleSheet("/home/richard/workspace/cpp/mxit/src/var/test.qss");
+   
   settings = new QSettings ( "mxitc", "env", this );
+  contactMetaData = new ContactMetaData();
   
   DockWidget::Debug * debugWidget = new DockWidget::Debug (this);
   appendDockWidget(debugWidget,    Qt::RightDockWidgetArea, actionDebug_Variables);
@@ -40,7 +44,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   DockWidget::Options * optionsWidget = new DockWidget::Options (this);
   appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
   
-  contactsWidget = new DockWidget::Contacts (this);
+  contactsWidget = new DockWidget::Contacts (contactMetaData,this);
   appendDockWidget(contactsWidget, Qt::LeftDockWidgetArea, actionContacts);
   
   logWidget = new DockWidget::Log (this);
@@ -118,19 +122,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   }
   
   
-  /* setting up QIcons for presence*/
-  
-  QPixmap gray =    QPixmap ( 30, 30 ); gray  .fill(Qt::gray);
-  QPixmap green =   QPixmap ( 30, 30 ); green .fill(Qt::green);
-  QPixmap orange =  QPixmap ( 30, 30 ); orange.fill(QColor(255,215,0));
-  QPixmap blue =    QPixmap ( 30, 30 ); blue  .fill(Qt::blue);
-  QPixmap red =     QPixmap ( 30, 30 ); red   .fill(Qt::red);
-  
-  presenceIcons[Contact::OFFLINE]         = gray;
-  presenceIcons[Contact::ONLINE]          = green;
-  presenceIcons[Contact::AWAY]            = orange;
-  presenceIcons[Contact::AVAILABLE]       = blue;
-  presenceIcons[Contact::DO_NOT_DISTURB]  = red;
   
 }
 
@@ -156,6 +147,25 @@ MXitC::~MXitC()
   }
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::applyStyleSheet(const QString & styleSheetFile)
+{
+  QFile ssfile(styleSheetFile);
+  ssfile.open(QFile::ReadOnly);
+  if (ssfile.exists ()) {
+    QString styleSheet = QLatin1String(ssfile.readAll());
+    application->setStyleSheet(styleSheet);
+    
+    return;
+  }
+  //qDebug() << QFileInfo(ssfile).absoluteDir ().absolutePath () ;
+
+}
 
 /****************************************************************************
 **
@@ -420,7 +430,7 @@ void MXitC::contactsReceived(){
     }
   }
   
-  refreshContactsList();
+  contactsWidget->refresh(contactsHash.values());
         
 }
 
@@ -480,26 +490,6 @@ void MXitC::setCurrentUser(QListWidgetItem * item){
 
 
 
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void MXitC::refreshContactsList() {
-
-  /* resetting contacts list*/
-  contactsWidget->clearList();/* FIXME make a tree view ?*/
-  Q_FOREACH(const Contact & c, contactsHash) {
-  
-    contactsWidget->addItemToList( QListWidgetItem ( presenceIcons[c.presence], c.getNickname()) );
-  }
-  
-  for (int i = 0 ; i < 5 ; i++)
-    qDebug() << i << " " << presenceIcons[(Contact::Presence)i];
-    
-
-}
 
 /****************************************************************************
 **
@@ -517,6 +507,7 @@ void MXitC::refreshChatBox(){
       mainTextArea->append ( m.getFormattedMsg() );
     }
   }
+  
   
 }
 

@@ -17,6 +17,9 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
 
 #include "common/types.h"
 #include "common/actions.h"
@@ -62,6 +65,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void messageReceived();
   
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
+  
+  void applyStyleSheet(const QString & styleSheetFile);
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -88,7 +93,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void sendGateway(bool http);
   
-  void refreshContactsList();
   
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -99,7 +103,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   QHash<QString, QString> nicknameToContactAddress; // converts contactAddresses to their unique nickname
   QHash<QString, Contact> contactsHash; // identified by contactAddress (NOT nickname)
   
-  QHash<Contact::Presence, QIcon> presenceIcons; // identified by contactAddress (NOT nickname)
+  ContactMetaData * contactMetaData;
   
   Contact * currentContact;
   

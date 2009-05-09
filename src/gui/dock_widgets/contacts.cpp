@@ -20,7 +20,7 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Contacts::Contacts(QWidget* parent) : MXitDockWidget(parent)
+Contacts::Contacts(const ContactMetaData * metadata, QWidget* parent) : MXitDockWidget(parent), metadata(metadata)
 {
   setupUi(this);
   
@@ -64,9 +64,34 @@ void Contacts::clearList(){
 **
 ****************************************************************************/
 
-void Contacts::addItemToList(const QListWidgetItem & liw){
-  QListWidgetItem * item = new QListWidgetItem(liw);
+void Contacts::addContact(const Contact & c){
+
+  QListWidgetItem * item = new QListWidgetItem(metadata->presenceIcons()[c.presence], QString().setNum(metadata->presencePrecedence()[c.presence])+c.getNickname());
   contactList->addItem(item);
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Contacts::refresh(QList<Contact> contacts) {
+
+  /* resetting contacts list*/
+  clearList();/* FIXME make a tree view ?*/
+  Q_FOREACH(const Contact & c, contacts) {
+  
+    addContact( c ); 
+  }
+  contactList->sortItems();
+    
+  for (int i = 0 ; i < contactList->count() ; i++) {
+    QListWidgetItem * lwi = contactList->item(i);
+    lwi->setText ( lwi->text().mid ( 1 ) );
+  }
+
 }
 
 

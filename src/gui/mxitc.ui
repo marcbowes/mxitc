@@ -144,6 +144,9 @@
    <property name="text">
     <string>Options</string>
    </property>
+   <property name="shortcut">
+    <string>Alt+O</string>
+   </property>
   </action>
   <action name="actionDebug_Variables">
    <property name="text">
