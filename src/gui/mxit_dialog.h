@@ -29,7 +29,7 @@ class MXitDialog : public QDialog
   public:         /* class specific */
   
   MXitDialog(QWidget *parent = 0, MXit::Client *client = 0, QSettings *settings = 0);
-  ~MXitDialog();
+  virtual ~MXitDialog();
 
   private: /* methods */
 

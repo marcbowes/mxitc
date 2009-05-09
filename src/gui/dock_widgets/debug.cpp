@@ -18,7 +18,7 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Debug::Debug(QWidget* parent) : QDockWidget(parent)
+Debug::Debug(QWidget* parent) : MXitDockWidget(parent)
 {
   setupUi(this);
   

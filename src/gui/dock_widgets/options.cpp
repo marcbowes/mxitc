@@ -20,7 +20,7 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Options::Options(QWidget* parent) : QDockWidget(parent)
+Options::Options(QWidget* parent) : MXitDockWidget(parent)
 {
   setupUi(this);
   

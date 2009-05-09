@@ -21,8 +21,11 @@
 #include "common/types.h"
 #include "common/actions.h"
 #include "mxit/client.h"
+
 #include "gui/dock_widgets/debug.h"
 #include "gui/dock_widgets/options.h"
+#include "gui/dock_widgets/contacts.h"
+
 #include "gui/dialogs/login.h"
 #include "gui/dialogs/addContact.h"
 #include "gui/contact.h"
@@ -58,11 +61,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void contactsReceived();
   void messageReceived();
   
+  void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
 
-  void toggleDockWidget(QDockWidget * widget);
-  private slots:
-  void debugToggle();
-  void optionsToggle();
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   public slots:
@@ -110,8 +110,10 @@ class MXitC : public QMainWindow, private Ui::MXitC
   QLabel * statusLabel;
   
   /* Dockable Widgets*/
-  DockWidget::Debug * debugWidget;
-  DockWidget::Options * optionWidget;
+  QVector<QDockWidget *> dockWidgets;
+  
+  DockWidget::Contacts * contactsWidget;
+  
 };
 
 }

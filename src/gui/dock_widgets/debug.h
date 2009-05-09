@@ -7,8 +7,8 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_DEBUG_WIDGET_H__
-#define __MXIT_GUI_DEBUG_WIDGET_H__
+#ifndef __MXIT_GUI_DOCKWIDGET_DEBUG_H__
+#define __MXIT_GUI_DOCKWIDGET_DEBUG_H__
 
 #include <QDockWidget>
 #include <QHash>
@@ -16,7 +16,9 @@
 
 #include "common/types.h"
 
-#include "ui_debugWidget.h"
+#include "gui/mxit_dock_widget.h"
+
+#include "ui_debug.h"
 
 namespace MXit
 {
@@ -29,7 +31,7 @@ namespace DockWidget
 
 
 
-class Debug : public QDockWidget, private Ui::DebugDockWidget
+class Debug : public MXitDockWidget, private Ui::DebugDockWidget
 {
   Q_OBJECT
   

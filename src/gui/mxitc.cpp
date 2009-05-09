@@ -35,30 +35,21 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   statusbar->addPermanentWidget(statusLabel);
   setStatusBar();
   
-  /* adding the debug window */
-  debugWidget = new DockWidget::Debug (this);
-  debugWidget->setFeatures (QDockWidget::AllDockWidgetFeatures);
-  addDockWidget(Qt::RightDockWidgetArea, debugWidget);
+  settings = new QSettings ( "mxitc", "env", this );
   
-  /* adding the options window */
-  optionWidget = new DockWidget::Options (this);
-  optionWidget->setFeatures (QDockWidget::AllDockWidgetFeatures);
-  addDockWidget(Qt::RightDockWidgetArea, optionWidget);
-  //optionWidget->setFloating ( true );
-  optionWidget->setVisible ( false );
+  DockWidget::Debug * debugWidget = new DockWidget::Debug (this);
+  contactsWidget = new DockWidget::Contacts (this);
+  appendDockWidget(debugWidget,                     Qt::RightDockWidgetArea, actionDebug_Variables);
+  appendDockWidget(new DockWidget::Options (this),  Qt::RightDockWidgetArea, actionOptions);
+  appendDockWidget(contactsWidget                 , Qt::LeftDockWidgetArea, actionContacts);
+  
+  restoreState(settings->value("gui layout").toByteArray());
   
   
-  connect(optionWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(saveLayout(Qt::DockWidgetArea)));
-  connect(debugWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(saveLayout(Qt::DockWidgetArea)));
-  connect(contactWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(saveLayout(Qt::DockWidgetArea)));
-  
-  
-  connect(actionDebug_Variables, SIGNAL(triggered()), this, SLOT(debugToggle()));
-  connect(actionOptions, SIGNAL(triggered()), this, SLOT(optionsToggle()));
   
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
-  /*TODO integrate into QT designer*/
+  /*TODO integrate into QT designer (?)*/
   connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginDialog()));
   connect(actionAddContact, SIGNAL(triggered()), this, SLOT(openAddContactDialog()));
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
@@ -69,9 +60,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(mxit, SIGNAL(outgoingAction(Action)), this, SLOT(incomingAction(Action)));
   
   
-  connect(contactList, SIGNAL(itemPressed ( QListWidgetItem *  )), this, SLOT(setCurrentUser( QListWidgetItem *  )));
+  connect(contactsWidget, SIGNAL(outgoingItemPressed ( QListWidgetItem *  )), this, SLOT(setCurrentUser( QListWidgetItem *  )));
   
-  settings = new QSettings ( "mxitc", "env", this );
   
   
   StringVec variables;
@@ -121,7 +111,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   }
   
   
-  restoreState(settings->value("gui layout").toByteArray());
   
 }
 
@@ -141,10 +130,35 @@ MXitC::~MXitC()
   statusbar->removeWidget(statusLabel);
   delete statusLabel;
   
-  delete debugWidget;
-  delete optionWidget;
   
+  Q_FOREACH(const QDockWidget * dw, dockWidgets) {
+    
+    delete dw; /*FIXME - check if contactWidget is cleaned up already - if it's a problem it should be made into another dockwidget separate from the mxitc.ui file*/
+  }
 }
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea area, QAction* action){
+
+  dockWidgets.append(dockWidget);
+  
+  dockWidget->setFeatures (QDockWidget::AllDockWidgetFeatures);
+  addDockWidget(Qt::RightDockWidgetArea, dockWidget);
+  dockWidget->setVisible ( false );
+    
+  connect(dockWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(saveLayout(Qt::DockWidgetArea)));
+  
+  connect(action, SIGNAL(triggered()), dockWidget, SLOT(toggleVisibility()));
+  //connect(actionDebug_Variables, SIGNAL(triggered()), this, SLOT(debugToggle()));
+  //connect(actionOptions, SIGNAL(triggered()), this, SLOT(optionsToggle()));
+}
+
 
 /****************************************************************************
 **
@@ -157,42 +171,14 @@ void MXitC::saveLayout(Qt::DockWidgetArea area) {
   settings->setValue("gui layout", saveState());
 }
 
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void MXitC::toggleDockWidget(QDockWidget * widget) {
-  
-  /*TODO make a trigger raise if not raised else show if not shown else not show if shown( and raised)*/
-  /*qDebug() << widget->isVisible();
-  if (!widget->isActiveWindow()) {
-    widget->show();
-    widget->raise();
-    widget->activateWindow();
-  }
-  else {*/
-  
-  
-  if (widget->isVisible()) {
-    widget->setVisible(false);
-  }
-  else {
-    widget->setVisible(true);
-    widget->raise();
-  }
-  
-  //}
-}
 
 
-void MXitC::debugToggle() {
+/*void MXitC::debugToggle() {
   toggleDockWidget(debugWidget);
 }
 void MXitC::optionsToggle() {
   toggleDockWidget(optionWidget);
-}
+}*/
 
 /****************************************************************************
 **
@@ -316,7 +302,6 @@ void MXitC::contactsReceived(){
       ...
       groupN \1 contactAddressN \1 nicknameN \1 presenceN \1 typeN \1 mood
   */
-  QByteArray contacts = mxit->variableValue("contacts");
   
   /* manually entering data */
   /*contacts.append("group1");          contacts.append('\1');
@@ -354,6 +339,7 @@ void MXitC::contactsReceived(){
   contacts.append("3");               contacts.append('\1');*/
   
   // qDebug() << QByteArray(contacts).replace('\1', "\\1").replace('\0', "\\0");
+  QByteArray contacts = mxit->variableValue("contacts");
   
   QByteArray contactInfo [6];
   
@@ -407,9 +393,10 @@ void MXitC::contactsReceived(){
   }
   
   /* resetting contacts list*/
-  contactList->clear();/* FIXME make a tree view */
+  contactsWidget->clearList();/* FIXME make a tree view */
   Q_FOREACH(const Contact & c, contactsHash) {
-    contactList->addItem( c.getNickname() );
+    QString nn = c.getNickname();
+    contactsWidget->addItemToList( nn );
   }
         
 }

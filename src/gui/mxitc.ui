@@ -87,33 +87,13 @@
     </property>
     <addaction name="actionOptions"/>
     <addaction name="actionDebug_Variables"/>
+    <addaction name="actionContacts"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuContacts"/>
    <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="contactWidget">
-   <property name="features">
-    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
-   </property>
-   <property name="windowTitle">
-    <string>ContactList</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
-    <layout class="QGridLayout" name="gridLayout">
-     <property name="margin">
-      <number>0</number>
-     </property>
-     <item row="0" column="0">
-      <widget class="QListWidget" name="contactList"/>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
@@ -170,6 +150,14 @@
    </property>
    <property name="shortcut">
     <string>Alt+D</string>
+   </property>
+  </action>
+  <action name="actionContacts">
+   <property name="text">
+    <string>Contacts</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+C</string>
    </property>
   </action>
  </widget>

@@ -7,12 +7,10 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_DOCKWIDGETS_OPTIONS_H__
-#define __MXIT_GUI_DOCKWIDGETS_OPTIONS_H__
+#ifndef __MXIT_GUI_DOCKWIDGET_OPTIONS_H__
+#define __MXIT_GUI_DOCKWIDGET_OPTIONS_H__
 
-#include <QDockWidget>
-#include <QHash>
-#include <QDebug>
+#include "gui/mxit_dock_widget.h"
 
 #include "ui_options.h"
 
@@ -25,7 +23,7 @@ namespace GUI
 namespace DockWidget
 {
 
-class Options : public QDockWidget, private Ui::OptionsDockWidget
+class Options : public MXitDockWidget, private Ui::OptionsDockWidget
 {
   Q_OBJECT
   
