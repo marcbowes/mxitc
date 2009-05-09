@@ -26,6 +26,7 @@ Options::Options(QWidget* parent) : MXitDockWidget(parent)
   
   connect(httpRadioButton, SIGNAL(toggled ( bool )), httpWidget, SLOT(setEnabled ( bool )));
   
+  connect(httpRadioButton, SIGNAL(toggled ( bool )), this, SIGNAL(gatewaySelected( bool )));
 }
 
 

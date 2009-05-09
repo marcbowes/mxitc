@@ -86,6 +86,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void saveLayout(Qt::DockWidgetArea area); 
   
+  void sendGateway(bool http);
+  
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   

@@ -32,6 +32,9 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   Options(QWidget* parent = 0);
   ~Options();
   
+  signals:
+  void gatewaySelected(bool http);
+  
   public slots:
   
   

@@ -39,9 +39,10 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   DockWidget::Debug * debugWidget = new DockWidget::Debug (this);
   contactsWidget = new DockWidget::Contacts (this);
-  appendDockWidget(debugWidget,                     Qt::RightDockWidgetArea, actionDebug_Variables);
-  appendDockWidget(new DockWidget::Options (this),  Qt::RightDockWidgetArea, actionOptions);
-  appendDockWidget(contactsWidget                 , Qt::LeftDockWidgetArea, actionContacts);
+  DockWidget::Options * optionsWidget = new DockWidget::Options (this);
+  appendDockWidget(debugWidget,    Qt::RightDockWidgetArea, actionDebug_Variables);
+  appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
+  appendDockWidget(contactsWidget, Qt::LeftDockWidgetArea, actionContacts);
   
   restoreState(settings->value("gui layout").toByteArray());
   
@@ -62,6 +63,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   connect(contactsWidget, SIGNAL(outgoingItemPressed ( QListWidgetItem *  )), this, SLOT(setCurrentUser( QListWidgetItem *  )));
   
+  connect(optionsWidget, SIGNAL(gatewaySelected(bool)), this, SLOT(sendGateway( bool )));  
   
   
   StringVec variables;
@@ -137,6 +139,19 @@ MXitC::~MXitC()
   }
 }
 
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+void MXitC::sendGateway(bool http)
+{
+  if (http)
+    mxit->setGateway(mxit->variableValue("http1"));
+  else
+    mxit->setGateway(mxit->variableValue("soc1"));
+}
 
 /****************************************************************************
 **
