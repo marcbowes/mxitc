@@ -75,6 +75,8 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
   **
   ***************************************************************************
   */
+  
+  return VariableHash();
 }
 
 }

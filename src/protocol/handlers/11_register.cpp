@@ -115,6 +115,8 @@ VariableHash Register::handle(const QByteArray &packet)
   **
   ***************************************************************************
   */
+  
+  return VariableHash();
 }
 
 }

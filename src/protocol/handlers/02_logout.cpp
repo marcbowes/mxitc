@@ -67,6 +67,8 @@ VariableHash Logout::handle(const QByteArray &packet)
   **
   ***************************************************************************
   */
+  
+  return VariableHash();
 }
 
 }

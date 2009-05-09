@@ -77,7 +77,7 @@ VariableHash SubscribeToANewContact::handle(const QByteArray &packet)
   ***************************************************************************
   */
   
-  
+  return VariableHash();
 }
 
 }
