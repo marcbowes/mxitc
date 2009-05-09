@@ -387,6 +387,7 @@ MXit::Protocol::Handler* Client::handlerFor(const QByteArray &command)
 {
   unsigned int c = command.toUInt();
   Q_FOREACH(MXit::Protocol::Handler *h, handlers) {
+    qDebug() << "checking suitability of handler" << h->command << "for" << c;
     if (h->command == c) return h;
   }
   
