@@ -78,8 +78,16 @@ void Connection::HTTP_connect()
 ****************************************************************************/
 void Connection::HTTP_read(int id, bool error)
 { 
-  QByteArray in = http.readAll();
-  qDebug() << in;
+  buffer.append(http.readAll());
+  if (!buffer.isEmpty()) {
+    QList<QByteArray> packets = buffer.split('\2');
+    Q_FOREACH(const QByteArray &packet, packets) {
+      qDebug() << "HTTP PACKET\n---";
+      qDebug() << QByteArray(packet).replace('\0', ';').replace('\1', ',');
+      emit outgoingPacket(packet);
+    }
+  }
+  buffer.clear();
 }
 
 
@@ -229,6 +237,7 @@ Packet* Connection::buildPacket() {
 void Connection::close()
 {
   state = DISCONNECTING;
+  buffer.clear();
   
   /* determine type of connection to open */
   switch (gateway.type) {

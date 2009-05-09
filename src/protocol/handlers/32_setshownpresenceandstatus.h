@@ -15,7 +15,7 @@
 
 #include "protocol/handler.h"
 
-#define SETSHOWNPRESENCEANDSTATUS 1
+#define SETSHOWNPRESENCEANDSTATUS 32
 
 namespace MXit
 {
