@@ -1,6 +1,6 @@
 
 
-#include "contacts.h"
+#include "log.h"
 
 namespace MXit
 {
@@ -20,11 +20,9 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Contacts::Contacts(QWidget* parent) : MXitDockWidget(parent)
+Log::Log(QWidget* parent) : MXitDockWidget(parent)
 {
   setupUi(this);
-  
-  connect(contactList, SIGNAL(itemPressed ( QListWidgetItem *  )), this, SIGNAL(outgoingItemPressed( QListWidgetItem *  )));
   
 }
 
@@ -37,7 +35,7 @@ Contacts::Contacts(QWidget* parent) : MXitDockWidget(parent)
 ** Widget destructor
 **
 ****************************************************************************/
-Contacts::~Contacts()
+Log::~Log()
 {
 
 }
@@ -49,20 +47,9 @@ Contacts::~Contacts()
 **
 ****************************************************************************/
 
-void Contacts::clearList(){
-  contactList->clear();
+void Log::logMessage(const QString& msg) {
+  listWidget->addItem ( msg );
 }
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void Contacts::addItemToList(QString& nickname){
-  contactList->addItem(nickname);
-}
-
 
 
 } /* end of DockWidget namespace */

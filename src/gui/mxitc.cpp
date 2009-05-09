@@ -457,8 +457,13 @@ void MXitC::messageReceived(){
 void MXitC::setCurrentUser(QListWidgetItem * item){
   //qDebug() << item->text();
   //qDebug() << nicknameToContactAddress[item->text()];
+  
+  currentContact->setChatInputText(chatInput->text());
+  
   currentContact = &contactsHash[nicknameToContactAddress[item->text()]];
   refreshChatBox();
+  
+  chatInput->setText(currentContact->getChatInputText());
 }
 
 

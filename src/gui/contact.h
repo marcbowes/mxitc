@@ -123,11 +123,13 @@ class Contact : public QObject
   void setPresence(int presence);
   void setType(int type);
   void setMood(int mood);
+  
+  void setChatInputText(const QString& inputChatText);
+  QString getChatInputText();
 
 
   QVector <Message> chatHistory; // TODO make private, too lazy to do all the methods right now - rax
 
-  QString chatInputText; /* an area to save what the user has types in the input line */
 
   /* group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood \0 */
   private: /* variables */
@@ -138,6 +140,7 @@ class Contact : public QObject
   unsigned int type;
   unsigned int mood;
   
+  QString chatInputText; /* an area to save what the user has types in the input line */
 
 
 };

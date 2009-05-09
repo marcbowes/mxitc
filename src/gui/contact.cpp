@@ -166,6 +166,26 @@ void Contact::setMood(int mood)
   this->mood = mood;
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void  Contact::setChatInputText(const QString& chatInputText_) {
+  chatInputText = chatInputText_;
+}
+  
+  
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+QString  Contact::getChatInputText() {
+  return chatInputText;
+}
+
 
 } /* end namespace GUI */
 
