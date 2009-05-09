@@ -60,7 +60,7 @@ void SendNewMessage::build(MXit::Network::Packet *packet, VariableHash &variable
   
   /* packet data setup */
   (*packet) << variables["contactAddress"]
-            << variables["msg"]
+            << variables["message"]
             << variables["type"]
             << variables["flags"]
   ;

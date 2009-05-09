@@ -555,11 +555,8 @@ void MXitC::outgoingMessage(const QString & message)
 {
   if (currentContact) {
     currentContact->chatHistory.append(Message ( 0, message) );
-    
     mxit->sendMessage(currentContact->getContactAddress(), message, MXit::Protocol::MessageTypeNormal, 0);
-    
     refreshChatBox();
-    
   }
 }
 
