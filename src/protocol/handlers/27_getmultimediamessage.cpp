@@ -37,7 +37,7 @@ void GetMultimediaMessage::build(MXit::Network::Packet *packet, VariableHash &va
   == DEFINITIONS
   ***************************************************************************
   **
-  **  chunkedData         see appendix G. too long to pasted
+  **  chunkedData         see appendix G. too long to paste
   **
   ***************************************************************************
   */
@@ -65,6 +65,13 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
   **  27\0
   **  errorCode[\1errorMessage]\0
   **  chunkedData
+  **
+  ***************************************************************************
+  
+  == DEFINITIONS
+  ***************************************************************************
+  **
+  **  chunkedData         see appendix G. too long to paste
   **
   ***************************************************************************
   */
