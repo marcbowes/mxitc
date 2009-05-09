@@ -82,6 +82,8 @@ VariableHash SetShownPresenceAndStatus::handle(const QByteArray &packet)
   **
   ***************************************************************************
   */
+  
+  return VariableHash();
 }
 
 }

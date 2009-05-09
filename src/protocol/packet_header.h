@@ -4,20 +4,24 @@
 **
 ** Author: Marc Bowes, 2009
 **
-** maps variables to values
+** extracts header information from an incoming packet
 **
 ****************************************************************************/
 
-#ifndef __MXIT_HASH_VARIABLES_H__
-#define __MXIT_HASH_VARIABLES_H__
+#ifndef __MXIT_PACKET_HEADER_H__
+#define __MXIT_PACKET_HEADER_H__
 
-#include "types.h"
+#include "common/types.h"
 
 namespace MXit
 {
 
-VariableHash hashVariables(const QByteArray &data, const StringVec &variables,
-    char delimiter = ';');
+namespace Protocol
+{
+
+VariableHash packetHeader(const QByteArray &packet);
+
+}
 
 }
 

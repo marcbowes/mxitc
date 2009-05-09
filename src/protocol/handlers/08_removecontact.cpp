@@ -68,7 +68,7 @@ VariableHash RemoveContact::handle(const QByteArray &packet)
   ***************************************************************************
   */
   
-  
+  return VariableHash();
 }
 
 }

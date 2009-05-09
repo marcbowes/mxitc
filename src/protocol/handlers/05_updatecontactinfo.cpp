@@ -72,6 +72,8 @@ VariableHash UpdateContactInfo::handle(const QByteArray &packet)
   **
   ***************************************************************************
   */
+  
+  return VariableHash();
 }
 
 }

@@ -2,20 +2,19 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
-** Author: Marc Bowes, 2009
-** Author: Richard Baxter, 2009
+** Author: Tim Sjoberg, 2009
 **
-** MXit::Network::Handlers::Login deals with logging into MXit
+** MXit::Network::Handlers::Register deals with registering a new account
 ** see build/handle definitions in .cpp file for implementation details
 **
 ****************************************************************************/
 
-#ifndef __MXIT_PROTOCOL_HANDLERS_SETSHOWNPRESENCEANDSTATUS_H__
-#define __MXIT_PROTOCOL_HANDLERS_SETSHOWNPRESENCEANDSTATUS_H__
+#ifndef __MXIT_PROTOCOL_HANDLERS_REGISTER_H__
+#define __MXIT_PROTOCOL_HANDLERS_REGISTER_H__
 
 #include "protocol/handler.h"
 
-#define SETSHOWNPRESENCEANDSTATUS 32
+#define REGISTER 11
 
 namespace MXit
 {
@@ -26,11 +25,11 @@ namespace Protocol
 namespace Handlers
 {
 
-class SetShownPresenceAndStatus : public Handler
+class Register : public Handler
 {
   public:
   
-  SetShownPresenceAndStatus() { command = SETSHOWNPRESENCEANDSTATUS; }
+  Register() { command = REGISTER; }
   
   virtual void build(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);
@@ -43,4 +42,3 @@ class SetShownPresenceAndStatus : public Handler
 }
 
 #endif
-
