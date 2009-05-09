@@ -38,6 +38,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/contact.cpp
   gui/message.cpp
   
+  gui/dock_widgets/log.cpp
   gui/dock_widgets/options.cpp
   gui/dock_widgets/debug.cpp
   gui/dock_widgets/contacts.cpp
@@ -61,6 +62,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   gui/message.h
   gui/contact.h
   
+  gui/dock_widgets/log.h
   gui/dock_widgets/options.h
   gui/dock_widgets/debug.h
   gui/dock_widgets/contacts.h
@@ -73,6 +75,7 @@ SET(MXIT_CLIENT_MOC_SRCS
 
 SET(MXIT_CLIENT_UI
   
+  gui/dock_widgets/log.ui
   gui/dock_widgets/options.ui
   gui/dock_widgets/debug.ui
   gui/dock_widgets/contacts.ui

@@ -22,6 +22,7 @@
 #include "common/actions.h"
 #include "mxit/client.h"
 
+#include "gui/dock_widgets/log.h"
 #include "gui/dock_widgets/debug.h"
 #include "gui/dock_widgets/options.h"
 #include "gui/dock_widgets/contacts.h"
@@ -115,6 +116,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   QVector<QDockWidget *> dockWidgets;
   
   DockWidget::Contacts * contactsWidget;
+  DockWidget::Log * logWidget;
   
 };
 

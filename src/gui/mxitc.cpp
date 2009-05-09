@@ -31,18 +31,20 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   application = app;  /* store a copy */
   
   login = NULL;
-  statusLabel = new QLabel("No status set!");
-  statusbar->addPermanentWidget(statusLabel);
-  setStatusBar();
   
   settings = new QSettings ( "mxitc", "env", this );
   
   DockWidget::Debug * debugWidget = new DockWidget::Debug (this);
-  contactsWidget = new DockWidget::Contacts (this);
-  DockWidget::Options * optionsWidget = new DockWidget::Options (this);
   appendDockWidget(debugWidget,    Qt::RightDockWidgetArea, actionDebug_Variables);
+  
+  DockWidget::Options * optionsWidget = new DockWidget::Options (this);
   appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
+  
+  contactsWidget = new DockWidget::Contacts (this);
   appendDockWidget(contactsWidget, Qt::LeftDockWidgetArea, actionContacts);
+  
+  logWidget = new DockWidget::Log (this);
+  appendDockWidget(logWidget, Qt::RightDockWidgetArea, actionLogs);
   
   restoreState(settings->value("gui layout").toByteArray());
   
@@ -65,6 +67,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   connect(optionsWidget, SIGNAL(gatewaySelected(bool)), this, SLOT(sendGateway( bool )));  
   
+  statusLabel = new QLabel("No status set!");
+  statusbar->addPermanentWidget(statusLabel);
+  setStatusBar();
   
   StringVec variables;
   variables.append("err");                  /* 0 = success, else failed */
@@ -252,11 +257,6 @@ void MXitC::incomingAction(Action action)
         
         currentState = LOGGED_IN;
         setStatusBar();
-        /*
-        QMessageBox logged_in; 
-        logged_in.setText(QString("Logged in to mxit network"));
-        logged_in.exec();
-        */
         
         /* closing the login window if it is open (i.e. login != NULL)*/
         if (login != NULL) {
@@ -275,10 +275,6 @@ void MXitC::incomingAction(Action action)
       {
         currentState = LOGGED_OUT;
         setStatusBar();
-        
-        QMessageBox logged_out; 
-        logged_out.setText(QString("Logged out of mxit network"));
-        logged_out.exec();
       }
       break;
       
@@ -502,7 +498,9 @@ void MXitC::setStatusBar()
     case LOGGED_OUT: statusLabel->setText("LOGGED_OUT"); break;
     case LOGGING_IN: statusLabel->setText("LOGGING_IN"); break;
   
+        
   }
+  logWidget->logMessage("GUI:: State set to "+statusLabel->text());
 }
 
 /****************************************************************************
@@ -529,13 +527,13 @@ void MXitC::sendMessageFromChatInput()
 
 void MXitC::incomingError(int errorCode, const QString & errorString)
 {
-  QMessageBox error; error.setText(QString("(%1) %2").arg(errorCode).arg(errorString));
-  error.exec();
+  //QMessageBox error; error.setText(QString("(%1) %2").arg(errorCode).arg(errorString));
+  //error.exec();
+  logWidget->logMessage("GUI:: Error "+QString("(%1) %2").arg(errorCode).arg(errorString));
   
   
   if (login != NULL) {
-    login->resetButtons();  
-    
+    login->resetButtons();
   }
 }
 
