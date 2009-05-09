@@ -8,12 +8,14 @@ INCLUDE(${QT_USE_FILE})
 
 # .cxx sources
 SET(MXIT_CLIENT_SRCS_CXX
+  common/hash_variables.cpp
 
   network/packets/http.cpp
   network/packets/tcp.cpp
   
   protocol/aes.cpp
   protocol/handler.cpp
+  protocol/packet_header.cpp
   protocol/handlers/01_login.cpp
   protocol/handlers/02_logout.cpp
   protocol/handlers/03_getcontacts.cpp
@@ -40,6 +42,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/dialogs/login.cpp
   gui/mxitc.cpp
   gui/mxit_dialog.cpp
+  
   main.cpp
 )
 
