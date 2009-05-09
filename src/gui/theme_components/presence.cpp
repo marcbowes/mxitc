@@ -12,7 +12,7 @@ namespace MXit
 namespace GUI
 {
 
-namespace Theme
+namespace ThemeComponents
 {
 
 // stub

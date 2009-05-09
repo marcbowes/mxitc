@@ -12,7 +12,31 @@ namespace MXit
 namespace GUI
 {
 
-// stub
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Default constructor
+** Constructs all theme components
+**
+****************************************************************************/
+Theme::Theme()
+{
+  using namespace ThemeComponents;
+  presence = new Presence();
+}
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** descontructor, desconstructs theme components
+**
+****************************************************************************/
+Theme::~Theme()
+{
+  delete presence;
+}
 
 }
 

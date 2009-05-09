@@ -4,14 +4,14 @@
 **
 ** Author: Marc Bowes, 2009
 **
-** MXit::GUI::Theme::Presence provides methods for displaying contact
-** presence info
+** MXit::GUI::ThemeComponents::Presence provides methods for displaying
+** contact presence info
 **
 ****************************************************************************/
 
 
-#ifndef __MXIT_GUI_THEME_PRESENCE_H__
-#define __MXIT_GUI_THEME_PRESENCE_H__
+#ifndef __MXIT_GUI_THEMECOMPONENTS_PRESENCE_H__
+#define __MXIT_GUI_THEMECOMPONENTS_PRESENCE_H__
 
 namespace MXit
 {
@@ -19,7 +19,7 @@ namespace MXit
 namespace GUI
 {
 
-namespace Theme
+namespace ThemeComponents
 {
 
 class Presence
@@ -33,5 +33,5 @@ class Presence
 
 }
 
-#endif /* __MXIT_GUI_THEME_PRESENCE_H__ */
+#endif /* __MXIT_GUI_THEMECOMPONENTS_PRESENCE_H__ */
 
