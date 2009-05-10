@@ -39,7 +39,6 @@ Contacts::Contacts(QWidget* parent, Theme &theme) : MXitDockWidget(parent, theme
 ****************************************************************************/
 Contacts::~Contacts()
 {
-  clearList();
 }
 
 
@@ -49,14 +48,14 @@ Contacts::~Contacts()
 **
 ****************************************************************************/
 
-void Contacts::clearList(){
+/*void Contacts::clearList(){
 
   while(contactList->count()) {
     delete contactList->takeItem (0);
   }
   
   contactList->clear();
-}
+}*/
 
 /****************************************************************************
 **
@@ -65,7 +64,8 @@ void Contacts::clearList(){
 **
 ****************************************************************************/
 
-void Contacts::addContact(const Contact & c) {
+QListWidgetItem * Contacts::addContact(const Contact & c){
+
   QChar   sortPrefix;
   switch (c.presence) {
     case Protocol::Enumerables::Contact::Available:
@@ -88,13 +88,28 @@ void Contacts::addContact(const Contact & c) {
       break;
   }
   
-  QListWidgetItem *item = new QListWidgetItem(theme.presence.pixmap(c.presence), QString("%1%2").arg(sortPrefix).arg(c.nickname));
+  QString lable = QString("%1%2").arg(sortPrefix).arg(c.nickname);
   
+  QListWidgetItem * item = NULL;
+  
+  if (!listItemWidgets.contains(c.nickname)) {
+    item = new QListWidgetItem(theme.presence.pixmap(c.presence), lable); // create new item
+    contactList->addItem(item);
+    listItemWidgets[c.nickname] = item;
+  }
+  else {
+    item = listItemWidgets[c.nickname];
+    *item = QListWidgetItem(theme.presence.pixmap(c.presence), lable); // change exiting item
+  }
+    
   if (c.unreadMessage) {
     item->setForeground(QBrush(Qt::red));
   }
+  else {
+    item->setForeground(QBrush(Qt::black));
+  }
   
-  contactList->addItem(item);
+  return item;
 }
 
 
@@ -107,20 +122,32 @@ void Contacts::addContact(const Contact & c) {
 
 void Contacts::refresh(const QList<Contact>& contacts) {
 
-  if (contacts.size() != contactList->count()) {
-    /* means the new contact list has added or removed a contact*/
-    /*todo, handle this case :/ */
-  }
-  int selected = contactList->currentRow ();
-  
 
-  //qDebug() << "refreshing";
-  /* resetting contacts list*/
-  clearList();/* FIXME make a tree view ?*/
   Q_FOREACH(const Contact & c, contacts) {
   
-    addContact( c ); 
+    qDebug() << c.nickname << ":" << c.unreadMessage;
   }
+  
+
+  /* resetting contacts list*/
+  
+  QSet <QListWidgetItem*> lwiInList; // nickname -> bool
+  
+  Q_FOREACH(const Contact & c, contacts) {
+    QListWidgetItem* inContacts = addContact( c ); 
+    lwiInList.insert(inContacts);
+  }
+  
+  /* removing any contacts that are no longer n the list*/
+  Q_FOREACH(const Contact & c, contacts) {
+    if (!lwiInList.contains(listItemWidgets[c.nickname])) {
+      contactList->removeItemWidget(listItemWidgets[c.nickname]);
+      delete listItemWidgets[c.nickname];
+      listItemWidgets.remove(c.nickname);
+    }
+  }
+  
+  /*cleaning up*/
   contactList->sortItems();
     
   for (int i = 0 ; i < contactList->count() ; i++) {
@@ -128,7 +155,7 @@ void Contacts::refresh(const QList<Contact>& contacts) {
     lwi->setText ( lwi->text().mid ( 1 ) );
   }
   
-  contactList->setCurrentRow ( selected );
+  //contactList->setCurrentRow ( selected );
 
 }
 

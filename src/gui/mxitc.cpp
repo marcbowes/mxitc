@@ -194,7 +194,7 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
   dockWidget->setVisible ( false );
     
     
-  qDebug() << "loading "  << QString("visible?")+dockWidget->objectName ();
+  //qDebug() << "loading "  << QString("visible?")+dockWidget->objectName ();
   dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
   dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
     
@@ -224,7 +224,7 @@ void MXitC::saveLayout(bool b) {
 void MXitC::saveLayout(Qt::DockWidgetArea area) {
   
   Q_FOREACH(const QDockWidget * dw, dockWidgets) {
-    qDebug() << "saving "  << QString("visible?")+dw->objectName ();
+    //qDebug() << "saving "  << QString("visible?")+dw->objectName ();
     settings->setValue(QString("visible?")+dw->objectName (), dw->isVisible());
     settings->setValue(QString("floating?")+dw->objectName (), dw->isFloating());
   }
@@ -604,7 +604,7 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
 void MXitC::outgoingMessage(const QString & message)
 {
   if (currentContact) {
-    currentContact->chatHistory.append(Message ( 0, message) );
+    currentContact->incomingMessage( Message ( 0, message) );
     currentContact->unreadMessage = false;
     mxit->sendMessage(currentContact->contactAddress, message, Protocol::Enumerables::Message::Normal, 0);
     refreshChatBox();

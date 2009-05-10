@@ -40,6 +40,7 @@ Contact::Contact(const Contact &other)
   this->presence        = other.presence;
   this->type            = other.type;
   this->mood            = other.mood;
+  this->unreadMessage   = other.unreadMessage;
 }
 
 
@@ -64,7 +65,7 @@ Contact& Contact::operator=(const Contact &other)
   presence              = other.presence;
   type                  = other.type;
   mood                  = other.mood;
-  unreadMessage         = true;
+  unreadMessage         = other.unreadMessage;
 
   return *this;
 }
