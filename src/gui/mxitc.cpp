@@ -41,7 +41,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   DockWidget::Debug * debugWidget = new DockWidget::Debug (this, theme);
   appendDockWidget(debugWidget,    Qt::RightDockWidgetArea, actionDebug_Variables);
   
-  DockWidget::Options * optionsWidget = new DockWidget::Options (this, theme);
+  optionsWidget = new DockWidget::Options (this, theme);
   appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
   
   contactsWidget = new DockWidget::Contacts (this, theme);
@@ -52,6 +52,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   restoreState(settings->value("gui layout").toByteArray());
   
+  optionsWidget->setBaseThemeDirectory(settings->value("themeBaseDirectory").toString());
+  optionsWidget->setSelectedTheme(settings->value("selectedTheme").toString());
   
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
@@ -69,6 +71,12 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(contactsWidget, SIGNAL(outgoingItemPressed ( QListWidgetItem *  )), this, SLOT(setCurrentUser( QListWidgetItem *  )));
   
   connect(optionsWidget, SIGNAL(gatewaySelected(bool)), this, SLOT(sendGateway( bool )));  
+
+  connect(optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+  
+  
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
   
   statusLabel = new QLabel("No status set!");
   statusbar->addPermanentWidget(statusLabel);
@@ -448,7 +456,7 @@ void MXitC::contactsReceived(){
     }
   }
   
-  contactsWidget->refresh(contactsHash.values());
+  refreshContacts();
         
 }
 
@@ -488,6 +496,23 @@ void MXitC::messageReceived(){
     /*TODO handel this eror case, even though it should NEVER happen - rax*/
   }
         
+}
+
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Sets the curent contact the user is chatting to
+**
+****************************************************************************/
+
+void MXitC::themeChanged(){
+  refreshContacts();
+  settings->setValue("themeBaseDirectory", optionsWidget->getBaseThemeDirectory());
+  settings->setValue("selectedTheme", optionsWidget->getSelectedTheme());
+  
 }
 
 /****************************************************************************
@@ -536,6 +561,19 @@ void MXitC::refreshChatBox(){
   }
   
   
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Refreshes the chatBox area
+**
+****************************************************************************/
+
+void MXitC::refreshContacts(){
+  contactsWidget->refresh(contactsHash.values());
 }
 
 /****************************************************************************

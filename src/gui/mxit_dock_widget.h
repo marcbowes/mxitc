@@ -31,9 +31,10 @@ class MXitDockWidget : public QDockWidget
   private: /* methods */
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
 
   public slots:
-  void toggleVisibility();
+  void toggleVisibility(); /*FIXME there is apparently something that does this already in Qt... find it - rax*/
   
 
   protected slots:

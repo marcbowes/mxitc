@@ -35,8 +35,21 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   Options(QWidget* parent, Theme &theme);
   ~Options();
   
+  
+  public: /*method */
+  
+  QString getBaseThemeDirectory();
+  void setBaseThemeDirectory(const QString& dir);
+  QString getSelectedTheme();
+  void setSelectedTheme(const QString& theme);
+  
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   signals:
   void gatewaySelected(bool http);
+  
+  signals:
+  void themeChanged();
+  
   
   public slots:
   

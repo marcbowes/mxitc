@@ -88,14 +88,17 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void incomingAction(Action action);
   void setCurrentUser(QListWidgetItem * item);
-  void refreshChatBox(); /*FIXME slot ? - rax*/
   
   void saveLayout(bool b);
   void saveLayout(Qt::DockWidgetArea area = Qt::NoDockWidgetArea); 
   
   void sendGateway(bool http);
   
+  void themeChanged();
   
+  
+  void refreshChatBox(); /*FIXME slot ? - rax*/
+  void refreshContacts();
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
@@ -123,6 +126,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   DockWidget::Contacts * contactsWidget;
   DockWidget::Log * logWidget;
+  DockWidget::Options * optionsWidget;
   
 };
 

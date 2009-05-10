@@ -58,21 +58,66 @@ Options::~Options()
 ** Author: Richard Baxter
 **
 ****************************************************************************/
-void Options::openThemeBrowser ()
-{
+
+void Options::openThemeBrowser () {
   QFileDialog fileDiag ( this, "Choose your theme directory");
   fileDiag.setFileMode(QFileDialog::DirectoryOnly);
   if (fileDiag.exec ()){
     QDir selection = fileDiag.selectedFiles ().front();
     
-    /*TODO check if directory exists, if not, display it in red and return - rax*/
-    /*TODO probably do in a different slot - rax*/
-    dirLineEdit->setText(selection.absolutePath ());
-  
-  
-    refreshComboBox();
+    setBaseThemeDirectory(selection.absolutePath ());
   }
 }
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+
+QString Options::getSelectedTheme() {
+  return themeComboBox->itemText ( themeComboBox->currentIndex () );
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+
+void Options::setSelectedTheme(const QString& theme) {
+  qint32 selection = themeComboBox->findText (theme);
+  if (selection == -1)
+    selection = 0;
+  themeComboBox->setCurrentIndex (selection);
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+
+QString Options::getBaseThemeDirectory() {
+  return dirLineEdit->text();
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Options::setBaseThemeDirectory(const QString& dir) {
+    /*TODO check if directory exists, if not, display it in red and return - rax*/
+    dirLineEdit->setText(dir);
+  
+    refreshComboBox();
+}
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
@@ -83,6 +128,7 @@ void Options::refreshComboBox ()
   QDir dir(dirLineEdit->text());
 
   if (dir.exists()) {
+    //dirLineEdit->setForground(QBrush(Qt::black));
     themeComboBox->clear();
     QFileInfoList fil = dir.entryInfoList ( QStringList(), QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name );
     
@@ -90,11 +136,17 @@ void Options::refreshComboBox ()
       themeComboBox->addItem (fileInfo.fileName());
     }
   }
+  else {
+    //dirLineEdit->setForground(QBrush(Qt::red));
+    themeComboBox->clear();
+  }
 }
 
 void Options::loadTheme(const QString & dir){
 
-  theme.load(QDir(dirLineEdit->text()+"/"+dir));
+  theme.load(QDir(getBaseThemeDirectory()+"/"+dir));
+  
+  emit themeChanged();
 }
 
 } /* end of DockWidget namespace */
