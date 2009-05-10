@@ -43,7 +43,7 @@ class ChatSession
   
   QString chatSessionName;
   
-  MXit::Contact * mainContact; /*slight hack for now*/
+  MXit::Contact * mainContact; /*slight hack for now since we will always have one contact, will have to be changed later*/
   //QSet<MXit::Contact *> otherContacts; /*TODO implement*/
   
   //QTableWidget tableWidget;

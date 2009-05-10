@@ -2,8 +2,7 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
-** MXit::GUI::OptionsDockWidget provides a login window.
-** This is an extension of the generated dialog, made with Designer.
+** Author: Richard Baxter, 2009
 **
 ****************************************************************************/
 

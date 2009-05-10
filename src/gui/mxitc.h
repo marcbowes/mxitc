@@ -29,9 +29,9 @@
 #include "gui/dock_widgets/debug.h"
 #include "gui/dock_widgets/options.h"
 #include "gui/dock_widgets/chat_sessions.h"
+#include "gui/dock_widgets/add_contact.h"
 
 #include "gui/dialogs/login.h"
-#include "gui/dialogs/addContact.h"
 #include "gui/chat_session.h"
 #include "gui/theme.h"
 
@@ -82,7 +82,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void loggingIn();
   void openLoginDialog();
-  void openAddContactDialog();
   
   void incomingAction(Action action);
   void setCurrentChatSession(QListWidgetItem * item);

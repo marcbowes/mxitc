@@ -61,6 +61,9 @@ enum Type {
   GoogleTalk     = 18
 };
 
+
+enum AlertProfile {General, Meeting, Silent};
+
 }
 
 }

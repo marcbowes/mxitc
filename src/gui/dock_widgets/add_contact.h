@@ -6,18 +6,14 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_DOCKWIDGET_DEBUG_H__
-#define __MXIT_GUI_DOCKWIDGET_DEBUG_H__
-
-#include <QDockWidget>
-#include <QHash>
-#include <QDebug>
-
-#include "common/types.h"
+#ifndef __MXIT_GUI_DOCKWIDGET_ADDCONTACT_H__
+#define __MXIT_GUI_DOCKWIDGET_ADDCONTACT_H__
 
 #include "gui/mxit_dock_widget.h"
 
-#include "ui_debug.h"
+#include "ui_add_contact.h"
+
+#include "protocol/enumerables/contact.h"
 
 namespace MXit
 {
@@ -28,31 +24,26 @@ namespace GUI
 namespace DockWidget
 {
 
-
-
-class Debug : public MXitDockWidget, private Ui::DebugDockWidget
+class AddContact : public MXitDockWidget, private Ui::AddContactDockWidget
 {
   Q_OBJECT
   
   public: /*class specific */
 
-  Debug(QWidget* parent, Theme &theme);
-  ~Debug();
+  AddContact(QWidget* parent, Theme &theme);
+  ~AddContact();
   
   signals:
-  void requestVariableHashRefresh();
-
-  public slots:
   
-  void incomingVariableHash(const VariableHash& variables);
-  
+  void addContact(const QString& cellphone, const QString& nickname, const QString& inviteMsg, Protocol::Enumerables::Contact::AlertProfile a);
   
   private slots:
-  void refreshRequested();
+  
+  void sendAddContactInfo();
+  
 
 
 };
-
 
 } /* end of DockWidget namespace */
 

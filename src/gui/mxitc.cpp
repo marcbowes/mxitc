@@ -35,6 +35,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
    
   settings = new QSettings ( "mxitc", "env", this );
   
+  /* Adding MXitDockWidgets*/
+  
   DockWidget::Debug * debugWidget = new DockWidget::Debug (this, theme);
   appendDockWidget(debugWidget,    Qt::RightDockWidgetArea, actionDebug_Variables);
   
@@ -47,17 +49,23 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   logWidget = new DockWidget::Log (this, theme);
   appendDockWidget(logWidget, Qt::RightDockWidgetArea, actionLogs);
   
+  DockWidget::AddContact * addContactWidget = new DockWidget::AddContact (this, theme);
+  appendDockWidget(addContactWidget, Qt::LeftDockWidgetArea, actionAdd_Contact);
+  //connect(actionAddContact, SIGNAL(triggered()), this, SLOT(openAddContactDialog()));
+  
   restoreState(settings->value("gui layout").toByteArray());
   
   optionsWidget->setBaseThemeDirectory(settings->value("themeBaseDirectory").toString());
   optionsWidget->setSelectedTheme(settings->value("selectedTheme").toString());
   themeChanged(); /* HACK? */
   
+  /*TODO mxit still need addcontact slot*/
+  //connect(addContactWidget, SIGNAL(addContact(const QString&, const QString&, const QString&, Protocol::Enumerables::Contact::AlertProfile)), mxit, SLOT(addContact(const QString&, const QString&, const QString&, Protocol::Enumerables::Contact::AlertProfile))
+  
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
   /*TODO integrate into QT designer (?)*/
   connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginDialog()));
-  connect(actionAddContact, SIGNAL(triggered()), this, SLOT(openAddContactDialog()));
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
   
   connect(chatInput,  SIGNAL(returnPressed ()), this, SLOT(sendMessageFromChatInput()));
@@ -217,6 +225,7 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
 void MXitC::saveLayout(bool b) {
   saveLayout();
 }
+
 void MXitC::saveLayout(Qt::DockWidgetArea area) {
   
   Q_FOREACH(const QDockWidget * dw, dockWidgets) {
@@ -343,53 +352,11 @@ void MXitC::incomingAction(Action action)
 
 void MXitC::contactsReceived(){
 
-  /* TODO remove the message box */
-  /*
-  QMessageBox msgbox; 
-  msgbox.setText(QString("Contacts received mofo!"));
-  msgbox.exec();
-  */
-  
   /* fetch contacts */
   /*  group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood \0
       ...
       groupN \1 contactAddressN \1 nicknameN \1 presenceN \1 typeN \1 mood
   */
-  
-  /* manually entering data */
-  /*contacts.append("group1");          contacts.append('\1');
-  contacts.append("uniqueAddy1");     contacts.append('\1');
-  contacts.append("raxter_dude");     contacts.append('\1');
-  contacts.append("1");               contacts.append('\1');
-  contacts.append("0");               contacts.append('\1');
-  contacts.append("0");               contacts.append('\1');
-  
-                                      contacts.append('\0');
-                                      
-  contacts.append("group2");          contacts.append('\1');
-  contacts.append("uniqueAddy2");     contacts.append('\1');
-  contacts.append("some_other_dude"); contacts.append('\1');
-  contacts.append("0");               contacts.append('\1');
-  contacts.append("1");               contacts.append('\1');
-  contacts.append("2");               contacts.append('\1');
-  
-                                      contacts.append('\0');
-                                      
-  contacts.append("group3");          contacts.append('\1');
-  contacts.append("uniqueAddy3");     contacts.append('\1');
-  contacts.append("uhh_marc");        contacts.append('\1');
-  contacts.append("3");               contacts.append('\1');
-  contacts.append("2");               contacts.append('\1');
-  contacts.append("2");               contacts.append('\1');
-  
-                                      contacts.append('\0');
-                                      
-  contacts.append("group1");          contacts.append('\1');
-  contacts.append("uniqueAddy4");     contacts.append('\1');
-  contacts.append("tim_or_someone");  contacts.append('\1');
-  contacts.append("3");               contacts.append('\1');
-  contacts.append("3");               contacts.append('\1');
-  contacts.append("3");               contacts.append('\1');*/
   
   // qDebug() << QByteArray(contacts).replace('\1', "\\1").replace('\0', "\\0");
   QByteArray contacts = mxit->variableValue("contacts");
@@ -447,7 +414,6 @@ void MXitC::contactsReceived(){
       chatSess.unreadMessage = false;
     }
   }
-  qDebug() << "contacts received";
   
   /*Q_FOREACH(const ChatSession & cs, chatSessions.values()) {
     qDebug() << cs.chatSessionName;
@@ -725,20 +691,6 @@ void MXitC::openLoginDialog(){
   login = NULL;
 }
 
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** Opens the add contact dialog
-**
-****************************************************************************/
-
-void MXitC::openAddContactDialog(){
-  
-  MXit::GUI::Dialog::AddContact addContact(this, mxit, settings);
-  addContact.exec();
-  
-}
   
   
 }

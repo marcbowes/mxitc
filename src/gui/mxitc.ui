@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>681</width>
-    <height>499</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>681</width>
+     <width>800</width>
      <height>25</height>
     </rect>
    </property>
@@ -45,12 +45,6 @@
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menuContacts">
-    <property name="title">
-     <string>Contacts</string>
-    </property>
-    <addaction name="actionAddContact"/>
-   </widget>
    <widget class="QMenu" name="menuView">
     <property name="tearOffEnabled">
      <bool>true</bool>
@@ -59,12 +53,12 @@
      <string>&amp;View</string>
     </property>
     <addaction name="actionOptions"/>
-    <addaction name="actionDebug_Variables"/>
     <addaction name="actionContacts"/>
+    <addaction name="actionAdd_Contact"/>
     <addaction name="actionLogs"/>
+    <addaction name="actionDebug_Variables"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuContacts"/>
    <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -140,6 +134,14 @@
   <action name="actionLogs">
    <property name="text">
     <string>Activity &amp;Log</string>
+   </property>
+  </action>
+  <action name="actionAdd_Contact">
+   <property name="text">
+    <string>Add Contact</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+A</string>
    </property>
   </action>
  </widget>
