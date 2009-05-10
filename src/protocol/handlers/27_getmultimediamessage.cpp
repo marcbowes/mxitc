@@ -121,14 +121,14 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
     
     
     QByteArray tempData;
+    int penis = 0;
+    int tdpenis = 0;
+    int chunkLength = 0;
+    QTextCodec *codec = QTextCodec::codecForName("UTF-8");
     
     switch (type) {
       case MXit::Protocol::Enumerables::ChunkedData::CustomResource:
-        QTextCodec *codec = QTextCodec::codecForName("UTF-8");
         
-        int penis = 0;
-        int tdpenis = 0;
-        int chunkLength = 0;
         
         while (data.at(penis) != '\0') {
           tempData[tdpenis] = data[penis];
