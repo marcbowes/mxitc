@@ -82,7 +82,7 @@ VariableHash GetNewSubscription::handle(const QByteArray &packet)
   
   int i = 0, count = 0;
   
-  while (count < packet.startsWith("ln=") ? 3 : 2) {
+  while (count < (packet.startsWith("ln=") ? 3 : 2)) {
     i++;
     if (packet.at(i) == '\0')
       count++;
