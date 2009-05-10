@@ -24,7 +24,20 @@ namespace Handlers
 ****************************************************************************/
 void GetNewSubscription::build(MXit::Network::Packet *packet, VariableHash &variables)
 {
-  /* stub */
+  /*
+  == PACKET FORMAT
+  ***************************************************************************
+  **
+  **  id=loginname[\1sesid]\0
+  **  cm=51
+  **
+  ***************************************************************************
+  */
+  
+  /* packet header setup */
+  packet->setCommand("51");
+  
+  /* no data */
 }
 
 
@@ -67,8 +80,19 @@ VariableHash GetNewSubscription::handle(const QByteArray &packet)
   ***************************************************************************
   */
   
-  /* stub */
-  return VariableHash();
+  int i = 0, count = 0;
+  
+  while (count < packet.startsWith("ln=") ? 3 : 2) {
+    i++;
+    if (packet.at(i) == '\0')
+      count++;
+  }
+  
+  QByteArray contactData = packet.right(packet.size() - i - 1);
+  VariableHash variable;
+  variable["contacts"] = contactData;
+  
+  return variable;
 }
 
 }

@@ -136,7 +136,7 @@ void Client::incomingPacket(const QByteArray &packet)
       emit outgoingAction(CONTACTS_RECEIVED);
 
       /* variable scrubbing */
-      useVariable("contacts", 0);
+      variables.remove("contacts");
       break;
     case GETNEWMESSAGES:
       emit outgoingAction(MESSAGE_RECEIVED);
@@ -149,6 +149,12 @@ void Client::incomingPacket(const QByteArray &packet)
       variables.remove("type");
       variables.remove("id");
       variables.remove("flags");
+      break;
+    case GETNEWSUBSCRIPTION:
+      emit outgoingAction(SUBSCRIPTIONS_RECEIVED);
+
+      /* variable scrubbing */
+      variables.remove("contacts");
       break;
   }
   
