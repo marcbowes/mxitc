@@ -5,6 +5,7 @@
 ****************************************************************************/
 
 #include "27_getmultimediamessage.h"
+#include "protocol/enumerables/chunked_data.h"
 #include <QTextCodec>
 
 namespace MXit
@@ -90,25 +91,20 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
   int position = 0;
   int size = chunkedData.size();
   
-  //while (position < chunkedData.size()) {
-    qDebug() << "position at type: " << position;
+  while (position < chunkedData.size()) {
     //getting type byte
     int type = (int)chunkedData.at(position);
     qDebug() << "type: " << type;
     
     position++;
     
-    qDebug() << "position at length: " << position;
     //now at first length byte. getting length
     //watch this haxx
     int length = 0;
-    length |= chunkedData[position];
-    qDebug() << "length: " << length;
+    length |= (unsigned char)chunkedData[position];
     position++;
     for (int j=0; j<3; j++) {
-      qDebug() << "length before shift: " << length;
       length = length << 8;
-      qDebug() << "length after shift: " << length;
       length |= (unsigned char)chunkedData[position + j];
     }
     position += 3;
@@ -117,11 +113,8 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
     
     qDebug() << "size: " << size;
     qDebug() << "length: " << length;
-    qDebug() << "position + length: " << position + length;
-    
     qDebug() << "position at data: " << position;
-    //if (length < 0) break;
-    
+        
     //now at first data byte
     //getting data
     QByteArray data = chunkedData.mid(position, length);
@@ -157,15 +150,10 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
     
     int chunkLength = 0;
     chunkLength |= data[penis];
-    qDebug() << "chunk length debug";
-    qDebug() << chunkLength;
     penis++;
     for (int j=0; j<3; j++) {
       chunkLength = chunkLength << 8;
-      qDebug() << "before: " << chunkLength;
       chunkLength |= (unsigned char)data[penis + j];
-      qDebug() << "what it is: " << (int)(unsigned char)data[penis + j];
-      qDebug() << "after: " << chunkLength;
     }
     penis += 3;
     
@@ -177,12 +165,9 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
     qDebug() << "total: " << data.size();
     
     //moving to next chunk
-    position += length;
+    position += (length - 1);
     
-    
-    
-    //qDebug() << string;
-  //}
+  }
   
   return VariableHash();
 }
