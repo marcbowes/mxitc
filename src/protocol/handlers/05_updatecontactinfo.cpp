@@ -49,9 +49,10 @@ void UpdateContactInfo::build(MXit::Network::Packet *packet, VariableHash &varia
   packet->setCommand("5");
   
   /* packet data setup */
-  (*packet) << variables["group"];
-  (*packet) << variables["contactAddress"];
-  (*packet) << variables["nickname"];
+  (*packet) << variables["group"]
+            << variables["contactAddress"]
+            << variables["nickname"]
+  ;
 }
 
 /****************************************************************************

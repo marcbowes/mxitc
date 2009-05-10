@@ -17,6 +17,9 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QFile>
+#include <QFileInfo>
+#include <QTextBlock>
 
 #include "common/types.h"
 #include "common/actions.h"
@@ -31,7 +34,7 @@
 #include "gui/dialogs/addContact.h"
 #include "gui/contact.h"
 
-#include "protocol/message_type.h"
+#include "protocol/enumerables/message.h"
 
 #include "ui_mxitc.h"
 
@@ -55,7 +58,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   private: /* methods */
   void outgoingMessage(const QString & message);
   
-  void updateContactsList(const QVector<Contact>& contacts);
   void setStatusBar();
   
   
@@ -63,6 +65,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void messageReceived();
   
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
+  
+  void applyStyleSheet(const QString & styleSheetFile);
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -85,9 +89,11 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void setCurrentUser(QListWidgetItem * item);
   void refreshChatBox(); /*FIXME slot ? - rax*/
   
-  void saveLayout(Qt::DockWidgetArea area); 
+  void saveLayout(bool b);
+  void saveLayout(Qt::DockWidgetArea area = Qt::NoDockWidgetArea); 
   
   void sendGateway(bool http);
+  
   
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -97,7 +103,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   QHash<QString, QString> nicknameToContactAddress; // converts contactAddresses to their unique nickname
   QHash<QString, Contact> contactsHash; // identified by contactAddress (NOT nickname)
-  
   
   Contact * currentContact;
   

@@ -8,6 +8,7 @@ INCLUDE(${QT_USE_FILE})
 
 # .cxx sources
 SET(MXIT_CLIENT_SRCS_CXX
+  common/contact.cpp
   common/hash_variables.cpp
 
   network/packets/http.cpp
@@ -35,6 +36,8 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handshaker.cpp
   mxit/client.cpp
   
+  gui/theme_components/presence.cpp
+  
   gui/mxit_dock_widget.cpp
   gui/contact.cpp
   gui/message.cpp
@@ -46,8 +49,10 @@ SET(MXIT_CLIENT_SRCS_CXX
   
   gui/dialogs/addContact.cpp
   gui/dialogs/login.cpp
+  
   gui/mxitc.cpp
   gui/mxit_dialog.cpp
+  gui/theme.cpp
   
   main.cpp
 )
@@ -61,7 +66,6 @@ SET(MXIT_CLIENT_MOC_SRCS
   
   gui/mxit_dock_widget.h
   gui/message.h
-  gui/contact.h
   
   gui/dock_widgets/log.h
   gui/dock_widgets/options.h
@@ -70,6 +74,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   
   gui/dialogs/addContact.h
   gui/dialogs/login.h
+  
   gui/mxitc.h
   gui/mxit_dialog.h
 )

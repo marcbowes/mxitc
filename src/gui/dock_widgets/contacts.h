@@ -10,9 +10,12 @@
 #ifndef __MXIT_GUI_DOCKWIDGET_CONTACTS_H__
 #define __MXIT_GUI_DOCKWIDGET_CONTACTS_H__
 
+#include "gui/contact.h"
 #include "gui/mxit_dock_widget.h"
 
 #include "ui_contacts.h"
+
+#include <QDebug>
 
 namespace MXit
 {
@@ -36,11 +39,15 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   void outgoingItemPressed ( QListWidgetItem *  );
   
+  
   public:
   
-  void clearList();
-  void addItemToList(QString& nickname);
+  void refresh(const QList<Contact>& contacts);
 
+  private:
+  
+  void clearList();
+  void addContact(const Contact & c);
 
 };
 

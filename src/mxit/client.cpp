@@ -115,6 +115,8 @@ void Client::incomingPacket(const QByteArray &packet)
   /* post packet-level handling */
   switch (packetHeader["command"].toUInt()) {
     case LOGIN:
+      emit outgoingAction(LOGGED_IN);
+
       /* variable scrubbing */
       useVariable("loginname", 0);
       
@@ -122,8 +124,6 @@ void Client::incomingPacket(const QByteArray &packet)
       variables["show"]   = "1";        /* online */
       variables["status"] = "mxitc";
       sendPacket("setshownpresenceandstatus");
-            
-      emit outgoingAction(LOGGED_IN);
       break;
     case LOGOUT:
       connection->close();
@@ -131,17 +131,22 @@ void Client::incomingPacket(const QByteArray &packet)
       emit outgoingAction(LOGGED_OUT);
       break;
     case GETCONTACTS:
-      useVariable("contacts", 0);
-      
       emit outgoingAction(CONTACTS_RECEIVED);
+
+      /* variable scrubbing */
+      useVariable("contacts", 0);
       break;
     case GETNEWMESSAGES:
-      
       emit outgoingAction(MESSAGE_RECEIVED);
-      //variables["contactAddress"], variables["message"]
+
+      /* variable scrubbing */
       variables.remove("contactData");
-      variables.remove("contactAddress");
       variables.remove("message");
+      variables.remove("contactAddress");
+      variables.remove("dateTime");
+      variables.remove("type");
+      variables.remove("id");
+      variables.remove("flags");
       break;
   }
   
@@ -282,7 +287,7 @@ void Client::setGateway(const QString &connectionString)
 ** Passes parameters onto a packet handler and transmits result
 **
 ****************************************************************************/
-void Client::sendMessage(const QString &contactAddress, const QString &message, MXit::Protocol::MessageType type, unsigned int flags)
+void Client::sendMessage(const QString &contactAddress, const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags)
 {
   /* build variables for login packet */
   VariableHash messageVariables;

@@ -53,6 +53,7 @@ void MXitDockWidget::toggleVisibility() {
   }
   else {*/
   
+  //toggleViewAction ();
   
   if (isVisible()) {
     setVisible(false);

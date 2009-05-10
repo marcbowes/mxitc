@@ -25,7 +25,7 @@ namespace GUI
 ****************************************************************************/
 
 Message::Message(const Contact * sender, const QString & message) : 
-      sender(sender), message(message)
+      senderVar(sender), messageVar(message)
 {
   /* nothing */
 }
@@ -39,7 +39,7 @@ Message::Message(const Contact * sender, const QString & message) :
 ****************************************************************************/
 
 Message::Message(const Message & m) :  
-      sender(m.sender), message(m.message)
+      senderVar(m.senderVar), messageVar(m.messageVar)
 {
   /* nothing */
 }
@@ -54,8 +54,8 @@ Message::Message(const Message & m) :
 
 Message& Message::operator=(const Message & m)
 {
-  sender = m.sender;
-  message = m.message;
+  senderVar = m.senderVar;
+  messageVar = m.messageVar;
   
   return *this;
 }
@@ -78,9 +78,9 @@ Message::~Message()
 **
 ****************************************************************************/
 
-const Contact * Message::getSender() const
+const Contact * Message::sender() const
 {
-  return sender;
+  return senderVar;
 }
 
 /****************************************************************************
@@ -89,22 +89,11 @@ const Contact * Message::getSender() const
 **
 ****************************************************************************/
 
-QString Message::getMessage() const
+QString Message::message() const
 {
-  return message;
+  return messageVar;
 }
 
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-QString Message::getFormattedMsg() const
-{
-  return (sender?sender->getNickname():QString("You")) + ": " + message;
-}
 
 } /* end namespace GUI */
 

@@ -4,8 +4,6 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
-
 #include "contact.h"
 
 namespace MXit
@@ -16,20 +14,13 @@ namespace GUI
 
 /****************************************************************************
 **
-** Author: Richard Baxter
+** Author: Marc Bowes
 **
 ** Contact constructor
 **
 ****************************************************************************/
 
-Contact:: Contact(
-      const QString& group, 
-      const QString& contactAddress, 
-      const QString& nickname, 
-      unsigned int presence, 
-      unsigned int type, 
-      unsigned int mood) :
-      group(group), contactAddress(contactAddress), nickname(nickname), presence(presence), type(type), mood(mood)
+Contact::Contact()
 {
   /* nothing */
 }
@@ -37,21 +28,26 @@ Contact:: Contact(
 
 /****************************************************************************
 **
-** Author: Richard Baxter
+** Author: Marc Bowes
 **
 ** Contact copy constructor
 **
 ****************************************************************************/
 
-Contact:: Contact(const Contact& c) :
-      group(c.group), contactAddress(c.contactAddress), nickname(c.nickname), presence(c.presence), type(c.type), mood(c.mood)
+Contact::Contact(const Contact &other)
 {
-  /* nothing */
+  this->group           = other.group;
+  this->contactAddress  = other.contactAddress;
+  this->nickname        = other.nickname;
+  this->presence        = other.presence;
+  this->type            = other.type;
+  this->mood            = other.mood;
 }
+
 
 /****************************************************************************
 **
-** Author: Richard Baxter
+** Author: Marc Bowes
 **
 ** Contact deconstructor
 **
@@ -61,15 +57,17 @@ Contact::~Contact()
   /* nothing */
 }
 
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-QString Contact::getNickname() const
+Contact& Contact::operator=(const Contact &other)
 {
-  return nickname;
+  group                 = other.group;
+  contactAddress        = other.contactAddress;
+  nickname              = other.nickname;
+  presence              = other.presence;
+  type                  = other.type;
+  mood                  = other.mood;
+  unreadMessage         = true;
+
+  return *this;
 }
 
 /****************************************************************************
@@ -78,117 +76,13 @@ QString Contact::getNickname() const
 **
 ****************************************************************************/
 
-QString Contact::getContactAddress() const
+void Contact::incomingMessage(Message message)
 {
-  return contactAddress;
-}
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-QString Contact::getGroup() const
-{
-  return group;
+  chatHistory.append(message);
+  unreadMessage = true;
 }
 
 
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void Contact::setGroup(const QString& group)
-{
-  this->group = group;
 }
 
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void Contact::setContactAddress(const QString& contactAddress)
-{
-  this->contactAddress = contactAddress;
 }
-
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void Contact::setNickname(const QString& nickname)
-{
-  this->nickname = nickname;
-}
-
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void Contact::setPresence(int presence)
-{
-  this->presence = presence;
-}
-
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void Contact::setType(int type)
-{
-  this->type = type;
-}
-
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void Contact::setMood(int mood)
-{
-  this->mood = mood;
-}
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void  Contact::setChatInputText(const QString& chatInputText_) {
-  chatInputText = chatInputText_;
-}
-  
-  
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-QString  Contact::getChatInputText() {
-  return chatInputText;
-}
-
-
-} /* end namespace GUI */
-
-} /* end namespace MXit */
-
-

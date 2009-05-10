@@ -32,6 +32,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   login = NULL;
   
+  /*apply styleing!*/
+  applyStyleSheet("/home/richard/workspace/cpp/mxit/src/var/test.qss");
+   
   settings = new QSettings ( "mxitc", "env", this );
   
   DockWidget::Debug * debugWidget = new DockWidget::Debug (this);
@@ -47,7 +50,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   appendDockWidget(logWidget, Qt::RightDockWidgetArea, actionLogs);
   
   restoreState(settings->value("gui layout").toByteArray());
-  
   
   
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
@@ -139,11 +141,29 @@ MXitC::~MXitC()
   
   
   Q_FOREACH(const QDockWidget * dw, dockWidgets) {
-    
-    delete dw; /*FIXME - check if contactWidget is cleaned up already - if it's a problem it should be made into another dockwidget separate from the mxitc.ui file*/
+    delete dw;
   }
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::applyStyleSheet(const QString & styleSheetFile)
+{
+  QFile ssfile(styleSheetFile);
+  ssfile.open(QFile::ReadOnly);
+  if (ssfile.exists ()) {
+    QString styleSheet = QLatin1String(ssfile.readAll());
+    application->setStyleSheet(styleSheet);
+    
+    return;
+  }
+  //qDebug() << QFileInfo(ssfile).absoluteDir ().absolutePath () ;
+
+}
 
 /****************************************************************************
 **
@@ -172,9 +192,20 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
   addDockWidget(Qt::RightDockWidgetArea, dockWidget);
   dockWidget->setVisible ( false );
     
-  connect(dockWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(saveLayout(Qt::DockWidgetArea)));
-  
+    
+  qDebug() << "loading "  << QString("visible?")+dockWidget->objectName ();
+  dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
+  dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
+    
   connect(action, SIGNAL(triggered()), dockWidget, SLOT(toggleVisibility()));
+  
+  connect(
+          dockWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), 
+          this, SLOT(saveLayout(Qt::DockWidgetArea)));
+  connect(
+          dockWidget, SIGNAL(visibilityChanged ( bool ) ), 
+          this, SLOT(saveLayout( bool )));
+  
   //connect(actionDebug_Variables, SIGNAL(triggered()), this, SLOT(debugToggle()));
   //connect(actionOptions, SIGNAL(triggered()), this, SLOT(optionsToggle()));
 }
@@ -186,9 +217,23 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
 **
 ****************************************************************************/
 
+void MXitC::saveLayout(bool b) {
+  saveLayout();
+}
 void MXitC::saveLayout(Qt::DockWidgetArea area) {
   
+  Q_FOREACH(const QDockWidget * dw, dockWidgets) {
+    qDebug() << "saving "  << QString("visible?")+dw->objectName ();
+    settings->setValue(QString("visible?")+dw->objectName (), dw->isVisible());
+    settings->setValue(QString("floating?")+dw->objectName (), dw->isFloating());
+  }
+  
   settings->setValue("gui layout", saveState());
+  
+  /*<QObject*> children = findChildren<QObject *>();
+  Q_FOREACH(const QObject * ob, children) {
+    qDebug() << ob;
+  }*/
 }
 
 
@@ -386,32 +431,25 @@ void MXitC::contactsReceived(){
       newContact = true;
     }        
     
-    Contact & c = contactsHash[contactAddress];
-    c.setGroup(          QString(contactInfo [0]));
-    c.setContactAddress( QString(contactInfo [1]));
-    c.setNickname(       QString(contactInfo [2]));
-    c.setPresence(       QString(contactInfo [3]).toInt());
-    c.setType(           QString(contactInfo [4]).toInt());
-    c.setMood(           QString(contactInfo [5]).toInt());
+    Contact &c = contactsHash[contactAddress];
+    c.group           = contactInfo[0];
+    c.contactAddress  = contactInfo[1];
+    c.nickname        = contactInfo[2];
+    c.presence        = (Protocol::Enumerables::Contact::Presence)contactInfo[3].toUInt();
+    c.type            = (Protocol::Enumerables::Contact::Type)contactInfo[4].toUInt();
+    c.mood            = (Protocol::Enumerables::Contact::Mood)contactInfo[5].toUInt();
     
     if(newContact) {
-      nicknameToContactAddress[c.getNickname()] = c.getContactAddress();
+      nicknameToContactAddress[c.nickname] = c.contactAddress;
      
-      c.chatHistory.append( Message(0, "User: "+ c.getNickname()));
-      c.chatHistory.append( Message(0, "CA: "+ c.getContactAddress()));
-      c.chatHistory.append( Message(0, "grp: \""+ c.getGroup() + "\""));
+      c.incomingMessage( Message(0, "User: "+ c.nickname));
+      c.unreadMessage = false;
     }
   }
   
-  /* resetting contacts list*/
-  contactsWidget->clearList();/* FIXME make a tree view */
-  Q_FOREACH(const Contact & c, contactsHash) {
-    QString nn = c.getNickname();
-    contactsWidget->addItemToList( nn );
-  }
+  contactsWidget->refresh(contactsHash.values());
         
 }
-
 
 /****************************************************************************
 **
@@ -436,8 +474,13 @@ void MXitC::messageReceived(){
   
     Contact& sender = contactsHash[contactAddress];
     
-    sender.chatHistory.append( Message(&sender, mxit->variableValue("message")) );
+    sender.incomingMessage( Message(&sender, mxit->variableValue("message")) );
+    
+    if (currentContact)
+      currentContact->unreadMessage = false;
+    
     refreshChatBox();
+    contactsWidget->refresh(contactsHash.values());
   }
   else {
     qDebug() << "wtf unknown contact!"; 
@@ -459,13 +502,17 @@ void MXitC::setCurrentUser(QListWidgetItem * item){
   //qDebug() << nicknameToContactAddress[item->text()];
   
   if (currentContact)
-    currentContact->setChatInputText(chatInput->text());
+    currentContact->chatInputText = chatInput->text();
   
   currentContact = &contactsHash[nicknameToContactAddress[item->text()]];
-  refreshChatBox();
+  currentContact->unreadMessage = false;
   
-  chatInput->setText(currentContact->getChatInputText());
+  refreshChatBox();
+  contactsWidget->refresh(contactsHash.values());
+  
+  chatInput->setText(currentContact->chatInputText);
 }
+
 
 
 
@@ -482,9 +529,11 @@ void MXitC::refreshChatBox(){
   mainTextArea->clear();
   if (currentContact != NULL) {
     Q_FOREACH(const Message& m, currentContact->chatHistory) {
-      mainTextArea->append ( m.getFormattedMsg() );
+      mainTextArea->append (  QString("<") +(m.sender()?m.sender()->nickname:QString("You")) + QString("> ") +m.message() );
+      //nameTextArea->append ( m.sender()?m.sender()->getNickname():"You" );
     }
   }
+  
   
 }
 
@@ -555,7 +604,8 @@ void MXitC::outgoingMessage(const QString & message)
 {
   if (currentContact) {
     currentContact->chatHistory.append(Message ( 0, message) );
-    mxit->sendMessage(currentContact->getContactAddress(), message, MXit::Protocol::MessageTypeNormal, 0);
+    currentContact->unreadMessage = false;
+    mxit->sendMessage(currentContact->contactAddress, message, Protocol::Enumerables::Message::Normal, 0);
     refreshChatBox();
   }
 }
@@ -627,19 +677,6 @@ void MXitC::openAddContactDialog(){
   
   MXit::GUI::Dialog::AddContact addContact(this, mxit, settings);
   addContact.exec();
-  
-}
-
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** Adds a contact to the contact tree
-**
-****************************************************************************/
-void MXitC::updateContactsList(const QVector<Contact>& contacts)
-{
   
 }
   
