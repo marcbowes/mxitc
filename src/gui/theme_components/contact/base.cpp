@@ -28,7 +28,7 @@ namespace Contact
 void Base::load(QDir theme)
 {
   /* stylesheet */
-  QFile qss ("stylesheet.qss");
+  QFile qss(theme.filePath("stylesheet.qss"));
   qss.open(QFile::ReadOnly);
   if (qss.exists()) {
     stylesheet = QLatin1String(qss.readAll());
@@ -56,6 +56,7 @@ void Base::load(QDir theme)
 ****************************************************************************/
 void Base::loadDefaults()
 {
+  stylesheet = QString();
   presence.loadDefaults();
 }
 

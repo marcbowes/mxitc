@@ -51,6 +51,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   optionsWidget->setBaseThemeDirectory(settings->value("themeBaseDirectory").toString());
   optionsWidget->setSelectedTheme(settings->value("selectedTheme").toString());
+  themeChanged(); /* HACK? */
   
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   

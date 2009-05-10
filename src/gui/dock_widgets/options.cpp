@@ -142,9 +142,10 @@ void Options::refreshComboBox ()
   }
 }
 
-void Options::loadTheme(const QString & dir){
-
-  theme.load(QDir(getBaseThemeDirectory()+"/"+dir));
+void Options::loadTheme(const QString &dir){
+  QDir themeDir = getBaseThemeDirectory();
+  themeDir.cd(dir);
+  theme.load(themeDir);
   
   emit themeChanged();
 }
