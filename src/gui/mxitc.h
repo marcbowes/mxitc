@@ -34,7 +34,7 @@
 #include "gui/dialogs/addContact.h"
 #include "gui/contact.h"
 
-#include "protocol/message_type.h"
+#include "protocol/enumerables/message.h"
 
 #include "ui_mxitc.h"
 
@@ -103,8 +103,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   QHash<QString, QString> nicknameToContactAddress; // converts contactAddresses to their unique nickname
   QHash<QString, Contact> contactsHash; // identified by contactAddress (NOT nickname)
-  
-  ContactMetaData * contactMetaData;
   
   Contact * currentContact;
   

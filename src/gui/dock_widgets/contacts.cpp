@@ -20,7 +20,7 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Contacts::Contacts(const ContactMetaData * metadata, QWidget* parent) : MXitDockWidget(parent), metadata(metadata)
+Contacts::Contacts(QWidget* parent) : MXitDockWidget(parent)
 {
   setupUi(this);
   
@@ -61,17 +61,43 @@ void Contacts::clearList(){
 /****************************************************************************
 **
 ** Author: Richard Baxter
+** Author: Marc Bowes
 **
 ****************************************************************************/
 
 void Contacts::addContact(const Contact & c){
 
-  QListWidgetItem * item = new QListWidgetItem(metadata->presenceIcons()[c.presence], QString().setNum(metadata->presencePrecedence()[c.presence])+c.getNickname());
-  //qDebug() << c.getNickname() << ":" << c.unreadMessage;
+
+  
+  QPixmap pixmap; /* FIXME: theme */
+  QChar   sortPrefix;
+  switch (c.presence) {
+    case Protocol::Enumerables::Contact::Available:
+      sortPrefix = '0';
+      break;
+    case Protocol::Enumerables::Contact::Online:
+      sortPrefix = '1';
+      break;
+    case Protocol::Enumerables::Contact::Away:
+      sortPrefix = '2';
+      break;
+    case Protocol::Enumerables::Contact::DoNotDisturb:
+      sortPrefix = '3';
+      break;
+    case Protocol::Enumerables::Contact::Offline:
+      sortPrefix = '4';
+      break;
+    default:
+      sortPrefix = '9';
+      break;
+  }
+  
+  QListWidgetItem *item = new QListWidgetItem(pixmap, QString("%1%2").arg(sortPrefix).arg(c.nickname));
+  
   if (c.unreadMessage) {
     item->setForeground(QBrush(Qt::red));
   }
-    
+  
   contactList->addItem(item);
 }
 

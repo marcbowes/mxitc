@@ -7,13 +7,19 @@
 ****************************************************************************/
 
   
-#ifndef __MXIT_PROTOCOL_MESSAGETYPE_H__
-#define __MXIT_PROTOCOL_MESSAGETYPE_H__
+#ifndef __MXIT_PROTOCOL_ENUMERABLES_MESSAGE_H__
+#define __MXIT_PROTOCOL_ENUMERABLES_MESSAGE_H__
 
 namespace MXit
 {
 
 namespace Protocol
+{
+
+namespace Enumerables
+{
+
+namespace Message
 {
 
 /****************************************************************************
@@ -23,15 +29,19 @@ namespace Protocol
 ** enum definition for message types
 **
 ****************************************************************************/
-enum MessageType {
-  MessageTypeNormal             = 1,
-  MessageTypeChat               = 2,
-  MessageTypeHeadline           = 3,
-  MessageTypeError              = 4,
-  MessageTypeGroupChat          = 5,
-  MessageTypeCustomForm         = 6,
-  MessageTypeCommand            = 7
+enum Type {
+  Normal        = 1,
+  Chat          = 2,
+  Headline      = 3,
+  Error         = 4,
+  GroupChat     = 5,
+  CustomForm    = 6,
+  Command       = 7
 };
+
+}
+
+}
 
 }
 

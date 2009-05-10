@@ -36,7 +36,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   applyStyleSheet("/home/richard/workspace/cpp/mxit/src/var/test.qss");
    
   settings = new QSettings ( "mxitc", "env", this );
-  contactMetaData = new ContactMetaData();
   
   DockWidget::Debug * debugWidget = new DockWidget::Debug (this);
   appendDockWidget(debugWidget,    Qt::RightDockWidgetArea, actionDebug_Variables);
@@ -44,7 +43,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   DockWidget::Options * optionsWidget = new DockWidget::Options (this);
   appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
   
-  contactsWidget = new DockWidget::Contacts (contactMetaData,this);
+  contactsWidget = new DockWidget::Contacts (this);
   appendDockWidget(contactsWidget, Qt::LeftDockWidgetArea, actionContacts);
   
   logWidget = new DockWidget::Log (this);
@@ -432,21 +431,19 @@ void MXitC::contactsReceived(){
       newContact = true;
     }        
     
-    Contact & c = contactsHash[contactAddress];
-    c.setGroup(          QString(contactInfo [0]));
-    c.setContactAddress( QString(contactInfo [1]));
-    c.setNickname(       QString(contactInfo [2]));
-    c.setPresence(       QString(contactInfo [3]).toInt());
-    c.setType(           QString(contactInfo [4]).toInt());
-    c.setMood(           QString(contactInfo [5]).toInt());
+    Contact &c = contactsHash[contactAddress];
+    c.group           = contactInfo[0];
+    c.contactAddress  = contactInfo[1];
+    c.nickname        = contactInfo[2];
+    c.presence        = (Protocol::Enumerables::Contact::Presence)contactInfo[3].toUInt();
+    c.type            = (Protocol::Enumerables::Contact::Type)contactInfo[4].toUInt();
+    c.mood            = (Protocol::Enumerables::Contact::Mood)contactInfo[5].toUInt();
     
     if(newContact) {
-      nicknameToContactAddress[c.getNickname()] = c.getContactAddress();
+      nicknameToContactAddress[c.nickname] = c.contactAddress;
      
-      c.incomingMessage( Message(0, "User: "+ c.getNickname()));
+      c.incomingMessage( Message(0, "User: "+ c.nickname));
       c.unreadMessage = false;
-      //c.incomingMessage( Message(0, "CA: "+ c.getContactAddress()));
-      //c.incomingMessage( Message(0, "grp: \""+ c.getGroup() + "\""));
     }
   }
   
@@ -504,9 +501,8 @@ void MXitC::setCurrentUser(QListWidgetItem * item){
   //qDebug() << item->text();
   //qDebug() << nicknameToContactAddress[item->text()];
   
-  if (currentContact) {
-    currentContact->setChatInputText(chatInput->text());
-  }
+  if (currentContact)
+    currentContact->chatInputText = chatInput->text();
   
   currentContact = &contactsHash[nicknameToContactAddress[item->text()]];
   currentContact->unreadMessage = false;
@@ -514,7 +510,7 @@ void MXitC::setCurrentUser(QListWidgetItem * item){
   refreshChatBox();
   contactsWidget->refresh(contactsHash.values());
   
-  chatInput->setText(currentContact->getChatInputText());
+  chatInput->setText(currentContact->chatInputText);
 }
 
 
@@ -532,8 +528,8 @@ void MXitC::refreshChatBox(){
 
   mainTextArea->clear();
   if (currentContact != NULL) {
-    Q_FOREACH(const Message& m, currentContact->chatHistory()) {
-      mainTextArea->append (  QString("<") +(m.sender()?m.sender()->getNickname():QString("You")) + QString("> ") +m.message() );
+    Q_FOREACH(const Message& m, currentContact->chatHistory) {
+      mainTextArea->append (  QString("<") +(m.sender()?m.sender()->nickname:QString("You")) + QString("> ") +m.message() );
       //nameTextArea->append ( m.sender()?m.sender()->getNickname():"You" );
     }
   }
@@ -607,9 +603,9 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
 void MXitC::outgoingMessage(const QString & message)
 {
   if (currentContact) {
-    currentContact->incomingMessage(Message ( 0, message));
+    currentContact->chatHistory.append(Message ( 0, message) );
     currentContact->unreadMessage = false;
-    mxit->sendMessage(currentContact->getContactAddress(), message, MXit::Protocol::MessageTypeNormal, 0);
+    mxit->sendMessage(currentContact->contactAddress, message, Protocol::Enumerables::Message::Normal, 0);
     refreshChatBox();
   }
 }

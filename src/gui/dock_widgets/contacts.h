@@ -32,7 +32,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   public: /*class specific */
 
-  Contacts(const ContactMetaData * metadata, QWidget* parent = 0);
+  Contacts(QWidget* parent = 0);
   ~Contacts();
   
   signals:
@@ -46,8 +46,6 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
 
   private:
   
-  const ContactMetaData * metadata;
-
   void clearList();
   void addContact(const Contact & c);
 

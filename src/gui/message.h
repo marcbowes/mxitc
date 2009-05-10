@@ -12,6 +12,7 @@
 #define __MXIT_GUI_MESSAGE_H__
 
 #include <QObject>
+#include <QVector>
 
 namespace MXit
 {
@@ -44,6 +45,8 @@ class Message : public QObject
   const Contact  * senderVar;
 
 };
+
+typedef QVector<Message> MessageVec;
 
 
 } /* end namespace GUI */
