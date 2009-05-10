@@ -7,5 +7,6 @@
 #include "09_getnewmessages.h"
 #include "10_sendnewmessage.h"
 #include "11_register.h"
+#include "17_polldifference.h"
 #include "27_getmultimediamessage.h"
 #include "32_setshownpresenceandstatus.h"
