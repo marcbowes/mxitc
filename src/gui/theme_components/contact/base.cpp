@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include "theme.h"
+#include "base.h"
 
 namespace MXit
 {
@@ -12,19 +12,30 @@ namespace MXit
 namespace GUI
 {
 
+namespace ThemeComponents
+{
+
+namespace Contact
+{
+
 /****************************************************************************
 **
 ** Author: Marc Bowes
 **
-** constructs theme components
+** loads components
 **
 ****************************************************************************/
-void Theme::load(QDir theme)
-{  
-  if (theme.cd("contact")) {
-    contact.load(theme);
+void Base::load(QDir theme)
+{
+  /* load theme components */
+  if (theme.cd("presence")) {
+    presence.load(theme);
     theme.cdUp();
   }
+}
+
+}
+
 }
 
 }

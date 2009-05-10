@@ -17,6 +17,9 @@ namespace GUI
 namespace ThemeComponents
 {
 
+namespace Contact
+{
+
 /****************************************************************************
 **
 ** Author: Marc Bowes
@@ -27,11 +30,11 @@ namespace ThemeComponents
 void Presence::load(const QDir &dir)
 {
   /* load from disk */
-  QImage _available   = QImage(dir.absoluteFilePath("presence/available.png"));
-  QImage _away        = QImage(dir.absoluteFilePath("presence/away.png"));
-  QImage _dnd         = QImage(dir.absoluteFilePath("presence/dnd.png"));
-  QImage _offline     = QImage(dir.absoluteFilePath("presence/offline.png"));
-  QImage _online      = QImage(dir.absoluteFilePath("presence/online.png"));
+  QImage _available   = QImage(dir.absoluteFilePath("available.png"));
+  QImage _away        = QImage(dir.absoluteFilePath("away.png"));
+  QImage _dnd         = QImage(dir.absoluteFilePath("dnd.png"));
+  QImage _offline     = QImage(dir.absoluteFilePath("offline.png"));
+  QImage _online      = QImage(dir.absoluteFilePath("online.png"));
   
   /* build pixmaps from images, or use defaults */
   if (_available.isNull()) {
@@ -100,6 +103,8 @@ QPixmap Presence::pixmap(Protocol::Enumerables::Contact::Presence presence)
       return QPixmap(DEFAULT_SIZE);
       break;
   }
+}
+
 }
 
 }

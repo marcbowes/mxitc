@@ -88,18 +88,18 @@ QListWidgetItem * Contacts::addContact(const Contact & c){
       break;
   }
   
-  QString lable = QString("%1%2").arg(sortPrefix).arg(c.nickname);
+  QString label = QString("%1%2").arg(sortPrefix).arg(c.nickname);
   
   QListWidgetItem * item = NULL;
   
   if (!listItemWidgets.contains(c.nickname)) {
-    item = new QListWidgetItem(theme.presence.pixmap(c.presence), lable); // create new item
+    item = new QListWidgetItem(theme.contact.presence.pixmap(c.presence), label); // create new item
     contactList->addItem(item);
     listItemWidgets[c.nickname] = item;
   }
   else {
     item = listItemWidgets[c.nickname];
-    *item = QListWidgetItem(theme.presence.pixmap(c.presence), lable); // change exiting item
+    *item = QListWidgetItem(theme.contact.presence.pixmap(c.presence), label); // change exiting item
   }
     
   if (c.unreadMessage) {
