@@ -80,7 +80,7 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
   
   int i=0, count = 0;
   
-  while (count < 3) {
+  while (count < packet.startsWith("ln=") ? 3 : 2) {
     i++;
     if (packet.at(i) == '\0')
       count++;
@@ -119,54 +119,64 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
     //getting data
     QByteArray data = chunkedData.mid(position, length);
     
-    QTextCodec *codec = QTextCodec::codecForName("UTF-8");
     
-    int penis = 0;
-    int tdpenis = 0;
     QByteArray tempData;
-    while (data.at(penis) != '\0') {
-      tempData[tdpenis] = data[penis];
-      penis++;
-      tdpenis++;
+    
+    switch (type) {
+      case MXit::Protocol::Enumerables::ChunkedData::CustomResource:
+        QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+        
+        int penis = 0;
+        int tdpenis = 0;
+        int chunkLength = 0;
+        
+        while (data.at(penis) != '\0') {
+          tempData[tdpenis] = data[penis];
+          penis++;
+          tdpenis++;
+        }
+        qDebug() << "id: " << codec->toUnicode(tempData);
+        
+        penis++;
+        tempData.clear();
+        tdpenis = 0;
+        
+        while ((data.at(penis) != '\0')&&(data.at(penis) != '\1')) {
+          tempData[tdpenis] = data[penis];
+          penis++;
+          tdpenis++;
+        }
+        
+        qDebug() << "handle: " << codec->toUnicode(tempData);
+        
+        //no null to dodge
+        qDebug() << "operation: " << (int)data.at(penis);
+        
+        penis++; // moving on
+        
+        chunkLength |= data[penis];
+        penis++;
+        for (int j=0; j<3; j++) {
+          chunkLength = chunkLength << 8;
+          chunkLength |= (unsigned char)data[penis + j];
+        }
+        penis += 3;
+        
+        qDebug() << "chunk length: " << chunkLength;
+        
+        penis += chunkLength;
+        
+        if (penis != data.size())
+          qDebug() << "Error parsing chunked data";
+        
+        break;
+      default:
+        qDebug() << "Error: Unknown chunked data type";
+        break;
     }
-    qDebug() << "id: " << codec->toUnicode(tempData);
-    
-    penis++;
-    tempData.clear();
-    tdpenis = 0;
-    
-    while ((data.at(penis) != '\0')&&(data.at(penis) != '\1')) {
-      tempData[tdpenis] = data[penis];
-      penis++;
-      tdpenis++;
-    }
-    
-    qDebug() << "handle: " << codec->toUnicode(tempData);
-    
-    //no null to dodge
-    qDebug() << "operation: " << (int)data.at(penis);
-    
-    penis++; // moving on
-    
-    int chunkLength = 0;
-    chunkLength |= data[penis];
-    penis++;
-    for (int j=0; j<3; j++) {
-      chunkLength = chunkLength << 8;
-      chunkLength |= (unsigned char)data[penis + j];
-    }
-    penis += 3;
-    
-    qDebug() << "chunk length: " << chunkLength;
-    
-    penis += chunkLength;
-    
-    qDebug() << "penis: " << penis;
-    qDebug() << "total: " << data.size();
     
     //moving to next chunk
     position += (length - 1);
-    
   }
   
   return VariableHash();
