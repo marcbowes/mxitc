@@ -123,12 +123,7 @@ QListWidgetItem * Contacts::addContact(const Contact & c){
 void Contacts::refresh(const QList<Contact>& contacts) {
 
 
-  Q_FOREACH(const Contact & c, contacts) {
-  
-    qDebug() << c.nickname << ":" << c.unreadMessage;
-  }
-  
-
+ 
   /* resetting contacts list*/
   
   QSet <QListWidgetItem*> lwiInList; // nickname -> bool

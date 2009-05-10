@@ -10,6 +10,9 @@
 #ifndef __MXIT_GUI_DOCKWIDGET_OPTIONS_H__
 #define __MXIT_GUI_DOCKWIDGET_OPTIONS_H__
 
+#include <QFileDialog>
+#include <QDebug>
+
 #include "gui/mxit_dock_widget.h"
 
 #include "ui_options.h"
@@ -39,6 +42,9 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   
   
   private slots:
+  void openThemeBrowser ();
+  void refreshComboBox ();
+  void loadTheme(const QString & dir);
 
 
 };
