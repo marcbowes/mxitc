@@ -19,7 +19,7 @@
 #include <QListWidgetItem>
 #include <QFile>
 #include <QFileInfo>
-#include <QDir>
+#include <QTextBlock>
 
 #include "common/types.h"
 #include "common/actions.h"
@@ -89,7 +89,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void setCurrentUser(QListWidgetItem * item);
   void refreshChatBox(); /*FIXME slot ? - rax*/
   
-  void saveLayout(Qt::DockWidgetArea area); 
+  void saveLayout(bool b);
+  void saveLayout(Qt::DockWidgetArea area = Qt::NoDockWidgetArea); 
   
   void sendGateway(bool http);
   

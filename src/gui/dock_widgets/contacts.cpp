@@ -67,6 +67,11 @@ void Contacts::clearList(){
 void Contacts::addContact(const Contact & c){
 
   QListWidgetItem * item = new QListWidgetItem(metadata->presenceIcons()[c.presence], QString().setNum(metadata->presencePrecedence()[c.presence])+c.getNickname());
+  //qDebug() << c.getNickname() << ":" << c.unreadMessage;
+  if (c.unreadMessage) {
+    item->setForeground(QBrush(Qt::red));
+  }
+    
   contactList->addItem(item);
 }
 
@@ -75,10 +80,19 @@ void Contacts::addContact(const Contact & c){
 **
 ** Author: Richard Baxter
 **
+**
 ****************************************************************************/
 
-void Contacts::refresh(QList<Contact> contacts) {
+void Contacts::refresh(const QList<Contact>& contacts) {
 
+  if (contacts.size() != contactList->count()) {
+    /* means the new contact list has added or removed a contact*/
+    /*todo, handle this case :/ */
+  }
+  int selected = contactList->currentRow ();
+  
+
+  //qDebug() << "refreshing";
   /* resetting contacts list*/
   clearList();/* FIXME make a tree view ?*/
   Q_FOREACH(const Contact & c, contacts) {
@@ -91,8 +105,11 @@ void Contacts::refresh(QList<Contact> contacts) {
     QListWidgetItem * lwi = contactList->item(i);
     lwi->setText ( lwi->text().mid ( 1 ) );
   }
+  
+  contactList->setCurrentRow ( selected );
 
 }
+
 
 
 

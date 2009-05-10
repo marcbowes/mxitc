@@ -1,3 +1,0 @@
-QLineEdit { background: yellow }
-QCheckBox { color: red }
-QPushButton { color: red }

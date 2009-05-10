@@ -29,7 +29,7 @@ Contact:: Contact(
       unsigned int presence, 
       unsigned int type, 
       unsigned int mood) :
-      group(group), contactAddress(contactAddress), nickname(nickname), presence((Presence)presence), type((Type)type), mood((Mood)mood)
+      group(group), contactAddress(contactAddress), nickname(nickname), presence((Presence)presence), type((Type)type), mood((Mood)mood), unreadMessage(false)
 {
   /* nothing */
 }
@@ -44,7 +44,7 @@ Contact:: Contact(
 ****************************************************************************/
 
 Contact:: Contact(const Contact& c) :
-      group(c.group), contactAddress(c.contactAddress), nickname(c.nickname), presence(c.presence), type(c.type), mood(c.mood), unreadMessage(true)
+      group(c.group), contactAddress(c.contactAddress), nickname(c.nickname), presence(c.presence), type(c.type), mood(c.mood), unreadMessage(c.unreadMessage)
 {
   /* nothing */
 }
@@ -74,10 +74,47 @@ Contact& Contact::operator=(const Contact& c) {
   presence = c.presence;
   type = c.type;
   mood = c.mood;
-  unreadMessage = true;
+  unreadMessage = c.unreadMessage;
   
   return *this;
 }
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Contact::incomingMessage(Message message)
+{
+  chatHistoryVec.append(message);
+  unreadMessage = true;
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+const QVector <Message>& Contact::chatHistory()
+{
+  return chatHistoryVec;
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+QString Contact::getFormattedMsg(int i) const /* FIXME deprecated i think*/
+{
+  const Message& m = chatHistoryVec[i];
+  return (m.sender()?m.sender()->getNickname():QString("You")) + ": " + m.message();
+}
+
   
 /****************************************************************************
 **

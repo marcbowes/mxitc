@@ -53,7 +53,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   restoreState(settings->value("gui layout").toByteArray());
   
   
-  
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
   /*TODO integrate into QT designer (?)*/
@@ -194,9 +193,20 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
   addDockWidget(Qt::RightDockWidgetArea, dockWidget);
   dockWidget->setVisible ( false );
     
-  connect(dockWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), this, SLOT(saveLayout(Qt::DockWidgetArea)));
-  
+    
+  qDebug() << "loading "  << QString("visible?")+dockWidget->objectName ();
+  dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
+  dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
+    
   connect(action, SIGNAL(triggered()), dockWidget, SLOT(toggleVisibility()));
+  
+  connect(
+          dockWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), 
+          this, SLOT(saveLayout(Qt::DockWidgetArea)));
+  connect(
+          dockWidget, SIGNAL(visibilityChanged ( bool ) ), 
+          this, SLOT(saveLayout( bool )));
+  
   //connect(actionDebug_Variables, SIGNAL(triggered()), this, SLOT(debugToggle()));
   //connect(actionOptions, SIGNAL(triggered()), this, SLOT(optionsToggle()));
 }
@@ -208,7 +218,16 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
 **
 ****************************************************************************/
 
+void MXitC::saveLayout(bool b) {
+  saveLayout();
+}
 void MXitC::saveLayout(Qt::DockWidgetArea area) {
+  
+  Q_FOREACH(const QDockWidget * dw, dockWidgets) {
+    qDebug() << "saving "  << QString("visible?")+dw->objectName ();
+    settings->setValue(QString("visible?")+dw->objectName (), dw->isVisible());
+    settings->setValue(QString("floating?")+dw->objectName (), dw->isFloating());
+  }
   
   settings->setValue("gui layout", saveState());
   
@@ -424,9 +443,10 @@ void MXitC::contactsReceived(){
     if(newContact) {
       nicknameToContactAddress[c.getNickname()] = c.getContactAddress();
      
-      c.chatHistory.append( Message(0, "User: "+ c.getNickname()));
-      c.chatHistory.append( Message(0, "CA: "+ c.getContactAddress()));
-      c.chatHistory.append( Message(0, "grp: \""+ c.getGroup() + "\""));
+      c.incomingMessage( Message(0, "User: "+ c.getNickname()));
+      c.unreadMessage = false;
+      //c.incomingMessage( Message(0, "CA: "+ c.getContactAddress()));
+      //c.incomingMessage( Message(0, "grp: \""+ c.getGroup() + "\""));
     }
   }
   
@@ -457,8 +477,13 @@ void MXitC::messageReceived(){
   
     Contact& sender = contactsHash[contactAddress];
     
-    sender.chatHistory.append( Message(&sender, mxit->variableValue("message")) );
+    sender.incomingMessage( Message(&sender, mxit->variableValue("message")) );
+    
+    if (currentContact)
+      currentContact->unreadMessage = false;
+    
     refreshChatBox();
+    contactsWidget->refresh(contactsHash.values());
   }
   else {
     qDebug() << "wtf unknown contact!"; 
@@ -479,11 +504,15 @@ void MXitC::setCurrentUser(QListWidgetItem * item){
   //qDebug() << item->text();
   //qDebug() << nicknameToContactAddress[item->text()];
   
-  if (currentContact)
+  if (currentContact) {
     currentContact->setChatInputText(chatInput->text());
+  }
   
   currentContact = &contactsHash[nicknameToContactAddress[item->text()]];
+  currentContact->unreadMessage = false;
+  
   refreshChatBox();
+  contactsWidget->refresh(contactsHash.values());
   
   chatInput->setText(currentContact->getChatInputText());
 }
@@ -503,8 +532,9 @@ void MXitC::refreshChatBox(){
 
   mainTextArea->clear();
   if (currentContact != NULL) {
-    Q_FOREACH(const Message& m, currentContact->chatHistory) {
-      mainTextArea->append ( m.getFormattedMsg() );
+    Q_FOREACH(const Message& m, currentContact->chatHistory()) {
+      mainTextArea->append (  QString("<") +(m.sender()?m.sender()->getNickname():QString("You")) + QString("> ") +m.message() );
+      //nameTextArea->append ( m.sender()?m.sender()->getNickname():"You" );
     }
   }
   
@@ -577,7 +607,8 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
 void MXitC::outgoingMessage(const QString & message)
 {
   if (currentContact) {
-    currentContact->chatHistory.append(Message ( 0, message) );
+    currentContact->incomingMessage(Message ( 0, message));
+    currentContact->unreadMessage = false;
     mxit->sendMessage(currentContact->getContactAddress(), message, MXit::Protocol::MessageTypeNormal, 0);
     refreshChatBox();
   }

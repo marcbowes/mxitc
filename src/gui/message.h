@@ -29,19 +29,19 @@ class Message : public QObject
 	
   Message(const Contact * sender = 0, const QString & message = "");
   Message(const Message & m);
+  Message& operator=(const Message & );
   
   ~Message();
   
-  const Contact * getSender() const;
-  QString getMessage() const;
+  const Contact * sender() const;
+  QString message() const;
   QString getFormattedMsg() const;
   
-  Message& operator=(const Message & );
   
   private:
   
-  QString message;
-  const Contact  * sender;
+  QString messageVar;
+  const Contact  * senderVar;
 
 };
 

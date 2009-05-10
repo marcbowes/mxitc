@@ -42,7 +42,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   public:
   
-  void refresh(QList<Contact> contacts);
+  void refresh(const QList<Contact>& contacts);
 
   private:
   

@@ -65,9 +65,13 @@ class Contact : public QObject
   
   void setChatInputText(const QString& inputChatText);
   QString getChatInputText();
+  void incomingMessage(Message message);
+  
+  const QVector <Message>& chatHistory();
+  QString getFormattedMsg(int i) const;
 
+  public:         /* vaiables */
 
-  QVector <Message> chatHistory;
 
   bool unreadMessage;
   Presence presence;
@@ -82,6 +86,7 @@ class Contact : public QObject
   
   QString chatInputText; /* an area to save what the user has types in the input line */
   
+  QVector <Message> chatHistoryVec;
 
 
 };
