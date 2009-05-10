@@ -46,7 +46,7 @@ void GetMultimediaMessage::build(MXit::Network::Packet *packet, VariableHash &va
   packet->setCommand("27");
   
   /* packet data setup */
-  (*packet) << "oogelyboogely";//FIXME: not a real request :)
+  (*packet) << variables["chunkedData"];
 }
 
 /****************************************************************************
@@ -75,8 +75,18 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
   **
   ***************************************************************************
   */
+  /* setup */
+  StringVec variables;
   
-  return VariableHash();
+  /* first break up packet by \0 into variable sections */
+  variables.append("ln");                   /* ln=X\0 */
+  variables.append("command");              /* 27\0 */
+  variables.append("error");                /* errorCode[\1errorMessage]\0 */
+  variables.append("chunkedData");
+  
+  VariableHash data = hashVariables(packet, variables, '\0');
+    
+  return data;
 }
 
 }
