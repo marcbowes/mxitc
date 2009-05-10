@@ -1,6 +1,6 @@
 
 
-#include "contacts.h"
+#include "chat_sessions.h"
 
 namespace MXit
 {
@@ -20,7 +20,7 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Contacts::Contacts(QWidget* parent, Theme &theme) : MXitDockWidget(parent, theme)
+ChatSessions::ChatSessions(QWidget* parent, Theme &theme) : MXitDockWidget(parent, theme)
 {
   setupUi(this);
   
@@ -37,7 +37,7 @@ Contacts::Contacts(QWidget* parent, Theme &theme) : MXitDockWidget(parent, theme
 ** Widget destructor
 **
 ****************************************************************************/
-Contacts::~Contacts()
+ChatSessions::~ChatSessions()
 {
 }
 
@@ -64,10 +64,10 @@ Contacts::~Contacts()
 **
 ****************************************************************************/
 
-QListWidgetItem * Contacts::addContact(const Contact & c){
+QListWidgetItem * ChatSessions::addChatSession(const ChatSession & c){
 
   QChar   sortPrefix;
-  switch (c.presence) {
+  switch (c.mainContact->presence) {
     case Protocol::Enumerables::Contact::Available:
       sortPrefix = '0';
       break;
@@ -88,18 +88,18 @@ QListWidgetItem * Contacts::addContact(const Contact & c){
       break;
   }
   
-  QString label = QString("%1%2").arg(sortPrefix).arg(c.nickname);
+  QString label = QString("%1%2").arg(sortPrefix).arg(c.chatSessionName);
   
   QListWidgetItem * item = NULL;
   
-  if (!listItemWidgets.contains(c.nickname)) {
-    item = new QListWidgetItem(theme.contact.presence.pixmap(c.presence), label); // create new item
+  if (!listItemWidgets.contains(c.chatSessionName)) {
+    item = new QListWidgetItem(theme.contact.presence.pixmap(c.mainContact->presence), label); // create new item
     contactList->addItem(item);
-    listItemWidgets[c.nickname] = item;
+    listItemWidgets[c.chatSessionName] = item;
   }
   else {
-    item = listItemWidgets[c.nickname];
-    *item = QListWidgetItem(theme.contact.presence.pixmap(c.presence), label); // change exiting item
+    item = listItemWidgets[c.chatSessionName];
+    *item = QListWidgetItem(theme.contact.presence.pixmap(c.mainContact->presence), label); // change exiting item
   }
     
   if (c.unreadMessage) {
@@ -120,7 +120,7 @@ QListWidgetItem * Contacts::addContact(const Contact & c){
 **
 ****************************************************************************/
 
-void Contacts::refresh(const QList<Contact>& contacts) {
+void ChatSessions::refresh(const QList<ChatSession>& chatSessions) {
 
 
  
@@ -128,17 +128,17 @@ void Contacts::refresh(const QList<Contact>& contacts) {
   
   QSet <QListWidgetItem*> lwiInList; // nickname -> bool
   
-  Q_FOREACH(const Contact & c, contacts) {
-    QListWidgetItem* inContacts = addContact( c ); 
+  Q_FOREACH(const ChatSession & c, chatSessions) {
+    QListWidgetItem* inContacts = addChatSession( c ); 
     lwiInList.insert(inContacts);
   }
   
   /* removing any contacts that are no longer n the list*/
-  Q_FOREACH(const Contact & c, contacts) {
-    if (!lwiInList.contains(listItemWidgets[c.nickname])) {
-      contactList->removeItemWidget(listItemWidgets[c.nickname]);
-      delete listItemWidgets[c.nickname];
-      listItemWidgets.remove(c.nickname);
+  Q_FOREACH(const ChatSession & c, chatSessions) {
+    if (!lwiInList.contains(listItemWidgets[c.chatSessionName])) {
+      contactList->removeItemWidget(listItemWidgets[c.chatSessionName]);
+      delete listItemWidgets[c.chatSessionName];
+      listItemWidgets.remove(c.chatSessionName);
     }
   }
   

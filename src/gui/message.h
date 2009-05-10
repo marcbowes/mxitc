@@ -13,6 +13,7 @@
 
 #include <QObject>
 #include <QVector>
+#include "common/contact.h"
 
 namespace MXit
 {
@@ -28,13 +29,13 @@ class Message : public QObject
   
   public:         /* class specific */
 	
-  Message(const Contact * sender = 0, const QString & message = "");
+  Message(const MXit::Contact * sender = 0, const QString & message = "");
   Message(const Message & m);
   Message& operator=(const Message & );
   
   ~Message();
   
-  const Contact * sender() const;
+  const MXit::Contact * sender() const;
   QString message() const;
   QString getFormattedMsg() const;
   
@@ -42,7 +43,7 @@ class Message : public QObject
   private:
   
   QString messageVar;
-  const Contact  * senderVar;
+  const MXit::Contact  * senderVar;
 
 };
 

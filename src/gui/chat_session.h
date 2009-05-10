@@ -10,12 +10,14 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_CONTACT_H__
-#define __MXIT_GUI_CONTACT_H__
+#ifndef __MXIT_GUI_CHATSESSION_H__
+#define __MXIT_GUI_CHATSESSION_H__
 
 #include "common/contact.h"
 
 #include "message.h"
+
+#include <QTableWidget>
 
 namespace MXit
 {
@@ -23,25 +25,33 @@ namespace MXit
 namespace GUI
 {
 
-class Contact: public MXit::Contact
+class ChatSession
 {
   public:         /* class specific */
   
-  Contact();
-  Contact(const Contact &other);
-  ~Contact();
+  ChatSession(MXit::Contact * mainContact = 0);
+  //ChatSession(const ChatSession &other);
+  ~ChatSession();
   
   public:         /* methods */
   
-  Contact& operator=(const Contact &other);
+  //ChatSession& operator=(const ChatSession &other);
   
   void incomingMessage(Message message);
   
   public:         /* variables */
   
-  MessageVec  chatHistory;
+  QString chatSessionName;
+  
+  MXit::Contact * mainContact; /*slight hack for now*/
+  //QSet<MXit::Contact *> otherContacts; /*TODO implement*/
+  
+  //QTableWidget tableWidget;
+  MessageVec  chatHistory; /*replace with QTableWidget*/
   QString     chatInputText;
   bool        unreadMessage;
+  
+  
 };
 
 }

@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include "contact.h"
+#include "chat_session.h"
 
 namespace MXit
 {
@@ -19,9 +19,13 @@ namespace GUI
 ** Contact constructor
 **
 ****************************************************************************/
-Contact::Contact()
+ChatSession::ChatSession(MXit::Contact * mainContact)
 {
-  /* nothing */
+  this->mainContact = mainContact;
+  
+  if (this->mainContact) {
+    chatSessionName = this->mainContact->nickname;
+  }
 }
 
 
@@ -32,16 +36,10 @@ Contact::Contact()
 ** Contact copy constructor
 **
 ****************************************************************************/
-Contact::Contact(const Contact &other)
-{
-  this->group           = other.group;
-  this->contactAddress  = other.contactAddress;
-  this->nickname        = other.nickname;
-  this->presence        = other.presence;
-  this->type            = other.type;
-  this->mood            = other.mood;
-  this->unreadMessage   = other.unreadMessage;
-}
+//ChatSession::ChatSession(const ChatSession &other)
+//{
+  /**/
+//}
 
 
 /****************************************************************************
@@ -51,24 +49,17 @@ Contact::Contact(const Contact &other)
 ** Contact deconstructor
 **
 ****************************************************************************/
-Contact::~Contact()
+ChatSession::~ChatSession()
 {
   /* nothing */
 }
 
 
-Contact& Contact::operator=(const Contact &other)
+/*Contact& ChatSession::operator=(const Contact &other)
 {
-  group                 = other.group;
-  contactAddress        = other.contactAddress;
-  nickname              = other.nickname;
-  presence              = other.presence;
-  type                  = other.type;
-  mood                  = other.mood;
-  unreadMessage         = other.unreadMessage;
 
   return *this;
-}
+}*/
 
 
 /****************************************************************************
@@ -76,12 +67,24 @@ Contact& Contact::operator=(const Contact &other)
 ** Author: Richard Baxter
 **
 ****************************************************************************/
-void Contact::incomingMessage(Message message)
+void ChatSession::incomingMessage(Message message)
 {
   chatHistory.append(message);
+  
   unreadMessage = true;
 }
 
 }
 
 }
+
+
+
+
+
+
+
+
+
+
+

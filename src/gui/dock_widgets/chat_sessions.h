@@ -7,10 +7,10 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_DOCKWIDGET_CONTACTS_H__
-#define __MXIT_GUI_DOCKWIDGET_CONTACTS_H__
+#ifndef __MXIT_GUI_DOCKWIDGET_CHATSESSIONS_H__
+#define __MXIT_GUI_DOCKWIDGET_CHATSESSIONS_H__
 
-#include "gui/contact.h"
+#include "gui/chat_session.h"
 #include "gui/mxit_dock_widget.h"
 
 #include "ui_contacts.h"
@@ -27,14 +27,14 @@ namespace GUI
 namespace DockWidget
 {
 
-class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
+class ChatSessions : public MXitDockWidget, private Ui::ContactsDockWidget
 {
   Q_OBJECT
   
   public: /*class specific */
 
-  Contacts(QWidget* parent, Theme &theme);
-  ~Contacts();
+  ChatSessions(QWidget* parent, Theme &theme);
+  ~ChatSessions();
   
   signals:
   
@@ -43,14 +43,14 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   public:
   
-  void refresh(const QList<Contact>& contacts);
+  void refresh(const QList<ChatSession>& chatSessions);
 
   private:
   
   //void clearList();
-  QListWidgetItem * addContact(const Contact & c);
+  QListWidgetItem * addChatSession(const ChatSession & c);
   
-  QHash<QString, QListWidgetItem*> listItemWidgets; // from nickname to listItemWidget
+  QHash<QString, QListWidgetItem*> listItemWidgets; // from chatSessionName to listItemWidget
 
 };
 

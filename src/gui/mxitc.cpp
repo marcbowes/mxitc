@@ -24,7 +24,7 @@ namespace GUI
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentState(LOGGED_OUT), currentContact(NULL)
+MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentState(LOGGED_OUT), currentChatSession(NULL)
 {
   
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
@@ -41,8 +41,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   optionsWidget = new DockWidget::Options (this, theme);
   appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
   
-  contactsWidget = new DockWidget::Contacts (this, theme);
-  appendDockWidget(contactsWidget, Qt::LeftDockWidgetArea, actionContacts);
+  chatSessionsWidget = new DockWidget::ChatSessions (this, theme);
+  appendDockWidget(chatSessionsWidget, Qt::LeftDockWidgetArea, actionContacts);
   
   logWidget = new DockWidget::Log (this, theme);
   appendDockWidget(logWidget, Qt::RightDockWidgetArea, actionLogs);
@@ -66,7 +66,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(mxit, SIGNAL(outgoingAction(Action)), this, SLOT(incomingAction(Action)));
   
   
-  connect(contactsWidget, SIGNAL(outgoingItemPressed ( QListWidgetItem *  )), this, SLOT(setCurrentUser( QListWidgetItem *  )));
+  connect(chatSessionsWidget, SIGNAL(outgoingItemPressed ( QListWidgetItem *  )), this, SLOT(setCurrentChatSession( QListWidgetItem *  )));
   
   connect(optionsWidget, SIGNAL(gatewaySelected(bool)), this, SLOT(sendGateway( bool )));  
 
@@ -150,6 +150,15 @@ MXitC::~MXitC()
   Q_FOREACH(const QDockWidget * dw, dockWidgets) {
     delete dw;
   }
+  
+  
+  /*for (int r = 0 ; r < mainChatArea->rowCount() ; r++){
+    for (int c = 0 ; c < mainChatArea->columnCount () ; c++){
+      QTableWidgetItem * item = mainChatArea->takeItem (r, c);
+      if (item)
+        delete item;
+    }
+  }*/
 }
 
 
@@ -412,14 +421,13 @@ void MXitC::contactsReceived(){
     
     bool newContact = false;
     QString contactAddress = contactInfo [1];
-    Contact contact;
                                           
     if (!contactsHash.contains(contactAddress)) {
-      Contact & c = contactsHash[contactAddress];
+      MXit::Contact & c = contactsHash[contactAddress];
       newContact = true;
     }        
     
-    Contact &c = contactsHash[contactAddress];
+    MXit::Contact &c = contactsHash[contactAddress];
     c.group           = contactInfo[0];
     c.contactAddress  = contactInfo[1];
     c.nickname        = contactInfo[2];
@@ -429,13 +437,22 @@ void MXitC::contactsReceived(){
     
     if(newContact) {
       nicknameToContactAddress[c.nickname] = c.contactAddress;
-     
-      c.incomingMessage( Message(0, "User: "+ c.nickname));
-      c.unreadMessage = false;
+      
+      chatSessions[c.nickname] = ChatSession(&c);
+      
+      contactsChatSession[&c] = &chatSessions[c.nickname];
+      
+      ChatSession& chatSess = chatSessions[c.nickname];
+      chatSess.incomingMessage( Message(0, "User: "+ c.nickname));
+      chatSess.unreadMessage = false;
     }
   }
+  qDebug() << "contacts received";
   
-  refreshContacts();
+  /*Q_FOREACH(const ChatSession & cs, chatSessions.values()) {
+    qDebug() << cs.chatSessionName;
+  }*/
+  refreshChatSessions();
         
 }
 
@@ -460,15 +477,15 @@ void MXitC::messageReceived(){
   //qDebug() << "contactAddress = " << contactAddress;
   if (contactsHash.contains(contactAddress)) {
   
-    Contact& sender = contactsHash[contactAddress];
+    MXit::Contact& sender = contactsHash[contactAddress];
     
-    sender.incomingMessage( Message(&sender, mxit->variableValue("message")) );
+    contactsChatSession[&sender]->incomingMessage( Message(&sender, mxit->variableValue("message")) );
     
-    if (currentContact)
-      currentContact->unreadMessage = false;
+    if (currentChatSession)
+      currentChatSession->unreadMessage = false;
     
     refreshChatBox();
-    contactsWidget->refresh(contactsHash.values());
+    chatSessionsWidget->refresh(chatSessions.values());
   }
   else {
     qDebug() << "wtf unknown contact!"; 
@@ -488,8 +505,8 @@ void MXitC::messageReceived(){
 ****************************************************************************/
 
 void MXitC::themeChanged(){
-  refreshContacts();
-  contactsWidget->setStyleSheet(theme.contact.stylesheet);
+  refreshChatSessions();
+  chatSessionsWidget->setStyleSheet(theme.contact.stylesheet);
   settings->setValue("themeBaseDirectory", optionsWidget->getBaseThemeDirectory());
   settings->setValue("selectedTheme", optionsWidget->getSelectedTheme());
   
@@ -503,20 +520,20 @@ void MXitC::themeChanged(){
 **
 ****************************************************************************/
 
-void MXitC::setCurrentUser(QListWidgetItem * item){
+void MXitC::setCurrentChatSession(QListWidgetItem * item){
   //qDebug() << item->text();
   //qDebug() << nicknameToContactAddress[item->text()];
   
-  if (currentContact)
-    currentContact->chatInputText = chatInput->text();
+  if (currentChatSession)
+    currentChatSession->chatInputText = chatInput->text();
   
-  currentContact = &contactsHash[nicknameToContactAddress[item->text()]];
-  currentContact->unreadMessage = false;
+  currentChatSession = &chatSessions[item->text()];
+  currentChatSession->unreadMessage = false;
   
   refreshChatBox();
-  contactsWidget->refresh(contactsHash.values());
+  chatSessionsWidget->refresh(chatSessions.values());
   
-  chatInput->setText(currentContact->chatInputText);
+  chatInput->setText(currentChatSession->chatInputText);
 }
 
 
@@ -533,8 +550,32 @@ void MXitC::setCurrentUser(QListWidgetItem * item){
 void MXitC::refreshChatBox(){
 
   mainTextArea->clear();
-  if (currentContact != NULL) {
-    Q_FOREACH(const Message& m, currentContact->chatHistory) {
+  //mainChatArea->setRowCount(0);
+  if (currentChatSession != NULL) {
+    Q_FOREACH(const Message& m, currentChatSession->chatHistory) {
+    
+      /*mainChatArea->setRowCount ( mainChatArea->rowCount ()+1 );
+
+      qint32 lastRow = mainChatArea->rowCount ()-1;
+
+      QTableWidgetItem * nameItem = mainChatArea->item ( lastRow, 1 );
+      QTableWidgetItem * chatItem = mainChatArea->item ( lastRow, 2 );
+      
+      qDebug() << mainChatArea->rowCount() << ":" << mainChatArea->columnCount();
+      qDebug() << nameItem << ":" << chatItem;
+      if (!nameItem)
+        mainChatArea->setItem(lastRow, 1, new QTableWidgetItem());
+      if (!chatItem)
+        mainChatArea->setItem(lastRow, 2, new QTableWidgetItem());
+      
+      nameItem = mainChatArea->item ( lastRow, 1 );
+      chatItem = mainChatArea->item ( lastRow, 2 );
+      
+      qDebug() << nameItem << ":" << chatItem;
+
+      nameItem->setText ((m.sender()?m.sender()->nickname:QString("You")));
+      chatItem->setText (m.message());
+      qDebug() << nameItem->text() << ":" << chatItem->text();*/
       mainTextArea->append (  QString("<") +(m.sender()?m.sender()->nickname:QString("You")) + QString("> ") +m.message() );
       //nameTextArea->append ( m.sender()?m.sender()->getNickname():"You" );
     }
@@ -552,8 +593,8 @@ void MXitC::refreshChatBox(){
 **
 ****************************************************************************/
 
-void MXitC::refreshContacts(){
-  contactsWidget->refresh(contactsHash.values());
+void MXitC::refreshChatSessions(){
+  chatSessionsWidget->refresh(chatSessions.values());
 }
 
 /****************************************************************************
@@ -621,10 +662,10 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
 
 void MXitC::outgoingMessage(const QString & message)
 {
-  if (currentContact) {
-    currentContact->incomingMessage( Message ( 0, message) );
-    currentContact->unreadMessage = false;
-    mxit->sendMessage(currentContact->contactAddress, message, Protocol::Enumerables::Message::Normal, 0);
+  if (currentChatSession) {
+    currentChatSession->incomingMessage( Message ( 0, message) );
+    currentChatSession->unreadMessage = false;
+    mxit->sendMessage(currentChatSession->mainContact->contactAddress, message, Protocol::Enumerables::Message::Normal, 0);
     refreshChatBox();
   }
 }

@@ -12,6 +12,10 @@ namespace MXit
 namespace GUI
 {
 
+
+  Theme::Theme()   {}
+  Theme::~Theme()  {}
+
 /****************************************************************************
 **
 ** Author: Marc Bowes

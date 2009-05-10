@@ -40,17 +40,18 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/theme_components/contact/base.cpp  
   gui/theme_components/contact/presence.cpp
   
-  gui/mxit_dock_widget.cpp
-  gui/contact.cpp
-  gui/message.cpp
   
   gui/dock_widgets/log.cpp
   gui/dock_widgets/options.cpp
   gui/dock_widgets/debug.cpp
-  gui/dock_widgets/contacts.cpp
+  gui/dock_widgets/chat_sessions.cpp
   
   gui/dialogs/addContact.cpp
   gui/dialogs/login.cpp
+  
+  gui/mxit_dock_widget.cpp
+  gui/chat_session.cpp
+  gui/message.cpp
   
   gui/mxitc.cpp
   gui/mxit_dialog.cpp
@@ -66,19 +67,22 @@ SET(MXIT_CLIENT_MOC_SRCS
   protocol/handshaker.h
   mxit/client.h
   
-  gui/mxit_dock_widget.h
-  gui/message.h
   
   gui/dock_widgets/log.h
   gui/dock_widgets/options.h
   gui/dock_widgets/debug.h
-  gui/dock_widgets/contacts.h
+  gui/dock_widgets/chat_sessions.h
   
   gui/dialogs/addContact.h
   gui/dialogs/login.h
   
+  gui/mxit_dock_widget.h
+  gui/chat_session.h
+  gui/message.h
+  
   gui/mxitc.h
   gui/mxit_dialog.h
+  gui/theme.h
 )
 
 SET(MXIT_CLIENT_UI
@@ -86,7 +90,7 @@ SET(MXIT_CLIENT_UI
   gui/dock_widgets/log.ui
   gui/dock_widgets/options.ui
   gui/dock_widgets/debug.ui
-  gui/dock_widgets/contacts.ui
+  gui/dock_widgets/chat_sessions.ui
   gui/dialogs/login.ui
   gui/dialogs/addContact.ui
   gui/mxitc.ui

@@ -25,8 +25,8 @@ class Theme
 {
   public:         /* class specific */
   
-  Theme()   {}
-  ~Theme()  {}
+  Theme();
+  ~Theme();
 
   public:         /* methods */
   

@@ -7,7 +7,6 @@
 #include <QDebug>
 
 #include "message.h"
-#include "contact.h"
 
 namespace MXit
 {
@@ -24,7 +23,7 @@ namespace GUI
 **
 ****************************************************************************/
 
-Message::Message(const Contact * sender, const QString & message) : 
+Message::Message(const MXit::Contact * sender, const QString & message) : 
       senderVar(sender), messageVar(message)
 {
   /* nothing */
@@ -78,7 +77,7 @@ Message::~Message()
 **
 ****************************************************************************/
 
-const Contact * Message::sender() const
+const MXit::Contact * Message::sender() const
 {
   return senderVar;
 }
