@@ -5,7 +5,6 @@
 ** Author: Marc Bowes, 2009
 **
 ****************************************************************************/
-
   
 #ifndef __MXIT_PROTOCOL_ENUMERABLES_MESSAGE_H__
 #define __MXIT_PROTOCOL_ENUMERABLES_MESSAGE_H__
