@@ -19,9 +19,14 @@ namespace GUI
 ** constructs theme components
 **
 ****************************************************************************/
-void Theme::load(const QDir &theme)
-{
-  presence.load(theme);
+void Theme::load(QDir theme)
+{  
+  if (theme.cd("contact")) {
+    contact.load(theme);
+    theme.cdUp();
+  } else {
+    contact.loadDefaults();
+  }
 }
 
 }
