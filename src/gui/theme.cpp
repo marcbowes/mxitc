@@ -16,26 +16,12 @@ namespace GUI
 **
 ** Author: Marc Bowes
 **
-** Default constructor
-** Constructs all theme components
+** constructs theme components
 **
 ****************************************************************************/
-Theme::Theme()
-  : presence ()
+void Theme::load(const QDir &theme)
 {
-  // nothing here
-}
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** descontructor, desconstructs theme components
-**
-****************************************************************************/
-Theme::~Theme()
-{
-  // nothing here
+  presence.load(theme);
 }
 
 }

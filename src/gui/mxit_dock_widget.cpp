@@ -19,7 +19,7 @@ namespace GUI
 ** DockWindow constructor
 **
 ****************************************************************************/
-MXitDockWidget::MXitDockWidget(QWidget *parent) : QDockWidget (parent)
+MXitDockWidget::MXitDockWidget(QWidget *parent, Theme &theme) : QDockWidget (parent), theme(theme)
 {
 }
 

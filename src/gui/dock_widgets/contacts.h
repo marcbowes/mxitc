@@ -16,6 +16,7 @@
 #include "ui_contacts.h"
 
 #include <QDebug>
+#include <QSet>
 
 namespace MXit
 {
@@ -32,7 +33,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   public: /*class specific */
 
-  Contacts(QWidget* parent = 0);
+  Contacts(QWidget* parent, Theme &theme);
   ~Contacts();
   
   signals:
@@ -46,8 +47,10 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
 
   private:
   
-  void clearList();
-  void addContact(const Contact & c);
+  //void clearList();
+  QListWidgetItem * addContact(const Contact & c);
+  
+  QHash<QString, QListWidgetItem*> listItemWidgets; // from nickname to listItemWidget
 
 };
 

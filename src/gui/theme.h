@@ -11,6 +11,8 @@
 #ifndef __MXIT_GUI_THEME_H__
 #define __MXIT_GUI_THEME_H__
 
+#include <QDir>
+
 #include "theme_components/presence.h"
 
 namespace MXit
@@ -23,11 +25,16 @@ class Theme
 {
   public:         /* class specific */
   
-  Theme();
-  ~Theme();
+  Theme()   {}
+  ~Theme()  {}
+
+  public:         /* methods */
+  
+  void load(const QDir &theme);
   
   public:         /* variables */
   
+  QDir                        dir;
   ThemeComponents::Presence   presence;
 };
 

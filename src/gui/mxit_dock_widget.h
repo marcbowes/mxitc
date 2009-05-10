@@ -11,6 +11,7 @@
 
 #include <QDockWidget>
 
+#include "theme.h"
 
 namespace MXit
 {
@@ -24,7 +25,7 @@ class MXitDockWidget : public QDockWidget
 
   public:         /* class specific */
   
-  MXitDockWidget(QWidget *parent = 0);
+  MXitDockWidget(QWidget *parent, Theme &theme);
   virtual ~MXitDockWidget();
 
   private: /* methods */
@@ -42,6 +43,8 @@ class MXitDockWidget : public QDockWidget
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
   protected:        /* variables */
+  
+  Theme &theme;
   
 };
 

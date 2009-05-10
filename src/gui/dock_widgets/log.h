@@ -29,7 +29,7 @@ class Log : public MXitDockWidget, private Ui::LogDockWidget
   
   public: /*class specific */
 
-  Log(QWidget* parent = 0);
+  Log(QWidget* parent, Theme &theme);
   ~Log();
   
   signals:

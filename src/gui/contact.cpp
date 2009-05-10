@@ -19,7 +19,6 @@ namespace GUI
 ** Contact constructor
 **
 ****************************************************************************/
-
 Contact::Contact()
 {
   /* nothing */
@@ -33,7 +32,6 @@ Contact::Contact()
 ** Contact copy constructor
 **
 ****************************************************************************/
-
 Contact::Contact(const Contact &other)
 {
   this->group           = other.group;
@@ -42,6 +40,7 @@ Contact::Contact(const Contact &other)
   this->presence        = other.presence;
   this->type            = other.type;
   this->mood            = other.mood;
+  this->unreadMessage   = other.unreadMessage;
 }
 
 
@@ -57,6 +56,7 @@ Contact::~Contact()
   /* nothing */
 }
 
+
 Contact& Contact::operator=(const Contact &other)
 {
   group                 = other.group;
@@ -65,23 +65,22 @@ Contact& Contact::operator=(const Contact &other)
   presence              = other.presence;
   type                  = other.type;
   mood                  = other.mood;
-  unreadMessage         = true;
+  unreadMessage         = other.unreadMessage;
 
   return *this;
 }
+
 
 /****************************************************************************
 **
 ** Author: Richard Baxter
 **
 ****************************************************************************/
-
 void Contact::incomingMessage(Message message)
 {
   chatHistory.append(message);
   unreadMessage = true;
 }
-
 
 }
 
