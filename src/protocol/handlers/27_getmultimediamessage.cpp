@@ -19,7 +19,7 @@ namespace Handlers
 **
 ** Author: Tim Sjoberg
 **
-** Populates a packet with the information required to request binary data
+** Populates a packet with the information required to send binary data
 **
 ****************************************************************************/
 void GetMultimediaMessage::build(MXit::Network::Packet *packet, VariableHash &variables)
@@ -53,7 +53,7 @@ void GetMultimediaMessage::build(MXit::Network::Packet *packet, VariableHash &va
 **
 ** Author: Tim Sjoberg
 **
-** Extracts nothing at the moment
+** Extracts data and sends back to be interpreted by the handler
 **
 ****************************************************************************/
 VariableHash GetMultimediaMessage::handle(const QByteArray &packet)

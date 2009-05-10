@@ -119,38 +119,20 @@ VariableHash GetContacts::handle(const QByteArray &packet)
   ***************************************************************************
   
   */
-  /*qDebug() << "in GetContacts::handle";
-  qDebug() << packet;
-  qDebug() << QByteArray(packet).replace('\0' , "\\0").replace('\1' , "\\1").replace('\2' , "\\2");
-  qDebug() << packet;
-  qDebug() << "size " << packet.size();*/ /*leave this debugging stuff here for now, i might need it later - rax*/
-  int i, count = 0;
-  for (i=0;((count < 4)&&(packet.at(i) != '\0')) ; i++) { /*NOTE FIXME WHATEVER - I changed the || to a &&, it seems to have fixed the segfaults Tim needs to check this - rax*/
-    //qDebug() << (count < 4);
-    //qDebug() << "^ i c" << i << count << packet.at(i);
-    if (packet.at(i) == '\0') {
-      //qDebug() << "\\0 encountered";
+  
+  int i=0, count = 0;
+  
+  while (count < 3) {
+    i++;
+    if (packet.at(i) == '\0')
       count++;
-      }
-    //if (packet.at(i) == '\1')
-      //qDebug() << "\\1 encountered";
-      
-      
-    //FIXME: remove when proven to be working
-    if (i >= packet.size())
-      qDebug() << "AH FUCK!";
-    //qDebug() << "v i c" << i << count << packet.at(i);
   }
   
   QByteArray contactData = packet.right(packet.size() - i - 1);
-  //FIXME: remove when proven to be working
-  if (contactData.at(0) == '\0')
-    qDebug() << "l2count noob!";
   
   VariableHash variable;
   variable["contacts"] = contactData;
   
-  //qDebug() << "out GetContacts::handle" ;
   return variable;
 }
 
