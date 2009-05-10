@@ -12,6 +12,7 @@
 #define __MXIT_GUID_THEMECOMPONENTS_CONTACT_BASE_H__
 
 #include <QDir>
+#include <QString>
 
 #include "presence.h"
 
@@ -41,7 +42,8 @@ class Base
 
   public:         /* variables */
   
-  Presence presence;
+  Presence  presence;
+  QString   stylesheet;
 };
 
 }

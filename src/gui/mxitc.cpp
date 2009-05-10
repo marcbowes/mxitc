@@ -32,9 +32,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   application = app;  /* store a copy */
   
   login = NULL;
-  
-  /*apply styleing!*/
-  applyStyleSheet("/home/richard/workspace/cpp/mxit/src/var/test.qss");
    
   settings = new QSettings ( "mxitc", "env", this );
   
@@ -146,25 +143,6 @@ MXitC::~MXitC()
   }
 }
 
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void MXitC::applyStyleSheet(const QString & styleSheetFile)
-{
-  QFile ssfile(styleSheetFile);
-  ssfile.open(QFile::ReadOnly);
-  if (ssfile.exists ()) {
-    QString styleSheet = QLatin1String(ssfile.readAll());
-    application->setStyleSheet(styleSheet);
-    
-    return;
-  }
-  //qDebug() << QFileInfo(ssfile).absoluteDir ().absolutePath () ;
-
-}
 
 /****************************************************************************
 **

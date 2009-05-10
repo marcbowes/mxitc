@@ -66,8 +66,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void messageReceived();
   
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
-  
-  void applyStyleSheet(const QString & styleSheetFile);
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
