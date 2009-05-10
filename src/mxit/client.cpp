@@ -49,6 +49,7 @@ Client::Client()
   /* 08 */ handlers["removecontact"]              = new RemoveContact();
   /* 09 */ handlers["getnewmessages"]             = new GetNewMessages();
   /* 10 */ handlers["sendnewmessage"]             = new SendNewMessage();
+  /* 27 */ handlers["getmultimediamessage"]       = new GetMultimediaMessage();
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
 }
 
