@@ -41,6 +41,7 @@ class Presence
   public:         /* methods */
   
   void load(const QDir &dir);
+  void loadDefaults();
   QPixmap pixmap(Protocol::Enumerables::Contact::Presence presence);
   
   private:        /* variables */

@@ -24,6 +24,8 @@ void Theme::load(QDir theme)
   if (theme.cd("contact")) {
     contact.load(theme);
     theme.cdUp();
+  } else {
+    contact.loadDefaults();
   }
 }
 

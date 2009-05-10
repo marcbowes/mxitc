@@ -37,6 +37,7 @@ class Base
   public:         /* methods */
   
   void load(QDir theme);
+  void loadDefaults();
 
   public:         /* variables */
   

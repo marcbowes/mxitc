@@ -31,7 +31,22 @@ void Base::load(QDir theme)
   if (theme.cd("presence")) {
     presence.load(theme);
     theme.cdUp();
+  } else {
+    presence.loadDefaults();
   }
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** loads defaults
+**
+****************************************************************************/
+void Base::loadDefaults()
+{
+  presence.loadDefaults();
 }
 
 }
