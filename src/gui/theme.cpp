@@ -20,8 +20,8 @@ namespace GUI
 ** Constructs all theme components
 **
 ****************************************************************************/
-Theme::Theme()
-  : presence ()
+Theme::Theme(const QDir &active)
+  : dir(active), presence(dir)
 {
   // nothing here
 }
