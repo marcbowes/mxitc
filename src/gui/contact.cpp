@@ -19,7 +19,6 @@ namespace GUI
 ** Contact constructor
 **
 ****************************************************************************/
-
 Contact::Contact()
 {
   /* nothing */
@@ -33,7 +32,6 @@ Contact::Contact()
 ** Contact copy constructor
 **
 ****************************************************************************/
-
 Contact::Contact(const Contact &other)
 {
   this->group           = other.group;
@@ -57,6 +55,7 @@ Contact::~Contact()
   /* nothing */
 }
 
+
 Contact& Contact::operator=(const Contact &other)
 {
   group                 = other.group;
@@ -70,18 +69,17 @@ Contact& Contact::operator=(const Contact &other)
   return *this;
 }
 
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
 **
 ****************************************************************************/
-
 void Contact::incomingMessage(Message message)
 {
   chatHistory.append(message);
   unreadMessage = true;
 }
-
 
 }
 

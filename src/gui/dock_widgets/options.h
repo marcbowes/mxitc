@@ -29,7 +29,7 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   
   public: /*class specific */
 
-  Options(QWidget* parent = 0);
+  Options(QWidget* parent, Theme &theme);
   ~Options();
   
   signals:

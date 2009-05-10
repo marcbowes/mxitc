@@ -26,6 +26,7 @@ namespace GUI
 ****************************************************************************/
 MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentState(LOGGED_OUT), currentContact(NULL)
 {
+  
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   mxit = client;      /* store a copy */
   application = app;  /* store a copy */
@@ -37,16 +38,16 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
    
   settings = new QSettings ( "mxitc", "env", this );
   
-  DockWidget::Debug * debugWidget = new DockWidget::Debug (this);
+  DockWidget::Debug * debugWidget = new DockWidget::Debug (this, theme);
   appendDockWidget(debugWidget,    Qt::RightDockWidgetArea, actionDebug_Variables);
   
-  DockWidget::Options * optionsWidget = new DockWidget::Options (this);
+  DockWidget::Options * optionsWidget = new DockWidget::Options (this, theme);
   appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
   
-  contactsWidget = new DockWidget::Contacts (this);
+  contactsWidget = new DockWidget::Contacts (this, theme);
   appendDockWidget(contactsWidget, Qt::LeftDockWidgetArea, actionContacts);
   
-  logWidget = new DockWidget::Log (this);
+  logWidget = new DockWidget::Log (this, theme);
   appendDockWidget(logWidget, Qt::RightDockWidgetArea, actionLogs);
   
   restoreState(settings->value("gui layout").toByteArray());

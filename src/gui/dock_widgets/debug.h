@@ -37,7 +37,7 @@ class Debug : public MXitDockWidget, private Ui::DebugDockWidget
   
   public: /*class specific */
 
-  Debug(QWidget* parent = 0);
+  Debug(QWidget* parent, Theme &theme);
   ~Debug();
   
   signals:

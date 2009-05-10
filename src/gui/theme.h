@@ -25,8 +25,12 @@ class Theme
 {
   public:         /* class specific */
   
-  Theme(const QDir &active);
-  ~Theme();
+  Theme()   {}
+  ~Theme()  {}
+
+  public:         /* methods */
+  
+  void load(const QDir &theme);
   
   public:         /* variables */
   

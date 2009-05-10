@@ -20,7 +20,7 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Contacts::Contacts(QWidget* parent) : MXitDockWidget(parent)
+Contacts::Contacts(QWidget* parent, Theme &theme) : MXitDockWidget(parent, theme)
 {
   setupUi(this);
   
@@ -65,11 +65,7 @@ void Contacts::clearList(){
 **
 ****************************************************************************/
 
-void Contacts::addContact(const Contact & c){
-
-
-  
-  QPixmap pixmap; /* FIXME: theme */
+void Contacts::addContact(const Contact & c) {
   QChar   sortPrefix;
   switch (c.presence) {
     case Protocol::Enumerables::Contact::Available:
@@ -92,7 +88,7 @@ void Contacts::addContact(const Contact & c){
       break;
   }
   
-  QListWidgetItem *item = new QListWidgetItem(pixmap, QString("%1%2").arg(sortPrefix).arg(c.nickname));
+  QListWidgetItem *item = new QListWidgetItem(theme.presence.pixmap(c.presence), QString("%1%2").arg(sortPrefix).arg(c.nickname));
   
   if (c.unreadMessage) {
     item->setForeground(QBrush(Qt::red));

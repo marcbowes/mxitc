@@ -33,6 +33,7 @@
 #include "gui/dialogs/login.h"
 #include "gui/dialogs/addContact.h"
 #include "gui/contact.h"
+#include "gui/theme.h"
 
 #include "protocol/enumerables/message.h"
 
@@ -112,7 +113,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   QSettings *settings;
   
   State currentState;
-  
+  Theme theme;
  
   Dialog::Login * login;
   QLabel * statusLabel;

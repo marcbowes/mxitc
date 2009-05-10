@@ -32,7 +32,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   public: /*class specific */
 
-  Contacts(QWidget* parent = 0);
+  Contacts(QWidget* parent, Theme &theme);
   ~Contacts();
   
   signals:

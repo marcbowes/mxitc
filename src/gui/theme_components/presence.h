@@ -32,11 +32,12 @@ class Presence
 {
   public:         /* class specific */
   
-  Presence(const QDir &dir);
-  ~Presence();
+  Presence()    {}
+  ~Presence()   {}
   
   public:         /* methods */
   
+  void load(const QDir &dir);
   QPixmap pixmap(Protocol::Enumerables::Contact::Presence presence);
   
   private:        /* variables */

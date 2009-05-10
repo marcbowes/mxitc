@@ -5,7 +5,7 @@
 ****************************************************************************/
 
 #include <QImage>
-
+#include <QDebug>
 #include "presence.h"
 
 namespace MXit
@@ -24,63 +24,51 @@ namespace ThemeComponents
 ** creates components from disk
 **
 ****************************************************************************/
-Presence::Presence(const QDir &dir)
+void Presence::load(const QDir &dir)
 {
   /* load from disk */
-  QImage _available   = QImage(dir.absoluteFilePath("available.png"));
-  QImage _away        = QImage(dir.absoluteFilePath("away.png"));
-  QImage _dnd         = QImage(dir.absoluteFilePath("dnd.png"));
-  QImage _offline     = QImage(dir.absoluteFilePath("offline.png"));
-  QImage _online      = QImage(dir.absoluteFilePath("online.png"));
+  QImage _available   = QImage(dir.absoluteFilePath("presence/available.png"));
+  QImage _away        = QImage(dir.absoluteFilePath("presence/away.png"));
+  QImage _dnd         = QImage(dir.absoluteFilePath("presence/dnd.png"));
+  QImage _offline     = QImage(dir.absoluteFilePath("presence/offline.png"));
+  QImage _online      = QImage(dir.absoluteFilePath("presence/online.png"));
   
-  /* build pixmaps */
+  /* build pixmaps from images, or use defaults */
   if (_available.isNull()) {
     available = QPixmap(DEFAULT_SIZE);
     available.fill(Qt::blue);
   } else {
-    QPixmap::fromImage(_available);
+    available = QPixmap::fromImage(_available);
   }
   
   if (_away.isNull()) {
     away = QPixmap(DEFAULT_SIZE);
     away.fill(QColor(255,215,0));
   } else {
-    QPixmap::fromImage(_away);
+    away = QPixmap::fromImage(_away);
   }
   
   if (_dnd.isNull()) {
     dnd = QPixmap(DEFAULT_SIZE);
     dnd.fill(Qt::red);
   } else {
-    QPixmap::fromImage(_dnd);
+    dnd = QPixmap::fromImage(_dnd);
   }
   
   if (_offline.isNull()) {
     offline = QPixmap(DEFAULT_SIZE);
     offline.fill(Qt::gray);
   } else {
-    QPixmap::fromImage(_offline);
+    offline = QPixmap::fromImage(_offline);
   }
   
   if (_online.isNull()) {
     online = QPixmap(DEFAULT_SIZE);
     online.fill(Qt::green);
   } else {
-    QPixmap::fromImage(_online);
+    online = QPixmap::fromImage(_online);
   }
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** empty deconstructor
-**
-****************************************************************************/
-Presence::~Presence()
-{
-  /* nothing here */
+  qDebug() << "loaded";
 }
 
 
