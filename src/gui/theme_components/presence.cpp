@@ -5,7 +5,7 @@
 ****************************************************************************/
 
 #include <QImage>
-#include <QDebug>
+
 #include "presence.h"
 
 namespace MXit
@@ -68,7 +68,6 @@ void Presence::load(const QDir &dir)
   } else {
     online = QPixmap::fromImage(_online);
   }
-  qDebug() << "loaded";
 }
 
 
