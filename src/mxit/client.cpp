@@ -51,6 +51,7 @@ Client::Client()
   /* 10 */ handlers["sendnewmessage"]             = new SendNewMessage();
   /* 27 */ handlers["getmultimediamessage"]       = new GetMultimediaMessage();
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
+  /* 51 */ handlers["getnewsubscription"]         = new GetNewSubscription();
 }
 
 
