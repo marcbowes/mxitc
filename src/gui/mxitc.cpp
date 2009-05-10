@@ -488,6 +488,7 @@ void MXitC::messageReceived(){
 
 void MXitC::themeChanged(){
   refreshContacts();
+  contactsWidget->setStyleSheet(theme.contact.stylesheet);
   settings->setValue("themeBaseDirectory", optionsWidget->getBaseThemeDirectory());
   settings->setValue("selectedTheme", optionsWidget->getSelectedTheme());
   
