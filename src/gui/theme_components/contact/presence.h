@@ -9,8 +9,8 @@
 ****************************************************************************/
 
 
-#ifndef __MXIT_GUI_THEMECOMPONENTS_PRESENCE_H__
-#define __MXIT_GUI_THEMECOMPONENTS_PRESENCE_H__
+#ifndef __MXIT_GUI_THEMECOMPONENTS_CONTACT_PRESENCE_H__
+#define __MXIT_GUI_THEMECOMPONENTS_CONTACT_PRESENCE_H__
 
 #include <QDir>
 #include <QPixmap>
@@ -26,6 +26,9 @@ namespace GUI
 {
 
 namespace ThemeComponents
+{
+
+namespace Contact
 {
 
 class Presence
@@ -56,5 +59,7 @@ class Presence
 
 }
 
-#endif /* __MXIT_GUI_THEMECOMPONENTS_PRESENCE_H__ */
+}
+
+#endif /* __MXIT_GUI_THEMECOMPONENTS_CONTACT_PRESENCE_H__ */
 

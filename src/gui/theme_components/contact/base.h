@@ -4,16 +4,16 @@
 **
 ** Author: Marc Bowes, 2009
 **
-** MXit::GUI::Theme acts as a holder for theming components
+** holder class for theme components
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_THEME_H__
-#define __MXIT_GUI_THEME_H__
+#ifndef __MXIT_GUID_THEMECOMPONENTS_CONTACT_BASE_H__
+#define __MXIT_GUID_THEMECOMPONENTS_CONTACT_BASE_H__
 
 #include <QDir>
 
-#include "theme_components/contact/base.h"
+#include "presence.h"
 
 namespace MXit
 {
@@ -21,26 +21,35 @@ namespace MXit
 namespace GUI
 {
 
-class Theme
+namespace ThemeComponents
+{
+
+namespace Contact
+{
+
+class Base
 {
   public:         /* class specific */
-  
-  Theme()   {}
-  ~Theme()  {}
+
+  Base()  {}
+  ~Base() {}
 
   public:         /* methods */
   
   void load(QDir theme);
-  
+
   public:         /* variables */
   
-  QDir                            dir;
-  ThemeComponents::Contact::Base  contact;
+  Presence presence;
 };
 
 }
 
 }
 
-#endif /* __MXIT_GUI_THEME_H__ */
+}
+
+}
+
+#endif /* __MXIT_GUID_THEMECOMPONENTS_CONTACT_BASE_H__ */
 

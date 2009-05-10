@@ -88,7 +88,7 @@ void Contacts::addContact(const Contact & c) {
       break;
   }
   
-  QListWidgetItem *item = new QListWidgetItem(theme.presence.pixmap(c.presence), QString("%1%2").arg(sortPrefix).arg(c.nickname));
+  QListWidgetItem *item = new QListWidgetItem(theme.contact.presence.pixmap(c.presence), QString("%1%2").arg(sortPrefix).arg(c.nickname));
   
   if (c.unreadMessage) {
     item->setForeground(QBrush(Qt::red));
