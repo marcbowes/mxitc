@@ -23,6 +23,7 @@
 #include "protocol/aes.h"
 #include "protocol/handshaker.h"
 #include "protocol/handlers/include.list"
+#include "protocol/enumerables/contact.h"
 #include "protocol/enumerables/message.h"
 
 namespace MXit
@@ -60,11 +61,14 @@ class Client : public QObject
 
   public:         /* methods */
   
+  void addContact(const QString &group, const QString &contactAddress, const QString &nickname,
+    Protocol::Enumerables::Contact::Type type, const QString &message);
   void authenticate(const VariableHash &settings);
   void initialize();
   void login(const QString &cellphone, const QString &password, const QString &captcha);
   void setGateway(const QString &connectionString);
-  void sendMessage(const QString &contactAddress, const QString &message, MXit::Protocol::Enumerables::Message::Type, unsigned int flags);
+  void sendMessage(const QString &contactAddress, const QString &message,
+    Protocol::Enumerables::Message::Type, unsigned int flags);
   
   QByteArray variableValue(const QString &name);
 
