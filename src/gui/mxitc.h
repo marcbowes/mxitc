@@ -99,6 +99,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void themeChanged();
   
+  void chatSessionsMenu(const QPoint & pos, const QString& chatSession);
+  
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   

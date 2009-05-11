@@ -63,7 +63,12 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(addContactWidget, 
           SIGNAL(addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &)), 
           mxit, 
-          SLOT  (addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &)));
+          SLOT  (addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &))  );
+  
+  connect(chatSessionsWidget, 
+          SIGNAL(contextMenuRequest(const QPoint &, const QString &)), 
+          this , 
+          SLOT(chatSessionsMenu(const QPoint &, const QString &))  );
   
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
@@ -172,12 +177,62 @@ MXitC::~MXitC()
   }*/
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** the chatSessionsWidget requested a context menu
+** pos is relative to the chatSession dock widget
+**
+****************************************************************************/
+
+void MXitC::chatSessionsMenu(const QPoint & pos, const QString& chatSessionName) {
+  
+  ChatSession & chatSession = chatSessions[chatSessionName];
+  
+  QMenu contextMenu(chatSessionName, this);
+  
+  #define ADD(x,y) QAction x(y, this); contextMenu.addAction(&x);
+  ADD(changeNickname, "Change Nickname");
+  ADD(changeGroup,    "Change Group");
+  ADD(sendFile,       "Send File");
+  ADD(removeContact,  "Remove Contact");
+  #undef ADD
+  
+  //qDebug() << chatSessionsWidget;
+ 
+  QAction * selection = contextMenu.exec( pos );
+  
+  
+       if (selection == &changeNickname) {
+    qDebug() << "changeNickname";
+  }
+  else if (selection == &changeGroup) {
+    qDebug() << "changeGroup";
+  }
+  else if (selection == &sendFile) {
+    qDebug() << "sendFile";
+  
+  }
+  else if (selection == &removeContact) {
+    qDebug() << "removeContact";
+    
+    QMessageBox sure;
+    sure.setText("Are you sure you wish to remove "+chatSessionName);
+    sure.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    sure.setDefaultButton(QMessageBox::Cancel);
+
+    
+    
+  }
+}
 
 /****************************************************************************
 **
 ** Author: Richard Baxter
 **
 ****************************************************************************/
+
 void MXitC::sendGateway(bool http)
 {
   if (http)
@@ -338,6 +393,11 @@ void MXitC::incomingAction(Action action)
       break;
       
     //--------------------------------------
+    case MESSAGE_RECEIVED:
+      messageReceived();
+    break;
+    
+    //--------------------------------------
     case SUBSCRIPTIONS_RECEIVED:
       subscriptionsReceived();
     break;
@@ -464,6 +524,8 @@ void MXitC::messageReceived(){
   
   //QString nickname = contactAddressToNickname[];
   //qDebug() << "nickname = " << nickname;
+  
+  
   
   QString contactAddress = mxit->variableValue("contactAddress");
   //qDebug() << "contactAddress = " << contactAddress;

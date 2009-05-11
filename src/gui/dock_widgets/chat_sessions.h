@@ -39,6 +39,8 @@ class ChatSessions : public MXitDockWidget, private Ui::ChatSessionsDockWidget
   
   void outgoingItemPressed ( QListWidgetItem *  );
   
+  void contextMenuRequest(const QPoint &, const QString&);
+  
   
   public:
   

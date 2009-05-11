@@ -59,11 +59,13 @@ void Debug::refreshRequested()
 void Debug::incomingVariableHash(const VariableHash& variables)
 {
   //qDebug() << "DebugDockWidget::incomingVaraibleHash(const VariableHash& variables)";
-  
-  listWidget->clear();
-  
-  for (VariableHashConstItr i = variables.constBegin(); i != variables.constEnd(); ++i)
-     listWidget->addItem ( i.key() +": " + i.value());
+  if (isVisible()) {
+    listWidget->clear();
+    
+    for (VariableHashConstItr i = variables.constBegin(); i != variables.constEnd(); ++i)
+       listWidget->addItem ( i.key() +": " + i.value());
+       
+  }
   
 }
 

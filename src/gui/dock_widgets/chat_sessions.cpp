@@ -55,9 +55,16 @@ ChatSessions::~ChatSessions()
 ****************************************************************************/
 
 void ChatSessions::chatSessionsListContextMenuRequest(const QPoint & pos) {
-  qDebug() << (chatSessionsList->itemAt ( pos.x(), pos.y() ));
 
+  QListWidgetItem * lwi = (chatSessionsList->itemAt ( pos.x(), pos.y() ));
+  
+  if (lwi) {
+    QString chatSession = lwi->text();
+    qDebug() << parent();
+    emit contextMenuRequest(chatSessionsList->mapToGlobal ( pos ), chatSession);
+  }
 }
+
 
 /****************************************************************************
 **
