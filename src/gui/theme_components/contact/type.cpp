@@ -45,7 +45,7 @@ void Type::load(const QDir &dir)
   QImage _jabber      = QImage(dir.absoluteFilePath("jabber.png"));
   QImage _msn         = QImage(dir.absoluteFilePath("msn.png"));
   QImage _multimx     = QImage(dir.absoluteFilePath("multimx.png"));
-  QImage _mxit     = QImage(dir.absoluteFilePath("mxit.png"));
+  QImage _mxit        = QImage(dir.absoluteFilePath("mxit.png"));
   QImage _yahoo       = QImage(dir.absoluteFilePath("yahoo.png"));
   
   /* build pixmaps from images, or use defaults */
@@ -90,7 +90,7 @@ void Type::load(const QDir &dir)
   }
   
   if (!_mxit.isNull()) {
-    mxit = QPixmap::fromImage(_multimx);
+    mxit = QPixmap::fromImage(_mxit);
   }
   
   if (!_yahoo.isNull()) {
