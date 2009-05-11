@@ -49,7 +49,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   logWidget = new DockWidget::Log (this, theme);
   appendDockWidget(logWidget, Qt::RightDockWidgetArea, actionLogs);
   
-  DockWidget::AddContact * addContactWidget = new DockWidget::AddContact (this, theme);
+  addContactWidget = new DockWidget::AddContact (this, theme);
   appendDockWidget(addContactWidget, Qt::LeftDockWidgetArea, actionAdd_Contact);
   //connect(actionAddContact, SIGNAL(triggered()), this, SLOT(openAddContactDialog()));
   
@@ -499,6 +499,8 @@ void MXitC::messageReceived(){
 void MXitC::themeChanged(){
   refreshChatSessions();
   chatSessionsWidget->setStyleSheet(theme.contact.stylesheet);
+  addContactWidget->refresh();
+  
   settings->setValue("themeBaseDirectory", optionsWidget->getBaseThemeDirectory());
   settings->setValue("selectedTheme", optionsWidget->getSelectedTheme());
   

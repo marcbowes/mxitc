@@ -38,8 +38,10 @@ class AddContact : public MXitDockWidget, private Ui::AddContactDockWidget
   void addContact(const QString &group, const QString &contactAddress, const QString &nickname,
     Protocol::Enumerables::Contact::Type type, const QString &message);
   
-  private slots:
+  public slots:
+  void refresh();
   
+  private slots:
   void networkChanged ( int index );
   void sendAddContactInfo();
   

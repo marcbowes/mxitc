@@ -24,8 +24,14 @@ ChatSessions::ChatSessions(QWidget* parent, Theme &theme) : MXitDockWidget(paren
 {
   setupUi(this);
   
-  connect(contactList, SIGNAL(itemPressed ( QListWidgetItem *  )), this, SIGNAL(outgoingItemPressed( QListWidgetItem *  )));
+  connect(chatSessionsList, SIGNAL(itemPressed ( QListWidgetItem *  )), this, SIGNAL(outgoingItemPressed( QListWidgetItem *  )));
   
+  
+  connect(
+        chatSessionsList, 
+        SIGNAL( customContextMenuRequested ( const QPoint & ) ), 
+        this, 
+        SLOT( chatSessionsListContextMenuRequest( const QPoint & ) )  );
 }
 
 
@@ -41,6 +47,17 @@ ChatSessions::~ChatSessions()
 {
 }
 
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void ChatSessions::chatSessionsListContextMenuRequest(const QPoint & pos) {
+  qDebug() << (chatSessionsList->itemAt ( pos.x(), pos.y() ));
+
+}
 
 /****************************************************************************
 **
@@ -94,7 +111,7 @@ QListWidgetItem * ChatSessions::addChatSession(const ChatSession & c){
   
   if (!listItemWidgets.contains(c.chatSessionName)) {
     item = new QListWidgetItem(theme.contact.presence.pixmap(c.mainContact->presence), label); // create new item
-    contactList->addItem(item);
+    chatSessionsList->addItem(item);
     listItemWidgets[c.chatSessionName] = item;
   }
   else {
@@ -136,17 +153,17 @@ void ChatSessions::refresh(const QList<ChatSession>& chatSessions) {
   /* removing any contacts that are no longer n the list*/
   Q_FOREACH(const ChatSession & c, chatSessions) {
     if (!lwiInList.contains(listItemWidgets[c.chatSessionName])) {
-      contactList->removeItemWidget(listItemWidgets[c.chatSessionName]);
+      chatSessionsList->removeItemWidget(listItemWidgets[c.chatSessionName]);
       delete listItemWidgets[c.chatSessionName];
       listItemWidgets.remove(c.chatSessionName);
     }
   }
   
   /*cleaning up*/
-  contactList->sortItems();
+  chatSessionsList->sortItems();
     
-  for (int i = 0 ; i < contactList->count() ; i++) {
-    QListWidgetItem * lwi = contactList->item(i);
+  for (int i = 0 ; i < chatSessionsList->count() ; i++) {
+    QListWidgetItem * lwi = chatSessionsList->item(i);
     lwi->setText ( lwi->text().mid ( 1 ) );
   }
   

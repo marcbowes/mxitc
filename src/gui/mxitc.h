@@ -70,6 +70,11 @@ class MXitC : public QMainWindow, private Ui::MXitC
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  void refreshChatBox(); /*FIXME slot ? - rax*/
+  void refreshChatSessions();
+  
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
   public slots:
   
   void sendMessageFromChatInput();
@@ -94,9 +99,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void themeChanged();
   
-  
-  void refreshChatBox(); /*FIXME slot ? - rax*/
-  void refreshChatSessions();
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
@@ -128,6 +130,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   DockWidget::ChatSessions * chatSessionsWidget;
   DockWidget::Log * logWidget;
   DockWidget::Options * optionsWidget;
+  DockWidget::AddContact * addContactWidget;
   
 };
 

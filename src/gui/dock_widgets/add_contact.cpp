@@ -42,7 +42,41 @@ AddContact::AddContact(QWidget* parent, Theme &theme) : MXitDockWidget(parent, t
   */
   alertProfileComboBox->setEnabled(false); /*TODO, do something with it, for now it does nothing*/
   
-  #define ADD(x) networkComboBox->addItem ( theme.contact.type.pixmap(x), #x, QVariant(Protocol::Enumerables::Contact::x) )
+  refresh();
+  
+  
+  /*TODO change "cellphone" lable to Address when MXit not slected as network*/
+  
+  connect(addButton, SIGNAL(released()), this, SLOT(sendAddContactInfo()));
+  
+  connect(networkComboBox, SIGNAL(currentIndexChanged ( int )), this, SLOT(networkChanged( int )));
+  
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Widget destructor
+**
+****************************************************************************/
+AddContact::~AddContact()
+{
+
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Widget destructor
+**
+****************************************************************************/
+void AddContact::refresh() {
+
+  networkComboBox->clear();
+  #define ADD(x) networkComboBox->addItem ( theme.contact.type.pixmap(x), #x, QVariant(x) )
   {
     using namespace Protocol::Enumerables::Contact;
     ADD(MXit);
@@ -59,15 +93,7 @@ AddContact::AddContact(QWidget* parent, Theme &theme) : MXitDockWidget(parent, t
     ADD(GoogleTalk);
   }
   #undef ADD
-  
-  /*TODO change "cellphone" lable to Address when MXit not slected as network*/
-  
-  connect(addButton, SIGNAL(released()), this, SLOT(sendAddContactInfo()));
-  
-  connect(networkComboBox, SIGNAL(currentIndexChanged ( int )), this, SLOT(networkChanged( int )));
 }
-
-
 
 /****************************************************************************
 **
@@ -76,12 +102,6 @@ AddContact::AddContact(QWidget* parent, Theme &theme) : MXitDockWidget(parent, t
 ** Widget destructor
 **
 ****************************************************************************/
-AddContact::~AddContact()
-{
-
-}
-
-
 void AddContact::networkChanged ( int index ) {
 
   using namespace Protocol::Enumerables::Contact;
