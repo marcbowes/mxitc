@@ -9,8 +9,8 @@
 ****************************************************************************/
 
 
-#ifndef __MXIT_GUI_THEMECOMPONENTS_CONTACT_PRESENCE_H__
-#define __MXIT_GUI_THEMECOMPONENTS_CONTACT_PRESENCE_H__
+#ifndef __MXIT_GUI_THEMECOMPONENTS_CONTACT_TYPE_H__
+#define __MXIT_GUI_THEMECOMPONENTS_CONTACT_TYPE_H__
 
 #include <QDir>
 #include <QPixmap>
@@ -29,26 +29,33 @@ namespace ThemeComponents
 namespace Contact
 {
 
-class Presence
+class Type
 {
   public:         /* class specific */
   
-  Presence()    {}
-  ~Presence()   {}
+  Type()  {}
+  ~Type() {}
   
   public:         /* methods */
   
   void load(const QDir &dir);
   void loadDefaults();
-  QPixmap pixmap(Protocol::Enumerables::Contact::Presence presence);
+  QPixmap pixmap(Protocol::Enumerables::Contact::Type type);
   
   private:        /* variables */
   
-  QPixmap available,
-          away,
-          dnd,
-          offline,
-          online
+  QPixmap aim,
+          bot,
+          chat_room,
+          gallery,
+          google_talk,
+          icq,
+          info,
+          jabber,
+          msn,
+          multimx,
+          mxit,
+          yahoo,
   ;
 };
 
@@ -60,5 +67,5 @@ class Presence
 
 }
 
-#endif /* __MXIT_GUI_THEMECOMPONENTS_CONTACT_PRESENCE_H__ */
+#endif /* __MXIT_GUI_THEMECOMPONENTS_CONTACT_TYPE_H__ */
 

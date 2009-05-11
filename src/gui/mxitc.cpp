@@ -49,7 +49,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   logWidget = new DockWidget::Log (this, theme);
   appendDockWidget(logWidget, Qt::RightDockWidgetArea, actionLogs);
   
-  DockWidget::AddContact * addContactWidget = new DockWidget::AddContact (this, theme);
+  addContactWidget = new DockWidget::AddContact (this, theme);
   appendDockWidget(addContactWidget, Qt::LeftDockWidgetArea, actionAdd_Contact);
   //connect(actionAddContact, SIGNAL(triggered()), this, SLOT(openAddContactDialog()));
   
@@ -60,7 +60,10 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   themeChanged(); /* HACK? */
   
   /*TODO mxit still need addcontact slot*/
-  //connect(addContactWidget, SIGNAL(addContact(const QString&, const QString&, const QString&, Protocol::Enumerables::Contact::AlertProfile)), mxit, SLOT(addContact(const QString&, const QString&, const QString&, Protocol::Enumerables::Contact::AlertProfile))
+  connect(addContactWidget, 
+          SIGNAL(addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &)), 
+          mxit, 
+          SLOT  (addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &)));
   
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
@@ -269,7 +272,7 @@ void MXitC::incomingAction(Action action)
       {
         /* TODO get the PID and encrypted password*/
         
-        /* vector of variables that'll e saved in settings */
+        /* vector of variables that'll be saved in settings */
         StringVec variables;
         variables.append("err");                  /* 0 = success, else failed */
         variables.append("url");                  /* URL that should be used for the Get PID request */
@@ -335,8 +338,8 @@ void MXitC::incomingAction(Action action)
       break;
       
     //--------------------------------------
-    case MESSAGE_RECEIVED:
-      messageReceived();
+    case SUBSCRIPTIONS_RECEIVED:
+      subscriptionsReceived();
     break;
   }
 
@@ -349,7 +352,30 @@ void MXitC::incomingAction(Action action)
 **
 ****************************************************************************/
 
+void MXitC::subscriptionsReceived(){
 
+  QList<QByteArray> split0 = mxit->variableValue("contacts").split('\0');
+  
+  qDebug() << split0;
+  
+  Q_FOREACH(const QByteArray& contact, split0) {
+    
+    QList<QByteArray> split1 = contact.split('\1');
+    
+    QListIterator<QByteArray> split1Itt(split1);
+    
+    split1Itt.next();
+    
+  }
+  
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
 void MXitC::contactsReceived(){
 
   /* fetch contacts */
@@ -473,6 +499,8 @@ void MXitC::messageReceived(){
 void MXitC::themeChanged(){
   refreshChatSessions();
   chatSessionsWidget->setStyleSheet(theme.contact.stylesheet);
+  addContactWidget->refresh();
+  
   settings->setValue("themeBaseDirectory", optionsWidget->getBaseThemeDirectory());
   settings->setValue("selectedTheme", optionsWidget->getSelectedTheme());
   

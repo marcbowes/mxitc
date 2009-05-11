@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>224</width>
-    <height>420</height>
+    <width>248</width>
+    <height>437</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QLabel" name="cellNumberLabel">
+     <widget class="QLabel" name="addressLabel">
       <property name="text">
        <string>Cellphone</string>
       </property>
@@ -46,36 +46,53 @@
      <widget class="QLineEdit" name="inviteMsgLineEdit"/>
     </item>
     <item>
-     <widget class="QGroupBox" name="alertProfileGroupBox">
-      <property name="title">
-       <string>Alert Profiles</string>
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Group</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QRadioButton" name="silentRadioButton">
-         <property name="text">
-          <string>Silent</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="meetingRadioButton">
-         <property name="text">
-          <string>Meeting</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="generalRadioButton_2">
-         <property name="text">
-          <string>General</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="groupComboBox">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Network</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="networkComboBox"/>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Alert Profile</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="alertProfileComboBox">
+      <item>
+       <property name="text">
+        <string>General</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Meeting</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Silent</string>
+       </property>
+      </item>
      </widget>
     </item>
     <item>

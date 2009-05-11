@@ -26,7 +26,7 @@ namespace GUI
 namespace DockWidget
 {
 
-class ChatSessions : public MXitDockWidget, private Ui::ContactsDockWidget
+class ChatSessions : public MXitDockWidget, private Ui::ChatSessionsDockWidget
 {
   Q_OBJECT
   
@@ -44,12 +44,18 @@ class ChatSessions : public MXitDockWidget, private Ui::ContactsDockWidget
   
   void refresh(const QList<ChatSession>& chatSessions);
 
+  private slots:
+  
+  void chatSessionsListContextMenuRequest(const QPoint & pos);
+  
+  
   private:
   
   //void clearList();
   QListWidgetItem * addChatSession(const ChatSession & c);
   
   QHash<QString, QListWidgetItem*> listItemWidgets; // from chatSessionName to listItemWidget
+  
 
 };
 

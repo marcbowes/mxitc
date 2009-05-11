@@ -35,10 +35,14 @@ class AddContact : public MXitDockWidget, private Ui::AddContactDockWidget
   
   signals:
   
-  void addContact(const QString& cellphone, const QString& nickname, const QString& inviteMsg, Protocol::Enumerables::Contact::AlertProfile a);
+  void addContact(const QString &group, const QString &contactAddress, const QString &nickname,
+    Protocol::Enumerables::Contact::Type type, const QString &message);
+  
+  public slots:
+  void refresh();
   
   private slots:
-  
+  void networkChanged ( int index );
   void sendAddContactInfo();
   
 

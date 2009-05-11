@@ -64,11 +64,17 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void contactsReceived();
   void messageReceived();
+  void subscriptionsReceived();
   
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+  void refreshChatBox(); /*FIXME slot ? - rax*/
+  void refreshChatSessions();
+  
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
   public slots:
   
   void sendMessageFromChatInput();
@@ -93,9 +99,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void themeChanged();
   
-  
-  void refreshChatBox(); /*FIXME slot ? - rax*/
-  void refreshChatSessions();
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
@@ -127,6 +130,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   DockWidget::ChatSessions * chatSessionsWidget;
   DockWidget::Log * logWidget;
   DockWidget::Options * optionsWidget;
+  DockWidget::AddContact * addContactWidget;
   
 };
 

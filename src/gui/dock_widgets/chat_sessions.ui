@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ContactsDockWidget</class>
- <widget class="QDockWidget" name="ContactsDockWidget">
+ <class>ChatSessionsDockWidget</class>
+ <widget class="QDockWidget" name="ChatSessionsDockWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,13 +10,20 @@
     <height>300</height>
    </rect>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::CustomContextMenu</enum>
+  </property>
   <property name="windowTitle">
-   <string>Contacts</string>
+   <string>Chat Sessions</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QListWidget" name="contactList"/>
+     <widget class="QListWidget" name="chatSessionsList">
+      <property name="contextMenuPolicy">
+       <enum>Qt::CustomContextMenu</enum>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

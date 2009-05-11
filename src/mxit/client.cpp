@@ -221,7 +221,7 @@ void Client::incomingVariables(const VariableHash &params)
 void Client::addContact(const QString &group, const QString &contactAddress, const QString &nickname,
     Protocol::Enumerables::Contact::Type type, const QString &message)
 {
-  /* build variables for login packet */
+  /* packet variables */
   VariableHash subscriptionVariables;
   subscriptionVariables["group"]      = group.toUtf8();
   subscriptionVariables["contact_loginname"]
@@ -297,6 +297,23 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
 **
 ** Author: Marc Bowes
 **
+** Passes parameters onto a packet handler and transmits result
+**
+****************************************************************************/
+void Client::removeContact(const QString &contactAddress)
+{
+  /* packet variables */
+  VariableHash removeVariables;
+  removeVariables["contactAddress"]   = contactAddress.toUtf8();
+  
+  sendPacket("removecontact", removeVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** sets the gateway, and deals with reconnecting
 **
 ****************************************************************************/
@@ -320,7 +337,7 @@ void Client::setGateway(const QString &connectionString)
 ****************************************************************************/
 void Client::sendMessage(const QString &contactAddress, const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags)
 {
-  /* build variables for login packet */
+  /* packet variables */
   VariableHash messageVariables;
   messageVariables["contactAddress"]  = contactAddress.toUtf8();
   messageVariables["message"]         = message.toUtf8();
