@@ -12,7 +12,7 @@
 #include "gui/chat_session.h"
 #include "gui/mxit_dock_widget.h"
 
-#include "ui_contacts.h"
+#include "ui_chat_sessions.h"
 
 #include <QDebug>
 #include <QSet>
