@@ -64,6 +64,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void contactsReceived();
   void messageReceived();
+  void subscriptionsReceived();
   
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
 

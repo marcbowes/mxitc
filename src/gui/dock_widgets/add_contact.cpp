@@ -24,7 +24,45 @@ AddContact::AddContact(QWidget* parent, Theme &theme) : MXitDockWidget(parent, t
 {
   setupUi(this);
   
+  /*
+  enum Type {
+    MXit           = 0,
+    Jabber         = 1,
+    Msn            = 2,
+    Yahoo          = 3,
+    Icq            = 4,
+    Aim            = 5,
+    Bot            = 8,
+    ChatRoom       = 9,
+    Gallary        = 12,
+    Info           = 13,
+    Multimx        = 14,
+    GoogleTalk     = 18
+  };
+  */
+  alertProfileComboBox->setEnabled(false); /*TODO, do something with it, for now it does nothing*/
+  
+  #define ADD(x) networkComboBox->addItem ( QIcon(QPixmap(16,16)), #x, QVariant(Protocol::Enumerables::Contact::x) )
+  ADD(MXit);
+  ADD(Jabber);
+  ADD(Msn);
+  ADD(Yahoo);
+  ADD(Icq);
+  ADD(Aim);
+  ADD(Bot);
+  ADD(ChatRoom);
+  ADD(Gallary);
+  ADD(Info);
+  ADD(Multimx);
+  ADD(GoogleTalk);
+  
+  #undef ADD
+  
+  /*TODO change "cellphone" lable to Address when MXit not slected as network*/
+  
   connect(addButton, SIGNAL(released()), this, SLOT(sendAddContactInfo()));
+  
+  connect(networkComboBox, SIGNAL(currentIndexChanged ( int )), this, SLOT(networkChanged( int )));
 }
 
 
@@ -42,6 +80,18 @@ AddContact::~AddContact()
 }
 
 
+void AddContact::networkChanged ( int index ) {
+
+  using namespace Protocol::Enumerables::Contact;
+
+  Type type = (Type)networkComboBox->itemData (index).toInt();
+  
+  if (type == MXit)
+    addressLabel->setText("Cellphone");
+  else
+    addressLabel->setText("Address");
+}
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
@@ -50,13 +100,20 @@ AddContact::~AddContact()
 
 void AddContact::sendAddContactInfo() {
 
-  Protocol::Enumerables::Contact::AlertProfile a = Protocol::Enumerables::Contact::General;
+  /*Protocol::Enumerables::Contact::AlertProfile a = Protocol::Enumerables::Contact::General;
   if (silentRadioButton->isChecked())
     a = Protocol::Enumerables::Contact::Silent;
   else if (meetingRadioButton->isChecked())
-    a = Protocol::Enumerables::Contact::Meeting;
+    a = Protocol::Enumerables::Contact::Meeting;*/
 
-  emit addContact(cellphoneLineEdit->text(), nicknameLineEdit->text(), inviteMsgLineEdit->text(), a);
+  //const QString &group, const QString &contactAddress, const QString &nickname, Protocol::Enumerables::Contact::Type type, const QString &message
+
+  emit addContact(
+                    groupComboBox->currentText (), 
+                    cellphoneLineEdit->text(), 
+                    nicknameLineEdit->text(), 
+                    (Protocol::Enumerables::Contact::Type)networkComboBox->itemData (networkComboBox->currentIndex ()).toInt(), 
+                    inviteMsgLineEdit->text()  );
 }
 
 

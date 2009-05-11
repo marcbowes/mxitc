@@ -53,6 +53,10 @@ class Client : public QObject
   void outgoingError(int code, const QString &message);
   void outgoingVariables(const VariableHash&);
   
+  public slots:
+  void addContact(const QString &group, const QString &contactAddress, const QString &nickname,
+    Protocol::Enumerables::Contact::Type type, const QString &message);
+    
   private slots:
   
   void incomingError(const QString &);
@@ -61,8 +65,6 @@ class Client : public QObject
 
   public:         /* methods */
   
-  void addContact(const QString &group, const QString &contactAddress, const QString &nickname,
-    Protocol::Enumerables::Contact::Type type, const QString &message);
   void authenticate(const VariableHash &settings);
   void initialize();
   void login(const QString &cellphone, const QString &password, const QString &captcha);
