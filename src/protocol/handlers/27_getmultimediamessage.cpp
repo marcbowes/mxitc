@@ -115,16 +115,26 @@ QByteArray GetMultimediaMessage::getChunk(QByteArray chunk, int &type, int &leng
 
 VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray chunkData)
 {
-  //thing
+  //commmon
   QByteArray data;
-  int dataLength, dataType, position;
-  QTextCodec *codec = QTextCodec::codecForName("UTF-8");
   VariableHash returnData;
+  
+  //used in CustomResource
+  int dataLength, dataType, position, chunksLen;
+  QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+  
+  //used in GetFile
+  int offset, fileLength, crc;
+  
+  
+  //used in SplashImage
+  int anchor, timeToShow;
+  
   
   switch (type) {
     case MXit::Protocol::Enumerables::ChunkedData::CustomResource:
       qDebug() << "Type 1 Start";
-      position = 1;
+      position = 1; //because it starts witha \0 for no apparent reason
       
       while (chunkData.at(position) != '\0') {
         data.append(chunkData[position]);
@@ -134,6 +144,7 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
       qDebug() << "id: " << codec->toUnicode(data);
       
       position++;
+      position++; //FIXME: dodging the tab, necessary?
       data.clear();
             
       while ((chunkData.at(position) != '\0')&&(chunkData.at(position) != '\1')) {
@@ -142,18 +153,89 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
       }
       //FIXME: need to save to variable hash
       qDebug() << "handle: " << codec->toUnicode(data);
-      
       //get operation FIXME: need to save to variable hash
       qDebug() << "operation: " << (int)chunkData.at(position);
       
-      position++; // now at next chunk
+      position++; // now at chunks len
+      
+      chunksLen = 0;
+      chunksLen |= (unsigned char)chunkData[position];
+      position++;
+      for (int i=0; i<3; i++) {
+        chunksLen = chunksLen << 8;
+        chunksLen |= (unsigned char)chunkData[position + i];
+      }
+      position += 3;
+      
+      qDebug() << "chunksLen: " << chunksLen;
+      
+      //now at first chunk of many; FIXME to handle more than one
       data = getChunk(chunkData.mid(position), dataType, dataLength);
+      //qDebug() << "Type: " << (int)chunkData[position+2];
       returnData.unite(handleChunk(dataType, dataLength, data));
       
       qDebug() << "Type 1 End";
       break;
+    case MXit::Protocol::Enumerables::ChunkedData::SplashImage:
+      qDebug() << "Type 2 Start";
+      
+      //anchor FIXME save to variable hash
+      anchor = (unsigned char)chunkData[0];
+      
+      //timeToShow FIXME save to variable hash
+      timeToShow = (unsigned char)chunkData[1];
+      
+      //bgcolour FIXME save to variable hash
+      data = chunkData.mid(2, 4);
+      
+      //image FIXME save to variable hash
+      data = chunkData.mid(6, (length - 6));
+      
+      qDebug() << "Type 2 End";
+      break;
+    case MXit::Protocol::Enumerables::ChunkedData::SplashClickThrough:
+      //currently empty
+      break;
+    case MXit::Protocol::Enumerables::ChunkedData::GetFile:
+      qDebug() << "Type 8 Start";
+      
+      //id FIXME save to variable hash
+      data = chunkData.left(8);
+      
+      //offset FIXME save to variable hash
+      offset = 0;
+      offset |= (unsigned char)chunkData[8];
+      for (int i=9; i<12; i++) {
+        offset = offset << 8;
+        offset |= (unsigned char)chunkData[i];
+      }
+      
+      //fileLength
+      fileLength = 0;
+      fileLength |= (unsigned char)chunkData[12];
+      for (int i=13; i<16; i++) {
+        fileLength = fileLength << 8;
+        fileLength |= (unsigned char)chunkData[i];
+      }
+      
+      //crc FIXME do check later
+      crc = 0;
+      crc |= (unsigned char)chunkData[16];
+      for (int i=17; i<20; i++) {
+        crc = crc << 8;
+        crc |= (unsigned char)chunkData[i];
+      }
+      
+      //data FIXME save to variable hash
+      data = chunkData.mid(20, fileLength);
+      
+      qDebug() << "Type 8 End";
+      break;
+    case MXit::Protocol::Enumerables::ChunkedData::Skin:
+      //we shouldnt get this
+      break;
     default:
-      qDebug() << "Error: Unknown chunked data type";
+      qDebug() << "Error: Unknown chunked data type " << type;
       break;
   }
   
