@@ -68,6 +68,7 @@ class Client : public QObject
   void authenticate(const VariableHash &settings);
   void initialize();
   void login(const QString &cellphone, const QString &password, const QString &captcha);
+  void removeContact(const QString &contactAddress);
   void setGateway(const QString &connectionString);
   void sendMessage(const QString &contactAddress, const QString &message,
     Protocol::Enumerables::Message::Type, unsigned int flags);
