@@ -389,6 +389,7 @@ void MXitC::incomingAction(Action action)
       
     //--------------------------------------
     case CONTACTS_RECEIVED:
+      logWidget->logMessage("GUI::CONTACTS_RECEIVED");
       contactsReceived();
       break;
       
@@ -399,6 +400,7 @@ void MXitC::incomingAction(Action action)
     
     //--------------------------------------
     case SUBSCRIPTIONS_RECEIVED:
+      logWidget->logMessage("GUI::SUBSCRIPTIONS_RECEIVED");
       subscriptionsReceived();
     break;
   }
