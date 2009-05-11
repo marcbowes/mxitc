@@ -72,6 +72,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
+  mainTextArea->setFocusProxy(chatInput);
+  
   /*TODO integrate into QT designer (?)*/
   connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginDialog()));
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
@@ -427,6 +429,8 @@ void MXitC::subscriptionsReceived(){
     QListIterator<QByteArray> split1Itt(split1);
     
     split1Itt.next();
+    
+    qDebug() << split1;
     
   }
   
