@@ -118,11 +118,12 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
   //commmon
   QByteArray data;
   VariableHash returnData;
+  returnData["type"] = QByteArray::number(type);
   
   //used in CustomResource
   int dataLength, dataType, position, chunksLen;
-  QTextCodec *codec = QTextCodec::codecForName("UTF-8");
-  
+  VariableHash tempVariables;
+    
   //used in GetFile
   int offset, fileLength, crc;
   
@@ -133,28 +134,30 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
   
   switch (type) {
     case MXit::Protocol::Enumerables::ChunkedData::CustomResource:
-      qDebug() << "Type 1 Start";
       position = 1; //because it starts witha \0 for no apparent reason
       
+      //id
       while (chunkData.at(position) != '\0') {
         data.append(chunkData[position]);
         position++;
       }
-      //FIXME: need to save id to variablehash
-      qDebug() << "id: " << codec->toUnicode(data);
+      
+      returnData["id"] = data;
       
       position++;
-      position++; //FIXME: dodging the tab, necessary?
       data.clear();
-            
+      
+      //handle      
+      position++; //FIXME: dodging the tab, necessary?
       while ((chunkData.at(position) != '\0')&&(chunkData.at(position) != '\1')) {
         data.append(chunkData[position]);
         position++;
       }
-      //FIXME: need to save to variable hash
-      qDebug() << "handle: " << codec->toUnicode(data);
-      //get operation FIXME: need to save to variable hash
-      qDebug() << "operation: " << (int)chunkData.at(position);
+      
+      returnData["handle"] = data;
+      
+      //operation
+      returnData["operation"] = QByteArray::number((int)chunkData.at(position));
       
       position++; // now at chunks len
       
@@ -167,40 +170,44 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
       }
       position += 3;
       
-      qDebug() << "chunksLen: " << chunksLen;
-      
       //now at first chunk of many; FIXME to handle more than one
       data = getChunk(chunkData.mid(position), dataType, dataLength);
-      //qDebug() << "Type: " << (int)chunkData[position+2];
-      returnData.unite(handleChunk(dataType, dataLength, data));
+      tempVariables = handleChunk(dataType, dataLength, data);
+      returnData[QString(returnData["handle"]) + "_type"] = tempVariables["type"];
+      returnData[QString(returnData["handle"]) + "_anchor"] = tempVariables["anchor"];
+      returnData[QString(returnData["handle"]) + "_timeToShow"] = tempVariables["timeToShow"];
+      returnData[QString(returnData["handle"]) + "_bgColour"] = tempVariables["bgColour"];
+      returnData[QString(returnData["handle"]) + "_image"] = tempVariables["image"];
       
-      qDebug() << "Type 1 End";
       break;
     case MXit::Protocol::Enumerables::ChunkedData::SplashImage:
-      qDebug() << "Type 2 Start";
-      
-      //anchor FIXME save to variable hash
+      //anchor
       anchor = (unsigned char)chunkData[0];
+      if ((anchor != 3)&&(anchor != 0)) {
+        qDebug() << "Error parsing splash image: invalid anchor";
+        break;
+      }
+      returnData["anchor"] = QByteArray::number(anchor);
       
-      //timeToShow FIXME save to variable hash
+      //timeToShow
       timeToShow = (unsigned char)chunkData[1];
+      returnData["timeToShow"] = QByteArray::number(timeToShow);
       
-      //bgcolour FIXME save to variable hash
+      //bgcolour
       data = chunkData.mid(2, 4);
+      returnData["bgColour"] = data.toHex();
       
-      //image FIXME save to variable hash
+      //image
       data = chunkData.mid(6, (length - 6));
-      
-      qDebug() << "Type 2 End";
+      returnData["image"] = data;
       break;
     case MXit::Protocol::Enumerables::ChunkedData::SplashClickThrough:
       //currently empty
       break;
     case MXit::Protocol::Enumerables::ChunkedData::GetFile:
-      qDebug() << "Type 8 Start";
-      
       //id FIXME save to variable hash
       data = chunkData.left(8);
+      returnData["id"] = data;
       
       //offset FIXME save to variable hash
       offset = 0;
@@ -209,6 +216,7 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
         offset = offset << 8;
         offset |= (unsigned char)chunkData[i];
       }
+      returnData["offset"] = QByteArray::number(offset);
       
       //fileLength
       fileLength = 0;
@@ -226,10 +234,9 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
         crc |= (unsigned char)chunkData[i];
       }
       
-      //data FIXME save to variable hash
+      //data
       data = chunkData.mid(20, fileLength);
-      
-      qDebug() << "Type 8 End";
+      returnData["file"] = data;
       break;
     case MXit::Protocol::Enumerables::ChunkedData::Skin:
       //we shouldnt get this
