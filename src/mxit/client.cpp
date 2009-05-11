@@ -214,6 +214,29 @@ void Client::incomingVariables(const VariableHash &params)
 /****************************************************************************
 **
 ** Author: Marc Bowes
+**
+** Passes parameters onto a packet handler and transmits result
+**
+****************************************************************************/
+void Client::addContact(const QString &group, const QString &contactAddress, const QString &nickname,
+    Protocol::Enumerables::Contact::Type type, const QString &message)
+{
+  /* build variables for login packet */
+  VariableHash subscriptionVariables;
+  subscriptionVariables["group"]      = group.toUtf8();
+  subscriptionVariables["contact_loginname"]
+                                      = contactAddress.toUtf8();
+  subscriptionVariables["nickname"]   = nickname.toUtf8();
+  subscriptionVariables["type"]       = QString("%1").arg(type).toUtf8();
+  subscriptionVariables["msg"]        = message.toUtf8();
+  
+  sendPacket("subscribetoanewcontact", subscriptionVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
 ** Author: Richard Baxter
 **
 ** same as login, but skips the handshaking phase
