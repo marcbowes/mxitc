@@ -44,6 +44,13 @@ void Base::load(QDir theme)
   } else {
     presence.loadDefaults();
   }
+  
+  if (theme.cd("type")) {
+    type.load(theme);
+    theme.cdUp();
+  } else {
+    type.loadDefaults();
+  }
 }
 
 
@@ -58,6 +65,7 @@ void Base::loadDefaults()
 {
   stylesheet = QString();
   presence.loadDefaults();
+  type.loadDefaults();
 }
 
 }

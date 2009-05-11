@@ -15,6 +15,7 @@
 #include <QString>
 
 #include "presence.h"
+#include "type.h"
 
 namespace MXit
 {
@@ -44,6 +45,7 @@ class Base
   
   Presence  presence;
   QString   stylesheet;
+  Type      type;
 };
 
 }

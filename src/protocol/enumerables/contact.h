@@ -49,20 +49,17 @@ enum Presence {
 enum Type {
   MXit           = 0,
   Jabber         = 1,
-  Msn            = 2,
+  MSN            = 2,
   Yahoo          = 3,
-  Icq            = 4,
-  Aim            = 5,
+  ICQ            = 4,
+  AIM            = 5,
   Bot            = 8,
   ChatRoom       = 9,
-  Gallary        = 12,
+  Gallery        = 12,
   Info           = 13,
-  Multimx        = 14,
+  MultiMx        = 14,
   GoogleTalk     = 18
 };
-
-
-enum AlertProfile {General, Meeting, Silent};
 
 }
 

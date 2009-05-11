@@ -42,20 +42,22 @@ AddContact::AddContact(QWidget* parent, Theme &theme) : MXitDockWidget(parent, t
   */
   alertProfileComboBox->setEnabled(false); /*TODO, do something with it, for now it does nothing*/
   
-  #define ADD(x) networkComboBox->addItem ( QIcon(QPixmap(16,16)), #x, QVariant(Protocol::Enumerables::Contact::x) )
-  ADD(MXit);
-  ADD(Jabber);
-  ADD(Msn);
-  ADD(Yahoo);
-  ADD(Icq);
-  ADD(Aim);
-  ADD(Bot);
-  ADD(ChatRoom);
-  ADD(Gallary);
-  ADD(Info);
-  ADD(Multimx);
-  ADD(GoogleTalk);
-  
+  #define ADD(x) networkComboBox->addItem ( theme.contact.type.pixmap(x), #x, QVariant(Protocol::Enumerables::Contact::x) )
+  {
+    using namespace Protocol::Enumerables::Contact;
+    ADD(MXit);
+    ADD(Jabber);
+    ADD(MSN);
+    ADD(Yahoo);
+    ADD(ICQ);
+    ADD(AIM);
+    ADD(Bot);
+    ADD(ChatRoom);
+    ADD(Gallery);
+    ADD(Info);
+    ADD(MultiMx);
+    ADD(GoogleTalk);
+  }
   #undef ADD
   
   /*TODO change "cellphone" lable to Address when MXit not slected as network*/

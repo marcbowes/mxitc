@@ -8,6 +8,8 @@
 
 #include "presence.h"
 
+#define DEFAULT_SIZE QSize(16, 16)
+
 namespace MXit
 {
 
@@ -98,20 +100,21 @@ void Presence::loadDefaults()
 ****************************************************************************/
 QPixmap Presence::pixmap(Protocol::Enumerables::Contact::Presence presence)
 {
+  using namespace Protocol::Enumerables::Contact;
   switch (presence) {
-    case Protocol::Enumerables::Contact::Available:
+    case Available:
       return available;
       break;
-    case Protocol::Enumerables::Contact::Away:
+    case Away:
       return away;
       break;
-    case Protocol::Enumerables::Contact::DoNotDisturb:
+    case DoNotDisturb:
       return dnd;
       break;
-    case Protocol::Enumerables::Contact::Offline:
+    case Offline:
       return offline;
       break;
-    case Protocol::Enumerables::Contact::Online:
+    case Online:
       return online;
       break;
     default:

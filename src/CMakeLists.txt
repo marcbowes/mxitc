@@ -39,7 +39,7 @@ SET(MXIT_CLIENT_SRCS_CXX
 
   gui/theme_components/contact/base.cpp  
   gui/theme_components/contact/presence.cpp
-  
+  gui/theme_components/contact/type.cpp  
   
   gui/dock_widgets/log.cpp
   gui/dock_widgets/options.cpp
@@ -81,7 +81,6 @@ SET(MXIT_CLIENT_MOC_SRCS
   
   gui/mxitc.h
   gui/mxit_dialog.h
-  gui/theme.h
 )
 
 SET(MXIT_CLIENT_UI
