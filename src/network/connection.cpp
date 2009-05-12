@@ -317,6 +317,8 @@ void Connection::sendPacket(const Packet *packet)
   if (state != CONNECTED) {
     if (state != CONNECTING) {
       emit outgoingError("No connection has been opened");
+    } else {
+      socket->waitForConnected();
     }
     
     /* determine type of connection to open */
