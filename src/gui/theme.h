@@ -12,6 +12,7 @@
 #define __MXIT_GUI_THEME_H__
 
 #include <QDir>
+#include <QPixmap>
 
 #include "theme_components/contact/base.h"
 
@@ -25,17 +26,22 @@ class Theme
 {
   public:         /* class specific */
   
-  Theme();
-  ~Theme();
+  Theme()   {}
+  ~Theme()  {}
 
   public:         /* methods */
   
   void load(QDir theme);
+  void loadDefaults();
   
-  public:         /* variables */
+  public:        /* variables */
+  
+  ThemeComponents::Contact::Base  contact;
+  QPixmap                         windowIcon;
+  
+  private:       /* variables */
   
   QDir                            dir;
-  ThemeComponents::Contact::Base  contact;
 };
 
 }

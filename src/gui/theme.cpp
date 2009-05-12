@@ -4,17 +4,17 @@
 **
 ****************************************************************************/
 
+#include <QImage>
+
 #include "theme.h"
+
+#define DEFAULT_SIZE QSize(16, 16)
 
 namespace MXit
 {
 
 namespace GUI
 {
-
-
-  Theme::Theme()   {}
-  Theme::~Theme()  {}
 
 /****************************************************************************
 **
@@ -24,13 +24,43 @@ namespace GUI
 **
 ****************************************************************************/
 void Theme::load(QDir theme)
-{  
+{
+  /* load defaults */
+  loadDefaults();
+  
+  /* base */
+  /* load from disk */
+  QImage _windowIcon  = QImage(dir.absoluteFilePath("icon.png"));
+  
+  /* build pixmaps from images, or use defaults */
+  if (!_windowIcon.isNull()) {
+    windowIcon = QPixmap::fromImage(_windowIcon);
+  }
+  
+  /* components */
   if (theme.cd("contact")) {
     contact.load(theme);
     theme.cdUp();
-  } else {
-    contact.loadDefaults();
   }
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** constructs default theme components
+**
+****************************************************************************/
+void Theme::loadDefaults()
+{
+  /* base */
+  /* build pixmaps from defaults */
+  windowIcon = QPixmap(DEFAULT_SIZE);
+  windowIcon.fill(Qt::blue);
+  
+  /* components */
+  contact.loadDefaults();
 }
 
 }

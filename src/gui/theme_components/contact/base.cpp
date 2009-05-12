@@ -32,24 +32,17 @@ void Base::load(QDir theme)
   qss.open(QFile::ReadOnly);
   if (qss.exists()) {
     stylesheet = QLatin1String(qss.readAll());
-  } else {
-    /* ensure it's empty, in case of loading a new theme with no qss */
-    stylesheet = QString();
   }
   
   /* load theme components */
   if (theme.cd("presence")) {
     presence.load(theme);
     theme.cdUp();
-  } else {
-    presence.loadDefaults();
   }
   
   if (theme.cd("type")) {
     type.load(theme);
     theme.cdUp();
-  } else {
-    type.loadDefaults();
   }
 }
 
