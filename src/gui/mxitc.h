@@ -35,6 +35,7 @@
 #include "gui/dock_widgets/add_contact.h"
 
 #include "gui/dialogs/login.h"
+#include "gui/dialogs/allow_subscription.h"
 #include "gui/theme.h"
 
 #include "protocol/enumerables/message.h"
@@ -72,6 +73,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   bool ensureExistanceOfChatSession(MXit::Contact & contact);
   
+  void removeContactFromGUI(const QString& contactAddress);
+  
   /* chat session creation deletion*/
   void startChatSessionWithContact (MXit::Contact & contact);
   void closeChatSession(const QString & chatSessionName);
@@ -79,6 +82,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
   
   
+  QSet<QString> getGroupSet();
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

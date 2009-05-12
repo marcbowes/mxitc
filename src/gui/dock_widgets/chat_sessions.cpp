@@ -130,6 +130,7 @@ QListWidgetItem * ChatSessions::addChatSession(const ChatSession & c){
     *item = QListWidgetItem(theme.contact.presence.pixmap(c.mainContact->presence), label); // change exiting item
   }
     
+  /* TODO make the dockwidget lable go red/green when there is a new message (from anyone) and it hasn't been selected*/
   if (c.unreadMessage) {
     item->setForeground(QBrush(Qt::red));
   }
@@ -170,30 +171,30 @@ void ChatSessions::selectItem(const QString& chatSessionName) {
 ****************************************************************************/
 
 void ChatSessions::refresh(const QList<ChatSession>& chatSessions) {
-
-
-  /* resetting contacts list*/
   
-  qDebug() << "adding items";
-  Q_FOREACH(const ChatSession & c, chatSessions) {
+
+  /* resetting chatsessions list*/
+  
+  //qDebug() << "adding items";
+  /*Q_FOREACH(const ChatSession & c, chatSessions) {
     qDebug() << c.chatSessionName;
-  }
+  }*/
   QSet <QListWidgetItem*> shouldBeInList; // chatSessionName
   
   /* building set of who should be in the list*/
   Q_FOREACH(const ChatSession & c, chatSessions) {
     QListWidgetItem* inChatSessions = addChatSession( c ); 
     shouldBeInList.insert(inChatSessions);
-    qDebug() << "item should be in list => " << c.chatSessionName;
+    //qDebug() << "item should be in list => " << c.chatSessionName;
   }
   
   /*scanning for those who shouldn't be in the list and deleting them*/
   for (int i = 0 ; i < chatSessionsList->count() ; i++) {
     QListWidgetItem * lwi = chatSessionsList->item(i);
     
-    qDebug() << "checking if item is supposed to be in list => " << lwi->text();
+    //qDebug() << "checking if item is supposed to be in list => " << lwi->text();
     if (!shouldBeInList.contains(lwi)) {
-      qDebug() << lwi->text() << " item is in chatSessionlist but should not be";
+      //qDebug() << lwi->text() << " item is in chatSessionlist but should not be";
       chatSessionsList->removeItemWidget(lwi);
       listItemWidgets.remove(lwi->text());
       delete lwi;

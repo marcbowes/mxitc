@@ -62,6 +62,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*------------------------------------------------------------------------------------------*/
   /*Settings restore */
   /*------------------------------------------------------------------------------------------*/
+  /* TODO save window size and maximised state*/
   /* After all the MXitDockWidgets have been added, their attributes can be restored*/
   restoreState(settings->value("gui layout").toByteArray());
   
@@ -230,7 +231,14 @@ MXitC::~MXitC()
 /* FIXME overkill on the #defs? - rax*/
 #define MENU_START(title) QMenu contextMenu(title, this); QHash<QString, QAction*> hash;
 #define MENU_ITEM(y) hash[y] = new QAction (y, this); contextMenu.addAction(hash[y]);
-#define MENU_EXEC() contextMenu.exec( pos )->text();  Q_FOREACH(QAction * act, hash){ delete act; }
+#define MENU_EXEC(s) \
+{ \
+QAction* a = contextMenu.exec( pos ); \
+bool __ret = true; \
+if (a){ s = a->text(); __ret = false;} \
+Q_FOREACH(QAction * act, hash){ delete act; } \
+if (__ret) return;  \
+}
   
 void MXitC::chatSessionsMenu(const QPoint & pos, const QString& chatSessionName) {
   
@@ -240,7 +248,8 @@ void MXitC::chatSessionsMenu(const QPoint & pos, const QString& chatSessionName)
   
   MENU_ITEM("Close Chat");
  
-  QString selection = MENU_EXEC();
+  QString selection;
+  MENU_EXEC(selection);
   
   if (selection == "Close Chat") {
     /* closes chat */
@@ -270,6 +279,7 @@ void MXitC::contactsMenu(const QPoint & pos, const QString& nickname) {
   
   if (contact.presence == Protocol::Enumerables::Contact::Unaffiliated) {
     MENU_ITEM("Accept");
+    MENU_ITEM("Reject");
   }
   else {
     MENU_ITEM("Chat");
@@ -279,21 +289,49 @@ void MXitC::contactsMenu(const QPoint & pos, const QString& nickname) {
     MENU_ITEM("Remove Contact");
   }
  
-  QString selection = MENU_EXEC();
+  QString selection;
+  MENU_EXEC(selection);
+  
+  
+  qDebug() << selection;
   
   if (contact.presence == Protocol::Enumerables::Contact::Unaffiliated) {
     if (selection == "Accept") 
     {
-      /* TODO ask user to select groupname and nicKname - duplicate nicknames must be implemented!*/
-      mxit->allowSubscription(contact.contactAddress, "", contact.nickname);
-      logWidget->logMessage("GUI:: "+contact.nickname+" subscribed to");
+      /* TODO ask user to select groupname and nickname - duplicate nicknames must be implemented!*/
+      QSet<QString> groups = getGroupSet();
+      Dialog::AllowSubscription allow (contact.inviteMessage, contact.nickname, groups, this);
+      
+      /*TODO make sure user doesn't add a nickname that already exists - related TODO about duplicate names*/
+      if (allow.exec() == QDialog::Accepted) {
+        
+        mxit->allowSubscription(contact.contactAddress, allow.getGroup(), allow.getNickname());
+        logWidget->logMessage("GUI:: "+contact.nickname+" subscribed to");
+      }
+        
+    }
+    else if (selection == "Reject") 
+    {
+      QMessageBox sure;
+      sure.setText("Are you sure you wish to reject \""+contact.nickname+"\"");
+      if (contact.inviteMessage != "")
+        sure.setInformativeText(nickname+" sent you an invite message: \"" + contact.inviteMessage+"\"");
+      sure.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+      sure.setDefaultButton(QMessageBox::Cancel);
+      
+      if (sure.exec() == QMessageBox::Ok) {
+        /* send rejection to client*/
+        logWidget->logMessage("GUI:: "+contact.nickname+" subscription denyed");
+        mxit->denySubscription(contact.contactAddress);
+        removeContactFromGUI(contact.contactAddress);
+      }
     }
   }
   else 
   {
     if (selection == "Chat") 
     {
-      qDebug() << "chat";
+      //qDebug() << "chat";
       startChatSessionWithContact(contact);
       
       /* since the user requested a chat, bring forward the chatSessions dockwindow*/
@@ -319,10 +357,9 @@ void MXitC::contactsMenu(const QPoint & pos, const QString& nickname) {
       sure.setDefaultButton(QMessageBox::Cancel);
       
       if (sure.exec() == QMessageBox::Ok) {
+        logWidget->logMessage("GUI:: contact \""+contact.contactAddress+"\" removed");
         mxit->removeContact(contact.contactAddress);
-        nicknameToContactAddress.remove(contact.nickname);
-        contacts.remove(contact.contactAddress);
-        refreshContacts();
+        removeContactFromGUI(contact.contactAddress);
       }
     }
   }
@@ -331,7 +368,32 @@ void MXitC::contactsMenu(const QPoint & pos, const QString& nickname) {
 #undef MENU_START
 #undef MENU_ITEM
 #undef MENU_EXEC
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Removes the contact from the GUI and any associated chat sessions
+** TODO what if the contact is in a group chat and you remove them?
+**
+****************************************************************************/
+
+void MXitC::removeContactFromGUI(const QString& contactAddress) {
+
+  /*remove any accociated chat sessions */
+  /*TODO what if the contact is in a group chat and you remove them? */
+
+  QString nickname = contacts[contactAddress].nickname;
+  if (chatSessions.contains(nickname))
+    closeChatSession(nickname);
+
+  nicknameToContactAddress.remove(nickname);
+  contacts.remove(contactAddress);
   
+  refreshContacts();
+  refreshChatSessions();
+}
   
 /****************************************************************************
 **
@@ -370,6 +432,26 @@ void MXitC::closeChatSession(const QString & chatSessionName) {
      
   chatSessions.remove(chatSessionName);
   refreshChatSessions();
+}
+
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+QSet<QString> MXitC::getGroupSet() {
+  
+  QSet<QString> ret;
+ 
+  Q_FOREACH(const MXit::Contact & c, contacts) {
+    if (!ret.contains(c.group))
+      ret.insert(c.group);
+  } 
+  
+  return ret;
 }
 
 /****************************************************************************
@@ -575,7 +657,7 @@ void MXitC::subscriptionsReceived(){
       ... \0
       contactAddressN \1 nicknameN \1 typeN \1 hiddenLoginnameN \1 msgN \1 groupchatmodN
   */
-  
+  //qDebug() << "subscriptionsReceived";
   /* loop over all contacts*/
   Q_FOREACH(const QByteArray& contact, mxit->variableValue("contacts").split('\0')) 
   {
@@ -586,7 +668,7 @@ void MXitC::subscriptionsReceived(){
     */ 
     QVector<QByteArray> fields = QVector<QByteArray>::fromList ( contact.split('\1') );
     
-    qDebug() << fields;
+    //qDebug() << fields;
     
     QString contactAddress = fields[0];
     
@@ -600,8 +682,8 @@ void MXitC::subscriptionsReceived(){
       c.type = (Type)fields[2].toUInt();
       c.presence = Unaffiliated;
       //c.hidden = fields[3].toBool();
-      //c.inviteMsg = fields[4]; 
-      // TODO what do we do with hidden status and invite message?
+      c.inviteMessage = fields[4]; 
+      // TODO what do we do with hidden status?
     }
     
     nicknameToContactAddress[c.nickname] = c.contactAddress;
@@ -632,6 +714,9 @@ void MXitC::contactsReceived(){
       groupN \1 contactAddressN \1 nicknameN \1 presenceN \1 typeN \1 mood
   */
   
+  //QSet<QString> shouldBeInHash;
+  
+  //qDebug() << "contactsReceived";
   /* loop over all contacts*/
   Q_FOREACH(const QByteArray& contact, mxit->variableValue("contacts").split('\0')) 
   {
@@ -641,6 +726,8 @@ void MXitC::contactsReceived(){
       group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood
     */
     QVector<QByteArray> fields = QVector<QByteArray>::fromList ( contact.split('\1') );
+    
+    //qDebug() << fields;
     
     QString contactAddress = fields [1];
     
@@ -657,11 +744,22 @@ void MXitC::contactsReceived(){
       c.mood            = (Mood)fields[5].toUInt();
     }
     
+    //shouldBeInHash.insert(c.contactAddress);
+    
     /* TODO should this if be here? investigate - see subscriptions received for more TODO's related to this*/
     //if(newContact) {
       nicknameToContactAddress[c.nickname] = c.contactAddress;
     //}
   }
+  
+  /* NOTE keep this code here in case I can still use it*/
+  //Q_FOREACH(const MXit::Contact & c, contacts.values()) {
+  //  if (!shouldBeInHash.contains(c.contactAddress)) {
+  //   /* then the contact in the hash is not supposed to be there, remove*/ 
+  //    nicknameToContactAddress.remove(c.nickname);
+  //    contacts.remove(c.contactAddress);
+  //  }
+  //}
   
   refreshContacts();
         
@@ -714,11 +812,11 @@ void MXitC::messageReceived(){
 
   /*FIXME only handles single user stuff atm! group chat to follow*/
   QString contactAddress = mxit->variableValue("contactAddress");
-  qDebug() << contactAddress;
+  //qDebug() << contactAddress;
   if (contacts.contains(contactAddress)) { /*since we are assuming the chat is from a single contact not a group chat*/
   
     MXit::Contact& sender = contacts[contactAddress];
-    qDebug() << sender.nickname;
+    //qDebug() << sender.nickname;
     ensureExistanceOfChatSession(sender);
     chatSessions[sender.nickname].incomingMessage( Message(&sender, mxit->variableValue("message")) );
     
@@ -727,9 +825,9 @@ void MXitC::messageReceived(){
       currentChatSession->unreadMessage = false;
     
     
-    Q_FOREACH(const ChatSession & c, chatSessions.values()) {
-      qDebug() << c.chatSessionName;
-    }
+    //Q_FOREACH(const ChatSession & c, chatSessions.values()) {
+    //  qDebug() << c.chatSessionName;
+    //}
     refreshChatSessions(); /* show unread messages, new chat sessions etc*/
     refreshChatBox();
   }

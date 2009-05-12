@@ -133,31 +133,45 @@ QListWidgetItem * Contacts::addContact(const MXit::Contact & c){
 void Contacts::refresh(const QList<MXit::Contact>& contacts) {
 
 
-  /* getting listwidgets that are already in list*/
-  QSet <QListWidgetItem*> lwiInList; // nickname
-  Q_FOREACH(const Contact & c, contacts) {
+  /* resetting contacts list*/
+  
+  //qDebug() << "adding items";
+  /*Q_FOREACH(const MXit::Contact & c, contacts) {
+    qDebug() << c.nickname;
+  }*/
+  QSet <QListWidgetItem*> shouldBeInList; // chatSessionName
+  
+  /* building set of who should be in the list*/
+  Q_FOREACH(const MXit::Contact & c, contacts) {
     QListWidgetItem* inContacts = addContact( c ); 
-    lwiInList.insert(inContacts);
+    shouldBeInList.insert(inContacts);
+    //qDebug() << "item should be in list => " << c.nickname;
   }
   
-  /* removing any contacts that are no longer n the list*/
-  Q_FOREACH(const Contact & c, contacts) 
-  {
-    if (!lwiInList.contains(listItemWidgets[c.nickname]))
-    {
-      contactsList->removeItemWidget(listItemWidgets[c.nickname]);
-      delete listItemWidgets[c.nickname];
-      listItemWidgets.remove(c.nickname);
+  /*scanning for those who shouldn't be in the list and deleting them*/
+  for (int i = 0 ; i < contactsList->count() ; i++) {
+    QListWidgetItem * lwi = contactsList->item(i);
+    
+    //qDebug() << "checking if item is supposed to be in list => " << lwi->text();
+    if (!shouldBeInList.contains(lwi)) {
+      //qDebug() << lwi->text() << " item is in contactsList but should not be";
+      contactsList->removeItemWidget(lwi);
+      listItemWidgets.remove(lwi->text());
+      delete lwi;
+      i--;
     }
   }
   
+  /*at this point all contacts have a precidence number on*/
+  
   contactsList->sortItems();
-    
-  /*cleaning up the precidence hack*/
+  
+  /* removing precidence number*/
   for (int i = 0 ; i < contactsList->count() ; i++) {
     QListWidgetItem * lwi = contactsList->item(i);
     lwi->setText ( lwi->text().mid ( 1 ) );
   }
+  //contactList->setCurrentRow ( selected );
 
 }
 

@@ -55,6 +55,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/dock_widgets/add_contact.cpp
   
   gui/dialogs/login.cpp
+  gui/dialogs/allow_subscription.cpp
   
   gui/mxit_dock_widget.cpp
   gui/message.cpp
@@ -82,6 +83,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   gui/dock_widgets/add_contact.h
   
   gui/dialogs/login.h
+  gui/dialogs/allow_subscription.h
   
   gui/mxit_dock_widget.h
   gui/message.h
@@ -100,6 +102,7 @@ SET(MXIT_CLIENT_UI
   gui/dock_widgets/add_contact.ui
   
   gui/dialogs/login.ui
+  gui/dialogs/allow_subscription.ui
   gui/mxitc.ui
 )
 
