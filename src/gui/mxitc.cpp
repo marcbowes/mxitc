@@ -280,6 +280,7 @@ void MXitC::contactsMenu(const QPoint & pos, const QString& nickname) {
   if (contact.presence == Protocol::Enumerables::Contact::Unaffiliated) {
     MENU_ITEM("Accept");
     MENU_ITEM("Reject");
+    MENU_ITEM("Reject Permanently");
   }
   else {
     MENU_ITEM("Chat");
@@ -323,6 +324,22 @@ void MXitC::contactsMenu(const QPoint & pos, const QString& nickname) {
         /* send rejection to client*/
         logWidget->logMessage("GUI:: "+contact.nickname+" subscription denyed");
         mxit->denySubscription(contact.contactAddress);
+        removeContactFromGUI(contact.contactAddress);
+      }
+    }
+    else if (selection == "Reject Permanently") 
+    {
+      QMessageBox sure;
+      sure.setText("Are you sure you wish to reject permanently \""+contact.nickname+"\"");
+      if (contact.inviteMessage != "")
+        sure.setInformativeText("In order to unblock, you need to add "+nickname+" as a contact\n"+nickname+" sent you an invite message: \"" + contact.inviteMessage+"\"");
+      sure.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+      sure.setDefaultButton(QMessageBox::Cancel);
+      
+      if (sure.exec() == QMessageBox::Ok) {
+        /* send permanent rejection to client*/
+        logWidget->logMessage("GUI:: "+contact.nickname+" subscription permanently denyed");
+        mxit->denySubscription(contact.contactAddress, true);
         removeContactFromGUI(contact.contactAddress);
       }
     }

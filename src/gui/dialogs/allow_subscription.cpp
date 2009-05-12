@@ -24,6 +24,7 @@ AllowSubscription::AllowSubscription(const QString & inviteMessage, const QStrin
   inviteMessageTextEdit->setText(inviteMessage);
   nicknameLineEdit->setText(nickname);
   
+    groupComboBox->addItem ( "" );
   Q_FOREACH(QString s, groups) {
     groupComboBox->addItem ( s );
   }
