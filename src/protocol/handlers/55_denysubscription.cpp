@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include "52_allowsubscription.h"
+#include "55_denysubscription.h"
 
 namespace MXit
 {
@@ -22,7 +22,7 @@ namespace Handlers
 ** stub
 **
 ****************************************************************************/
-void AllowSubscription::build(MXit::Network::Packet *packet, VariableHash &variables)
+void DenySubscription::build(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -36,13 +36,10 @@ void AllowSubscription::build(MXit::Network::Packet *packet, VariableHash &varia
   */
   
   /* packet header setup */
-  packet->setCommand("52");
+  packet->setCommand("55");
   
   /* build packet data */
-  (*packet) << variables["contactAddress"]
-            << variables["group"]
-            << variables["nickname"]
-  ;
+  (*packet) << variables["contactAddress"];
 }
 
 
@@ -53,7 +50,7 @@ void AllowSubscription::build(MXit::Network::Packet *packet, VariableHash &varia
 ** Does nothing
 **
 ****************************************************************************/
-VariableHash AllowSubscription::handle(const QByteArray &packet)
+VariableHash DenySubscription::handle(const QByteArray &packet)
 {
   /*
   == PACKET FORMAT

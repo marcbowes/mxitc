@@ -68,6 +68,7 @@ class Client : public QObject
   void authenticate(const VariableHash &settings);
   void allowSubscription(const QString &contactAddress, const QString &group,
     const QString &nickname);
+  void denySubscription(const QString &contactAddress);
   void initialize();
   void login(const QString &cellphone, const QString &password, const QString &captcha);
   void removeContact(const QString &contactAddress);

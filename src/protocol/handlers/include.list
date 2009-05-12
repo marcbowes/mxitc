@@ -12,3 +12,4 @@
 #include "32_setshownpresenceandstatus.h"
 #include "51_getnewsubscription.h"
 #include "52_allowsubscription.h"
+#include "55_denysubscription.h"

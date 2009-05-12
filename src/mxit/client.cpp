@@ -53,6 +53,7 @@ Client::Client()
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
   /* 51 */ handlers["getnewsubscription"]         = new GetNewSubscription();
   /* 52 */ handlers["allowsubscription"]          = new AllowSubscription();
+  /* 55 */ handlers["denysubscription"]           = new DenySubscription();
 }
 
 
@@ -267,8 +268,30 @@ void Client::allowSubscription(const QString &contactAddress, const QString &gro
   VariableHash subscriptionVariables;
   subscriptionVariables["contactAddress"]
                            = contactAddress.toUtf8();
+  subscriptionVariables["group"]
+                          = group.toUtf8();
+  subscriptionVariables["nickname"]
+                          = nickname.toUtf8();
   
   sendPacket("allowsubscription", subscriptionVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Passes parameters onto a packet handler and transmits result
+**
+****************************************************************************/
+void Client::denySubscription(const QString &contactAddress)
+{
+  /* packet variables */
+  VariableHash subscriptionVariables;
+  subscriptionVariables["contactAddress"]
+                           = contactAddress.toUtf8();
+  
+  sendPacket("denysubscription", subscriptionVariables);
 }
 
 

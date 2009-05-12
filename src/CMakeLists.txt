@@ -32,6 +32,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handlers/32_setshownpresenceandstatus.cpp
   protocol/handlers/51_getnewsubscription.cpp
   protocol/handlers/52_allowsubscription.cpp
+  protocol/handlers/55_denysubscription.cpp
   
   network/packet.cpp
   network/gateway.cpp
