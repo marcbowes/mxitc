@@ -4,8 +4,6 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
-
 #include "protocol/packet_header.h"
 
 #include "client.h"

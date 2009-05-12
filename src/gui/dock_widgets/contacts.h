@@ -10,12 +10,10 @@
 #define __MXIT_GUI_DOCKWIDGET_CONTACTS_H__
 
 #include "common/contact.h"
+
 #include "gui/mxit_dock_widget.h"
 
 #include "ui_contacts.h"
-
-#include <QDebug>
-#include <QSet>
 
 namespace MXit
 {

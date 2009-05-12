@@ -11,7 +11,6 @@
 
 #include <QDockWidget>
 #include <QHash>
-#include <QDebug>
 
 #include "common/types.h"
 

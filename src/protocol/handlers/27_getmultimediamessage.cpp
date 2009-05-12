@@ -94,11 +94,19 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
   QByteArray packetData = getChunk(chunkedData, type, length);
   
   if (size != (length + 5))
-    qDebug() << "Error parsing data or more than one chunk (and not of type 1)";
+    ;/* FIXME: error handling */ //qDebug() << "Error parsing data or more than one chunk (and not of type 1)";
 
   return handleChunk(type, length, packetData);
 }
 
+
+/****************************************************************************
+**
+** Author: Tim Sjoberg
+**
+** FIXME: comment this
+**
+****************************************************************************/
 QByteArray GetMultimediaMessage::getChunk(QByteArray chunk, int &type, int &length)
 {
   type = (int)chunk.at(0);
@@ -113,6 +121,14 @@ QByteArray GetMultimediaMessage::getChunk(QByteArray chunk, int &type, int &leng
   return chunk.right(chunk.size() - 5);
 }
 
+
+/****************************************************************************
+**
+** Author: Tim Sjoberg
+**
+** FIXME: comment this
+**
+****************************************************************************/
 VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray chunkData)
 {
   //commmon
@@ -184,7 +200,7 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
       //anchor
       anchor = (unsigned char)chunkData[0];
       if ((anchor != 3)&&(anchor != 0)) {
-        qDebug() << "Error parsing splash image: invalid anchor";
+        ;/* FIXME: error handling */ //qDebug() << "Error parsing splash image: invalid anchor";
         break;
       }
       returnData["anchor"] = QByteArray::number(anchor);
@@ -242,7 +258,7 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
       //we shouldnt get this
       break;
     default:
-      qDebug() << "Error: Unknown chunked data type " << type;
+      ;/* FIXME: error handling */ //qDebug() << "Error: Unknown chunked data type " << type;
       break;
   }
   

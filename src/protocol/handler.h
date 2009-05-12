@@ -12,7 +12,6 @@
 #define __MXIT_PROTOCOL_HANDLER_H__
 
 #include <QObject>
-#include <QDebug>
 
 #include "common/hash_variables.h"
 

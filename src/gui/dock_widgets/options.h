@@ -10,7 +10,6 @@
 #define __MXIT_GUI_DOCKWIDGET_OPTIONS_H__
 
 #include <QFileDialog>
-#include <QDebug>
 
 #include "gui/mxit_dock_widget.h"
 

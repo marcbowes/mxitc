@@ -6,11 +6,8 @@
 
 #include <QUrl>
 #include <QDateTime>
-#include <QDebug>
 
 #include "handshaker.h"
-
-#define DEBUG(x) qDebug() << #x << ":\t" << x;
 
 namespace MXit
 {
@@ -58,27 +55,15 @@ Handshaker::~Handshaker()
 ****************************************************************************/
 void Handshaker::requestComplete(int id, bool error)
 {
-#ifdef HANDSHAKER_DEBUG
-  qDebug() << "Request Finished";
-  DEBUG(currentRequest);
-  DEBUG(id);
-  DEBUG(http->lastResponse().statusCode());
-#endif
-  
   /* check for error */
   if (error) {
-    qDebug() << "There was an error in the HTTP request";
-    DEBUG(http->errorString());
+    ;/* FIXME: error handling */ // "There was an error in the HTTP request";
     
     return;
   }
   
   /* ensure the request that completed is the one we expected */
-  if (id != currentRequest) {
-  #ifdef HANDSHAKER_DEBUG
-    qDebug() << "ignoring unexpected request id";
-  #endif
-    
+  if (id != currentRequest) {    
     return;
   }
   
@@ -121,11 +106,6 @@ void Handshaker::initialize()
     .arg(url.path())
     .arg(timestamp)
   ;
-
-#ifdef HANDSHAKER_DEBUG
-  DEBUG(url.host());
-  DEBUG(query);
-#endif
   
   state = INITIALIZING;
   currentRequest = http->get(query);
@@ -155,11 +135,6 @@ void Handshaker::challenge(const QString &cellphone, const QString &captcha,
     .arg(cellphone)
     .arg(captcha)
   ;
-  
-#ifdef HANDSHAKER_DEBUG
-  DEBUG(url.host());
-  DEBUG(query);
-#endif
 
   state = CHALLENGING;
   currentRequest = http->get(query);

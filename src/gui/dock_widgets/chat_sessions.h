@@ -10,12 +10,10 @@
 #define __MXIT_GUI_DOCKWIDGET_CHATSESSIONS_H__
 
 #include "common/chat_session.h"
+
 #include "gui/mxit_dock_widget.h"
 
 #include "ui_chat_sessions.h"
-
-#include <QDebug>
-#include <QSet>
 
 namespace MXit
 {

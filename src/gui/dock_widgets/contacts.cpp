@@ -1,4 +1,10 @@
+/****************************************************************************
+**
+** For Copyright & Licensing information, see COPYRIGHT in project root
+**
+****************************************************************************/
 
+#include <QSet>
 
 #include "contacts.h"
 
@@ -60,7 +66,6 @@ void Contacts::contactsListContextMenuRequest(const QPoint & pos) {
   
   if (lwi) {
     QString contactAddress = lwi->text();
-    qDebug() << parent();
     emit contextMenuRequest(contactsList->mapToGlobal ( pos ), contactAddress);
   }
 }
