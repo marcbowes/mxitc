@@ -265,24 +265,6 @@ void Client::addContact(const QString &group, const QString &contactAddress, con
 /****************************************************************************
 **
 ** Author: Marc Bowes
-** Author: Richard Baxter
-**
-** same as login, but skips the handshaking phase
-**
-****************************************************************************/
-void Client::authenticate(const VariableHash &settings)
-{
-  variables.unite(settings);
-  emit outgoingVariables(variables);
-  
-  connection->setGateway(variables["soc1"]);
-  connection->open(getPacket("login"));
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
 **
 ** Passes parameters onto a packet handler and transmits result
 **
@@ -300,6 +282,24 @@ void Client::allowSubscription(const QString &contactAddress, const QString &gro
                           = nickname.toUtf8();
   
   sendPacket("allowsubscription", subscriptionVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+** Author: Richard Baxter
+**
+** same as login, but skips the handshaking phase
+**
+****************************************************************************/
+void Client::authenticate(const VariableHash &settings)
+{
+  variables.unite(settings);
+  emit outgoingVariables(variables);
+  
+  connection->setGateway(variables["soc1"]);
+  connection->open(getPacket("login"));
 }
 
 
@@ -346,6 +346,28 @@ void Client::initialize()
 **
 ** Author: Marc Bowes
 **
+****************************************************************************/
+void Client::getContacts()
+{
+  /* FIXME: stub */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::getNewMessages()
+{
+  /* FIXME: stub */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** abstraction method to simply login process, see submethod calls
 **
 ****************************************************************************/
@@ -365,6 +387,17 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
   challenge(captcha);
   
   emit outgoingVariables(variables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::pollDifference()
+{
+  /* FIXME: stub */
 }
 
 
@@ -407,6 +440,17 @@ void Client::setGateway(const QString &connectionString)
 **
 ** Author: Marc Bowes
 **
+****************************************************************************/
+void Client::setShownPresenceAndStatus()
+{
+  /* FIXME: stub */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Passes parameters onto a packet handler and transmits result
 **
 ****************************************************************************/
@@ -420,6 +464,39 @@ void Client::sendMessage(const QString &contactAddress, const QString &message, 
   messageVariables["flags"]           = QString("%1").arg(flags).toUtf8();
   
   sendPacket("sendnewmessage", messageVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::signup()
+{
+  /* FIXME: stub */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::updateContactInfo()
+{
+  /* FIXME: stub */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::updateProfile()
+{
+  /* FIXME: stub */
 }
 
 
