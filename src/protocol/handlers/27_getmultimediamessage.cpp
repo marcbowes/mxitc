@@ -47,8 +47,40 @@ void GetMultimediaMessage::build(MXit::Network::Packet *packet, VariableHash &va
   /* packet header setup */
   packet->setCommand("27");
   
+  int type, length;
+  
+  type = variables["type"].toInt();
+  
+  QByteArray data;
+  
+  switch(type) {
+    case MXit::Protocol::Enumerables::ChunkedData::RejectFile:
+      
+      break;
+    case MXit::Protocol::Enumerables::ChunkedData::GetFile:
+      
+      break;
+    case MXit::Protocol::Enumerables::ChunkedData::ReceivedFile:
+      
+      break;
+    case MXit::Protocol::Enumerables::ChunkedData::SendFileDirect:
+      
+      break;
+    case MXit::Protocol::Enumerables::ChunkedData::ForwardFileDirect:
+      
+      break;
+    default:
+      //FIXME: report error
+      break;
+  }
+  
+  length = data.size();
+  
+  data.prepend(intToHex(length, 4));
+  data.prepend(variables["type"]); 
+  
   /* packet data setup */
-  (*packet) << variables["chunkedData"];
+  (*packet) << data;
 }
 
 /****************************************************************************
@@ -131,7 +163,7 @@ QByteArray GetMultimediaMessage::getChunk(QByteArray chunk, int &type, int &leng
 ****************************************************************************/
 VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray chunkData)
 {
-  //commmon
+  //commmon FIXME: cleanup. data isnt actually necessary i dont think
   QByteArray data;
   VariableHash returnData;
   returnData["type"] = QByteArray::number(type);
@@ -228,6 +260,9 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
     case MXit::Protocol::Enumerables::ChunkedData::SplashClickThrough:
       //currently empty
       break;
+    case MXit::Protocol::Enumerables::ChunkedData::OfferFile:
+      
+      break;
     case MXit::Protocol::Enumerables::ChunkedData::GetFile:
       //id FIXME save to variable hash
       data = chunkData.left(8);
@@ -271,6 +306,14 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
   }
   
   return returnData;
+}
+
+QByteArray GetMultimediaMessage::intToHex(int number, int numberOfBytes)
+{
+  QByteArray output = QByteArray::number(number, 16);
+  while (output.size() < (numberOfBytes*2))
+    output.prepend("0");
+  return output.toHex();
 }
 
 }
