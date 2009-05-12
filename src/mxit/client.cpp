@@ -660,7 +660,7 @@ void Client::sendPacket(const QString &handler)
 void Client::sendPacket(const QString &handler, VariableHash &packetVariables)
 {
   connection->sendPacket(getPacket(handler, packetVariables));
-  keepAliveTimer.start(1000 * 60); /* every minute */
+  keepAliveTimer.start(1000 * 60 * 15); /* every 15 minutes */
 }
 
 
