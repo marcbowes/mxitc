@@ -256,6 +256,25 @@ void Client::authenticate(const VariableHash &settings)
 /****************************************************************************
 **
 ** Author: Marc Bowes
+**
+** Passes parameters onto a packet handler and transmits result
+**
+****************************************************************************/
+void Client::allowSubscription(const QString &contactAddress, const QString &group,
+  const QString &nickname)
+{
+  /* packet variables */
+  VariableHash subscriptionVariables;
+  subscriptionVariables["contactAddress"]
+                           = contactAddress.toUtf8();
+  
+  sendPacket("allowsubscription", subscriptionVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
 ** Author: Richard Baxter
 **
 ** this method instructs the handshaker to request initial information
