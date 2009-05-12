@@ -50,6 +50,7 @@ class Client : public QObject
   void environmentReady();
   void errorEncountered(const QString &);
   void outgoingAction(Action);
+  void outgoingConnectionError(const QString &message);
   void outgoingMessage(const QString & contactAddress, const QString & message);
   void outgoingError(int code, const QString &message);
   void outgoingVariables(const VariableHash&);

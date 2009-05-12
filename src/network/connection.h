@@ -52,16 +52,6 @@ class Connection : public QObject
   void outgoingPacket(const QByteArray &packet);
   void outgoingState(const State &outgoing);
 
-  private slots:
-  
-  void HTTP_connect();
-  void HTTP_read(int id, bool error);
-  void TCP_connect();
-  void TCP_connected();
-  void TCP_disconnect();
-  void TCP_disconnected();
-  void TCP_read();
-
   public:         /* methods */
   
   Packet *buildPacket();
@@ -71,7 +61,18 @@ class Connection : public QObject
   void open(const Packet *login);
   void setGateway(const QString &connectionString);
   void sendPacket(const Packet *packet);
+
+  private slots:
   
+  void HTTP_connect();
+  void HTTP_read(int id, bool error);
+  void TCP_connect();
+  void TCP_connected();
+  void TCP_disconnect();
+  void TCP_disconnected();
+  void TCP_error(QAbstractSocket::SocketError socketError);
+  void TCP_read();
+
   private:        /* variables */
   
   QByteArray      buffer;

@@ -406,7 +406,7 @@ QByteArray Client::variableValue(const QString &name)
 ****************************************************************************/
 void Client::incomingError(const QString &error)
 {
-  qDebug() << error;
+  emit outgoingConnectionError(error);
 }
 
 
