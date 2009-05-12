@@ -19,7 +19,7 @@ namespace Handlers
 **
 ** Author: Marc Bowes
 **
-** stub
+** allows a subscription (friend) request and assigns a handle
 **
 ****************************************************************************/
 void AllowSubscription::build(MXit::Network::Packet *packet, VariableHash &variables)
@@ -59,7 +59,7 @@ VariableHash AllowSubscription::handle(const QByteArray &packet)
   == PACKET FORMAT
   ***************************************************************************
   **
-  **  51\0
+  **  52\0
   **  errorCode[\1errorMessage]\0
   **
   ***************************************************************************

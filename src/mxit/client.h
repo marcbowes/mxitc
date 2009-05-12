@@ -15,6 +15,8 @@
 #define __MXIT_CLIENT_H__
 
 #include <QHash>
+#include <QTime>
+#include <QTimer>
 
 #include "common/actions.h"
 
@@ -62,6 +64,7 @@ class Client : public QObject
   void incomingError(const QString &);
   void incomingPacket(const QByteArray &);
   void incomingVariables(const VariableHash &);
+  void keepAlive();
 
   public:         /* methods */
   
@@ -96,6 +99,8 @@ class Client : public QObject
   MXit::Network::Connection  *connection;
   MXit::Protocol::HandlerHash handlers;
   MXit::Protocol::Handshaker *handshaker;
+  QTimer                      keepAliveTimer;
+  QTime                       lastAction;
   Status                      state;
   VariableHash                variables;
 };

@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include "55_denysubscription.h"
+#include "1k_keepalive.h"
 
 namespace MXit
 {
@@ -19,27 +19,25 @@ namespace Handlers
 **
 ** Author: Marc Bowes
 **
-** Denies a subscription (friend) request
+** Empty command to prevent a login-kick (#43)
 **
 ****************************************************************************/
-void DenySubscription::build(MXit::Network::Packet *packet, VariableHash &variables)
+void KeepAlive::build(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
   ***************************************************************************
   **
   **  id=loginname[\1sesid]\0
-  **  cm=55
-  **  ms=contactAddress
+  **  cm=1000
   **
   ***************************************************************************
   */
   
   /* packet header setup */
-  packet->setCommand("55");
+  packet->setCommand("1000");
   
-  /* build packet data */
-  (*packet) << variables["contactAddress"];
+  /* no data */
 }
 
 
@@ -50,13 +48,13 @@ void DenySubscription::build(MXit::Network::Packet *packet, VariableHash &variab
 ** Does nothing
 **
 ****************************************************************************/
-VariableHash DenySubscription::handle(const QByteArray &packet)
+VariableHash KeepAlive::handle(const QByteArray &packet)
 {
   /*
   == PACKET FORMAT
   ***************************************************************************
   **
-  **  55\0
+  **  1000\0
   **  errorCode[\1errorMessage]\0
   **
   ***************************************************************************

@@ -22,7 +22,7 @@ namespace MXit
 **
 ****************************************************************************/
 Client::Client()
-  : state (IDLE), variables()
+  : state (IDLE), variables(), keepAliveTimer()
 {
   connection = new MXit::Network::Connection();
   handshaker = new MXit::Protocol::Handshaker();
@@ -54,6 +54,11 @@ Client::Client()
   /* 51 */ handlers["getnewsubscription"]         = new GetNewSubscription();
   /* 52 */ handlers["allowsubscription"]          = new AllowSubscription();
   /* 55 */ handlers["denysubscription"]           = new DenySubscription();
+  /* 1k */ handlers["keepalive"]                  = new KeepAlive();
+  
+  /* keep alive */
+  connect(&keepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
+  keepAliveTimer.start(1000 * 60); /* every minute */
 }
 
 
@@ -214,6 +219,23 @@ void Client::incomingVariables(const VariableHash &params)
   variables.remove("captcha");
   
   emit outgoingVariables(variables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Called every so often by keepAliveTimer
+** sends packet 1000 if 15 minutes of no activity has elapsed to prevent
+** MXit dropping the connection
+**
+****************************************************************************/
+void Client::keepAlive()
+{
+  int difference = lastAction.secsTo(QTime::currentTime());
+  if (difference >= 60 * 15) /* 15 minutes */
+    sendPacket("keepalive");
 }
 
 
@@ -636,6 +658,7 @@ void Client::sendPacket(const QString &handler)
 void Client::sendPacket(const QString &handler, VariableHash &packetVariables)
 {
   connection->sendPacket(getPacket(handler, packetVariables));
+  lastAction = QTime::currentTime();
 }
 
 
