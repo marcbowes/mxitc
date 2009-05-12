@@ -69,7 +69,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void subscriptionsReceived();
   
   bool ensureExistanceOfContact(const QString & contactAddress);
-  bool ensureExistanceOfChatSession(const QString & chatSessionName);
+  
+  bool ensureExistanceOfChatSession(MXit::Contact & contact);
   
   /* chat session creation deletion*/
   void startChatSessionWithContact (MXit::Contact & contact);

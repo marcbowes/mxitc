@@ -284,7 +284,9 @@ void MXitC::contactsMenu(const QPoint & pos, const QString& nickname) {
   if (contact.presence == Protocol::Enumerables::Contact::Unaffiliated) {
     if (selection == "Accept") 
     {
-      /*TODO*/
+      /* TODO ask user to select groupname and nicKname - duplicate nicknames must be implemented!*/
+      mxit->allowSubscription(contact.contactAddress, "", contact.nickname);
+      logWidget->logMessage("GUI:: "+contact.nickname+" subscribed to");
     }
   }
   else 
@@ -544,6 +546,7 @@ void MXitC::incomingAction(Action action)
       
     //--------------------------------------
     case MESSAGE_RECEIVED:
+      logWidget->logMessage("GUI::MESSAGE_RECEIVED");
       messageReceived();
     break;
     
@@ -582,6 +585,8 @@ void MXitC::subscriptionsReceived(){
       contactAddressN \1 nicknameN \1 typeN \1 hiddenLoginnameN \1 msgN \1 groupchatmodN
     */ 
     QVector<QByteArray> fields = QVector<QByteArray>::fromList ( contact.split('\1') );
+    
+    qDebug() << fields;
     
     QString contactAddress = fields[0];
     
@@ -688,9 +693,9 @@ bool MXitC::ensureExistanceOfContact(const QString & contactAddress) {
 **
 ****************************************************************************/
 
-bool MXitC::ensureExistanceOfChatSession(const QString & chatSessionName) {
-  if (!chatSessions.contains(chatSessionName)) {
-    chatSessions[chatSessionName] = MXit::ChatSession();
+bool MXitC::ensureExistanceOfChatSession(MXit::Contact & contact) {
+  if (!chatSessions.contains(contact.nickname)) {
+    chatSessions[contact.nickname] = MXit::ChatSession(&contact);
     return true;
   }
   return false;
@@ -709,11 +714,12 @@ void MXitC::messageReceived(){
 
   /*FIXME only handles single user stuff atm! group chat to follow*/
   QString contactAddress = mxit->variableValue("contactAddress");
+  qDebug() << contactAddress;
   if (contacts.contains(contactAddress)) { /*since we are assuming the chat is from a single contact not a group chat*/
   
     MXit::Contact& sender = contacts[contactAddress];
-    
-    ensureExistanceOfChatSession(sender.nickname);
+    qDebug() << sender.nickname;
+    ensureExistanceOfChatSession(sender);
     chatSessions[sender.nickname].incomingMessage( Message(&sender, mxit->variableValue("message")) );
     
     /* if the chatSession that received the message is the one displayed, we need to set the unread message variable to false so that it won't be marked as 'unread'*/
@@ -721,8 +727,11 @@ void MXitC::messageReceived(){
       currentChatSession->unreadMessage = false;
     
     
-    refreshChatBox();
+    Q_FOREACH(const ChatSession & c, chatSessions.values()) {
+      qDebug() << c.chatSessionName;
+    }
     refreshChatSessions(); /* show unread messages, new chat sessions etc*/
+    refreshChatBox();
   }
   else {
     qDebug() << "wtf unknown contact!"; 

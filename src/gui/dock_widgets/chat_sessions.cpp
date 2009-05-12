@@ -175,6 +175,9 @@ void ChatSessions::refresh(const QList<ChatSession>& chatSessions) {
   /* resetting contacts list*/
   
   qDebug() << "adding items";
+  Q_FOREACH(const ChatSession & c, chatSessions) {
+    qDebug() << c.chatSessionName;
+  }
   QSet <QListWidgetItem*> shouldBeInList; // chatSessionName
   
   /* building set of who should be in the list*/
