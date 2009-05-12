@@ -39,7 +39,7 @@ Client::Client()
     
   /* keep alive */
   connect(&keepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
-  keepAliveTimer.start(1000 * 60); /* every minute */
+  keepAliveTimer.setSingleShot(true);
   
   /* create handlers */
   using namespace MXit::Protocol::Handlers;
@@ -232,9 +232,7 @@ void Client::incomingVariables(const VariableHash &params)
 ****************************************************************************/
 void Client::keepAlive()
 {
-  int difference = lastAction.secsTo(QTime::currentTime());
-  if (difference >= 60 * 15) /* 15 minutes */
-    sendPacket("keepalive");
+  sendPacket("keepalive");
 }
 
 
@@ -662,7 +660,7 @@ void Client::sendPacket(const QString &handler)
 void Client::sendPacket(const QString &handler, VariableHash &packetVariables)
 {
   connection->sendPacket(getPacket(handler, packetVariables));
-  lastAction = QTime::currentTime();
+  keepAliveTimer.start(1000 * 60 * 15); /* every 15 minutes */
 }
 
 
