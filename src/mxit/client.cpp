@@ -38,6 +38,10 @@ Client::Client()
   /* error bubbling between connection and ui */
   connect(connection, SIGNAL(outgoingError(const QString &)),
     this, SLOT(incomingError(const QString &)));
+    
+  /* keep alive */
+  connect(&keepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
+  keepAliveTimer.start(1000 * 60); /* every minute */
   
   /* create handlers */
   using namespace MXit::Protocol::Handlers;
@@ -51,14 +55,11 @@ Client::Client()
   /* 10 */ handlers["sendnewmessage"]             = new SendNewMessage();
   /* 27 */ handlers["getmultimediamessage"]       = new GetMultimediaMessage();
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
+  /* 43 */ handlers["loginkick"]                  = new LoginKick();
   /* 51 */ handlers["getnewsubscription"]         = new GetNewSubscription();
   /* 52 */ handlers["allowsubscription"]          = new AllowSubscription();
   /* 55 */ handlers["denysubscription"]           = new DenySubscription();
   /* 1k */ handlers["keepalive"]                  = new KeepAlive();
-  
-  /* keep alive */
-  connect(&keepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
-  keepAliveTimer.start(1000 * 60); /* every minute */
 }
 
 
@@ -163,8 +164,11 @@ void Client::incomingPacket(const QByteArray &packet)
       /* variable scrubbing */
       variables.remove("contacts");
       break;
+    case LOGINKICK:
+      sendPacket("login");
+      break;
     case DENYSUBSCRIPTION:
-      /* ensure contact refresh */
+      /* ensure contact refresh.. FIXME: Marc doesn't like this */
       sendPacket("getcontacts");
       break;
   }

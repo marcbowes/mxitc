@@ -30,6 +30,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handlers/17_polldifference.cpp
   protocol/handlers/27_getmultimediamessage.cpp
   protocol/handlers/32_setshownpresenceandstatus.cpp
+  protocol/handlers/43_loginkick.cpp
   protocol/handlers/51_getnewsubscription.cpp
   protocol/handlers/52_allowsubscription.cpp
   protocol/handlers/55_denysubscription.cpp
