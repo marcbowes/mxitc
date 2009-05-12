@@ -35,8 +35,10 @@ class Contact
 
   public:        /* variables */
   
-  QString group;
   QString contactAddress;
+  QString group;
+  QString inviteMessage;
+  bool    hideAddress;
   QString nickname;
 };
 

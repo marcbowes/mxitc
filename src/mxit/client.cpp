@@ -309,6 +309,8 @@ void Client::allowSubscription(const QString &contactAddress, const QString &gro
 ** Author: Marc Bowes
 **
 ** Passes parameters onto a packet handler and transmits result
+** If block is set to true a block request will be sent (prevents future
+** subscription attempts)
 **
 ****************************************************************************/
 void Client::denySubscription(const QString &contactAddress, bool block)
