@@ -48,7 +48,8 @@ class Presence
           away,
           dnd,
           offline,
-          online
+          online,
+          unaffiliated
   ;
 };
 

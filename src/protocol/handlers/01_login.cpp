@@ -115,21 +115,7 @@ void Login::build(MXit::Network::Packet *packet, VariableHash &variables)
     variables["dc"] = dc;
   }
   
-  /* write data to packet */
-  
-  /* FIXME: remove this */
-  /*(*packet) << "cPptvk6QwDWjqDvrWLaiJA=="
-            << "E-5.8.2-L-Nokia/E51"
-            << "1"                               // FIXME: getContacts
-            << "w=240;h=320;dmem=371;lmem=1;c=16777216;a=256;ctyp=8129;fmem=130657726;capd=4202496;utf8=false;cc=ZA;cid=0;imei=354193022441666;la=0;enc=ISO-8859-1;ploc=en;mcc=0;mnc=0;lac=0"
-                                                 // FIXME: capabilities 
-            << "25AABCAC-1AE7-414E-AB32-24DA79B04CD4"
-                                                 // FIXME: dc 
-            << "524287"                          // FIXME: features
-            << variables["defaultDialingCode"]   // FIXME: dialingCode
-            << "en"                              // FIXME: locale
-  ;*/
-  
+  /* write data to packet */  
   (*packet) << variables["encryptedpassword"]
             << "E-5.8.2-Y-LPM"                    // version
             << "1"                                // getcontacts

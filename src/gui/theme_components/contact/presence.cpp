@@ -40,6 +40,7 @@ void Presence::load(const QDir &dir)
   QImage _dnd         = QImage(dir.absoluteFilePath("dnd.png"));
   QImage _offline     = QImage(dir.absoluteFilePath("offline.png"));
   QImage _online      = QImage(dir.absoluteFilePath("online.png"));
+  QImage _unaffiliated= QImage(dir.absoluteFilePath("unaffiliated.png"));
   
   /* build pixmaps from images, or use defaults */
   if (!_available.isNull()) {
@@ -60,6 +61,10 @@ void Presence::load(const QDir &dir)
   
   if (!_online.isNull()) {
     online = QPixmap::fromImage(_online);
+  }
+  
+  if (!_unaffiliated.isNull()) {
+    unaffiliated = QPixmap::fromImage(_unaffiliated);
   }
 }
 
@@ -88,6 +93,9 @@ void Presence::loadDefaults()
 
   online = QPixmap(DEFAULT_SIZE);
   online.fill(Qt::green);
+  
+  unaffiliated = QPixmap(DEFAULT_SIZE);
+  unaffiliated.fill(Qt::green);
 }
 
 
@@ -116,6 +124,9 @@ QPixmap Presence::pixmap(Protocol::Enumerables::Contact::Presence presence)
       break;
     case Online:
       return online;
+      break;
+    case Unaffiliated:
+      return unaffiliated;
       break;
     default:
       return QPixmap(DEFAULT_SIZE);

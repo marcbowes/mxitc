@@ -43,7 +43,8 @@ enum Presence {
   Online         = 1,
   Away           = 2,
   Available      = 3,
-  DoNotDisturb   = 4
+  DoNotDisturb   = 4,
+  Unaffiliated   = 99 /* FIXME: HACK? */
 };
 
 enum Type {
