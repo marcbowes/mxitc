@@ -55,6 +55,7 @@ Client::Client()
   /* 10 */ handlers["sendnewmessage"]             = new SendNewMessage();
   /* 27 */ handlers["getmultimediamessage"]       = new GetMultimediaMessage();
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
+  /* 33 */ handlers["blocksubscription"]          = new BlockSubscription();
   /* 43 */ handlers["loginkick"]                  = new LoginKick();
   /* 51 */ handlers["getnewsubscription"]         = new GetNewSubscription();
   /* 52 */ handlers["allowsubscription"]          = new AllowSubscription();
@@ -310,14 +311,17 @@ void Client::allowSubscription(const QString &contactAddress, const QString &gro
 ** Passes parameters onto a packet handler and transmits result
 **
 ****************************************************************************/
-void Client::denySubscription(const QString &contactAddress)
+void Client::denySubscription(const QString &contactAddress, bool block)
 {
   /* packet variables */
   VariableHash subscriptionVariables;
   subscriptionVariables["contactAddress"]
                            = contactAddress.toUtf8();
   
-  sendPacket("denysubscription", subscriptionVariables);
+  if (block)
+    sendPacket("blocksubscription", subscriptionVariables);
+  else
+    sendPacket("denysubscription", subscriptionVariables);
 }
 
 
