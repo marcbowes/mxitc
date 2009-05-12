@@ -59,6 +59,10 @@ class MXitC : public QMainWindow, private Ui::MXitC
   ~MXitC();
   
   enum State  {LOGGED_IN, LOGGED_OUT, LOGGING_IN};
+  
+  protected:
+
+  void resizeEvent ( QResizeEvent * event );
 
   private: /* methods */
   void outgoingMessage(const QString & message);

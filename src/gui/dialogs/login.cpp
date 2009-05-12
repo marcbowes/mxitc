@@ -93,6 +93,7 @@ void Login::captchaChanged(const QString &text)
 ** this SLOT is triggered when the client receives the environment variables
 **
 ****************************************************************************/
+/*TODO gray out everything but cancle button until environment variables have been received*/
 void Login::environmentVariablesReady()
 {
   /* captcha */
