@@ -171,32 +171,42 @@ void ChatSessions::selectItem(const QString& chatSessionName) {
 
 void ChatSessions::refresh(const QList<ChatSession>& chatSessions) {
 
+
   /* resetting contacts list*/
   
-  QSet <QListWidgetItem*> lwiInList; // nickname -> bool
+  qDebug() << "adding items";
+  QSet <QListWidgetItem*> shouldBeInList; // chatSessionName
   
+  /* building set of who should be in the list*/
   Q_FOREACH(const ChatSession & c, chatSessions) {
-    QListWidgetItem* inContacts = addChatSession( c ); 
-    lwiInList.insert(inContacts);
+    QListWidgetItem* inChatSessions = addChatSession( c ); 
+    shouldBeInList.insert(inChatSessions);
+    qDebug() << "item should be in list => " << c.chatSessionName;
   }
   
-  /* removing any contacts that are no longer n the list*/
-  Q_FOREACH(const ChatSession & c, chatSessions) {
-    if (!lwiInList.contains(listItemWidgets[c.chatSessionName])) {
-      chatSessionsList->removeItemWidget(listItemWidgets[c.chatSessionName]);
-      delete listItemWidgets[c.chatSessionName];
-      listItemWidgets.remove(c.chatSessionName);
+  /*scanning for those who shouldn't be in the list and deleting them*/
+  for (int i = 0 ; i < chatSessionsList->count() ; i++) {
+    QListWidgetItem * lwi = chatSessionsList->item(i);
+    
+    qDebug() << "checking if item is supposed to be in list => " << lwi->text();
+    if (!shouldBeInList.contains(lwi)) {
+      qDebug() << lwi->text() << " item is in chatSessionlist but should not be";
+      chatSessionsList->removeItemWidget(lwi);
+      listItemWidgets.remove(lwi->text());
+      delete lwi;
+      i--;
     }
   }
   
-  /*cleaning up*/
+  /*at this point all contacts have a precidence number on*/
+  
   chatSessionsList->sortItems();
-    
+  
+  /* removing precidence number*/
   for (int i = 0 ; i < chatSessionsList->count() ; i++) {
     QListWidgetItem * lwi = chatSessionsList->item(i);
     lwi->setText ( lwi->text().mid ( 1 ) );
   }
-  
   //contactList->setCurrentRow ( selected );
 
 }

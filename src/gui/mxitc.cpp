@@ -33,12 +33,16 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   login = NULL;
    
+  /* Loading settings */
   settings = new QSettings ( "mxitc", "env", this );
   
-  /* Adding MXitDockWidgets*/
-  
+  /*------------------------------------------------------------------------------------------*/
+  /* Adding MXitDockWidgets - appendDockWidget will restore their closed& floating states as well as add thme to the necessary data structures*/
+  /*------------------------------------------------------------------------------------------*/
+  #ifdef VARIABLE_DEBUGGER
   DockWidget::Debug * debugWidget = new DockWidget::Debug (this, theme);
   appendDockWidget(debugWidget,    Qt::RightDockWidgetArea, actionDebug_Variables);
+  #endif
   
   optionsWidget = new DockWidget::Options (this, theme);
   appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
@@ -54,20 +58,34 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   addContactWidget = new DockWidget::AddContact (this, theme);
   appendDockWidget(addContactWidget, Qt::LeftDockWidgetArea, actionAdd_Contact);
-  //connect(actionAddContact, SIGNAL(triggered()), this, SLOT(openAddContactDialog()));
   
+  /*------------------------------------------------------------------------------------------*/
+  /*Settings restore */
+  /*------------------------------------------------------------------------------------------*/
+  /* After all the MXitDockWidgets have been added, their attributes can be restored*/
   restoreState(settings->value("gui layout").toByteArray());
   
+  /* Restoring theme information */
   optionsWidget->setBaseThemeDirectory(settings->value("themeBaseDirectory").toString());
   optionsWidget->setSelectedTheme(settings->value("selectedTheme").toString());
-  themeChanged(); /* HACK? */
   
-  /*TODO mxit still need addcontact slot*/
+  /* normally the optionsWidget->setSelectedTheme will trigger the optionWidget's themeChanged SIGNAL which will (in a few lines) be connected to this class's themeChange SLOT
+  We can't connect the themeChanged SIGNAL/SLOTs up since that would cause a QSettings save on the 'selected theme' on index 0 of the list and this->themeChanged which will overwrite the restored (correct!) QSettings value for 'selected theme' (something [TODO find out again] sets index to 0 => changes index of list => optionsWidget's loadTheme => this class's themeChanged => which overwrites the settings)*/
+  themeChanged(); /* so we just call this manually since we know now the correct theme is selected*/
+  
+  /*------------------------------------------------------------------------------------------*/
+  /* Connecting of functionality from child widgets to client*/
+  /*------------------------------------------------------------------------------------------*/
+  /* connecting the addContact functionality from the widget to the client*/
   connect(addContactWidget, 
           SIGNAL(addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &)), 
           mxit, 
           SLOT  (addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &))  );
   
+  
+  /*------------------------------------------------------------------------------------------*/
+  /* Connecting contextMenu requests from child widgets */
+  /*------------------------------------------------------------------------------------------*/
   connect(chatSessionsWidget, 
           SIGNAL(contextMenuRequest(const QPoint &, const QString &)), 
           this , 
@@ -78,7 +96,14 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
           this , 
           SLOT(contactsMenu(const QPoint &, const QString &))  );
   
+  
+  /*------------------------------------------------------------------------------------------*/
+  /* Connecting new variables SIGNAL from the client to tell debugWidget to update
+  /*------------------------------------------------------------------------------------------*/
+   #ifdef VARIABLE_DEBUGGER
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
+  #endif
+  
   
   mainTextArea->setFocusProxy(chatInput);
   
@@ -99,13 +124,18 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
   
   
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  
-  
+  /*------------------------------------------------------------------------------------------*/
+  /* Setting up status bar
+  /*------------------------------------------------------------------------------------------*/
   statusLabel = new QLabel("No status set!");
   statusbar->addPermanentWidget(statusLabel);
   setStatusBar();
   
+  /*------------------------------------------------------------------------------------------*/
+  /* Loading client hash variables from QSettings and passing to client
+  /*------------------------------------------------------------------------------------------*/
+  
+  /* this is the list of variables that should be loaded*/
   StringVec variables;
   variables.append("err");                  /* 0 = success, else failed */
   variables.append("url");                  /* URL that should be used for the Get PID request */
@@ -135,11 +165,13 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   variables.append("soc2");
   variables.append("http2");
   
+  /* creating the variable hash*/
   VariableHash variableHash;
   
   bool hasAllVariables = true;
   
   Q_FOREACH(const QString &var, variables) {
+    /*if a variable that is needed (i.e. is in variables) is not in settings then the auto login won't work and we need to bail out of the autologin process*/
     if (!settings->contains(var)) {
       hasAllVariables = false;
       break;
@@ -147,6 +179,10 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
     variableHash[var] = settings->value(var).toByteArray();
   }
   
+    /*TODO sort out autologin, what if the user has deselected it in options, how do the hash variables get to the client, does the user still want an autologin but just promted or does the user want to retype in their password and captch each time?*/
+    
+  /*if the settings was able to load all the necessary variables, the autologin can commence*/
+  /*TODO don't autologin if user has set it to not do so in options*/
   if (hasAllVariables) {
     loggingIn();
     mxit->authenticate(variableHash);
@@ -155,7 +191,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   
 }
-
 
 
 /****************************************************************************
@@ -167,25 +202,18 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
 ****************************************************************************/
 MXitC::~MXitC()
 {
-  // nothing here
+  settings->sync(); /*just in case*/
+  
   delete settings;
   statusbar->removeWidget(statusLabel);
   delete statusLabel;
   
-  
+  /* clean up MXitDockWidgets*/
   Q_FOREACH(const QDockWidget * dw, dockWidgets) {
     delete dw;
   }
-  
-  
-  /*for (int r = 0 ; r < mainChatArea->rowCount() ; r++){
-    for (int c = 0 ; c < mainChatArea->columnCount () ; c++){
-      QTableWidgetItem * item = mainChatArea->takeItem (r, c);
-      if (item)
-        delete item;
-    }
-  }*/
 }
+
 
 /****************************************************************************
 **
@@ -194,25 +222,32 @@ MXitC::~MXitC()
 ** the chatSessionsWidget requested a context menu
 ** pos is relative to the chatSession dock widget
 **
+** NOTE: it might seem like a good idea to generalise the context menu functions, it's not, i tried - rax
+**
 ****************************************************************************/
 
+/* trust me on this one, it's undefed after all the context menu stuffs are done - rax*/
+/* FIXME overkill on the #defs? - rax*/
+#define MENU_START(title) QMenu contextMenu(title, this); QHash<QString, QAction*> hash;
+#define MENU_ITEM(y) hash[y] = new QAction (y, this); contextMenu.addAction(hash[y]);
+#define MENU_EXEC() contextMenu.exec( pos )->text();  Q_FOREACH(QAction * act, hash){ delete act; }
+  
 void MXitC::chatSessionsMenu(const QPoint & pos, const QString& chatSessionName) {
   
-  ChatSession & chatSession = chatSessions[chatSessionName];
+  //ChatSession & chatSession = chatSessions[chatSessionName];
   
-  QMenu contextMenu(chatSessionName, this);
+  MENU_START(chatSessionName);
   
-  #define ADD(x,y) QAction x(y, this); contextMenu.addAction(&x);
-  ADD(closeChat, "Close Chat");
-  #undef ADD
-  
-  //qDebug() << chatSessionsWidget;
+  MENU_ITEM("Close Chat");
  
-  QAction * selection = contextMenu.exec( pos );
+  QString selection = MENU_EXEC();
   
-  
-       if (selection == &closeChat) {
-    qDebug() << "closeChat";
+  if (selection == "Close Chat") {
+    /* closes chat */
+    /*TODO logging of chats!*/
+    
+    closeChatSession(chatSessionName);
+    
   }
 }
 
@@ -228,113 +263,122 @@ void MXitC::chatSessionsMenu(const QPoint & pos, const QString& chatSessionName)
 
 void MXitC::contactsMenu(const QPoint & pos, const QString& nickname) {
   
-  
   MXit::Contact & contact = contacts[nicknameToContactAddress[nickname]];
-  QMenu contextMenu(nickname, this);
   
-  /*FIXME!!!!!!!!!!!!!!!!!!! use QHash n stuff - rax*/
-  QHash<QString, QAction*> hash;
-  #define ADD(y) hash[y] = new QAction (y, this); contextMenu.addAction(hash[y]);
   
-  qDebug() << contact.nickname;
-  qDebug() << contact.presence;
+  MENU_START(nickname);
   
   if (contact.presence == Protocol::Enumerables::Contact::Unaffiliated) {
-    ADD(         "Accept");
+    MENU_ITEM("Accept");
   }
   else {
-    ADD(           "Chat");
-    ADD( "Change Nickname");
-    ADD(    "Change Group");
-    ADD(       "Send File");
-    ADD(  "Remove Contact");
+    MENU_ITEM("Chat");
+    MENU_ITEM("Change Nickname");
+    MENU_ITEM("Change Group");
+    MENU_ITEM("Send File");
+    MENU_ITEM("Remove Contact");
   }
-  #undef ADD
  
-  QAction * selection = contextMenu.exec( pos );
-  
+  QString selection = MENU_EXEC();
   
   if (contact.presence == Protocol::Enumerables::Contact::Unaffiliated) {
-    if (selection == hash["Accept"]) 
+    if (selection == "Accept") 
     {
       /*TODO*/
     }
   }
   else 
   {
-    if (selection == hash["Chat"]) 
+    if (selection == "Chat") 
     {
       qDebug() << "chat";
       startChatSessionWithContact(contact);
       
       /* since the user requested a chat, bring forward the chatSessions dockwindow*/
       chatSessionsWidget->raise();
-      Q_FOREACH(const ChatSession& cs, chatSessions.values()) {
-        qDebug() << cs.chatSessionName;
-    }
-    qDebug() << "";
-    chatSessionsWidget->selectItem(chatSessions[contact.nickname].chatSessionName);
+      
+      chatSessionsWidget->selectItem(chatSessions[contact.nickname].chatSessionName);
       
     }
-    else if (selection == hash["Change Nickname"]) {
-      qDebug() << "changeNickname";
+    else if (selection == "Change Nickname") {
+      /* TODO */
     }
-    else if (selection == hash["Change Group"]) {
-      qDebug() << "changeGroup";
+    else if (selection == "Change Group") {
+      /* TODO */
     }
-    else if (selection == hash["Send File"]) {
-      qDebug() << "sendFile";
-    
+    else if (selection == "Send File") {
+      /* TODO */
     }
-    else if (selection == hash["Remove Contact"]) {
-      qDebug() << "removeContact";
+    else if (selection == "Remove Contact") {
       
       QMessageBox sure;
-      sure.setText("Are you sure you wish to remove "+nickname);
+      sure.setText("Are you sure you wish to remove \""+nickname+"\"");
       sure.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
       sure.setDefaultButton(QMessageBox::Cancel);
       
-      sure.exec();
+      if (sure.exec() == QMessageBox::Ok) {
+        mxit->removeContact(contact.contactAddress);
+        nicknameToContactAddress.remove(contact.nickname);
+        contacts.remove(contact.contactAddress);
+        refreshContacts();
+      }
     }
-  }
-  
-  Q_FOREACH(QAction * act, hash){
-    delete act;
   }
 }
 
+#undef MENU_START
+#undef MENU_ITEM
+#undef MENU_EXEC
+  
+  
 /****************************************************************************
 **
 ** Author: Richard Baxter
+**
+** Starts a chat session with a certain contact if one has not been done so already. If one has already been created then this function will simply set the current
+** this function does not raise the chatSessions window to the front, that should be handled higher up
 **
 ****************************************************************************/
 
 void MXitC::startChatSessionWithContact (MXit::Contact & contact) {
   
-  if (chatSessions.contains(contact.nickname)) {
-    /*then just open the existing one*/ 
-    setCurrentChatSession (contact.nickname); 
-  }
-  else {
+  if (!chatSessions.contains(contact.nickname)) {
     /* create new ChatSession */
-    chatSessions[contact.nickname] = ChatSession(&contact);
-    //contactsChatSession[&contact] = &chatSessions[c.nickname];
-    
-    ChatSession& chatSess = chatSessions[contact.nickname];
-    //chatSess.incomingMessage( Message(0, "User: "+ contact.nickname));
-    chatSess.unreadMessage = false;
-    
-    setCurrentChatSession (chatSess.chatSessionName); 
-    
+    chatSessions[contact.nickname] = ChatSession(&contact);    
   }
+  /* whether the chat session was created in this function or not, we must select it as the current chat session*/
+  setCurrentChatSession (contact.nickname); 
+}
+  
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Closes and cleans up the requested chat session
+** NOTE assumes the chatSessionName is correct, error checking should be done higher up!
+** FIXME all logs will be lost if you do this, logging system still to be implemented
+**
+****************************************************************************/
+
+void MXitC::closeChatSession(const QString & chatSessionName) {
+
+  /* if user closes the currentChatSession*/
+  if(&chatSessions[chatSessionName] == currentChatSession)
+     currentChatSession = 0;
+     
+  chatSessions.remove(chatSessionName);
+  refreshChatSessions();
 }
 
 /****************************************************************************
 **
 ** Author: Richard Baxter
 **
+** Requests the new gateway that should be used to the client 
+**
 ****************************************************************************/
 
+/* TODO fix up the gateway stuff and the gateway stuff in options*/
 void MXitC::sendGateway(bool http)
 {
   if (http)
@@ -347,23 +391,34 @@ void MXitC::sendGateway(bool http)
 **
 ** Author: Richard Baxter
 **
+** This function:
+**  appends a MXitDockWidget to a specified area
+**  connectes it to a specified action that will toggle it's visibility and raise it to the front when triggered
+**  adds it to the vector of dockwidgets in the mainwindow so that they can be itterated over
+**  loads the various attributes from settings that QMainWindow::saveState() doesn't save 
+**  hooks it up to the saveLayout function when it moves or changes state so that the layout is saved as the user changes it
+**
 ****************************************************************************/
 
 void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea area, QAction* action){
 
+  /* adding to vector */
   dockWidgets.append(dockWidget);
   
+  /* setting up features and adding it to this class (QMainWindow)*/
   dockWidget->setFeatures (QDockWidget::AllDockWidgetFeatures);
   addDockWidget(Qt::RightDockWidgetArea, dockWidget);
   dockWidget->setVisible ( false );
     
-    
-  //qDebug() << "loading "  << QString("visible?")+dockWidget->objectName ();
+  /* loading visibility and floating attributes*/
   dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
   dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
     
+  /* connecting the associated action to it's toggleVisibility SLOT*/
+  /* TODO still haven't figured out how to check if the widget is raised or not, right now it only toggles visibility and doesn't cycle from visible but not raised -> visible and raised -> not visible -> visible and raised*/
   connect(action, SIGNAL(triggered()), dockWidget, SLOT(toggleVisibility()));
   
+  /* hooking it up so that if anything cahnges, the settings will pick it up and save it's location*/
   connect(
           dockWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), 
           this, SLOT(saveLayout(Qt::DockWidgetArea)));
@@ -371,8 +426,6 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
           dockWidget, SIGNAL(visibilityChanged ( bool ) ), 
           this, SLOT(saveLayout( bool )));
   
-  //connect(actionDebug_Variables, SIGNAL(triggered()), this, SLOT(debugToggle()));
-  //connect(actionOptions, SIGNAL(triggered()), this, SLOT(optionsToggle()));
 }
 
 
@@ -380,12 +433,16 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
 **
 ** Author: Richard Baxter
 **
+** saves all the widget's attributes
+**
 ****************************************************************************/
 
+/* this was provided so that it could be connected nicely*/
 void MXitC::saveLayout(bool b) {
   saveLayout();
 }
 
+/*Qt::DockWidgetArea is never actually used, it's there so this function could be connected nicely*/
 void MXitC::saveLayout(Qt::DockWidgetArea area) {
   
   Q_FOREACH(const QDockWidget * dw, dockWidgets) {
@@ -395,13 +452,15 @@ void MXitC::saveLayout(Qt::DockWidgetArea area) {
   }
   
   settings->setValue("gui layout", saveState());
-  
 }
 
 
 /****************************************************************************
 **
 ** Author: Richard Baxter
+**
+** When the clien receives a packet, it usually means that the GUI must be notified of some action
+** this function receives the actions form the client and reacts accordingly
 **
 ****************************************************************************/
 
@@ -502,22 +561,31 @@ void MXitC::incomingAction(Action action)
 **
 ** Author: Richard Baxter
 **
+** deals with incoming subscriptions (not-yet-accepted contacts)
+**
 ****************************************************************************/
-
 void MXitC::subscriptionsReceived(){
 
+  /* packet type 51. Get new subscriptions 
   
+      contactAddress0 \1 nickname0 \1 type0 \1 hiddenLoginname0 \1 msg0 \1 groupchatmod0\0
+      ... \0
+      contactAddressN \1 nicknameN \1 typeN \1 hiddenLoginnameN \1 msgN \1 groupchatmodN
+  */
+  
+  /* loop over all contacts*/
   Q_FOREACH(const QByteArray& contact, mxit->variableValue("contacts").split('\0')) 
   {
-    
     if (contact == "") break; // the last split is always ""
-    /*contactAddress0 \1 nickname0 \1 type0 \1 hiddenLoginname0 \1 msg0 \1 groupchatmod0\0*/
+    
+    /* breaking up into fields:
+      contactAddressN \1 nicknameN \1 typeN \1 hiddenLoginnameN \1 msgN \1 groupchatmodN
+    */ 
     QVector<QByteArray> fields = QVector<QByteArray>::fromList ( contact.split('\1') );
     
-    qDebug() << fields;
     QString contactAddress = fields[0];
     
-    bool newContact = ensureExistanceOfContact(contactAddress);
+    ensureExistanceOfContact(contactAddress);
     MXit::Contact &c = contacts[contactAddress];
     
     {
@@ -527,18 +595,16 @@ void MXitC::subscriptionsReceived(){
       c.type = (Type)fields[2].toUInt();
       c.presence = Unaffiliated;
       //c.hidden = fields[3].toBool();
-      //c.inviteMsg = fields[4]; //FIXME
+      //c.inviteMsg = fields[4]; 
+      // TODO what do we do with hidden status and invite message?
     }
     
-    nicknameToContactAddress[c.nickname] = c.contactAddress; /* FIXME This whole setting variables thing appears elsewhere in code, absract it! - rax*/
-    /*FIXME deal with duplicate names!!*/
+    nicknameToContactAddress[c.nickname] = c.contactAddress;
+    /* TODO This whole creating acontact thing appears elsewhere in code, absract it? - rax*/
     
-    refreshContacts();
-      /*c.group           = contactInfo[0];
-      c.contactAddress  = contactInfo[1];
-      c.nickname        = contactInfo[2];
-      c.presence        = (Presence)contactInfo[3].toUInt();
-      c.mood            = (Mood)contactInfo[5].toUInt();*/
+    /*FIXME deal with duplicate names!! what if a potential contact has the same name as one of your other contacts or other subsriptions*/
+    
+    refreshContacts(); /* the contacts list must be refreshed to reflect the new potential contact*/
   }
   
 }
@@ -548,27 +614,32 @@ void MXitC::subscriptionsReceived(){
 **
 ** Author: Richard Baxter
 **
+** deals with incoming contacts
+**
 ****************************************************************************/
 void MXitC::contactsReceived(){
 
   /* fetch contacts */
-  /*  group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood \0
+  /*  
+  /* packet type 3. Get contacts 
+      group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood \0
       ...
       groupN \1 contactAddressN \1 nicknameN \1 presenceN \1 typeN \1 mood
   */
   
+  /* loop over all contacts*/
   Q_FOREACH(const QByteArray& contact, mxit->variableValue("contacts").split('\0')) 
   {
     if (contact == "") break; // the last split is always ""
-    // group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood
-    QVector<QByteArray> fields = QVector<QByteArray>::fromList ( contact.split('\1') );
     
-    /* FIXME ugly code below... - rax */
+    /* breaking up into fields:
+      group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood
+    */
+    QVector<QByteArray> fields = QVector<QByteArray>::fromList ( contact.split('\1') );
     
     QString contactAddress = fields [1];
     
     bool newContact = ensureExistanceOfContact(contactAddress);
-    
     MXit::Contact &c = contacts[contactAddress];
     
     {
@@ -581,10 +652,10 @@ void MXitC::contactsReceived(){
       c.mood            = (Mood)fields[5].toUInt();
     }
     
-    if(newContact) {
+    /* TODO should this if be here? investigate - see subscriptions received for more TODO's related to this*/
+    //if(newContact) {
       nicknameToContactAddress[c.nickname] = c.contactAddress;
-      
-    }
+    //}
   }
   
   refreshContacts();
@@ -630,59 +701,56 @@ bool MXitC::ensureExistanceOfChatSession(const QString & chatSessionName) {
 **
 ** Author: Richard Baxter
 **
+** reads in a new received message and updates the associated chat session (or creates a new one if necessary)
+**
 ****************************************************************************/
 
 void MXitC::messageReceived(){
 
-  /*QHashIterator<QString, Contact> i(contacts);
-  while (i.hasNext()) {
-    i.next();
-    qDebug() << i.key() << ": " << i.value().getContactAddress();
-  }*/
-  
-  //QString nickname = contactAddressToNickname[];
-  //qDebug() << "nickname = " << nickname;
-  
-  
-  
-  /*FIXME only handles single user stuff atm!*/
+  /*FIXME only handles single user stuff atm! group chat to follow*/
   QString contactAddress = mxit->variableValue("contactAddress");
-  if (contacts.contains(contactAddress)) {
+  if (contacts.contains(contactAddress)) { /*since we are assuming the chat is from a single contact not a group chat*/
   
     MXit::Contact& sender = contacts[contactAddress];
     
     ensureExistanceOfChatSession(sender.nickname);
     chatSessions[sender.nickname].incomingMessage( Message(&sender, mxit->variableValue("message")) );
     
+    /* if the chatSession that received the message is the one displayed, we need to set the unread message variable to false so that it won't be marked as 'unread'*/
     if (currentChatSession)
       currentChatSession->unreadMessage = false;
     
+    
     refreshChatBox();
-    chatSessionsWidget->refresh(chatSessions.values());
+    refreshChatSessions(); /* show unread messages, new chat sessions etc*/
   }
   else {
     qDebug() << "wtf unknown contact!"; 
-    /*TODO handel this eror case, even though it should NEVER happen - rax*/
+    /*TODO handle this eror case, even though it should NEVER happen - rax*/
   }
         
 }
-
 
 
 /****************************************************************************
 **
 ** Author: Richard Baxter
 **
-** Sets the curent contact the user is chatting to
+** refreshes all the widgets that need refreshing (for the new theme icons) and saves what theme is selected to settings
 **
 ****************************************************************************/
 
 void MXitC::themeChanged(){
+
   refreshChatSessions();
   refreshContacts();
-  chatSessionsWidget->setStyleSheet(theme.contact.stylesheet);
-  addContactWidget->refresh();
   
+  addContactWidget->refresh(); /* since it contains icons*/
+  /*TODO maybe make refresh a MXitDockWidget function and loop over all widgets. i.e. generalise? - rax*/
+  
+  chatSessionsWidget->setStyleSheet(theme.contact.stylesheet);
+  
+  /* saving theme to settings*/
   settings->setValue("themeBaseDirectory", optionsWidget->getBaseThemeDirectory());
   settings->setValue("selectedTheme", optionsWidget->getSelectedTheme());
   
@@ -697,6 +765,7 @@ void MXitC::themeChanged(){
 **
 ****************************************************************************/
 
+/* provided so that the ListWidget can hook up to it*/
 void MXitC::setCurrentChatSession(QListWidgetItem * item){
   setCurrentChatSession(item->text());
 }
@@ -715,7 +784,6 @@ void MXitC::setCurrentChatSession(const QString & chatSessionName){
   chatSessionsWidget->refresh(chatSessions.values());
   
   chatInput->setText(currentChatSession->chatInputText);
-  
   
 }
 
@@ -741,30 +809,7 @@ void MXitC::refreshChatBox(){
   if (currentChatSession != NULL) {
     Q_FOREACH(const Message& m, currentChatSession->chatHistory) {
     
-      /*mainChatArea->setRowCount ( mainChatArea->rowCount ()+1 );
-
-      qint32 lastRow = mainChatArea->rowCount ()-1;
-
-      QTableWidgetItem * nameItem = mainChatArea->item ( lastRow, 1 );
-      QTableWidgetItem * chatItem = mainChatArea->item ( lastRow, 2 );
-      
-      qDebug() << mainChatArea->rowCount() << ":" << mainChatArea->columnCount();
-      qDebug() << nameItem << ":" << chatItem;
-      if (!nameItem)
-        mainChatArea->setItem(lastRow, 1, new QTableWidgetItem());
-      if (!chatItem)
-        mainChatArea->setItem(lastRow, 2, new QTableWidgetItem());
-      
-      nameItem = mainChatArea->item ( lastRow, 1 );
-      chatItem = mainChatArea->item ( lastRow, 2 );
-      
-      qDebug() << nameItem << ":" << chatItem;
-
-      nameItem->setText ((m.sender()?m.sender()->nickname:QString("You")));
-      chatItem->setText (m.message());
-      qDebug() << nameItem->text() << ":" << chatItem->text();*/
       mainTextArea->append (  QString("<") +(m.sender()?m.sender()->nickname:QString("You")) + QString("> ") +m.message() );
-      //nameTextArea->append ( m.sender()?m.sender()->getNickname():"You" );
     }
   }
   
@@ -827,7 +872,7 @@ void MXitC::setStatusBar()
 
 void MXitC::sendMessageFromChatInput()
 {
-  outgoingMessage(chatInput->text());
+  outgoingMessage(chatInput->text()); /*signals to this classes outgoing messages so it can go to the client*/
   chatInput->setText("");
 }
 
@@ -841,10 +886,7 @@ void MXitC::sendMessageFromChatInput()
 
 void MXitC::incomingError(int errorCode, const QString & errorString)
 {
-  //QMessageBox error; error.setText(QString("(%1) %2").arg(errorCode).arg(errorString));
-  //error.exec();
   logWidget->logMessage("GUI:: Error "+QString("(%1) %2").arg(errorCode).arg(errorString));
-  
   
   if (login != NULL) {
     login->resetButtons();
@@ -910,7 +952,7 @@ void MXitC::loggingIn(){
 **
 ** Author: Richard Baxter
 **
-** Opens the login dialog
+** Opens the login dialog TODO soon to be depricated in favor of a dockwidget
 **
 ****************************************************************************/
 
