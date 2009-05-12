@@ -51,6 +51,9 @@ Client::Client()
   /* 08 */ handlers["removecontact"]              = new RemoveContact();
   /* 09 */ handlers["getnewmessages"]             = new GetNewMessages();
   /* 10 */ handlers["sendnewmessage"]             = new SendNewMessage();
+  /* 11 */ handlers["register"]                   = new Register();
+  /* 12 */ handlers["updateprofile"]              = new UpdateProfile();
+  /* 17 */ handlers["polldifference"]             = new PollDifference();
   /* 27 */ handlers["getmultimediamessage"]       = new GetMultimediaMessage();
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
   /* 33 */ handlers["blocksubscription"]          = new BlockSubscription();
