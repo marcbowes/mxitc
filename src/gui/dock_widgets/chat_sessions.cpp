@@ -90,6 +90,8 @@ void ChatSessions::chatSessionsListContextMenuRequest(const QPoint & pos) {
 
 QListWidgetItem * ChatSessions::addChatSession(const ChatSession & c){
 
+
+  /*FIXME TODO sort by last timestamp*/
   QChar   sortPrefix;
   switch (c.mainContact->presence) {
     case Protocol::Enumerables::Contact::Available:
@@ -117,11 +119,13 @@ QListWidgetItem * ChatSessions::addChatSession(const ChatSession & c){
   QListWidgetItem * item = NULL;
   
   if (!listItemWidgets.contains(c.chatSessionName)) {
+    /*the chatSession is not in the list currently*/
     item = new QListWidgetItem(theme.contact.presence.pixmap(c.mainContact->presence), label); // create new item
     chatSessionsList->addItem(item);
     listItemWidgets[c.chatSessionName] = item;
   }
   else {
+    /*the chatSession is in the list currently*/
     item = listItemWidgets[c.chatSessionName];
     *item = QListWidgetItem(theme.contact.presence.pixmap(c.mainContact->presence), label); // change exiting item
   }
@@ -136,18 +140,37 @@ QListWidgetItem * ChatSessions::addChatSession(const ChatSession & c){
   return item;
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** NOTE Assusmes that chatSessionName is definitly in the list
+**
+****************************************************************************/
+
+void ChatSessions::selectItem(const QString& chatSessionName) {
+
+  
+  for (int i = 0 ; i < chatSessionsList->count() ; i++) {
+    
+    qDebug() <<  chatSessionsList->item(i)->text();
+  }
+  qDebug() << chatSessionName;
+  qDebug() << chatSessionsList->findItems ( chatSessionName, Qt::MatchFixedString );
+
+  chatSessionsList->setCurrentRow ( chatSessionsList->row ( chatSessionsList->findItems ( chatSessionName, Qt::MatchFixedString ).front()));
+  
+  qDebug() << chatSessionsList->currentRow();
+}
 
 /****************************************************************************
 **
 ** Author: Richard Baxter
 **
-**
 ****************************************************************************/
 
 void ChatSessions::refresh(const QList<ChatSession>& chatSessions) {
 
-
- 
   /* resetting contacts list*/
   
   QSet <QListWidgetItem*> lwiInList; // nickname -> bool

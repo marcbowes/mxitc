@@ -23,16 +23,18 @@
 
 #include "common/types.h"
 #include "common/actions.h"
+#include "common/contact.h"
+
 #include "mxit/client.h"
 
 #include "gui/dock_widgets/log.h"
 #include "gui/dock_widgets/debug.h"
 #include "gui/dock_widgets/options.h"
 #include "gui/dock_widgets/chat_sessions.h"
+#include "gui/dock_widgets/contacts.h"
 #include "gui/dock_widgets/add_contact.h"
 
 #include "gui/dialogs/login.h"
-#include "gui/chat_session.h"
 #include "gui/theme.h"
 
 #include "protocol/enumerables/message.h"
@@ -66,12 +68,20 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void messageReceived();
   void subscriptionsReceived();
   
+  bool ensureExistanceOfContact(const QString & contactAddress);
+  bool ensureExistanceOfChatSession(const QString & chatSessionName);
+  
+  void startChatSessionWithContact (MXit::Contact & contact);
+  
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
+  
+  
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   void refreshChatBox(); /*FIXME slot ? - rax*/
   void refreshChatSessions();
+  void refreshContacts();
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
@@ -91,6 +101,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void incomingAction(Action action);
   void setCurrentChatSession(QListWidgetItem * item);
+  void setCurrentChatSession(const QString & chatSessionName);
   
   void saveLayout(bool b);
   void saveLayout(Qt::DockWidgetArea area = Qt::NoDockWidgetArea); 
@@ -99,7 +110,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void themeChanged();
   
-  void chatSessionsMenu(const QPoint & pos, const QString& chatSession);
+  void chatSessionsMenu(const QPoint & pos, const QString& chatSessionName);
+  void contactsMenu(const QPoint & pos, const QString& nickname);
   
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -109,9 +121,9 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   QHash<QString, QString> nicknameToContactAddress; // converts contactAddresses to their unique nickname
   QHash<QString, ChatSession> chatSessions; // identified by chatSession name (which is nickname if it's a single person)
-  QHash<QString, MXit::Contact> contactsHash; // identified by contactAddress (NOT nickname)
+  QHash<QString, MXit::Contact> contacts; // identified by contactAddress (NOT nickname)
   
-  QHash<MXit::Contact*, ChatSession*> contactsChatSession;
+  //QHash<MXit::Contact*, ChatSession*> contactsChatSession; /*TODO deprecated?*/
   
   ChatSession * currentChatSession;
   
@@ -130,6 +142,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   QVector<QDockWidget *> dockWidgets;
   
   DockWidget::ChatSessions * chatSessionsWidget;
+  DockWidget::Contacts * contactsWidget;
   DockWidget::Log * logWidget;
   DockWidget::Options * optionsWidget;
   DockWidget::AddContact * addContactWidget;

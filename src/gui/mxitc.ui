@@ -16,6 +16,13 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <widget class="QLabel" name="chattingToLabel">
+      <property name="text">
+       <string>Chatting to nobody</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QTextEdit" name="mainTextArea">
       <property name="readOnly">
        <bool>true</bool>
@@ -33,7 +40,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -54,6 +61,7 @@
     </property>
     <addaction name="actionOptions"/>
     <addaction name="actionContacts"/>
+    <addaction name="actionChat_Sessions"/>
     <addaction name="actionAdd_Contact"/>
     <addaction name="actionLogs"/>
     <addaction name="actionDebug_Variables"/>
@@ -142,6 +150,11 @@
    </property>
    <property name="shortcut">
     <string>Alt+A</string>
+   </property>
+  </action>
+  <action name="actionChat_Sessions">
+   <property name="text">
+    <string>Chat Sessions</string>
    </property>
   </action>
  </widget>

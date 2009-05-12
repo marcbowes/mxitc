@@ -6,13 +6,13 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_DOCKWIDGET_CHATSESSIONS_H__
-#define __MXIT_GUI_DOCKWIDGET_CHATSESSIONS_H__
+#ifndef __MXIT_GUI_DOCKWIDGET_CONTACTS_H__
+#define __MXIT_GUI_DOCKWIDGET_CONTACTS_H__
 
-#include "common/chat_session.h"
+#include "common/contact.h"
 #include "gui/mxit_dock_widget.h"
 
-#include "ui_chat_sessions.h"
+#include "ui_contacts.h"
 
 #include <QDebug>
 #include <QSet>
@@ -26,39 +26,37 @@ namespace GUI
 namespace DockWidget
 {
 
-class ChatSessions : public MXitDockWidget, private Ui::ChatSessionsDockWidget
+class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
 {
   Q_OBJECT
   
   public: /*class specific */
 
-  ChatSessions(QWidget* parent, Theme &theme);
-  ~ChatSessions();
+  Contacts(QWidget* parent, Theme &theme);
+  ~Contacts();
   
   signals:
   
   void outgoingItemPressed ( QListWidgetItem *  );
   
-  void contextMenuRequest(const QPoint &, const QString& chatSession);
+  void contextMenuRequest(const QPoint &, const QString& nickname);
   
   
   public:
   
-  void refresh(const QList<ChatSession>& chatSessions);
-  
-  void selectItem(const QString& chatSessionName);
+  void refresh(const QList<MXit::Contact>& contacts);
 
   private slots:
   
-  void chatSessionsListContextMenuRequest(const QPoint & pos);
+  void contactsListContextMenuRequest(const QPoint & pos);
   
   
   private:
   
   //void clearList();
-  QListWidgetItem * addChatSession(const ChatSession & c);
+  QListWidgetItem * addContact(const MXit::Contact & c);
   
-  QHash<QString, QListWidgetItem*> listItemWidgets; // from chatSessionName to listItemWidget
+  QHash<QString, QListWidgetItem*> listItemWidgets; // from nickname to listItemWidget
   
 
 };

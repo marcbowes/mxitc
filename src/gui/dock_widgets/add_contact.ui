@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>248</width>
-    <height>437</height>
+    <width>244</width>
+    <height>458</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>AddContact</string>
+   <string>Add a contact</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">

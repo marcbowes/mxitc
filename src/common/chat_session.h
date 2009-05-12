@@ -10,20 +10,21 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_CHATSESSION_H__
-#define __MXIT_GUI_CHATSESSION_H__
+#ifndef __MXIT_CHATSESSION_H__
+#define __MXIT_CHATSESSION_H__
 
-#include "common/contact.h"
+#include "contact.h"
+#include "types.h"
 
-#include "message.h"
+#include "gui/message.h"
 
 #include <QTableWidget>
 
 namespace MXit
 {
 
-namespace GUI
-{
+using GUI::Message; /*FIXME remove when Message class is moved to common*/
+using GUI::MessageVec; /*FIXME remove when Message class is moved to common*/
 
 class ChatSession
 {
@@ -53,8 +54,6 @@ class ChatSession
   
   
 };
-
-}
 
 }
 

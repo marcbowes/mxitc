@@ -44,7 +44,10 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
   
   chatSessionsWidget = new DockWidget::ChatSessions (this, theme);
-  appendDockWidget(chatSessionsWidget, Qt::LeftDockWidgetArea, actionContacts);
+  appendDockWidget(chatSessionsWidget, Qt::LeftDockWidgetArea, actionChat_Sessions);
+  
+  contactsWidget = new DockWidget::Contacts (this, theme);
+  appendDockWidget(contactsWidget, Qt::LeftDockWidgetArea, actionContacts);
   
   logWidget = new DockWidget::Log (this, theme);
   appendDockWidget(logWidget, Qt::RightDockWidgetArea, actionLogs);
@@ -69,6 +72,11 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
           SIGNAL(contextMenuRequest(const QPoint &, const QString &)), 
           this , 
           SLOT(chatSessionsMenu(const QPoint &, const QString &))  );
+          
+  connect(contactsWidget, 
+          SIGNAL(contextMenuRequest(const QPoint &, const QString &)), 
+          this , 
+          SLOT(contactsMenu(const QPoint &, const QString &))  );
   
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
@@ -195,10 +203,7 @@ void MXitC::chatSessionsMenu(const QPoint & pos, const QString& chatSessionName)
   QMenu contextMenu(chatSessionName, this);
   
   #define ADD(x,y) QAction x(y, this); contextMenu.addAction(&x);
-  ADD(changeNickname, "Change Nickname");
-  ADD(changeGroup,    "Change Group");
-  ADD(sendFile,       "Send File");
-  ADD(removeContact,  "Remove Contact");
+  ADD(closeChat, "Close Chat");
   #undef ADD
   
   //qDebug() << chatSessionsWidget;
@@ -206,25 +211,117 @@ void MXitC::chatSessionsMenu(const QPoint & pos, const QString& chatSessionName)
   QAction * selection = contextMenu.exec( pos );
   
   
-       if (selection == &changeNickname) {
-    qDebug() << "changeNickname";
+       if (selection == &closeChat) {
+    qDebug() << "closeChat";
   }
-  else if (selection == &changeGroup) {
-    qDebug() << "changeGroup";
-  }
-  else if (selection == &sendFile) {
-    qDebug() << "sendFile";
-  
-  }
-  else if (selection == &removeContact) {
-    qDebug() << "removeContact";
-    
-    QMessageBox sure;
-    sure.setText("Are you sure you wish to remove "+chatSessionName);
-    sure.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    sure.setDefaultButton(QMessageBox::Cancel);
+}
 
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** the contactsWidget requested a context menu
+** pos is relative to the contacts dock widget
+**
+****************************************************************************/
+
+void MXitC::contactsMenu(const QPoint & pos, const QString& nickname) {
+  
+  
+  MXit::Contact & contact = contacts[nicknameToContactAddress[nickname]];
+  QMenu contextMenu(nickname, this);
+  
+  /*FIXME!!!!!!!!!!!!!!!!!!! use QHash n stuff - rax*/
+  QHash<QString, QAction*> hash;
+  #define ADD(y) hash[y] = new QAction (y, this); contextMenu.addAction(hash[y]);
+  
+  if (contact.presence == Protocol::Enumerables::Contact::Unaffiliated) {
+    ADD(         "Accept");
+  }
+  else {
+    ADD(           "Chat");
+    ADD( "Change Nickname");
+    ADD(    "Change Group");
+    ADD(       "Send File");
+    ADD(  "Remove Contact");
+  }
+  #undef ADD
+ 
+  QAction * selection = contextMenu.exec( pos );
+  
+  
+  if (contact.presence == Protocol::Enumerables::Contact::Unaffiliated) {
+    if (selection == hash["Accept"]) 
+    {
+      /*TODO*/
+    }
+  }
+  else 
+  {
+    if (selection == hash["Chat"]) 
+    {
+      qDebug() << "chat";
+      startChatSessionWithContact(contact);
+      
+      /* since the user requested a chat, bring forward the chatSessions dockwindow*/
+      chatSessionsWidget->raise();
+      Q_FOREACH(const ChatSession& cs, chatSessions.values()) {
+        qDebug() << cs.chatSessionName;
+    }
+    qDebug() << "";
+    chatSessionsWidget->selectItem(chatSessions[contact.nickname].chatSessionName);
+      
+    }
+    else if (selection == hash["Change Nickname"]) {
+      qDebug() << "changeNickname";
+    }
+    else if (selection == hash["Change Group"]) {
+      qDebug() << "changeGroup";
+    }
+    else if (selection == hash["Send File"]) {
+      qDebug() << "sendFile";
     
+    }
+    else if (selection == hash["Remove Contact"]) {
+      qDebug() << "removeContact";
+      
+      QMessageBox sure;
+      sure.setText("Are you sure you wish to remove "+nickname);
+      sure.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+      sure.setDefaultButton(QMessageBox::Cancel);
+      
+      sure.exec();
+    }
+  }
+  
+  Q_FOREACH(QAction * act, hash){
+    delete act;
+  }
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::startChatSessionWithContact (MXit::Contact & contact) {
+  
+  if (chatSessions.contains(contact.nickname)) {
+    /*then just open the existing one*/ 
+    setCurrentChatSession (contact.nickname); 
+  }
+  else {
+    /* create new ChatSession */
+    chatSessions[contact.nickname] = ChatSession(&contact);
+    //contactsChatSession[&contact] = &chatSessions[c.nickname];
+    
+    ChatSession& chatSess = chatSessions[contact.nickname];
+    //chatSess.incomingMessage( Message(0, "User: "+ contact.nickname));
+    chatSess.unreadMessage = false;
+    
+    setCurrentChatSession (chatSess.chatSessionName); 
     
   }
 }
@@ -289,27 +386,15 @@ void MXitC::saveLayout(bool b) {
 void MXitC::saveLayout(Qt::DockWidgetArea area) {
   
   Q_FOREACH(const QDockWidget * dw, dockWidgets) {
-    //qDebug() << "saving "  << QString("visible?")+dw->objectName ();
+  
     settings->setValue(QString("visible?")+dw->objectName (), dw->isVisible());
     settings->setValue(QString("floating?")+dw->objectName (), dw->isFloating());
   }
   
   settings->setValue("gui layout", saveState());
   
-  /*<QObject*> children = findChildren<QObject *>();
-  Q_FOREACH(const QObject * ob, children) {
-    qDebug() << ob;
-  }*/
 }
 
-
-
-/*void MXitC::debugToggle() {
-  toggleDockWidget(debugWidget);
-}
-void MXitC::optionsToggle() {
-  toggleDockWidget(optionWidget);
-}*/
 
 /****************************************************************************
 **
@@ -418,20 +503,36 @@ void MXitC::incomingAction(Action action)
 
 void MXitC::subscriptionsReceived(){
 
-  QList<QByteArray> split0 = mxit->variableValue("contacts").split('\0');
   
-  qDebug() << split0;
-  
-  Q_FOREACH(const QByteArray& contact, split0) {
+  Q_FOREACH(const QByteArray& contact, mxit->variableValue("contacts").split('\0')) 
+  {
     
-    QList<QByteArray> split1 = contact.split('\1');
+    if (contact == "") break; // the last split is always ""
+    /*contactAddress0 \1 nickname0 \1 type0 \1 hiddenLoginname0 \1 msg0 \1 groupchatmod0\0*/
+    QVector<QByteArray> fields = QVector<QByteArray>::fromList ( contact.split('\1') );
     
-    QListIterator<QByteArray> split1Itt(split1);
+    qDebug() << fields;
+    QString contactAddress = fields[0];
     
-    split1Itt.next();
+    bool newContact = ensureExistanceOfContact(contactAddress);
+    MXit::Contact &c = contacts[contactAddress];
     
-    qDebug() << split1;
+    {
+      using namespace Protocol::Enumerables::Contact;
+      c.contactAddress = fields[0];
+      c.nickname = fields[1];
+      c.type = (Type)fields[2].toUInt();
+      c.presence = Unaffiliated;
+      //c.hidden = fields[3].toBool();
+      //c.inviteMsg = fields[4]; //FIXME
+      c.contactAddress = fields[0];
+    }
     
+      /*c.group           = contactInfo[0];
+      c.contactAddress  = contactInfo[1];
+      c.nickname        = contactInfo[2];
+      c.presence        = (Presence)contactInfo[3].toUInt();
+      c.mood            = (Mood)contactInfo[5].toUInt();*/
   }
   
 }
@@ -450,68 +551,73 @@ void MXitC::contactsReceived(){
       groupN \1 contactAddressN \1 nicknameN \1 presenceN \1 typeN \1 mood
   */
   
-  // qDebug() << QByteArray(contacts).replace('\1', "\\1").replace('\0', "\\0");
-  QByteArray contacts = mxit->variableValue("contacts");
-  
-  QByteArray contactInfo [6];
-  
-  int lastIndex = -1;
-  bool noMoreContacts = false;
-  while (!noMoreContacts) 
+  Q_FOREACH(const QByteArray& contact, mxit->variableValue("contacts").split('\0')) 
   {
-    for (int i = 0 ; i < 6 ; i++) 
-    {
-      int nextIndex = contacts.indexOf ( i == 5?'\0':'\1', lastIndex + 1);
-      if (nextIndex == -1 || nextIndex == contacts.length() -1) 
-      {
-        nextIndex = contacts.length()-1;
-        noMoreContacts = true;
-      }
-
-      //qDebug() << contacts.length();
-      //qDebug() << lastIndex;
-      //qDebug() << nextIndex;
-      contactInfo [i] = contacts.mid( lastIndex+1, nextIndex - lastIndex -1 );
-      //qDebug() << contactInfo [i];
-      lastIndex = nextIndex;
-    }
+    if (contact == "") break; // the last split is always ""
+    // group0 \1 contactAddress0 \1 nickname0 \1 presence0 \1 type0 \1 mood
+    QVector<QByteArray> fields = QVector<QByteArray>::fromList ( contact.split('\1') );
     
     /* FIXME ugly code below... - rax */
     
-    bool newContact = false;
-    QString contactAddress = contactInfo [1];
-                                          
-    if (!contactsHash.contains(contactAddress)) {
-      MXit::Contact & c = contactsHash[contactAddress];
-      newContact = true;
-    }        
+    QString contactAddress = fields [1];
     
-    MXit::Contact &c = contactsHash[contactAddress];
-    c.group           = contactInfo[0];
-    c.contactAddress  = contactInfo[1];
-    c.nickname        = contactInfo[2];
-    c.presence        = (Protocol::Enumerables::Contact::Presence)contactInfo[3].toUInt();
-    c.type            = (Protocol::Enumerables::Contact::Type)contactInfo[4].toUInt();
-    c.mood            = (Protocol::Enumerables::Contact::Mood)contactInfo[5].toUInt();
+    bool newContact = ensureExistanceOfContact(contactAddress);
+    
+    MXit::Contact &c = contacts[contactAddress];
+    
+    {
+      using namespace Protocol::Enumerables::Contact;
+      c.group           = fields[0];
+      c.contactAddress  = fields[1];
+      c.nickname        = fields[2];
+      c.presence        = (Presence)fields[3].toUInt();
+      c.type            = (Type)fields[4].toUInt();
+      c.mood            = (Mood)fields[5].toUInt();
+    }
     
     if(newContact) {
       nicknameToContactAddress[c.nickname] = c.contactAddress;
       
-      chatSessions[c.nickname] = ChatSession(&c);
-      
-      contactsChatSession[&c] = &chatSessions[c.nickname];
-      
-      ChatSession& chatSess = chatSessions[c.nickname];
-      chatSess.incomingMessage( Message(0, "User: "+ c.nickname));
-      chatSess.unreadMessage = false;
     }
   }
   
-  /*Q_FOREACH(const ChatSession & cs, chatSessions.values()) {
-    qDebug() << cs.chatSessionName;
-  }*/
-  refreshChatSessions();
+  refreshContacts();
         
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** ensures that the contact exists in the contacts hash, if it is new this function return true
+** (if it already exists the function return false)
+**
+****************************************************************************/
+
+bool MXitC::ensureExistanceOfContact(const QString & contactAddress) {
+  if (!contacts.contains(contactAddress)) {
+    contacts[contactAddress] = MXit::Contact();
+    return true;
+  }
+  return false;
+  
+}
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** ensures that the chatSessions exists in the chatSessions hash, if it is new this function return true
+** (if it already exists the function return false)
+**
+****************************************************************************/
+
+bool MXitC::ensureExistanceOfChatSession(const QString & chatSessionName) {
+  if (!chatSessions.contains(chatSessionName)) {
+    chatSessions[chatSessionName] = MXit::ChatSession();
+    return true;
+  }
+  return false;
+  
 }
 
 /****************************************************************************
@@ -522,7 +628,7 @@ void MXitC::contactsReceived(){
 
 void MXitC::messageReceived(){
 
-  /*QHashIterator<QString, Contact> i(contactsHash);
+  /*QHashIterator<QString, Contact> i(contacts);
   while (i.hasNext()) {
     i.next();
     qDebug() << i.key() << ": " << i.value().getContactAddress();
@@ -533,13 +639,14 @@ void MXitC::messageReceived(){
   
   
   
+  /*FIXME only handles single user stuff atm!*/
   QString contactAddress = mxit->variableValue("contactAddress");
-  //qDebug() << "contactAddress = " << contactAddress;
-  if (contactsHash.contains(contactAddress)) {
+  if (contacts.contains(contactAddress)) {
   
-    MXit::Contact& sender = contactsHash[contactAddress];
+    MXit::Contact& sender = contacts[contactAddress];
     
-    contactsChatSession[&sender]->incomingMessage( Message(&sender, mxit->variableValue("message")) );
+    ensureExistanceOfChatSession(sender.nickname);
+    chatSessions[sender.nickname].incomingMessage( Message(&sender, mxit->variableValue("message")) );
     
     if (currentChatSession)
       currentChatSession->unreadMessage = false;
@@ -566,6 +673,7 @@ void MXitC::messageReceived(){
 
 void MXitC::themeChanged(){
   refreshChatSessions();
+  refreshContacts();
   chatSessionsWidget->setStyleSheet(theme.contact.stylesheet);
   addContactWidget->refresh();
   
@@ -579,25 +687,31 @@ void MXitC::themeChanged(){
 ** Author: Richard Baxter
 **
 ** Sets the curent contact the user is chatting to
+** NOTE: Assumes that the chatSessionName is correct! error checking should be done higher up
 **
 ****************************************************************************/
 
 void MXitC::setCurrentChatSession(QListWidgetItem * item){
-  //qDebug() << item->text();
-  //qDebug() << nicknameToContactAddress[item->text()];
-  
+  setCurrentChatSession(item->text());
+}
+
+/****************************************************************************/
+
+void MXitC::setCurrentChatSession(const QString & chatSessionName){
+
   if (currentChatSession)
     currentChatSession->chatInputText = chatInput->text();
   
-  currentChatSession = &chatSessions[item->text()];
+  currentChatSession = &chatSessions[chatSessionName];
   currentChatSession->unreadMessage = false;
   
   refreshChatBox();
   chatSessionsWidget->refresh(chatSessions.values());
   
   chatInput->setText(currentChatSession->chatInputText);
+  
+  
 }
-
 
 
 
@@ -605,12 +719,17 @@ void MXitC::setCurrentChatSession(QListWidgetItem * item){
 **
 ** Author: Richard Baxter
 **
-** Refreshes the chatBox area
+** Refreshes the chatBox area TODO change name to refreshMainTextArea
 **
 ****************************************************************************/
 
 void MXitC::refreshChatBox(){
 
+  if (currentChatSession)
+    chattingToLabel->setText(currentChatSession->chatSessionName);
+  else
+    chattingToLabel->setText("Chatting to nobody");
+    
   mainTextArea->clear();
   //mainChatArea->setRowCount(0);
   if (currentChatSession != NULL) {
@@ -651,12 +770,24 @@ void MXitC::refreshChatBox(){
 **
 ** Author: Richard Baxter
 **
-** Refreshes the chatBox area
+** Refreshes the chatSessions widget
 **
 ****************************************************************************/
 
 void MXitC::refreshChatSessions(){
   chatSessionsWidget->refresh(chatSessions.values());
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Refreshes the chatSessions area
+**
+****************************************************************************/
+
+void MXitC::refreshContacts(){
+  contactsWidget->refresh(contacts.values());
 }
 
 /****************************************************************************

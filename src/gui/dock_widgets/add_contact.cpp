@@ -108,7 +108,7 @@ void AddContact::networkChanged ( int index ) {
 
   Type type = (Type)networkComboBox->itemData (index).toInt();
   
-  if (type == MXit)
+  if (type == MXit || type == MultiMx)
     addressLabel->setText("Cellphone");
   else
     addressLabel->setText("Address");

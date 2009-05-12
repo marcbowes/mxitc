@@ -9,6 +9,7 @@ INCLUDE(${QT_USE_FILE})
 # .cxx sources
 SET(MXIT_CLIENT_SRCS_CXX
   common/contact.cpp
+  common/chat_session.cpp
   common/hash_variables.cpp
 
   network/packets/http.cpp
@@ -45,12 +46,12 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/dock_widgets/options.cpp
   gui/dock_widgets/debug.cpp
   gui/dock_widgets/chat_sessions.cpp
+  gui/dock_widgets/contacts.cpp
   gui/dock_widgets/add_contact.cpp
   
   gui/dialogs/login.cpp
   
   gui/mxit_dock_widget.cpp
-  gui/chat_session.cpp
   gui/message.cpp
   
   gui/mxitc.cpp
@@ -72,6 +73,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   gui/dock_widgets/options.h
   gui/dock_widgets/debug.h
   gui/dock_widgets/chat_sessions.h
+  gui/dock_widgets/contacts.h
   gui/dock_widgets/add_contact.h
   
   gui/dialogs/login.h
@@ -89,6 +91,7 @@ SET(MXIT_CLIENT_UI
   gui/dock_widgets/options.ui
   gui/dock_widgets/debug.ui
   gui/dock_widgets/chat_sessions.ui
+  gui/dock_widgets/contacts.ui
   gui/dock_widgets/add_contact.ui
   
   gui/dialogs/login.ui

@@ -9,9 +9,6 @@
 namespace MXit
 {
 
-namespace GUI
-{
-
 /****************************************************************************
 **
 ** Author: Marc Bowes
@@ -74,7 +71,6 @@ void ChatSession::incomingMessage(Message message)
   unreadMessage = true;
 }
 
-}
 
 }
 
