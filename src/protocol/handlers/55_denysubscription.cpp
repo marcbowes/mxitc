@@ -30,7 +30,7 @@ void DenySubscription::build(MXit::Network::Packet *packet, VariableHash &variab
   **
   **  id=loginname[\1sesid]\0
   **  cm=52
-  **  ms=contactAddress[\1group\1nickname]
+  **  ms=contactAddress
   **
   ***************************************************************************
   */
