@@ -261,6 +261,100 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
       //currently empty
       break;
     case MXit::Protocol::Enumerables::ChunkedData::OfferFile:
+      //id
+      returnData["id"] = chunkData.left(8);
+      
+      position = 8;
+      
+      //contactAddress length
+      dataLength = 0;
+      dataLength |= (unsigned char)chunkData[position];
+      dataLength = dataLength << 8;
+      position++;
+      dataLength |= (unsigned char)chunkData[position];
+      
+      position++;
+      
+      //contactAddress
+      returnData["contactAddress"] = chunkData.mid(position, dataLength);
+      
+      position += dataLength;
+      
+      //size
+      dataLength = 0;
+      dataLength |= (unsigned char)chunkData[position];
+      position++;
+      for (int i=0; i<3; i++) {
+        dataLength = dataLength << 8;
+        dataLength |= (unsigned char)chunkData[position + i];
+      }
+      
+      returnData["size"] = QByteArray::number(dataLength);
+      
+      position += 3;
+      
+      //name length
+      dataLength = 0;
+      dataLength |= (unsigned char)chunkData[position];
+      dataLength = dataLength << 8;
+      position++;
+      dataLength |= (unsigned char)chunkData[position];
+      
+      position++;
+      
+      //name
+      returnData["name"] = chunkData.mid(position, dataLength);
+      
+      position += dataLength;
+      
+      //mimetype length
+      dataLength = 0;
+      dataLength |= (unsigned char)chunkData[position];
+      dataLength = dataLength << 8;
+      position++;
+      dataLength |= (unsigned char)chunkData[position];
+      
+      position++;
+      
+      //mimetype
+      returnData["mimetype"] = chunkData.mid(position, dataLength);
+      
+      position += dataLength;
+      
+      //timeStamp FIXME: dont skip
+      position += 8;
+      
+      //description length
+      dataLength = 0;
+      dataLength |= (unsigned char)chunkData[position];
+      dataLength = dataLength << 8;
+      position++;
+      dataLength |= (unsigned char)chunkData[position];
+      
+      position++;
+      
+      //mimetype
+      returnData["description"] = chunkData.mid(position, dataLength);
+      
+      position += dataLength;
+      
+      //alt length
+      dataLength = 0;
+      dataLength |= (unsigned char)chunkData[position];
+      dataLength = dataLength << 8;
+      position++;
+      dataLength |= (unsigned char)chunkData[position];
+      
+      position++;
+      
+      //mimetype
+      returnData["alt"] = chunkData.mid(position, dataLength);
+      
+      position += dataLength;
+      
+      //flags
+      
+      
       
       break;
     case MXit::Protocol::Enumerables::ChunkedData::GetFile:
