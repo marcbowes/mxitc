@@ -150,27 +150,35 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
   
   switch (type) {
     case MXit::Protocol::Enumerables::ChunkedData::CustomResource:
-      position = 1; //because it starts witha \0 for no apparent reason
+      position = 0;
       
-      //id
-      while (chunkData.at(position) != '\0') {
-        data.append(chunkData[position]);
-        position++;
-      }
-      
-      returnData["id"] = data;
+      //id length
+      dataLength = 0;
+      dataLength |= (unsigned char)chunkData[position];
+      dataLength = dataLength << 8;
+      position++;
+      dataLength |= (unsigned char)chunkData[position];
       
       position++;
-      data.clear();
       
+      //id
+      returnData["id"] = chunkData.mid(position, dataLength);
+      
+      position+= dataLength;
+      
+      //handle length
+      dataLength = 0;
+      dataLength |= (unsigned char)chunkData[position];
+      dataLength = dataLength << 8;
+      position++;
+      dataLength |= (unsigned char)chunkData[position];
+      
+      position++;
+            
       //handle      
-      position++; //FIXME: dodging the tab, necessary?
-      while ((chunkData.at(position) != '\0')&&(chunkData.at(position) != '\1')) {
-        data.append(chunkData[position]);
-        position++;
-      }
+      returnData["handle"] = chunkData.mid(position, dataLength);
       
-      returnData["handle"] = data;
+      position += dataLength;
       
       //operation
       returnData["operation"] = QByteArray::number((int)chunkData.at(position));
