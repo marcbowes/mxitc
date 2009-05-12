@@ -167,10 +167,6 @@ void Client::incomingPacket(const QByteArray &packet)
     case LOGINKICK:
       sendPacket("login");
       break;
-    case DENYSUBSCRIPTION:
-      /* ensure contact refresh.. FIXME: Marc doesn't like this */
-      sendPacket("getcontacts");
-      break;
   }
   
   /* global scrubbing */
