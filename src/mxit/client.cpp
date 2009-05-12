@@ -52,6 +52,7 @@ Client::Client()
   /* 27 */ handlers["getmultimediamessage"]       = new GetMultimediaMessage();
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
   /* 51 */ handlers["getnewsubscription"]         = new GetNewSubscription();
+  /* 52 */ handlers["allowsubscription"]          = new AllowSubscription();
 }
 
 

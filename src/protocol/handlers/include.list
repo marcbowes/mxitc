@@ -11,3 +11,4 @@
 #include "27_getmultimediamessage.h"
 #include "32_setshownpresenceandstatus.h"
 #include "51_getnewsubscription.h"
+#include "52_allowsubscription.h"
