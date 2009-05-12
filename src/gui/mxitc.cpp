@@ -236,6 +236,9 @@ void MXitC::contactsMenu(const QPoint & pos, const QString& nickname) {
   QHash<QString, QAction*> hash;
   #define ADD(y) hash[y] = new QAction (y, this); contextMenu.addAction(hash[y]);
   
+  qDebug() << contact.nickname;
+  qDebug() << contact.presence;
+  
   if (contact.presence == Protocol::Enumerables::Contact::Unaffiliated) {
     ADD(         "Accept");
   }
@@ -525,9 +528,12 @@ void MXitC::subscriptionsReceived(){
       c.presence = Unaffiliated;
       //c.hidden = fields[3].toBool();
       //c.inviteMsg = fields[4]; //FIXME
-      c.contactAddress = fields[0];
     }
     
+    nicknameToContactAddress[c.nickname] = c.contactAddress; /* FIXME This whole setting variables thing appears elsewhere in code, absract it! - rax*/
+    /*FIXME deal with duplicate names!!*/
+    
+    refreshContacts();
       /*c.group           = contactInfo[0];
       c.contactAddress  = contactInfo[1];
       c.nickname        = contactInfo[2];
