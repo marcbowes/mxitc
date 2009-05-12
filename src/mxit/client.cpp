@@ -12,6 +12,16 @@ namespace MXit
 {
 
 /****************************************************************************
+        __                                _ ____    
+   ____/ /__ ____ ___   ___ ___  ___ ____(_) _(_)___
+  / __/ / _ `(_-<(_-<  (_-</ _ \/ -_) __/ / _/ / __/
+  \__/_/\_,_/___/___/ /___/ .__/\__/\__/_/_//_/\__/ 
+                         /_/                        
+
+****************************************************************************/
+
+
+/****************************************************************************
 **
 ** Author: Richard Baxter
 ** Author: Marc Bowes
@@ -84,159 +94,13 @@ Client::~Client()
 
 
 /****************************************************************************
-**
-** Author: Marc Bowes
-**
-** this SLOT is triggered by the connection emitting an error
-**
+                __   ___           __     __    
+     ___  __ __/ /  / (_)___  ___ / /__  / /____
+    / _ \/ // / _ \/ / / __/ (_-</ / _ \/ __(_-<
+   / .__/\_,_/_.__/_/_/\__/ /___/_/\___/\__/___/
+  /_/                                           
+
 ****************************************************************************/
-void Client::incomingError(const QString &error)
-{
-  qDebug() << error;
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** this SLOT is triggered by the connection receiving a packet
-**
-****************************************************************************/
-void Client::incomingPacket(const QByteArray &packet)
-{
-  /* error checking */
-  VariableHash packetHeader = MXit::Protocol::packetHeader(packet);
-  if (packetHeader["errorCode"] != "0") {    
-    emit outgoingError(packetHeader["errorCode"].toInt(), packetHeader["errorMessage"]);
-    return;
-  }
-  
-  MXit::Protocol::Handler *handler = handlerFor(packetHeader["command"]);
-  
-  /* deal with unknown packets */
-  if (!handler) {
-    emit outgoingError(99, QString("Unkown packet handler for command %1").arg(QString(packetHeader["command"])));
-    return;
-  }
-  
-  /* pass on to handler */
-  VariableHash handledPacket = handler->handle(packet);
-  variables.unite(handledPacket);
-  
-  /* post packet-level handling */
-  switch (packetHeader["command"].toUInt()) {
-    case LOGIN:
-      emit outgoingAction(LOGGED_IN);
-
-      /* variable scrubbing */
-      useVariable("loginname", 0);
-      
-      /* need to send presence to remain online */
-      variables["show"]   = "1";        /* online */
-      variables["status"] = "mxitc";
-      sendPacket("setshownpresenceandstatus");
-      break;
-    case LOGOUT:
-      connection->close();
-      
-      emit outgoingAction(LOGGED_OUT);
-      break;
-    case GETCONTACTS:
-      emit outgoingAction(CONTACTS_RECEIVED);
-
-      /* variable scrubbing */
-      variables.remove("contacts");
-      break;
-    case GETNEWMESSAGES:
-      emit outgoingAction(MESSAGE_RECEIVED);
-
-      /* variable scrubbing */
-      variables.remove("contactData");
-      variables.remove("message");
-      variables.remove("contactAddress");
-      variables.remove("dateTime");
-      variables.remove("type");
-      variables.remove("id");
-      variables.remove("flags");
-      break;
-    case GETNEWSUBSCRIPTION:
-      emit outgoingAction(SUBSCRIPTIONS_RECEIVED);
-
-      /* variable scrubbing */
-      variables.remove("contacts");
-      break;
-    case LOGINKICK:
-      sendPacket("login");
-      break;
-  }
-  
-  /* global scrubbing */
-  variables.remove("ln");
-  variables.remove("command");
-  variables.remove("error");
-  
-  emit outgoingVariables(variables);
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** this SLOT is used by by subclients to report responses of operations
-** TODO: handler needs an origin type
-**
-****************************************************************************/
-void Client::incomingVariables(const VariableHash &params)
-{
-  /* unite these params with the client's variables
-   *
-   * == NOTE
-   * QHash#unite will not override keys, rather it will insert a duplicate
-   * key. Ensure that common variables (e.g. err) are properly cleaned up
-   * to prevent a very long useless list building up.
-   */
-  variables.unite(params);
-  
-  /* deal with the incoming variables */
-  switch (state) {
-    case INITIALIZING:
-      initializationComplete();
-      break;
-    case CHALLENGING:
-      setupReceived();
-      break;
-    default:
-      // TODO: what here?
-      break;
-  }
-  
-  /* clean up values we don't wish to store
-   *
-   * == NOTE
-   * QHash#remove removes ALL items with the specified key
-   */
-  variables.remove("err");
-  variables.remove("captcha");
-  
-  emit outgoingVariables(variables);
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** Called every so often by keepAliveTimer
-** sends packet 1000 if 15 minutes of no activity has elapsed to prevent
-** MXit dropping the connection
-**
-****************************************************************************/
-void Client::keepAlive()
-{
-  sendPacket("keepalive");
-}
 
 
 /****************************************************************************
@@ -501,6 +365,205 @@ void Client::updateProfile()
 
 
 /****************************************************************************
+                __   ___                 __  __           __  
+     ___  __ __/ /  / (_)___  __ _  ___ / /_/ /  ___  ___/ /__
+    / _ \/ // / _ \/ / / __/ /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
+   / .__/\_,_/_.__/_/_/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
+  /_/                                                         
+
+****************************************************************************/
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** returns (most recent) value of a variable
+**
+****************************************************************************/
+QByteArray Client::variableValue(const QString &name)
+{
+  return variables[name];
+}
+
+
+/****************************************************************************
+               _           __            __     __    
+     ___  ____(_)  _____ _/ /____   ___ / /__  / /____
+    / _ \/ __/ / |/ / _ `/ __/ -_) (_-</ / _ \/ __(_-<
+   / .__/_/ /_/|___/\_,_/\__/\__/ /___/_/\___/\__/___/
+  /_/                                                 
+
+/***************************************************************************/
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** this SLOT is triggered by the connection emitting an error
+**
+****************************************************************************/
+void Client::incomingError(const QString &error)
+{
+  qDebug() << error;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** this SLOT is triggered by the connection receiving a packet
+**
+****************************************************************************/
+void Client::incomingPacket(const QByteArray &packet)
+{
+  /* error checking */
+  VariableHash packetHeader = MXit::Protocol::packetHeader(packet);
+  if (packetHeader["errorCode"] != "0") {    
+    emit outgoingError(packetHeader["errorCode"].toInt(), packetHeader["errorMessage"]);
+    return;
+  }
+  
+  MXit::Protocol::Handler *handler = handlerFor(packetHeader["command"]);
+  
+  /* deal with unknown packets */
+  if (!handler) {
+    emit outgoingError(99, QString("Unkown packet handler for command %1").arg(QString(packetHeader["command"])));
+    return;
+  }
+  
+  /* pass on to handler */
+  VariableHash handledPacket = handler->handle(packet);
+  variables.unite(handledPacket);
+  
+  /* post packet-level handling */
+  switch (packetHeader["command"].toUInt()) {
+    case LOGIN:
+      emit outgoingAction(LOGGED_IN);
+
+      /* variable scrubbing */
+      useVariable("loginname", 0);
+      
+      /* need to send presence to remain online */
+      variables["show"]   = "1";        /* online */
+      variables["status"] = "mxitc";
+      sendPacket("setshownpresenceandstatus");
+      break;
+    case LOGOUT:
+      connection->close();
+      
+      emit outgoingAction(LOGGED_OUT);
+      break;
+    case GETCONTACTS:
+      emit outgoingAction(CONTACTS_RECEIVED);
+
+      /* variable scrubbing */
+      variables.remove("contacts");
+      break;
+    case GETNEWMESSAGES:
+      emit outgoingAction(MESSAGE_RECEIVED);
+
+      /* variable scrubbing */
+      variables.remove("contactData");
+      variables.remove("message");
+      variables.remove("contactAddress");
+      variables.remove("dateTime");
+      variables.remove("type");
+      variables.remove("id");
+      variables.remove("flags");
+      break;
+    case GETNEWSUBSCRIPTION:
+      emit outgoingAction(SUBSCRIPTIONS_RECEIVED);
+
+      /* variable scrubbing */
+      variables.remove("contacts");
+      break;
+    case LOGINKICK:
+      sendPacket("login");
+      break;
+  }
+  
+  /* global scrubbing */
+  variables.remove("ln");
+  variables.remove("command");
+  variables.remove("error");
+  
+  emit outgoingVariables(variables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** this SLOT is used by by subclients to report responses of operations
+** TODO: handler needs an origin type
+**
+****************************************************************************/
+void Client::incomingVariables(const VariableHash &params)
+{
+  /* unite these params with the client's variables
+   *
+   * == NOTE
+   * QHash#unite will not override keys, rather it will insert a duplicate
+   * key. Ensure that common variables (e.g. err) are properly cleaned up
+   * to prevent a very long useless list building up.
+   */
+  variables.unite(params);
+  
+  /* deal with the incoming variables */
+  switch (state) {
+    case INITIALIZING:
+      initializationComplete();
+      break;
+    case CHALLENGING:
+      setupReceived();
+      break;
+    default:
+      // TODO: what here?
+      break;
+  }
+  
+  /* clean up values we don't wish to store
+   *
+   * == NOTE
+   * QHash#remove removes ALL items with the specified key
+   */
+  variables.remove("err");
+  variables.remove("captcha");
+  
+  emit outgoingVariables(variables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Called every so often by keepAliveTimer
+** sends packet 1000 if 15 minutes of no activity has elapsed to prevent
+** MXit dropping the connection
+**
+****************************************************************************/
+void Client::keepAlive()
+{
+  sendPacket("keepalive");
+}
+
+
+/****************************************************************************
+               _           __                  __  __           __  
+     ___  ____(_)  _____ _/ /____   __ _  ___ / /_/ /  ___  ___/ /__
+    / _ \/ __/ / |/ / _ `/ __/ -_) /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
+   / .__/_/ /_/|___/\_,_/\__/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
+  /_/                                                               
+
+****************************************************************************/
+
+
+/****************************************************************************
 **
 ** Author: Marc Bowes
 **
@@ -522,19 +585,6 @@ MXit::Network::Packet* Client::buildPacket()
   }
   
   return packet;
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** returns (most recent) value of a variable
-**
-****************************************************************************/
-QByteArray Client::variableValue(const QString &name)
-{
-  return variables[name];
 }
 
 
@@ -598,6 +648,47 @@ MXit::Protocol::Handler* Client::handlerFor(const QByteArray &command)
   }
   
   return NULL; /* no packet found */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** this method is called by the incomingVariables SLOT
+**
+****************************************************************************/
+void Client::initializationComplete()
+{
+  state = IDLE;
+  emit environmentReady();
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** convenience method for packets using class variables
+**
+****************************************************************************/
+void Client::sendPacket(const QString &handler)
+{
+  sendPacket(handler, variables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** builds and sends a packet of the specified type from a variable hash
+**
+****************************************************************************/
+void Client::sendPacket(const QString &handler, VariableHash &packetVariables)
+{
+  connection->sendPacket(getPacket(handler, packetVariables));
+  keepAliveTimer.start(1000 * 60 * 15); /* every 15 minutes */
 }
 
 
@@ -703,47 +794,6 @@ void Client::setupReceived()
   useVariable("locale", 0);
   
   emit outgoingVariables(variables);
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** this method is called by the incomingVariables SLOT
-**
-****************************************************************************/
-void Client::initializationComplete()
-{
-  state = IDLE;
-  emit captchaReceived(QByteArray::fromBase64(variables["captcha"]));
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** convenience method for packets using class variables
-**
-****************************************************************************/
-void Client::sendPacket(const QString &handler)
-{
-  sendPacket(handler, variables);
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** builds and sends a packet of the specified type from a variable hash
-**
-****************************************************************************/
-void Client::sendPacket(const QString &handler, VariableHash &packetVariables)
-{
-  connection->sendPacket(getPacket(handler, packetVariables));
-  keepAliveTimer.start(1000 * 60 * 15); /* every 15 minutes */
 }
 
 

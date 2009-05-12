@@ -47,20 +47,13 @@ class Client : public QObject
   
   signals:
   
-  void captchaReceived(const QByteArray &);
+  void environmentReady();
   void errorEncountered(const QString &);
   void outgoingAction(Action);
   void outgoingMessage(const QString & contactAddress, const QString & message);
   void outgoingError(int code, const QString &message);
   void outgoingVariables(const VariableHash&);
     
-  private slots:
-  
-  void incomingError(const QString &);
-  void incomingPacket(const QByteArray &);
-  void incomingVariables(const VariableHash &);
-  void keepAlive();
-
   public slots:
   
   void addContact(const QString &group, const QString &contactAddress, const QString &nickname,
@@ -84,7 +77,16 @@ class Client : public QObject
   void updateContactInfo();
   void updateProfile();
   
+  public:         /* methods */
+  
   QByteArray variableValue(const QString &name);
+  
+  private slots:
+  
+  void incomingError(const QString &);
+  void incomingPacket(const QByteArray &);
+  void incomingVariables(const VariableHash &);
+  void keepAlive();
 
   private:        /* methods */
   
