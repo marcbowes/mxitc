@@ -750,7 +750,7 @@ void MXitC::messageReceived(){
 ****************************************************************************/
 
 void MXitC::themeChanged(){
-
+  setWindowIcon(theme.windowIcon);
   refreshChatSessions();
   refreshContacts();
   

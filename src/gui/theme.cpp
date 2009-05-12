@@ -30,7 +30,7 @@ void Theme::load(QDir theme)
   
   /* base */
   /* load from disk */
-  QImage _windowIcon  = QImage(dir.absoluteFilePath("icon.png"));
+  QImage _windowIcon  = QImage(theme.absoluteFilePath("icon.png"));
   
   /* build pixmaps from images, or use defaults */
   if (!_windowIcon.isNull()) {

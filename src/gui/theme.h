@@ -38,10 +38,6 @@ class Theme
   
   ThemeComponents::Contact::Base  contact;
   QPixmap                         windowIcon;
-  
-  private:       /* variables */
-  
-  QDir                            dir;
 };
 
 }
