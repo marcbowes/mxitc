@@ -53,10 +53,6 @@ class Client : public QObject
   void outgoingMessage(const QString & contactAddress, const QString & message);
   void outgoingError(int code, const QString &message);
   void outgoingVariables(const VariableHash&);
-  
-  public slots:
-  void addContact(const QString &group, const QString &contactAddress, const QString &nickname,
-    Protocol::Enumerables::Contact::Type type, const QString &message);
     
   private slots:
   
@@ -65,25 +61,35 @@ class Client : public QObject
   void incomingVariables(const VariableHash &);
   void keepAlive();
 
-  public:         /* methods */
+  public slots:
   
-  void authenticate(const VariableHash &settings);
+  void addContact(const QString &group, const QString &contactAddress, const QString &nickname,
+    Protocol::Enumerables::Contact::Type type, const QString &message);
   void allowSubscription(const QString &contactAddress, const QString &group,
     const QString &nickname);
+  void authenticate(const VariableHash &settings);
   void denySubscription(const QString &contactAddress, bool block=false);
   void initialize();
-  void login(const QString &cellphone, const QString &password, const QString &captcha);
+  void getContacts();
+  void getNewMessages();
+  void login(const QString &cellphone, const QString &password, const QString &captcha,
+    const VariableHash &settings);
+  void pollDifference();
   void removeContact(const QString &contactAddress);
   void setGateway(const QString &connectionString);
+  void setShownPresenceAndStatus();
   void sendMessage(const QString &contactAddress, const QString &message,
     Protocol::Enumerables::Message::Type, unsigned int flags);
+  void signup();
+  void updateContactInfo();
+  void updateProfile();
   
   QByteArray variableValue(const QString &name);
 
   private:        /* methods */
   
   MXit::Network::Packet* buildPacket();
-  void challenge(const QString &cellphone, const QString &captcha);
+  void challenge(const QString &captcha);
   MXit::Network::Packet* getPacket(const QString &handler);
   MXit::Network::Packet* getPacket(const QString &handler, VariableHash &packetVariables);
   MXit::Protocol::Handler* handlerFor(const QByteArray &command);
@@ -95,9 +101,9 @@ class Client : public QObject
 
   private:        /* variables */
   
-  MXit::Network::Connection  *connection;
-  MXit::Protocol::HandlerHash handlers;
-  MXit::Protocol::Handshaker *handshaker;
+  Network::Connection        *connection;
+  Protocol::HandlerHash       handlers;
+  Protocol::Handshaker       *handshaker;
   QTimer                      keepAliveTimer;
   Status                      state;
   VariableHash                variables;

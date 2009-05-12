@@ -123,7 +123,7 @@ void Login::build(MXit::Network::Packet *packet, VariableHash &variables)
             << variables["dc"]                    // dc
             << "524287"                           // features
             << variables["defaultDialingCode"]    // dialingCode
-            << "en"                               // locale
+            << variables["locale"]                // locale
   ;
   
   QByteArray postMs;

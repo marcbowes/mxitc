@@ -51,6 +51,9 @@ Client::Client()
   /* 08 */ handlers["removecontact"]              = new RemoveContact();
   /* 09 */ handlers["getnewmessages"]             = new GetNewMessages();
   /* 10 */ handlers["sendnewmessage"]             = new SendNewMessage();
+  /* 11 */ handlers["register"]                   = new Register();
+  /* 12 */ handlers["updateprofile"]              = new UpdateProfile();
+  /* 17 */ handlers["polldifference"]             = new PollDifference();
   /* 27 */ handlers["getmultimediamessage"]       = new GetMultimediaMessage();
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
   /* 33 */ handlers["blocksubscription"]          = new BlockSubscription();
@@ -262,24 +265,6 @@ void Client::addContact(const QString &group, const QString &contactAddress, con
 /****************************************************************************
 **
 ** Author: Marc Bowes
-** Author: Richard Baxter
-**
-** same as login, but skips the handshaking phase
-**
-****************************************************************************/
-void Client::authenticate(const VariableHash &settings)
-{
-  variables.unite(settings);
-  emit outgoingVariables(variables);
-  
-  connection->setGateway(variables["soc1"]);
-  connection->open(getPacket("login"));
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
 **
 ** Passes parameters onto a packet handler and transmits result
 **
@@ -297,6 +282,24 @@ void Client::allowSubscription(const QString &contactAddress, const QString &gro
                           = nickname.toUtf8();
   
   sendPacket("allowsubscription", subscriptionVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+** Author: Richard Baxter
+**
+** same as login, but skips the handshaking phase
+**
+****************************************************************************/
+void Client::authenticate(const VariableHash &settings)
+{
+  variables.unite(settings);
+  emit outgoingVariables(variables);
+  
+  connection->setGateway(variables["soc1"]);
+  connection->open(getPacket("login"));
 }
 
 
@@ -343,24 +346,58 @@ void Client::initialize()
 **
 ** Author: Marc Bowes
 **
+****************************************************************************/
+void Client::getContacts()
+{
+  /* FIXME: stub */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::getNewMessages()
+{
+  /* FIXME: stub */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** abstraction method to simply login process, see submethod calls
 **
 ****************************************************************************/
-void Client::login(const QString &cellphone, const QString &password, const QString &captcha)
+void Client::login(const QString &cellphone, const QString &password, const QString &captcha,
+  const VariableHash &settings)
 {
-  /* FIXME: easier conversion to QByteArray from QString? */
-  
   /* need to store cellphone so it can be used as "id" in packets */
-  QByteArray _cellphone; _cellphone.append(cellphone);
-  variables["_cellphone"] = _cellphone;
+  variables["_cellphone"] = cellphone.toLatin1();
   
   /* need to store password so that it can be sent after challenge is complete */
-  QByteArray _password; _password.append(password);
-  variables["_password"] = _password;
+  variables["_password"] = password.toLatin1();
+  
+  /* merge in settings */
+  variables.unite(settings);
   
   /* begin challenge */
-  challenge(cellphone, captcha);
+  challenge(captcha);
+  
   emit outgoingVariables(variables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::pollDifference()
+{
+  /* FIXME: stub */
 }
 
 
@@ -403,6 +440,17 @@ void Client::setGateway(const QString &connectionString)
 **
 ** Author: Marc Bowes
 **
+****************************************************************************/
+void Client::setShownPresenceAndStatus()
+{
+  /* FIXME: stub */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Passes parameters onto a packet handler and transmits result
 **
 ****************************************************************************/
@@ -416,6 +464,39 @@ void Client::sendMessage(const QString &contactAddress, const QString &message, 
   messageVariables["flags"]           = QString("%1").arg(flags).toUtf8();
   
   sendPacket("sendnewmessage", messageVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::signup()
+{
+  /* FIXME: stub */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::updateContactInfo()
+{
+  /* FIXME: stub */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::updateProfile()
+{
+  /* FIXME: stub */
 }
 
 
@@ -467,10 +548,10 @@ QByteArray Client::variableValue(const QString &name)
 ** this is required to login
 **
 ****************************************************************************/
-void Client::challenge(const QString &cellphone, const QString &captcha)
+void Client::challenge(const QString &captcha)
 {
   state = CHALLENGING;
-  handshaker->challenge(cellphone, captcha, variables["url"], variables["sessionid"]);
+  handshaker->challenge(captcha, variables);
 }
 
 
@@ -618,6 +699,8 @@ void Client::setupReceived()
   variables.remove("sessionid");
   variables.remove("_cellphone");
   variables.remove("_password");
+  useVariable("cc", 0);
+  useVariable("locale", 0);
   
   emit outgoingVariables(variables);
 }

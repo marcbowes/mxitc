@@ -68,9 +68,6 @@ void Handshaker::requestComplete(int id, bool error)
   }
   
   QByteArray response = http->readAll();
-#ifdef HANDSHAKER_DEBUG
-  DEBUG(response);
-#endif
   
   switch (state) {
     case INITIALIZING:
@@ -121,19 +118,19 @@ void Handshaker::initialize()
 ** variables starting with an underscore were set by a previous response
 **
 ****************************************************************************/
-void Handshaker::challenge(const QString &cellphone, const QString &captcha,
-  const QString &_url, const QString &_sessionid) /* from initialization */
+void Handshaker::challenge(const QString &captcha, const VariableHash &settings)
 {
-  QUrl url(_url);
+  QUrl url(settings["url"]);
   http->setHost(url.host(), 80);
   
-  // FIXME: **way** more environment variables needed here
   QString query =
-    QString("%1?type=getpid&sessionid=%2&ver=5.8.2&login=%3&cat=E&chalresp=%4&cc=ZA&loc=en&brand=Nokia&model=E51&path=1")
+    QString("%1?type=getpid&sessionid=%2&ver=5.8.2&login=%3&cat=E&chalresp=%4&cc=%5&loc=%6&brand=PC&model=mxitc&path=1")
     .arg(url.path())
-    .arg(_sessionid)
-    .arg(cellphone)
+    .arg(QString(settings["sessionid"]))
+    .arg(QString(settings["_cellphone"]))
     .arg(captcha)
+    .arg(QString(settings["cc"]))
+    .arg(QString(settings["locale"]))
   ;
 
   state = CHALLENGING;
