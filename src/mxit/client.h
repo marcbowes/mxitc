@@ -72,7 +72,8 @@ class Client : public QObject
     const QString &nickname);
   void denySubscription(const QString &contactAddress, bool block=false);
   void initialize();
-  void login(const QString &cellphone, const QString &password, const QString &captcha);
+  void login(const QString &cellphone, const QString &password, const QString &captcha,
+    const VariableHash &settings);
   void removeContact(const QString &contactAddress);
   void setGateway(const QString &connectionString);
   void sendMessage(const QString &contactAddress, const QString &message,
@@ -83,7 +84,7 @@ class Client : public QObject
   private:        /* methods */
   
   MXit::Network::Packet* buildPacket();
-  void challenge(const QString &cellphone, const QString &captcha);
+  void challenge(const QString &captcha);
   MXit::Network::Packet* getPacket(const QString &handler);
   MXit::Network::Packet* getPacket(const QString &handler, VariableHash &packetVariables);
   MXit::Protocol::Handler* handlerFor(const QByteArray &command);

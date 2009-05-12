@@ -49,8 +49,7 @@ class Handshaker : public QObject
 
   public:         /* methods */
   
-  void challenge(const QString &cellphone, const QString &captcha,
-    const QString &_url, const QString &_sessionid);
+  void challenge(const QString &captcha, const VariableHash &settings);
   void initialize();
   
   private:        /* methods */

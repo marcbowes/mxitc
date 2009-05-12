@@ -346,20 +346,21 @@ void Client::initialize()
 ** abstraction method to simply login process, see submethod calls
 **
 ****************************************************************************/
-void Client::login(const QString &cellphone, const QString &password, const QString &captcha)
+void Client::login(const QString &cellphone, const QString &password, const QString &captcha,
+  const VariableHash &settings)
 {
-  /* FIXME: easier conversion to QByteArray from QString? */
-  
   /* need to store cellphone so it can be used as "id" in packets */
-  QByteArray _cellphone; _cellphone.append(cellphone);
-  variables["_cellphone"] = _cellphone;
+  variables["_cellphone"] = cellphone.toLatin1();
   
   /* need to store password so that it can be sent after challenge is complete */
-  QByteArray _password; _password.append(password);
-  variables["_password"] = _password;
+  variables["_password"] = password.toLatin1();
+  
+  /* merge in settings */
+  variables.unite(settings);
   
   /* begin challenge */
-  challenge(cellphone, captcha);
+  challenge(captcha);
+  
   emit outgoingVariables(variables);
 }
 
@@ -467,10 +468,10 @@ QByteArray Client::variableValue(const QString &name)
 ** this is required to login
 **
 ****************************************************************************/
-void Client::challenge(const QString &cellphone, const QString &captcha)
+void Client::challenge(const QString &captcha)
 {
   state = CHALLENGING;
-  handshaker->challenge(cellphone, captcha, variables["url"], variables["sessionid"]);
+  handshaker->challenge(captcha, variables);
 }
 
 
@@ -618,6 +619,8 @@ void Client::setupReceived()
   variables.remove("sessionid");
   variables.remove("_cellphone");
   variables.remove("_password");
+  useVariable("cc", 0);
+  useVariable("locale", 0);
   
   emit outgoingVariables(variables);
 }
