@@ -20,6 +20,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTextBlock>
+#include <QSystemTrayIcon>
 
 #include "common/types.h"
 #include "common/actions.h"
@@ -153,6 +154,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   DockWidget::Log * logWidget;
   DockWidget::Options * optionsWidget;
   DockWidget::AddContact * addContactWidget;
+  
+  QSystemTrayIcon *trayIcon;
   
 };
 

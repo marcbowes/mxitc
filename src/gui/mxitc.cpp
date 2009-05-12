@@ -28,6 +28,11 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
 {
   
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
+  if (QSystemTrayIcon::isSystemTrayAvailable()) {
+    trayIcon = new QSystemTrayIcon(this);
+  } else {
+    trayIcon = NULL;
+  }
   mxit = client;      /* store a copy */
   application = app;  /* store a copy */
   
@@ -213,6 +218,9 @@ MXitC::~MXitC()
   Q_FOREACH(const QDockWidget * dw, dockWidgets) {
     delete dw;
   }
+  
+  if (trayIcon)
+    delete trayIcon;
 }
 
 
@@ -866,6 +874,11 @@ void MXitC::messageReceived(){
 
 void MXitC::themeChanged(){
   setWindowIcon(theme.windowIcon);
+  if (trayIcon) {
+    trayIcon->setIcon(theme.windowIcon);
+    if (!trayIcon->isVisible()) /* skip warning about no icon before a theme is set */
+      trayIcon->show();
+  }
   refreshChatSessions();
   refreshContacts();
   
@@ -1011,6 +1024,10 @@ void MXitC::sendMessageFromChatInput()
 void MXitC::incomingError(int errorCode, const QString & errorString)
 {
   logWidget->logMessage("GUI:: Error "+QString("(%1) %2").arg(errorCode).arg(errorString));
+  
+  if (trayIcon && trayIcon->isVisible()) {
+    trayIcon->showMessage(QString("Error #%1").arg(errorCode),  errorString);
+  }
   
   if (login != NULL) {
     login->resetButtons();
