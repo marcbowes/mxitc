@@ -294,7 +294,7 @@ void MXitC::contactsMenu(const QPoint & pos, const QString& nickname) {
   MENU_EXEC(selection);
   
   
-  qDebug() << selection;
+  //qDebug() << selection;
   
   if (contact.presence == Protocol::Enumerables::Contact::Unaffiliated) {
     if (selection == "Accept") 

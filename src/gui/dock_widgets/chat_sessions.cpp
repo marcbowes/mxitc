@@ -60,7 +60,7 @@ void ChatSessions::chatSessionsListContextMenuRequest(const QPoint & pos) {
   
   if (lwi) {
     QString chatSession = lwi->text();
-    qDebug() << parent();
+    //qDebug() << parent();
     emit contextMenuRequest(chatSessionsList->mapToGlobal ( pos ), chatSession);
   }
 }
@@ -152,16 +152,16 @@ QListWidgetItem * ChatSessions::addChatSession(const ChatSession & c){
 void ChatSessions::selectItem(const QString& chatSessionName) {
 
   
-  for (int i = 0 ; i < chatSessionsList->count() ; i++) {
+  /*for (int i = 0 ; i < chatSessionsList->count() ; i++) {
     
     qDebug() <<  chatSessionsList->item(i)->text();
   }
   qDebug() << chatSessionName;
   qDebug() << chatSessionsList->findItems ( chatSessionName, Qt::MatchFixedString );
-
+*/
   chatSessionsList->setCurrentRow ( chatSessionsList->row ( chatSessionsList->findItems ( chatSessionName, Qt::MatchFixedString ).front()));
   
-  qDebug() << chatSessionsList->currentRow();
+  //qDebug() << chatSessionsList->currentRow();
 }
 
 /****************************************************************************
