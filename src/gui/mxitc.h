@@ -71,7 +71,9 @@ class MXitC : public QMainWindow, private Ui::MXitC
   bool ensureExistanceOfContact(const QString & contactAddress);
   bool ensureExistanceOfChatSession(const QString & chatSessionName);
   
+  /* chat session creation deletion*/
   void startChatSessionWithContact (MXit::Contact & contact);
+  void closeChatSession(const QString & chatSessionName);
   
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
   
