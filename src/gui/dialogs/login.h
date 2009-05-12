@@ -24,6 +24,7 @@ namespace GUI
 namespace Dialog
 {
 
+/* TODO this class was created quite early on, needs to be refactored (?)*/
 class Login : public MXitDialog, private Ui::Login
 {
   Q_OBJECT
@@ -43,8 +44,10 @@ class Login : public MXitDialog, private Ui::Login
 
   private slots:
   
-  void captchaReceived(const QByteArray &captcha);
+  void environmentVariablesReady();
+  
   void captchaChanged(const QString &text);
+  
   void cellphoneChanged(const QString &text);
   void error(const QString &text);
   void login();

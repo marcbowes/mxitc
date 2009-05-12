@@ -38,6 +38,13 @@ Contacts::Contacts(QWidget* parent, Theme &theme) : MXitDockWidget(parent, theme
         SIGNAL( customContextMenuRequested ( const QPoint & ) ), 
         this, 
         SLOT( contactsListContextMenuRequest( const QPoint & ) )  );
+        
+        
+  connect(
+        contactsList, 
+        SIGNAL( itemDoubleClicked ( QListWidgetItem * ) ),
+        this, 
+        SIGNAL( chatRequest( QListWidgetItem * ) )  );
 }
 
 

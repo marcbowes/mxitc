@@ -39,6 +39,8 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   void contextMenuRequest(const QPoint &, const QString& nickname);
   
+  signals:
+  void chatRequest ( QListWidgetItem * );
   
   public:
   

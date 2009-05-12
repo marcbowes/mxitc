@@ -1,126 +1,111 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>Login</class>
- <widget class="QDialog" name="Login" >
-  <property name="geometry" >
+ <widget class="QDialog" name="Login">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>285</width>
-    <height>283</height>
+    <width>218</width>
+    <height>383</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Login</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" >
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QLabel" name="label_3" >
-     <property name="font" >
-      <font>
-       <pointsize>11</pointsize>
-       <weight>50</weight>
-       <italic>true</italic>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text" >
-      <string>Please login to continue</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label" >
-     <property name="font" >
-      <font>
-       <family>Verdana</family>
-       <pointsize>11</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text" >
+    <widget class="QLabel" name="label">
+     <property name="text">
       <string>Cellphone</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="cellphone" >
-     <property name="font" >
+    <widget class="QLineEdit" name="cellphone">
+     <property name="font">
       <font>
        <family>Verdana</family>
        <pointsize>16</pointsize>
       </font>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>Your 10 digit cellphone number</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_2" >
-     <property name="font" >
-      <font>
-       <family>Verdana</family>
-       <pointsize>11</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text" >
+    <widget class="QLabel" name="label_2">
+     <property name="text">
       <string>Password</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="password" >
-     <property name="font" >
+    <widget class="QLineEdit" name="password">
+     <property name="font">
       <font>
        <family>Verdana</family>
        <pointsize>16</pointsize>
       </font>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>The MXit password for your cellphone</string>
      </property>
-     <property name="echoMode" >
+     <property name="echoMode">
       <enum>QLineEdit::Password</enum>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="captchaLabel" >
-     <property name="font" >
-      <font>
-       <family>Verdana</family>
-      </font>
-     </property>
-     <property name="text" >
+    <widget class="QLabel" name="captchaLabel">
+     <property name="text">
       <string>CAPTCHA</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="captcha" >
-     <property name="font" >
+    <widget class="QLineEdit" name="captcha">
+     <property name="font">
       <font>
        <family>Verdana</family>
        <pointsize>16</pointsize>
       </font>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>Please enter the digits from the above image</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QWidget" native="1" name="widget" >
-     <layout class="QHBoxLayout" name="horizontalLayout_2" >
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Language</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="languageComboBox"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Country</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="countriesComboBox"/>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <spacer name="horizontalSpacer" >
-        <property name="orientation" >
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" stdset="0" >
+        <property name="sizeHint" stdset="0">
          <size>
           <width>40</width>
           <height>20</height>
@@ -129,31 +114,37 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="loginButton" >
-        <property name="enabled" >
+       <widget class="QPushButton" name="loginButton">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Login</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="cancelButton" >
-        <property name="text" >
+       <widget class="QPushButton" name="cancelButton">
+        <property name="text">
          <string>Cancel</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="helpButton" >
-        <property name="text" >
-         <string>Help</string>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

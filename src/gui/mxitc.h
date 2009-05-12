@@ -82,7 +82,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
   
-  
+  /* TODO change to a QList that is sorted by alphabetical order, starting with the "" group*/
   QSet<QString> getGroupSet();
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -105,12 +105,16 @@ class MXitC : public QMainWindow, private Ui::MXitC
 
   private slots:
   
-  void loggingIn();
   void openLoginDialog();
+  void loggingIn();
   
   void incomingAction(Action action);
+  
   void setCurrentChatSession(QListWidgetItem * item);
   void setCurrentChatSession(const QString & chatSessionName);
+  
+  void chatRequestedViaContact ( QListWidgetItem * item);
+  void chatRequestedViaContact ( const QString& nickname );
   
   void saveLayout(bool b);
   void saveLayout(Qt::DockWidgetArea area = Qt::NoDockWidgetArea); 
@@ -119,6 +123,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void themeChanged();
   
+  /* context munu functions*/
   void chatSessionsMenu(const QPoint & pos, const QString& chatSessionName);
   void contactsMenu(const QPoint & pos, const QString& nickname);
   

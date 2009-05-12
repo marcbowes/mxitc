@@ -6,6 +6,7 @@
 
 #include "mxitc.h"
 
+
 namespace MXit
 {
 
@@ -92,16 +93,18 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*------------------------------------------------------------------------------------------*/
   /* Connecting contextMenu requests from child widgets */
   /*------------------------------------------------------------------------------------------*/
-  connect(chatSessionsWidget, 
-          SIGNAL(contextMenuRequest(const QPoint &, const QString &)), 
-          this , 
-          SLOT(chatSessionsMenu(const QPoint &, const QString &))  );
+  connect(  chatSessionsWidget, 
+            SIGNAL(contextMenuRequest(const QPoint &, const QString &)), 
+            this , 
+            SLOT(chatSessionsMenu(const QPoint &, const QString &))  );
           
-  connect(contactsWidget, 
-          SIGNAL(contextMenuRequest(const QPoint &, const QString &)), 
-          this , 
-          SLOT(contactsMenu(const QPoint &, const QString &))  );
+  connect(  contactsWidget, 
+            SIGNAL(contextMenuRequest(const QPoint &, const QString &)), 
+            this , 
+            SLOT(contactsMenu(const QPoint &, const QString &))  );
   
+   connect( contactsWidget, SIGNAL(chatRequest ( QListWidgetItem * )),
+            this, SLOT(chatRequestedViaContact ( QListWidgetItem * ) )  );
   
   /*------------------------------------------------------------------------------------------*/
   /* Connecting new variables SIGNAL from the client to tell debugWidget to update
@@ -110,25 +113,37 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   #endif
   
-  
+  /*TODO put this somewhere useful*/
   mainTextArea->setFocusProxy(chatInput);
   
-  /*TODO integrate into QT designer (?)*/
+  
+  /*------------------------------------------------------------------------------------------*/
+  /* Connecting new variables SIGNAL from the widgets to the client
+  /*------------------------------------------------------------------------------------------*/
+  /*TODO sort out what connects need to go where*/
+  
   connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginDialog()));
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
   
   connect(chatInput,  SIGNAL(returnPressed ()), this, SLOT(sendMessageFromChatInput()));
   
-  connect(mxit, SIGNAL(outgoingError(int, const QString &)), this, SLOT(incomingError(int, const QString &)));
-  connect(mxit, SIGNAL(outgoingConnnectionError(const QString &)), this, SLOT(incomingConnectionError(const QString &)));
-  connect(mxit, SIGNAL(outgoingAction(Action)), this, SLOT(incomingAction(Action)));
-  
-  
-  connect(chatSessionsWidget, SIGNAL(outgoingItemPressed ( QListWidgetItem *  )), this, SLOT(setCurrentChatSession( QListWidgetItem *  )));
-  
-  connect(optionsWidget, SIGNAL(gatewaySelected(bool)), this, SLOT(sendGateway( bool )));  
 
-  connect(optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+  connect(  mxit, SIGNAL(outgoingError(int, const QString &)), 
+            this, SLOT(incomingError(int, const QString &)));
+            
+  connect(  mxit, SIGNAL(outgoingAction(Action)), 
+            this, SLOT(incomingAction(Action)));
+            
+  connect(  mxit, SIGNAL(outgoingConnnectionError(const QString &)), 
+            this, SLOT(incomingConnectionError(const QString &)));
+  
+  
+  connect(  chatSessionsWidget, SIGNAL(outgoingItemPressed ( QListWidgetItem *  )), 
+            this, SLOT(setCurrentChatSession( QListWidgetItem *  )));
+  
+  connect(  optionsWidget, SIGNAL(gatewaySelected(bool)), this, SLOT(sendGateway( bool )));  
+
+  connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
   
   
   /*------------------------------------------------------------------------------------------*/
@@ -172,6 +187,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   variables.append("soc2");
   variables.append("http2");
   
+  variables.append("locale");
+  
+  
   /* creating the variable hash*/
   VariableHash variableHash;
   
@@ -194,9 +212,10 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
     loggingIn();
     mxit->authenticate(variableHash);
   }
-  
-  
-  
+  else {
+    mxit->initialize();
+    openLoginDialog();
+  }
 }
 
 
@@ -357,14 +376,7 @@ void MXitC::contactsMenu(const QPoint & pos, const QString& nickname) {
   {
     if (selection == "Chat") 
     {
-      //qDebug() << "chat";
-      startChatSessionWithContact(contact);
-      
-      /* since the user requested a chat, bring forward the chatSessions dockwindow*/
-      chatSessionsWidget->raise();
-      
-      chatSessionsWidget->selectItem(chatSessions[contact.nickname].chatSessionName);
-      
+      chatRequestedViaContact(nickname);
     }
     else if (selection == "Change Nickname") {
       /* TODO */
@@ -453,11 +465,12 @@ void MXitC::startChatSessionWithContact (MXit::Contact & contact) {
 void MXitC::closeChatSession(const QString & chatSessionName) {
 
   /* if user closes the currentChatSession*/
-  if(&chatSessions[chatSessionName] == currentChatSession)
+  if(chatSessionName == currentChatSession->chatSessionName)
      currentChatSession = 0;
      
   chatSessions.remove(chatSessionName);
   refreshChatSessions();
+  refreshChatBox();
 }
 
 
@@ -852,7 +865,7 @@ void MXitC::messageReceived(){
     
     
     //Q_FOREACH(const ChatSession & c, chatSessions.values()) {
-    //  qDebug() << c.chatSessionName;
+      //qDebug() << c.chatSessionName;
     //}
     refreshChatSessions(); /* show unread messages, new chat sessions etc*/
     refreshChatBox();
@@ -923,6 +936,31 @@ void MXitC::setCurrentChatSession(const QString & chatSessionName){
   
   chatInput->setText(currentChatSession->chatInputText);
   
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** chat with specified user was requested 
+**
+****************************************************************************/
+
+void MXitC::chatRequestedViaContact ( QListWidgetItem * item) {
+  chatRequestedViaContact(item->text());
+}
+
+void MXitC::chatRequestedViaContact ( const QString& nickname ) {
+
+  MXit::Contact & contact = contacts[nicknameToContactAddress[nickname]];
+  startChatSessionWithContact(contact);
+  
+  /* since the user requested a chat, bring forward the chatSessions dockwindow*/
+  chatSessionsWidget->raise();
+  
+  chatSessionsWidget->selectItem(chatSessions[contact.nickname].chatSessionName);
+  
+  chatInput->setFocus(Qt::OtherFocusReason);
 }
 
 
@@ -1116,12 +1154,13 @@ void MXitC::loggingIn(){
 **
 ** Author: Richard Baxter
 **
-** Opens the login dialog TODO soon to be depricated in favor of a dockwidget
+** Opens the login dialog
 **
 ****************************************************************************/
 
 void MXitC::openLoginDialog(){
-
+  
+  
   login = new Dialog::Login(this, mxit, settings);
   connect(login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
   login->exec();
