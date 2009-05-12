@@ -120,6 +120,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(chatInput,  SIGNAL(returnPressed ()), this, SLOT(sendMessageFromChatInput()));
   
   connect(mxit, SIGNAL(outgoingError(int, const QString &)), this, SLOT(incomingError(int, const QString &)));
+  connect(mxit, SIGNAL(outgoingConnnectionError(const QString &)), this, SLOT(incomingConnectionError(const QString &)));
   connect(mxit, SIGNAL(outgoingAction(Action)), this, SLOT(incomingAction(Action)));
   
   
@@ -1012,6 +1013,28 @@ void MXitC::sendMessageFromChatInput()
   outgoingMessage(chatInput->text()); /*signals to this classes outgoing messages so it can go to the client*/
   chatInput->setText("");
 }
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Handles an incoming connection error (recieved from the client)
+**
+****************************************************************************/
+void MXitC::incomingConnectionError(const QString & errorString)
+{
+  logWidget->logMessage(QString("GUI:: Error %1").arg(errorString));
+  
+  if (trayIcon && trayIcon->isVisible()) {
+    trayIcon->showMessage("Network Error",  errorString);
+  }
+  
+  if (login != NULL) {
+    login->resetButtons();
+  }
+}
+
 
 /****************************************************************************
 **

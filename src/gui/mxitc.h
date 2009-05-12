@@ -96,6 +96,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   public slots:
   
   void sendMessageFromChatInput();
+  void incomingConnectionError(const QString & errorString);
   void incomingError(int errorCode, const QString & errorString);
 
   protected slots:
