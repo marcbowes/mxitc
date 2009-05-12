@@ -15,7 +15,6 @@
 #define __MXIT_CLIENT_H__
 
 #include <QHash>
-#include <QTime>
 #include <QTimer>
 
 #include "common/actions.h"
@@ -100,7 +99,6 @@ class Client : public QObject
   MXit::Protocol::HandlerHash handlers;
   MXit::Protocol::Handshaker *handshaker;
   QTimer                      keepAliveTimer;
-  QTime                       lastAction;
   Status                      state;
   VariableHash                variables;
 };
