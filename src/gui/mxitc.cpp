@@ -134,7 +134,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(  mxit, SIGNAL(outgoingAction(Action)), 
             this, SLOT(incomingAction(Action)));
             
-  connect(  mxit, SIGNAL(outgoingConnnectionError(const QString &)), 
+  connect(  mxit, SIGNAL(outgoingConnectionError(const QString &)), 
             this, SLOT(incomingConnectionError(const QString &)));
   
   

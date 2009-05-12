@@ -43,8 +43,8 @@ Connection::Connection()
   connect(socket,   SIGNAL(readyRead()),    this,   SLOT(TCP_read()));
   connect(socket,   SIGNAL(connected()),    this,   SLOT(TCP_connected()));
   connect(socket,   SIGNAL(disconnected()), this,   SLOT(TCP_disconnected()));
-  connect(socket,   SIGNAL(error(QAbstractSocket::SocketError socketError)),
-          this,    SLOT(TCP_error(QAbstractSocket::SocketError socketError)));
+  connect(socket,   SIGNAL(error(QAbstractSocket::SocketError)),
+          this,    SLOT(TCP_error(QAbstractSocket::SocketError)));
 }
 
 
