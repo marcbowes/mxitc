@@ -38,6 +38,7 @@ class GetMultimediaMessage : public Handler
   
   QByteArray getChunk(QByteArray chunk, int &type, int &length);
   VariableHash handleChunk(int type, int length, QByteArray chunkData);
+  QByteArray intToHex(int number, int numberOfBytes);
 };
 
 }
