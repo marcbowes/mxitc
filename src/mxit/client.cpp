@@ -158,6 +158,10 @@ void Client::incomingPacket(const QByteArray &packet)
       /* variable scrubbing */
       variables.remove("contacts");
       break;
+    case DENYSUBSCRIPTION:
+      /* ensure contact refresh */
+      sendPacket("getcontacts");
+      break;
   }
   
   /* global scrubbing */
