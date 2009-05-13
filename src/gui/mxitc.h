@@ -24,9 +24,9 @@
 
 #include "common/types.h"
 #include "common/actions.h"
-#include "common/contact.h"
 
 #include "mxit/client.h"
+#include "mxit/contact.h"
 
 #include "gui/dock_widgets/log.h"
 #include "gui/dock_widgets/debug.h"

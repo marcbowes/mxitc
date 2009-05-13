@@ -8,7 +8,6 @@ INCLUDE(${QT_USE_FILE})
 
 # .cxx sources
 SET(MXIT_CLIENT_SRCS_CXX
-  common/contact.cpp
   common/chat_session.cpp
   common/hash_variables.cpp
 
@@ -43,6 +42,8 @@ SET(MXIT_CLIENT_SRCS_CXX
   network/connection.cpp
   protocol/handshaker.cpp
   mxit/client.cpp
+  mxit/contact.cpp
+  mxit/conversation.cpp
 
   gui/theme_components/contact/base.cpp  
   gui/theme_components/contact/presence.cpp

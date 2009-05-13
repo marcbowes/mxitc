@@ -4,7 +4,7 @@
 **
 ** Author: Marc Bowes, 2009
 **
-** Provides functionality to store contacts as an object
+** Model for a MXit contact (address, presence..)
 **
 ****************************************************************************/
 
