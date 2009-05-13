@@ -108,10 +108,28 @@ void AddressBook::addContacts(const QByteArray &data)
 **
 ** Author: Marc Bowes
 **
-** Permanently removes a Contact from the AddressBook
+** Permanently removes a Contact from the AddressBook.
+** This method is safe - removing a non-existant Contact will have no effect.
 **
 ****************************************************************************/
 void AddressBook::removeContact(const QString &contactAddress)
+{
+  if (contacts.contains(contactAddress)) {
+    Contact *_delete = *contacts.find(contactAddress);
+    contacts.remove(_delete->contactAddress);
+    delete _delete;
+  }
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Returns a [presence, name]-ordered list of Contacts
+**
+****************************************************************************/
+ContactList AddressBook::toList()
 {
   /* STUB */
 }
