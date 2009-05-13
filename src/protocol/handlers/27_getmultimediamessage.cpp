@@ -55,18 +55,84 @@ void GetMultimediaMessage::build(MXit::Network::Packet *packet, VariableHash &va
   
   switch(type) {
     case MXit::Protocol::Enumerables::ChunkedData::RejectFile:
+      //id
+      data.append(variables["id"]);
+      
+      //reason
+      data.append(variables["reason"]);
+      
+      //data
+      data.append(QByteArray::number(variables["data"].length()));
+      data.append(variables["data"]);
       
       break;
     case MXit::Protocol::Enumerables::ChunkedData::GetFile:
+      //id
+      data.append(variables["id"]);
+      
+      //offset
+      data.append(variables["offset"]);
+      
+      //length
+      data.append(variables["length"]);
       
       break;
     case MXit::Protocol::Enumerables::ChunkedData::ReceivedFile:
+      //id
+      data.append(variables["id"]);
+      
+      //res
+      data.append(variables["res"]);
       
       break;
     case MXit::Protocol::Enumerables::ChunkedData::SendFileDirect:
+      //size
+      data.append(variables["size"]);
+      
+      //numContacts
+      data.append(variables["numContacts"]);
+      
+      //addresses
+      data.append(QByteArray::number(variables["addresses"].length()));
+      data.append(variables["addresses"]);
+      
+      //name
+      data.append(QByteArray::number(variables["name"].length()));
+      data.append(variables["name"]);
+      
+      //mimetype
+      data.append(QByteArray::number(variables["mimetype"].length()));
+      data.append(variables["mimetype"]);
+      
+      //description
+      data.append(QByteArray::number(variables["description"].length()));
+      data.append(variables["description"]);
+      
+      //crc
+      data.append(variables["crc"]);
+      
+      //bytes
+      data.append(variables["bytes"]);
       
       break;
     case MXit::Protocol::Enumerables::ChunkedData::ForwardFileDirect:
+      //id
+      data.append(variables["id"]);
+      
+      //numContacts
+      data.append(variables["numContacts"]);
+      
+      //addresses
+      data.append(QByteArray::number(variables["addresses"].length()));
+      data.append(variables["addresses"]);
+      
+      //name
+      data.append(QByteArray::number(variables["name"].length()));
+      data.append(variables["name"]);
+      
+      //description
+      data.append(QByteArray::number(variables["description"].length()));
+      data.append(variables["description"]);
       
       break;
     default:
@@ -171,6 +237,7 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
   //used in CustomResource
   int dataLength, dataType, position, chunksLen;
   VariableHash tempVariables;
+  VariableHashItr tempItr(tempVariables);
     
   //used in GetFile
   int offset, fileLength, crc;
@@ -226,14 +293,21 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
       }
       position += 3;
       
-      //now at first chunk of many; FIXME to handle more than one
-      data = getChunk(chunkData.mid(position), dataType, dataLength);
-      tempVariables = handleChunk(dataType, dataLength, data);
-      returnData[QString(returnData["handle"]) + "_type"] = tempVariables["type"];
-      returnData[QString(returnData["handle"]) + "_anchor"] = tempVariables["anchor"];
-      returnData[QString(returnData["handle"]) + "_timeToShow"] = tempVariables["timeToShow"];
-      returnData[QString(returnData["handle"]) + "_bgColour"] = tempVariables["bgColour"];
-      returnData[QString(returnData["handle"]) + "_image"] = tempVariables["image"];
+      //now at first chunk of many; FIXME going to get collisions of "handle"_type. but thats a protocol problem
+      while (position < length) {
+        tempVariables.clear();
+        
+        data = getChunk(chunkData.mid(position), dataType, dataLength);
+        tempVariables = handleChunk(dataType, dataLength, data);
+        
+        tempItr = tempVariables;
+        while (tempItr.hasNext()) {
+          tempItr.next();
+          returnData[QString(returnData["handle"]) + "_" + tempItr.key()] = tempItr.value();
+        }
+        
+        position += (5 + dataLength);
+      }
       
       break;
     case MXit::Protocol::Enumerables::ChunkedData::SplashImage:
@@ -321,7 +395,7 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
       
       position += dataLength;
       
-      //timeStamp FIXME: dont skip
+      //timeStamp FIXME: dont skip... maybe
       position += 8;
       
       //description length
@@ -353,16 +427,16 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
       position += dataLength;
       
       //flags
-      
+      returnData["flags"] = chunkData.mid(position, 4);
       
       
       break;
     case MXit::Protocol::Enumerables::ChunkedData::GetFile:
-      //id FIXME save to variable hash
+      //id
       data = chunkData.left(8);
       returnData["id"] = data;
       
-      //offset FIXME save to variable hash
+      //offset
       offset = 0;
       offset |= (unsigned char)chunkData[8];
       for (int i=9; i<12; i++) {
