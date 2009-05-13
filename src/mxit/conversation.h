@@ -21,7 +21,8 @@
 namespace MXit
 {
 
-typedef QSet<Contact*> ContactSet; /* for very fast contact lookups */
+typedef QSet<const Contact*>  ContactSet;   /* for very fast contact lookups */
+typedef QList<const Contact*> ContactList;  /* for synchronising with the outside world */
 
 class Conversation
 {
@@ -33,7 +34,9 @@ class Conversation
 
   public:         /* methods */
   
-  void addOrUpdateContacts(const QList<Contact*> &contacts);
+  void addOrUpdateContacts(const ContactList &contacts);
+  void removeContact(const Contact *contact);
+  void removeContacts(const ContactList &contacts);
 
   private:        /* variables */
   
