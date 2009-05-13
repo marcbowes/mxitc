@@ -44,6 +44,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   mxit/client.cpp
   mxit/contact.cpp
   mxit/conversation.cpp
+  mxit/message.cpp
 
   gui/theme_components/contact/base.cpp  
   gui/theme_components/contact/presence.cpp
