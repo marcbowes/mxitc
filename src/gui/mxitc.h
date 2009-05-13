@@ -6,7 +6,7 @@
 ** This is an extension of the generated dialog, made with Designer.
 **
 ****************************************************************************/
-
+#define VARIABLE_DEBUGGER
 #ifndef __MXIT_GUI_MXITC_H__
 #define __MXIT_GUI_MXITC_H__
 
