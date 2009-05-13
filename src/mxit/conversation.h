@@ -34,7 +34,8 @@ class Conversation
 
   public:         /* methods */
   
-  void addOrUpdateContacts(const ContactList &contacts);
+  void addContact(const Contact *contact);
+  void addContacts(const ContactList &contacts);
   void removeContact(const Contact *contact);
   void removeContacts(const ContactList &contacts);
 

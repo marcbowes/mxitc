@@ -72,12 +72,27 @@ Conversation::~Conversation()
 **
 ** Author: Marc Bowes
 **
-** Units a ContactList against the internal ContactSet.
-** This method is safe - the list can contain Contacts already stored and
-**  it will simply update any information which has changed.
+** Inserts a Contact into the internal ContactSet.
+** This method is safe - if the Contact is already stored, nothing will
+**  happen.
 **
 ****************************************************************************/
-void Conversation::addOrUpdateContacts(const ContactList &contacts)
+void Conversation::addContact(const Contact *contact)
+{
+  contacts.insert(contact);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Units a ContactList against the internal ContactSet.
+** This method is safe - the list can contain Contacts already stored and
+**  it will simply skip them.
+**
+****************************************************************************/
+void Conversation::addContacts(const ContactList &contacts)
 {
   this->contacts.unite(ContactSet::fromList(contacts));
 }
