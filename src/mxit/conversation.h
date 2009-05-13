@@ -24,7 +24,7 @@ namespace MXit
 
 typedef QSet<const Contact*>  ContactSet;   /* for very fast contact lookups */
 typedef QList<const Contact*> ContactList;  /* for synchronising with the outside world */
-typedef QList<Message>         MessageList;  /* for storing chat */
+typedef QList<Message*>        MessageList;  /* for storing chat */
 
 class Conversation
 {
@@ -38,12 +38,14 @@ class Conversation
   
   void addContact(const Contact *contact);
   void addContacts(const ContactList &contacts);
+  void appendMessage(const Message &message);
   void removeContact(const Contact *contact);
   void removeContacts(const ContactList &contacts);
 
   private:        /* variables */
   
   ContactSet      contacts;
+  MessageList     messages;
 };
 
 }

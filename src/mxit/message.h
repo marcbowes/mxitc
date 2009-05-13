@@ -26,8 +26,9 @@ class Message
   
   Message(const QString &message);
   Message(const Contact &contact, const QString &message);
+  Message(const Message &other);
   ~Message();
-
+  
   public:         /* variables */
   
   const Contact *contact;

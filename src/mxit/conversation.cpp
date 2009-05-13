@@ -54,7 +54,8 @@ Conversation::Conversation(const ContactSet &contacts)
 ****************************************************************************/
 Conversation::~Conversation()
 {
-  /* STUB */
+  Q_FOREACH(Message *message, messages)
+    delete message;
 }
 
 
@@ -95,6 +96,19 @@ void Conversation::addContact(const Contact *contact)
 void Conversation::addContacts(const ContactList &contacts)
 {
   this->contacts.unite(ContactSet::fromList(contacts));
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Stores a Message in the Conversation
+**
+****************************************************************************/
+void Conversation::appendMessage(const Message &message)
+{
+  messages.append(new Message(message));
 }
 
 

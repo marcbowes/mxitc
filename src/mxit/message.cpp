@@ -27,7 +27,7 @@ namespace MXit
 **
 ****************************************************************************/
 Message::Message(const QString &message)
-  : contact(NULL), message(message), timestamp (QTime::currentTime())
+  : contact(NULL), message(message), timestamp(QTime::currentTime())
 {
   /* Nothing */
 }
@@ -42,6 +42,20 @@ Message::Message(const QString &message)
 ****************************************************************************/
 Message::Message(const Contact &contact, const QString &message)
   : contact(&contact), message(message), timestamp (QTime::currentTime())
+{
+  /* Nothing */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Copy constructor
+**
+****************************************************************************/
+Message::Message(const Message &other)
+  : contact(other.contact), message(other.message), timestamp(other.timestamp)
 {
   /* Nothing */
 }
