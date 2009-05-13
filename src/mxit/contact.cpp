@@ -78,5 +78,33 @@ bool Contact::operator==(const Contact &other)
   return this->contactAddress == other.contactAddress;
 }
 
+
+/****************************************************************************
+                __   ___                 __  __           __  
+     ___  __ __/ /  / (_)___  __ _  ___ / /_/ /  ___  ___/ /__
+    / _ \/ // / _ \/ / / __/ /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
+   / .__/\_,_/_.__/_/_/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
+  /_/                                                         
+
+****************************************************************************/
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Updates fields (except contactAddress) from raw MXit data
+**
+****************************************************************************/
+void Contact::updateFromRaw(const QList<QByteArray> &fields)
+{
+  group     = fields[0];
+  /* skip contactAddress */
+  nickname  = fields[2];
+  presence  = (Protocol::Enumerables::Contact::Presence)fields[3].toUInt();
+  type      = (Protocol::Enumerables::Contact::Type)fields[4].toUInt();
+  mood      = (Protocol::Enumerables::Contact::Mood)fields[5].toUInt();
+}
+
 }
 

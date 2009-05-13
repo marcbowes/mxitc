@@ -11,6 +11,7 @@
 #ifndef __MXIT_CONTACT_H__
 #define __MXIT_CONTACT_H__
 
+#include <QHash>
 #include <QList>
 #include <QSet>
 #include <QString>
@@ -31,13 +32,17 @@ class Contact
   
   bool operator==(const Contact &other);
   
-  public:         /* variables */
+  public:        /* methods */
+  
+  void updateFromRaw(const QList<QByteArray> &fields);
+  
+  public:        /* variables */
 
   Protocol::Enumerables::Contact::Presence presence;
   Protocol::Enumerables::Contact::Type     type;
   Protocol::Enumerables::Contact::Mood     mood;
 
-  public:        /* variables */
+  public:       /* variables */
   
   QString contactAddress;
   QString group;
@@ -46,8 +51,9 @@ class Contact
   QString nickname;
 };
 
-typedef QSet<const Contact*>  ContactSet;
-typedef QList<const Contact*> ContactList;
+typedef QHash<QString, Contact*> ContactHash;
+typedef QList<const Contact*>   ContactList;
+typedef QSet<const Contact*>    ContactSet;
 
 }
 

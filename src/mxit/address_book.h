@@ -29,12 +29,20 @@ class AddressBook
   public:         /* methods */
 
   void addContact(const QByteArray &data);
+  void addContact(const QList<QByteArray> &fields);
   void addContacts(const QByteArray &data);
   void removeContact(const QString &contactAddress);
+  void updateContact(const QByteArray &data);
+  void updateContact(const QList<QByteArray> &fields);
+  void updateContacts(const QByteArray &data);
+  
+  private:       /* methods */
+  
+  void insertContact(const QList<QByteArray> &fields);
   
   private:       /* variables */
   
-  ContactSet      contacts;
+  ContactHash     contacts;
 };
 
 }
