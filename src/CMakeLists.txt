@@ -41,6 +41,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   network/gateway.cpp
   network/connection.cpp
   protocol/handshaker.cpp
+  mxit/address_book.cpp
   mxit/client.cpp
   mxit/contact.cpp
   mxit/conversation.cpp
