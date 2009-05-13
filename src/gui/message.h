@@ -13,7 +13,8 @@
 
 #include <QObject>
 #include <QVector>
-#include "common/contact.h"
+
+#include "mxit/contact.h"
 
 namespace MXit
 {

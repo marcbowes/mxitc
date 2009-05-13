@@ -36,10 +36,38 @@ Conversation::Conversation()
 **
 ** Author: Marc Bowes
 **
+** Constructor which accepts a pre-formed ContactSet
+**
+****************************************************************************/
+Conversation::Conversation(const ContactSet &contacts)
+{
+  this->contacts = contacts; /* copy */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Default destructor
 **
 ****************************************************************************/
 Conversation::~Conversation()
+{
+  /* STUB */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Units a set of contacts against the internal ContactSet.
+** This method is safe - the list can contain contacts already stored and
+**  it will simply update any information which has changed.
+**
+****************************************************************************/
+void addContacts(const QList<Contact> &contacts)
 {
   /* STUB */
 }

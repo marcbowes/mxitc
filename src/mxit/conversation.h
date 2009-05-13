@@ -13,15 +13,31 @@
 #ifndef __MXIT_CONVERSATION_H__
 #define __MXIT_CONVERSATION_H__
 
+#include <QList>
+#include <QSet>
+
+#include "contact.h"
+
 namespace MXit
 {
+
+typedef QSet<Contact> ContactSet; /* for very fast contact lookups */
 
 class Conversation
 {
   public:         /* class specific */
 	
   Conversation();
+  Conversation(const ContactSet &contacts);
   ~Conversation();
+
+  public:         /* methods */
+  
+  void addContacts(const QList<Contact> &contacts);
+
+  private:        /* variables */
+  
+  ContactSet      contacts;
 };
 
 }

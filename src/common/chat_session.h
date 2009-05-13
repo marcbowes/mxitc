@@ -13,8 +13,9 @@
 #ifndef __MXIT_CHATSESSION_H__
 #define __MXIT_CHATSESSION_H__
 
-#include "contact.h"
 #include "types.h"
+
+#include "mxit/contact.h"
 
 #include "gui/message.h"
 

@@ -9,7 +9,7 @@
 #ifndef __MXIT_GUI_DOCKWIDGET_CONTACTS_H__
 #define __MXIT_GUI_DOCKWIDGET_CONTACTS_H__
 
-#include "common/contact.h"
+#include "mxit/contact.h"
 
 #include "gui/mxit_dock_widget.h"
 
