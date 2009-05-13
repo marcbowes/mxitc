@@ -27,6 +27,8 @@ class Contact
     quint16 presence, quint16 type, quint16 mood);
   ~Contact();
   
+  bool operator==(const Contact &other);
+  
   public:         /* variables */
 
   Protocol::Enumerables::Contact::Presence presence;

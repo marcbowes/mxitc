@@ -67,9 +67,9 @@ Conversation::~Conversation()
 **  it will simply update any information which has changed.
 **
 ****************************************************************************/
-void addContacts(const QList<Contact> &contacts)
+void Conversation::addOrUpdateContacts(const QList<Contact*> &contacts)
 {
-  /* STUB */
+  this->contacts.unite(ContactSet::fromList(contacts));
 }
 
 }
