@@ -28,7 +28,7 @@ namespace MXit
 ****************************************************************************/
 Conversation::Conversation()
 {
-  /* STUB */
+  /* Nothing */
 }
 
 

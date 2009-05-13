@@ -23,14 +23,27 @@ namespace MXit
 **
 ** Author: Marc Bowes
 **
-** Default constructor
+** Constructor for outgoing chat (to a Contact)
+**
+****************************************************************************/
+Message::Message(const QString &message)
+  : contact(NULL), message(message), timestamp (QTime::currentTime())
+{
+  /* Nothing */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Constructor for incoming chat (from a Contact)
 **
 ****************************************************************************/
 Message::Message(const Contact &contact, const QString &message)
-  : timestamp (QTime::currentTime())
+  : contact(&contact), message(message), timestamp (QTime::currentTime())
 {
-  this->contact = &contact;
-  this->message = message;
+  /* Nothing */
 }
 
 

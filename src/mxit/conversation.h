@@ -17,12 +17,14 @@
 #include <QSet>
 
 #include "contact.h"
+#include "message.h"
 
 namespace MXit
 {
 
 typedef QSet<const Contact*>  ContactSet;   /* for very fast contact lookups */
 typedef QList<const Contact*> ContactList;  /* for synchronising with the outside world */
+typedef QList<Message>         MessageList;  /* for storing chat */
 
 class Conversation
 {

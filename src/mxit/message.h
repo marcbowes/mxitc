@@ -24,13 +24,14 @@ class Message
 {
   public:         /* class specific */
   
+  Message(const QString &message);
   Message(const Contact &contact, const QString &message);
   ~Message();
 
   public:         /* variables */
   
   const Contact *contact;
-  QString         message;
+  const QString  message;
   const QTime    timestamp;
 };
 
