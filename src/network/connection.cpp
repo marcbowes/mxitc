@@ -282,10 +282,22 @@ void Connection::HTTP_read(int id, bool error)
   buffer.append(http.readAll());
   if (!buffer.isEmpty()) {
     QList<QByteArray> packets = buffer.split('\2');
+    int idx = 0, idx_27 = -1;
+    QByteArray packet27;
     Q_FOREACH(const QByteArray &packet, packets) {
-      qDebug() << "HTTP PACKET\n---";
-      qDebug() << QByteArray(packet).replace('\0', ';').replace('\1', ',');
-      emit outgoingPacket(packet);
+      idx++;
+      if (packet.left(2) == "27")
+        idx_27 = idx;
+      if (idx_27 == -1) {
+        emit outgoingPacket(packet);
+      } else {
+        packet27.append(packet);
+        packet27.append('\2');
+      }
+    }
+    if (!packet27.isEmpty()) {
+      packet27.chop(1);
+      emit outgoingPacket(packet27);
     }
   }
   buffer.clear();
