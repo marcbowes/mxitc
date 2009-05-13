@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include "contact.h"
+#include "message.h"
 
 namespace MXit
 {
@@ -23,14 +23,13 @@ namespace MXit
 **
 ** Author: Marc Bowes
 **
-** Contact default constructor
+** Constructor for outgoing chat (to a Contact)
 **
 ****************************************************************************/
-Contact::Contact()
+Message::Message(const QString &message)
+  : contact(NULL), message(message), timestamp(QTime::currentTime())
 {
-  this->presence        = Protocol::Enumerables::Contact::Offline;
-  this->type            = Protocol::Enumerables::Contact::MXit;
-  this->mood            = Protocol::Enumerables::Contact::None;
+  /* Nothing */
 }
 
 
@@ -38,18 +37,13 @@ Contact::Contact()
 **
 ** Author: Marc Bowes
 **
-** Contact constructor
+** Constructor for incoming chat (from a Contact)
 **
 ****************************************************************************/
-Contact::Contact(const QString &group, const QString &contactAddress, const QString &nickname,
-    quint16 presence, quint16 type, quint16 mood)
+Message::Message(const Contact &contact, const QString &message)
+  : contact(&contact), message(message), timestamp (QTime::currentTime())
 {
-  this->group           = group;
-  this->contactAddress  = contactAddress;
-  this->nickname        = nickname;
-  this->presence        = (Protocol::Enumerables::Contact::Presence)presence;
-  this->type            = (Protocol::Enumerables::Contact::Type)type;
-  this->mood            = (Protocol::Enumerables::Contact::Mood)mood;
+  /* Nothing */
 }
 
 
@@ -57,12 +51,13 @@ Contact::Contact(const QString &group, const QString &contactAddress, const QStr
 **
 ** Author: Marc Bowes
 **
-** Contact deconstructor
+** Copy constructor
 **
 ****************************************************************************/
-Contact::~Contact()
+Message::Message(const Message &other)
+  : contact(other.contact), message(other.message), timestamp(other.timestamp)
 {
-  /* nothing */
+  /* Nothing */
 }
 
 
@@ -70,12 +65,12 @@ Contact::~Contact()
 **
 ** Author: Marc Bowes
 **
-** Equality operator
+** Default destructor
 **
 ****************************************************************************/
-bool Contact::operator==(const Contact &other)
+Message::~Message()
 {
-  return this->contactAddress == other.contactAddress;
+  /* Nothing */
 }
 
 }

@@ -28,7 +28,7 @@ namespace MXit
 ****************************************************************************/
 Conversation::Conversation()
 {
-  /* STUB */
+  /* Nothing */
 }
 
 
@@ -54,7 +54,33 @@ Conversation::Conversation(const ContactSet &contacts)
 ****************************************************************************/
 Conversation::~Conversation()
 {
-  /* STUB */
+  Q_FOREACH(Message *message, messages)
+    delete message;
+}
+
+
+/****************************************************************************
+                __   ___                 __  __           __  
+     ___  __ __/ /  / (_)___  __ _  ___ / /_/ /  ___  ___/ /__
+    / _ \/ // / _ \/ / / __/ /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
+   / .__/\_,_/_.__/_/_/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
+  /_/                                                         
+
+****************************************************************************/
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Inserts a Contact into the internal ContactSet.
+** This method is safe - if the Contact is already stored, nothing will
+**  happen.
+**
+****************************************************************************/
+void Conversation::addContact(const Contact *contact)
+{
+  contacts.insert(contact);
 }
 
 
@@ -62,14 +88,56 @@ Conversation::~Conversation()
 **
 ** Author: Marc Bowes
 **
-** Units a set of contacts against the internal ContactSet.
-** This method is safe - the list can contain contacts already stored and
-**  it will simply update any information which has changed.
+** Units a ContactList against the internal ContactSet.
+** This method is safe - the list can contain Contacts already stored and
+**  it will simply skip them.
 **
 ****************************************************************************/
-void addContacts(const QList<Contact> &contacts)
+void Conversation::addContacts(const ContactList &contacts)
 {
-  /* STUB */
+  this->contacts.unite(ContactSet::fromList(contacts));
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Stores a Message in the Conversation
+**
+****************************************************************************/
+void Conversation::appendMessage(const Message &message)
+{
+  messages.append(new Message(message));
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Removes a Contact from the interal ContactSet.
+** This method works regardless of whether the Contact was in this
+**  Conversation.
+**
+****************************************************************************/
+void Conversation::removeContact(const Contact *contact)
+{
+  contacts.remove(contact);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Removes a Contact for each Contact in the given ContactList
+**
+****************************************************************************/
+void Conversation::removeContacts(const ContactList &contacts)
+{
+  Q_FOREACH(const Contact *contact, contacts)
+    removeContact(contact);
 }
 
 }

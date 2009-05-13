@@ -8,8 +8,8 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_PACKET_HEADER_H__
-#define __MXIT_PACKET_HEADER_H__
+#ifndef __MXIT_PACKETHEADER_H__
+#define __MXIT_PACKETHEADER_H__
 
 #include "common/types.h"
 

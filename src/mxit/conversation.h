@@ -17,11 +17,14 @@
 #include <QSet>
 
 #include "contact.h"
+#include "message.h"
 
 namespace MXit
 {
 
-typedef QSet<Contact> ContactSet; /* for very fast contact lookups */
+typedef QSet<const Contact*>  ContactSet;   /* for very fast contact lookups */
+typedef QList<const Contact*> ContactList;  /* for synchronising with the outside world */
+typedef QList<Message*>        MessageList;  /* for storing chat */
 
 class Conversation
 {
@@ -33,11 +36,16 @@ class Conversation
 
   public:         /* methods */
   
-  void addContacts(const QList<Contact> &contacts);
+  void addContact(const Contact *contact);
+  void addContacts(const ContactList &contacts);
+  void appendMessage(const Message &message);
+  void removeContact(const Contact *contact);
+  void removeContacts(const ContactList &contacts);
 
   private:        /* variables */
   
   ContactSet      contacts;
+  MessageList     messages;
 };
 
 }
