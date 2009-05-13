@@ -207,6 +207,9 @@ void AddressBook::insertContact(const QList<QByteArray> &fields)
   Contact *contact = new Contact(group, contactAddress, nickname,
     presence, type, mood);
   contacts.insert(contactAddress, contact);
+  
+  /* FIXME: ordered insertion */
+  ordered.append(contact);
 }
 
 }

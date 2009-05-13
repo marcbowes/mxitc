@@ -12,6 +12,8 @@
 #ifndef __MXIT_ADDRESSBOOK_H__
 #define __MXIT_ADDRESSBOOK_H__
 
+#include <QByteArray>
+#include <QList>
 #include <QString>
 
 #include "contact.h"
