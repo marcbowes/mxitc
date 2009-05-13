@@ -41,7 +41,8 @@ AddressBook::AddressBook()
 ****************************************************************************/
 AddressBook::~AddressBook()
 {
-  /* STUB */
+  Q_FOREACH(const Contact *contact, contacts)
+    delete contact;
 }
 
 
@@ -64,9 +65,15 @@ AddressBook::~AddressBook()
 **  #updateContact
 **
 ****************************************************************************/
-void addContact(const QByteArray &data)
+void AddressBook::addContact(const QByteArray &data)
 {
-  /* STUB */
+  /* for data format, refer to Handler #03, GetContacts */
+  
+  QList<QByteArray> fields = data.split('\1');
+  contacts.insert(new Contact(fields[0], fields[1], fields[2],
+    Protocol::Enumerables::Contact::Presence(fields[3].toInt()),
+    Protocol::Enumerables::Contact::Type(fields[4].toInt()),
+    Protocol::Enumerables::Contact::Mood(fields[5].toInt())));
 }
 
 
@@ -77,9 +84,10 @@ void addContact(const QByteArray &data)
 ** Invokes #addContact for each Contact found in the MXit data
 **
 ****************************************************************************/
-void addContacts(const QByteArray &data)
+void AddressBook::addContacts(const QByteArray &data)
 {
-  /* STUB */
+  Q_FOREACH(const QByteArray &row, data.split('\0'))
+    addContact(row);
 }
 
 
@@ -90,7 +98,7 @@ void addContacts(const QByteArray &data)
 ** Permanently removes a Contact from the AddressBook
 **
 ****************************************************************************/
-void removeContact(const QString &contactAddress)
+void AddressBook::removeContact(const QString &contactAddress)
 {
   /* STUB */
 }

@@ -31,6 +31,10 @@ class AddressBook
   void addContact(const QByteArray &data);
   void addContacts(const QByteArray &data);
   void removeContact(const QString &contactAddress);
+  
+  private:       /* variables */
+  
+  ContactSet      contacts;
 };
 
 }
