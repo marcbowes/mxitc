@@ -6,7 +6,6 @@
 
 #include "27_getmultimediamessage.h"
 #include "protocol/enumerables/chunked_data.h"
-#include <QTextCodec>
 
 namespace MXit
 {
@@ -193,7 +192,7 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
   
   if (size != (length + 5))
     ;/* FIXME: error handling */ //qDebug() << "Error parsing data or more than one chunk (and not of type 1)";
-
+  
   return handleChunk(type, length, packetData);
 }
 
@@ -208,14 +207,15 @@ VariableHash GetMultimediaMessage::handle(const QByteArray &packet)
 QByteArray GetMultimediaMessage::getChunk(QByteArray chunk, int &type, int &length)
 {
   type = (int)chunk.at(0);
-  
+
   length = 0;
   length |= (unsigned char)chunk[1];
+  
   for (int i=2; i<5; i++) {
     length = length << 8;
     length |= (unsigned char)chunk[i];
   }
-  
+
   return chunk.right(chunk.size() - 5);
 }
 
@@ -250,7 +250,7 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
   switch (type) {
     case MXit::Protocol::Enumerables::ChunkedData::CustomResource:
       position = 0;
-      
+
       //id length
       dataLength = 0;
       dataLength |= (unsigned char)chunkData[position];
@@ -264,7 +264,7 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
       returnData["id"] = chunkData.mid(position, dataLength);
       
       position+= dataLength;
-      
+
       //handle length
       dataLength = 0;
       dataLength |= (unsigned char)chunkData[position];
@@ -273,12 +273,12 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
       dataLength |= (unsigned char)chunkData[position];
       
       position++;
-            
+
       //handle      
       returnData["handle"] = chunkData.mid(position, dataLength);
       
       position += dataLength;
-      
+
       //operation
       returnData["operation"] = QByteArray::number((int)chunkData.at(position));
       
@@ -292,11 +292,11 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
         chunksLen |= (unsigned char)chunkData[position + i];
       }
       position += 3;
-      
+
       //now at first chunk of many; FIXME going to get collisions of "handle"_type. but thats a protocol problem
       while (position < length) {
         tempVariables.clear();
-        
+
         data = getChunk(chunkData.mid(position), dataType, dataLength);
         tempVariables = handleChunk(dataType, dataLength, data);
         
@@ -308,7 +308,6 @@ VariableHash GetMultimediaMessage::handleChunk(int type, int length, QByteArray 
         
         position += (5 + dataLength);
       }
-      
       break;
     case MXit::Protocol::Enumerables::ChunkedData::SplashImage:
       //anchor
