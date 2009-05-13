@@ -32,7 +32,7 @@ class AddressBook
   void addContact(const QList<QByteArray> &fields);
   void addContacts(const QByteArray &data);
   void removeContact(const QString &contactAddress);
-  ContactList toList();
+  const ContactList& toList();
   void updateContact(const QByteArray &data);
   void updateContact(const QList<QByteArray> &fields);
   void updateContacts(const QByteArray &data);
@@ -44,6 +44,7 @@ class AddressBook
   private:       /* variables */
   
   ContactHash     contacts;
+  ContactList     ordered;
 };
 
 }

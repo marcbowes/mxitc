@@ -129,9 +129,9 @@ void AddressBook::removeContact(const QString &contactAddress)
 ** Returns a [presence, name]-ordered list of Contacts
 **
 ****************************************************************************/
-ContactList AddressBook::toList()
+const ContactList& AddressBook::toList()
 {
-  /* STUB */
+  return ordered;
 }
 
 
