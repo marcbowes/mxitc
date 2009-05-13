@@ -11,6 +11,8 @@
 #ifndef __MXIT_CONTACT_H__
 #define __MXIT_CONTACT_H__
 
+#include <QList>
+#include <QSet>
 #include <QString>
 
 #include "protocol/enumerables/contact.h"
@@ -43,6 +45,9 @@ class Contact
   bool    hideAddress;
   QString nickname;
 };
+
+typedef QSet<const Contact*>  ContactSet;
+typedef QList<const Contact*> ContactList;
 
 }
 

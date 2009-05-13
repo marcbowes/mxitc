@@ -12,6 +12,8 @@
 #ifndef __MXIT_ADDRESSBOOK_H__
 #define __MXIT_ADDRESSBOOK_H__
 
+#include <QString>
+
 #include "contact.h"
 
 namespace MXit
@@ -23,6 +25,12 @@ class AddressBook
   
   AddressBook();
   ~AddressBook();
+  
+  public:         /* methods */
+
+  void addContact(const QByteArray &data);
+  void addContacts(const QByteArray &data);
+  void removeContact(const QString &contactAddress);
 };
 
 }

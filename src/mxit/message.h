@@ -36,6 +36,8 @@ class Message
   const QTime    timestamp;
 };
 
+typedef QList<Message*> MessageList;
+
 }
 
 #endif /* __MXIT_MESSAGE_H__ */

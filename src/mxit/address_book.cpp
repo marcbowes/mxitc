@@ -44,5 +44,56 @@ AddressBook::~AddressBook()
   /* STUB */
 }
 
+
+/****************************************************************************
+                __   ___                 __  __           __  
+     ___  __ __/ /  / (_)___  __ _  ___ / /_/ /  ___  ___/ /__
+    / _ \/ // / _ \/ / / __/ /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
+   / .__/\_,_/_.__/_/_/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
+  /_/                                                         
+
+****************************************************************************/
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Builds a Contact from MXit data and updates the internal list.
+** This method is safe - adding an existing Contact will auto-forward to
+**  #updateContact
+**
+****************************************************************************/
+void addContact(const QByteArray &data)
+{
+  /* STUB */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Invokes #addContact for each Contact found in the MXit data
+**
+****************************************************************************/
+void addContacts(const QByteArray &data)
+{
+  /* STUB */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Permanently removes a Contact from the AddressBook
+**
+****************************************************************************/
+void removeContact(const QString &contactAddress)
+{
+  /* STUB */
+}
+
 }
 
