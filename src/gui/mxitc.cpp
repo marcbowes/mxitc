@@ -50,7 +50,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   appendDockWidget(debugWidget,    Qt::RightDockWidgetArea, actionDebug_Variables);
   #endif
   
-  optionsWidget = new DockWidget::Options (this, theme);
+  optionsWidget = new DockWidget::Options (this, theme, *settings);
   appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
   
   chatSessionsWidget = new DockWidget::ChatSessions (this, theme);
@@ -123,6 +123,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /* Unsorted connects
   /*------------------------------------------------------------------------------------------*/
   
+  connect(mxit, SIGNAL(environmentReady()), this, SLOT(environmentVariablesReady()));
+  
   /*------------------------------------------------------------------------------------------*/
   /* Connecting new variables SIGNAL from the widgets to the client
   /*------------------------------------------------------------------------------------------*/
@@ -138,16 +140,17 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
             this, SLOT(incomingError(int, const QString &)));
             
   connect(  mxit, SIGNAL(outgoingAction(Action)), 
-            this, SLOT(incomingAction(Action)));
+            this, SLOT(incomingAction(Action))  );
             
   connect(  mxit, SIGNAL(outgoingConnectionError(const QString &)), 
-            this, SLOT(incomingConnectionError(const QString &)));
+            this, SLOT(incomingConnectionError(const QString &))  );
   
   
   connect(  chatSessionsWidget, SIGNAL(outgoingItemPressed ( QListWidgetItem *  )), 
-            this, SLOT(setCurrentChatSession( QListWidgetItem *  )));
+            this, SLOT(setCurrentChatSession( QListWidgetItem *  ))  );
   
-  connect(  optionsWidget, SIGNAL(gatewaySelected(bool)), this, SLOT(sendGateway( bool )));  
+  connect(  optionsWidget, SIGNAL(gatewaySelected(const QString&)), 
+            this, SLOT(sendGatewayToClient(const QString&))  );  
 
   connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
   
@@ -248,6 +251,33 @@ MXitC::~MXitC()
   if (trayIcon)
     delete trayIcon;
 }
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** function is called when the environment variables are set
+**
+****************************************************************************/
+
+void MXitC::environmentVariablesReady() {
+
+  /*TODO make a log*///qDebug() << "environmentVariablesReady";
+  /* notify gateway */
+  
+  optionsWidget->addGateway(mxit->variableValue("soc1"));
+  optionsWidget->addGateway(mxit->variableValue("soc2"));
+  optionsWidget->addGateway(mxit->variableValue("http1"));
+  optionsWidget->addGateway(mxit->variableValue("http2"));
+  
+  if (settings->contains("gateway")) {
+    optionsWidget->setSelectedGateway(settings->value("gateway").toString());
+  }
+  else {
+    optionsWidget->setSelectedGateway(mxit->variableValue("soc1"));
+  }
+}
+
 
 
 /****************************************************************************
@@ -508,12 +538,10 @@ QSet<QString> MXitC::getGroupSet() {
 ****************************************************************************/
 
 /* TODO fix up the gateway stuff and the gateway stuff in options*/
-void MXitC::sendGateway(bool http)
+void MXitC::sendGatewayToClient(const QString& gateway)
 {
-  if (http)
-    mxit->setGateway(mxit->variableValue("http1"));
-  else
-    mxit->setGateway(mxit->variableValue("soc1"));
+  settings->setValue("gateway", gateway);
+  mxit->setGateway(gateway);
 }
 
 /****************************************************************************
@@ -610,6 +638,7 @@ void MXitC::incomingAction(Action action)
     //--------------------------------------
     case LOGGED_IN:
       
+      logWidget->logMessage("GUI::LOGGED_IN");
       if (currentState == LOGGED_IN)
         ;/* do nothing TODO */
       else /* if (currentState == LOGGED_OUT) */
@@ -666,6 +695,7 @@ void MXitC::incomingAction(Action action)
       
     //--------------------------------------
     case LOGGED_OUT:
+      logWidget->logMessage("GUI::LOGGED_OUT");
       
       if (currentState == LOGGED_OUT)
         ;/* do nothing TODO */
@@ -1166,7 +1196,6 @@ void MXitC::loggingIn(){
   currentState = LOGGING_IN;
   setStatusBar();
 }
-
 /****************************************************************************
 **
 ** Author: Richard Baxter

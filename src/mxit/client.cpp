@@ -160,6 +160,7 @@ void Client::allowSubscription(const QString &contactAddress, const QString &gro
 void Client::authenticate(const VariableHash &settings)
 {
   variables.unite(settings);
+  emit environmentReady();
   emit outgoingVariables(variables);
   
   connection->setGateway(variables["soc1"]);
@@ -294,6 +295,7 @@ void Client::setGateway(const QString &connectionString)
   if (connection->getState() != MXit::Network::Connection::DISCONNECTED) {
     sendPacket("logout");
     connection->close();
+    emit outgoingAction(LOGGED_OUT);
   }
   connection->setGateway(connectionString);
   connection->open(getPacket("login"));

@@ -91,7 +91,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  void refreshChatBox(); /*FIXME slot ? - rax*/
+  void refreshChatBox();
   void refreshChatSessions();
   void refreshContacts();
   
@@ -111,6 +111,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void openLoginDialog();
   void loggingIn();
+  void environmentVariablesReady();
   
   void incomingAction(Action action);
   
@@ -123,7 +124,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void saveLayout(bool b);
   void saveLayout(Qt::DockWidgetArea area = Qt::NoDockWidgetArea); 
   
-  void sendGateway(bool http);
+  void sendGatewayToClient(const QString& gateway);
   
   void themeChanged();
   
@@ -131,8 +132,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void chatSessionsMenu(const QPoint & pos, const QString& chatSessionName);
   void contactsMenu(const QPoint & pos, const QString& nickname);
   
-  
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
   private:        /* variables */
   
