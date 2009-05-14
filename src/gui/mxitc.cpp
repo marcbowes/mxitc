@@ -904,7 +904,7 @@ void MXitC::messageReceived(){
     MXit::Contact& sender = contacts[contactAddress];
     //qDebug() << sender.nickname;
     ensureExistanceOfChatSession(sender);
-    chatSessions[sender.nickname].incomingMessage( Message(sender, mxit->variableValue("message")) );
+    chatSessions[sender.nickname].incomingMessage( Message(&sender, mxit->variableValue("message")) );
     
     /* if the chatSession that received the message is the one displayed, we need to set the unread message variable to false so that it won't be marked as 'unread'*/
     if (currentChatSession)
@@ -1030,9 +1030,9 @@ void MXitC::refreshChatBox(){
   mainTextArea->clear();
   //mainChatArea->setRowCount(0);
   if (currentChatSession != NULL) {
-    Q_FOREACH(const Message *m, currentChatSession->chatHistory) {
-      QString chatLine = "<" + (m->contact ? m->contact->nickname : "You")  + ">";
-      mainTextArea->append(chatLine + " " + m->message);
+    Q_FOREACH(const Message& m, currentChatSession->chatHistory) {
+    
+      mainTextArea->append (  QString("<") +(m.sender()?m.sender()->nickname:QString("You")) + QString("> ") +m.message() );
     }
   }
   
@@ -1153,7 +1153,7 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
 void MXitC::outgoingMessage(const QString & message)
 {
   if (currentChatSession) {
-    currentChatSession->incomingMessage( Message ( message) );
+    currentChatSession->incomingMessage( Message ( 0, message) );
     currentChatSession->unreadMessage = false;
     mxit->sendMessage(currentChatSession->mainContact->contactAddress, message, Protocol::Enumerables::Message::Normal, 0);
     refreshChatBox();

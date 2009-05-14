@@ -88,6 +88,7 @@ class Client : public QObject
   void incomingPacket(const QByteArray &);
   void incomingVariables(const VariableHash &);
   void keepAlive();
+  void httpPoll();
 
   private:        /* methods */
   
@@ -108,6 +109,7 @@ class Client : public QObject
   Protocol::HandlerHash       handlers;
   Protocol::Handshaker       *handshaker;
   QTimer                      keepAliveTimer;
+  QTimer                      httpPollTimer;
   Status                      state;
   VariableHash                variables;
 };
