@@ -12,13 +12,9 @@
 #ifndef __MXIT_GUI_CONVERSATION_H__
 #define __MXIT_GUI_CONVERSATION_H__
 
-#include <QHash>
-
-#include "mxit/conversation.h"
-
 #include "gui/mxit_dock_widget.h"
 
-#include "ui_conversations.h"
+#include "ui_chat_sessions.h"
 
 namespace MXit
 {
@@ -26,7 +22,7 @@ namespace MXit
 namespace GUI
 {
 
-class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
+class Conversations : public MXitDockWidget, private Ui::ChatSessionsDockWidget
 {
   Q_OBJECT
   
@@ -35,23 +31,9 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
   Conversations(QWidget *parent, Theme &theme);
   ~Conversations();
   
-  signals:
-  
-  void conversationSelected(QListWidgetItem*);
-  void contextMenuRequest(QListWidgetItem*);
-  
   public:         /* methods */
   
-  void newConversation(const ContactSet &contacts);
-  void newConversation(const ContactSet &contacts, const QString &roomName);
   
-  public:        /* variables */
-  
-  QHash<QString, Conversation*> conversations;
-
-  private slots:
-  
-  void conversationContextMenuRequest(const QPoint &point);
 };
 
 }
