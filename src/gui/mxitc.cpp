@@ -1001,8 +1001,8 @@ void MXitC::refreshChatBox(){
   //mainChatArea->setRowCount(0);
   if (currentChatSession != NULL) {
     Q_FOREACH(const Message *m, currentChatSession->chatHistory) {
-    
-      mainTextArea->append (  QString("<") +(m->contact?m->contact->nickname:QString("You")) + QString("> ") +m->message );
+      QString chatLine = "<" + (m->contact ? m->contact->nickname : "You")  + ">";
+      mainTextArea->append(chatLine + " " + m->message);
     }
   }
   
