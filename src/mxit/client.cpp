@@ -51,6 +51,10 @@ Client::Client()
   connect(&keepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
   keepAliveTimer.setSingleShot(true);
   
+  /* httpPoll timer FIXME: use a variable for timing*/
+  connect(&httpPollTimer, SIGNAL(timeout()), this, SLOT(httpPoll()));
+  httpPollTimer.start(15000);
+  
   /* create handlers */
   using namespace MXit::Protocol::Handlers;
   /* 01 */ handlers["login"]                      = new Login();
@@ -550,6 +554,22 @@ void Client::incomingVariables(const VariableHash &params)
 void Client::keepAlive()
 {
   sendPacket("keepalive");
+}
+
+
+/****************************************************************************
+**
+** Author: Tim Sjoberg
+**
+** Called every so often by keepAliveTimer
+** sends packet 17 to get new info from mxit if on http
+**
+****************************************************************************/
+void Client::httpPoll()
+{
+  if (connection->isHTTP()) {
+    sendPacket("polldifference");
+  }
 }
 
 
