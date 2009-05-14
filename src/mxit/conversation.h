@@ -32,6 +32,7 @@ class Conversation
   void addContact(const Contact *contact);
   void addContacts(const ContactList &contacts);
   void appendMessage(const Message &message);
+  const ContactSet& getContacts();
   void removeContact(const Contact *contact);
   void removeContacts(const ContactList &contacts);
 

@@ -116,6 +116,19 @@ void Conversation::appendMessage(const Message &message)
 **
 ** Author: Marc Bowes
 **
+** Returns the ContactSet in this Conversation
+**
+****************************************************************************/
+const ContactSet& Conversation::getContacts()
+{
+  return contacts;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Removes a Contact from the interal ContactSet.
 ** This method works regardless of whether the Contact was in this
 **  Conversation.
