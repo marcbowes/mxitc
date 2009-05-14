@@ -22,7 +22,7 @@
 namespace MXit
 {
 
-typedef QMap <QString, Contact*> OrderedContactMap;
+typedef QMap<QString, Contact*> OrderedContactMap;
 
 class AddressBook : public QObject
 {

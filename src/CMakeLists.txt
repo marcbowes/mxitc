@@ -13,9 +13,10 @@ SET(MXIT_CLIENT_SRCS_CXX
   network/packets/http.cpp
   network/packets/tcp.cpp
   
-  protocol/aes.cpp
-  protocol/handler.cpp
-  protocol/packet_header.cpp
+  network/packet.cpp
+  network/gateway.cpp
+  network/connection.cpp
+  
   protocol/handlers/01_login.cpp
   protocol/handlers/02_logout.cpp
   protocol/handlers/03_getcontacts.cpp
@@ -36,34 +37,35 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handlers/55_denysubscription.cpp
   protocol/handlers/1k_keepalive.cpp
   
-  network/packet.cpp
-  network/gateway.cpp
-  network/connection.cpp
+  protocol/aes.cpp
+  protocol/handler.cpp
   protocol/handshaker.cpp
+  protocol/packet_header.cpp
+  
   mxit/address_book.cpp
   mxit/client.cpp
   mxit/contact.cpp
   mxit/conversation.cpp
+  mxit/conversations.cpp
   mxit/message.cpp
 
   gui/theme_components/contact/base.cpp  
   gui/theme_components/contact/presence.cpp
   gui/theme_components/contact/type.cpp  
   
+  gui/dock_widgets/add_contact.cpp
+  gui/dock_widgets/contacts.cpp
+  gui/dock_widgets/conversations.cpp
+  gui/dock_widgets/debug.cpp
   gui/dock_widgets/log.cpp
   gui/dock_widgets/options.cpp
-  gui/dock_widgets/debug.cpp
-  gui/dock_widgets/contacts.cpp
-  gui/dock_widgets/add_contact.cpp
-  gui/dock_widgets/conversations.cpp
   
-  gui/dialogs/login.cpp
   gui/dialogs/allow_subscription.cpp
-  
-  gui/mxit_dock_widget.cpp
+  gui/dialogs/login.cpp
   
   gui/mxitc.cpp
   gui/mxit_dialog.cpp
+  gui/mxit_dock_widget.cpp
   gui/theme.cpp
   
   main.cpp
@@ -71,11 +73,15 @@ SET(MXIT_CLIENT_SRCS_CXX
 
 # files which need to be moc'd by Qt
 SET(MXIT_CLIENT_MOC_SRCS
-  
+    
   network/connection.h
+
   protocol/handshaker.h
-  mxit/client.h
+  
   mxit/address_book.h
+  mxit/client.h
+  mxit/conversation.h
+  mxit/conversations.h
   
   gui/dock_widgets/log.h
   gui/dock_widgets/options.h
@@ -87,23 +93,23 @@ SET(MXIT_CLIENT_MOC_SRCS
   gui/dialogs/login.h
   gui/dialogs/allow_subscription.h
   
-  gui/mxit_dock_widget.h
-  
   gui/mxitc.h
   gui/mxit_dialog.h
+  gui/mxit_dock_widget.h
 )
 
 SET(MXIT_CLIENT_UI
   
+  gui/dock_widgets/add_contact.ui
+  gui/dock_widgets/contacts.ui
+  gui/dock_widgets/conversations.ui
+  gui/dock_widgets/debug.ui
   gui/dock_widgets/log.ui
   gui/dock_widgets/options.ui
-  gui/dock_widgets/debug.ui
-  gui/dock_widgets/contacts.ui
-  gui/dock_widgets/add_contact.ui
-  gui/dock_widgets/conversations.ui
   
-  gui/dialogs/login.ui
   gui/dialogs/allow_subscription.ui
+  gui/dialogs/login.ui
+  
   gui/mxitc.ui
 )
 

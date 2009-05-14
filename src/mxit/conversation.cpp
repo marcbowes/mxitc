@@ -45,12 +45,13 @@ QString buildDisplayName(const ContactSet &contacts, const QString &roomName)
 **
 ** Author: Marc Bowes
 **
-** Default constructor
+** Constructor for a private Conversation
 **
 ****************************************************************************/
-Conversation::Conversation()
+Conversation::Conversation(const Contact *contact)
+  : displayName(contact->contactAddress), type(Private)
 {
-  /* Nothing */
+  contacts.insert(contact);
 }
 
 
@@ -62,7 +63,7 @@ Conversation::Conversation()
 **
 ****************************************************************************/
 Conversation::Conversation(const ContactSet &contacts, const QString &roomName)
-  : displayName(buildDisplayName(contacts, roomName))
+  : displayName(buildDisplayName(contacts, roomName)), type(Group)
 {
   this->contacts = contacts; /* copy */
 }
@@ -132,6 +133,7 @@ void Conversation::addContacts(const ContactList &contacts)
 void Conversation::appendMessage(const Message &message)
 {
   messages.append(new Message(message));
+  emit updated();
 }
 
 
@@ -142,7 +144,7 @@ void Conversation::appendMessage(const Message &message)
 ** Returns the ContactSet in this Conversation
 **
 ****************************************************************************/
-const ContactSet& Conversation::getContacts()
+const ContactSet& Conversation::getContacts() const
 {
   return contacts;
 }
