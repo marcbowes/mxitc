@@ -24,7 +24,7 @@ class Conversation
   public:         /* class specific */
 	
   Conversation();
-  Conversation(const ContactSet &contacts);
+  Conversation(const ContactSet &contacts, const QString &roomName="");
   ~Conversation();
 
   public:         /* methods */
@@ -33,8 +33,13 @@ class Conversation
   void addContacts(const ContactList &contacts);
   void appendMessage(const Message &message);
   const ContactSet& getContacts();
+  QString& getDisplayName();
   void removeContact(const Contact *contact);
   void removeContacts(const ContactList &contacts);
+
+  public:         /* variables */
+  
+  const QString  displayName;
 
   private:        /* variables */
   

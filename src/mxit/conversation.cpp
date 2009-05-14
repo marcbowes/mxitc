@@ -4,10 +4,32 @@
 **
 ****************************************************************************/
 
+#include <QStringList>
+
 #include "conversation.h"
 
 namespace MXit
 {
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Creates a display name from a ContactSet or roomName
+**
+****************************************************************************/
+QString buildDisplayName(const ContactSet &contacts, const QString &roomName)
+{
+  if (roomName.isEmpty()) {
+    QStringList addressList;
+    Q_FOREACH(const Contact *contact, contacts)
+      addressList << contact->contactAddress;
+    return addressList.join(", ");
+  }
+  else
+    return roomName;
+}
+
 
 /****************************************************************************
         __                                _ ____    
@@ -39,7 +61,8 @@ Conversation::Conversation()
 ** Constructor which accepts a pre-formed ContactSet
 **
 ****************************************************************************/
-Conversation::Conversation(const ContactSet &contacts)
+Conversation::Conversation(const ContactSet &contacts, const QString &roomName)
+  : displayName(buildDisplayName(contacts, roomName))
 {
   this->contacts = contacts; /* copy */
 }
