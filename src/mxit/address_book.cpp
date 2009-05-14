@@ -108,6 +108,19 @@ void AddressBook::addContacts(const QByteArray &data)
 **
 ** Author: Marc Bowes
 **
+** Returns a Contact* from a given address
+**
+****************************************************************************/
+Contact* AddressBook::contactFromAddress(const QString &contactAddress)
+{
+  return contacts.at(contactAddress);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Returns a [presence, name]-ordered list of Contacts
 **
 ****************************************************************************/

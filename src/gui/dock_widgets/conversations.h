@@ -4,21 +4,17 @@
 **
 ** Author: Marc Bowes, 2009
 **
-** MXit::GUI::Conversation is a QDockWidget for displaying and managing
-**  a set of MXit::Conversations.
+** MXit::GUI::Conversations is a QDockWidget for displaying
+**  MXit::Conversations.
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_CONVERSATION_H__
-#define __MXIT_GUI_CONVERSATION_H__
+#ifndef __MXIT_GUI_CONVERSATIONS_H__
+#define __MXIT_GUI_CONVERSATIONS_H__
 
 #include <QHash>
 
 #include "mxit/conversation.h"
-
-#include "gui/mxit_dock_widget.h"
-
-#include "ui_conversations.h"
 
 namespace MXit
 {
@@ -58,5 +54,5 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
 
 }
 
-#endif /* __MXIT_GUI_CONVERSATION_H__ */
+#endif /* __MXIT_GUI_CONVERSATIONS_H__ */
 

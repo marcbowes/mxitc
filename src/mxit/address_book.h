@@ -36,6 +36,7 @@ class AddressBook
   void addContact(const QByteArray &data);
   void addContact(const QList<QByteArray> &fields);
   void addContacts(const QByteArray &data);
+  Contact* contactFromAddress(const QString &contactAddress);
   const OrderedContactMap& getContacts();
   void removeContact(const QString &contactAddress);
   void updateContact(const QByteArray &data);
