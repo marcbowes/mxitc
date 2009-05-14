@@ -197,16 +197,32 @@ Contact* AddressBook::insertContact(const QList<QByteArray> &fields)
 **
 ** Author: Marc Bowes
 **
-** Updates a Contact with new fields, returning true if any data was
-**  actually changed.
+** Updates a Contact with new fields, returning a Contact* if the Presence
+**  changed (i.e. reordered).
 ** **REQUIRES** the contact to exist.
 **
 ****************************************************************************/
-Contact* updateContact(const QList<QByteArray> &fields)
+Contact* AddressBook::updateContact(const QList<QByteArray> &fields)
 {
-  Contact *contact = contacts.value(fields[1]);
+  /* find the Contact */
+  OrderedContactMap::iterator itr = ordered.find(fields[1]);
+  Contact *contact = itr.value(); /* will break for itr == contacts.end() */
+  
+  /* remember Presence - this is important for ordering! */
+  Protocol::Enumerables::Contact::Presence current = contact->presence;
+  
+  /* perform update */
   contact->updateFromRaw(fields);
-  return contact;
+  
+  /* now reorder (reinsert) if Presence has changed */
+  if (current != contact->presence) {
+    ordered.erase(itr);
+    ordered.insert(contact->sortString(), contact);
+    return contact;
+  }
+  
+  /* not changed */
+  return NULL;
 }
 
 }
