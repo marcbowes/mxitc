@@ -14,12 +14,15 @@
 
 #include <QByteArray>
 #include <QList>
+#include <QMap>
 #include <QString>
 
 #include "contact.h"
 
 namespace MXit
 {
+
+typedef QMap <QString, Contact*> OrderedContactMap;
 
 class AddressBook
 {
@@ -33,8 +36,8 @@ class AddressBook
   void addContact(const QByteArray &data);
   void addContact(const QList<QByteArray> &fields);
   void addContacts(const QByteArray &data);
+  const OrderedContactMap& getContacts();
   void removeContact(const QString &contactAddress);
-  const ContactList& toList();
   void updateContact(const QByteArray &data);
   void updateContact(const QList<QByteArray> &fields);
   void updateContacts(const QByteArray &data);
@@ -45,8 +48,8 @@ class AddressBook
   
   private:       /* variables */
   
-  ContactHash     contacts;
-  ContactList     ordered;
+  ContactHash       contacts;
+  OrderedContactMap ordered;
 };
 
 }

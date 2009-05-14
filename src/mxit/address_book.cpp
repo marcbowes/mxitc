@@ -108,6 +108,19 @@ void AddressBook::addContacts(const QByteArray &data)
 **
 ** Author: Marc Bowes
 **
+** Returns a [presence, name]-ordered list of Contacts
+**
+****************************************************************************/
+const OrderedContactMap& AddressBook::getContacts()
+{
+  return ordered;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Permanently removes a Contact from the AddressBook.
 ** This method is safe - removing a non-existant Contact will have no effect.
 **
@@ -119,19 +132,6 @@ void AddressBook::removeContact(const QString &contactAddress)
     contacts.remove(_delete->contactAddress);
     delete _delete;
   }
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** Returns a [presence, name]-ordered list of Contacts
-**
-****************************************************************************/
-const ContactList& AddressBook::toList()
-{
-  return ordered;
 }
 
 
@@ -209,7 +209,31 @@ void AddressBook::insertContact(const QList<QByteArray> &fields)
   contacts.insert(contactAddress, contact);
   
   /* FIXME: ordered insertion */
-  ordered.append(contact);
+  QString order = contactAddress.toLower();
+  {
+    using namespace Protocol::Enumerables::Contact;
+    switch (contact->presence) {
+    case Available:
+      order.prepend('0');
+      break;
+    case Online:
+      order.prepend('1');
+      break;
+    case Away:
+      order.prepend('2');
+      break;
+    case DoNotDisturb:
+      order.prepend('3');
+      break;
+    case Offline:
+      order.prepend('4');
+      break;
+    default:
+      order.prepend('9');
+      break;
+  }
+  }
+  ordered.insert(order, contact);
 }
 
 }
