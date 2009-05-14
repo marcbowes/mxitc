@@ -48,7 +48,8 @@ ChatSession::ChatSession(MXit::Contact * mainContact)
 ****************************************************************************/
 ChatSession::~ChatSession()
 {
-  /* nothing */
+  Q_FOREACH(Message *message, chatHistory)
+    delete message;
 }
 
 
@@ -66,7 +67,7 @@ ChatSession::~ChatSession()
 ****************************************************************************/
 void ChatSession::incomingMessage(Message message)
 {
-  chatHistory.append(message);
+  chatHistory.append(new Message(message));
   
   unreadMessage = true;
 }

@@ -16,16 +16,12 @@
 #include "types.h"
 
 #include "mxit/contact.h"
-
-#include "gui/message.h"
+#include "mxit/message.h"
 
 #include <QTableWidget>
 
 namespace MXit
 {
-
-using GUI::Message; /*FIXME remove when Message class is moved to common*/
-using GUI::MessageVec; /*FIXME remove when Message class is moved to common*/
 
 class ChatSession
 {
@@ -49,7 +45,7 @@ class ChatSession
   //QSet<MXit::Contact *> otherContacts; /*TODO implement*/
   
   //QTableWidget tableWidget;
-  MessageVec  chatHistory; /*replace with QTableWidget*/
+  MessageList chatHistory; /*replace with QTableWidget*/
   QString     chatInputText;
   bool        unreadMessage;
   
