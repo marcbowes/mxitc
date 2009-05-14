@@ -62,6 +62,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/dialogs/allow_subscription.cpp
   
   gui/mxit_dock_widget.cpp
+  gui/message.cpp
   
   gui/mxitc.cpp
   gui/mxit_dialog.cpp
@@ -89,6 +90,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   gui/dialogs/allow_subscription.h
   
   gui/mxit_dock_widget.h
+  gui/message.h
   
   gui/mxitc.h
   gui/mxit_dialog.h
