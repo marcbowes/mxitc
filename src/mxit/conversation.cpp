@@ -133,7 +133,7 @@ void Conversation::addContacts(const ContactList &contacts)
 void Conversation::appendMessage(const Message &message)
 {
   messages.append(new Message(message));
-  emit updated();
+  emit updated(this);
 }
 
 
