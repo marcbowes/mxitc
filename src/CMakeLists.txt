@@ -58,12 +58,12 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/dock_widgets/chat_sessions.cpp
   gui/dock_widgets/contacts.cpp
   gui/dock_widgets/add_contact.cpp
-  gui/dock_widgets/conversations.cpp
   
   gui/dialogs/login.cpp
   gui/dialogs/allow_subscription.cpp
   
   gui/mxit_dock_widget.cpp
+  gui/message.cpp
   
   gui/mxitc.cpp
   gui/mxit_dialog.cpp
@@ -79,18 +79,19 @@ SET(MXIT_CLIENT_MOC_SRCS
   protocol/handshaker.h
   mxit/client.h
   
+  
   gui/dock_widgets/log.h
   gui/dock_widgets/options.h
   gui/dock_widgets/debug.h
   gui/dock_widgets/chat_sessions.h
   gui/dock_widgets/contacts.h
   gui/dock_widgets/add_contact.h
-  gui/dock_widgets/conversations.h
   
   gui/dialogs/login.h
   gui/dialogs/allow_subscription.h
   
   gui/mxit_dock_widget.h
+  gui/message.h
   
   gui/mxitc.h
   gui/mxit_dialog.h
