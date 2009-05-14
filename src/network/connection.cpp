@@ -273,6 +273,7 @@ void Connection::HTTP_connect()
 /****************************************************************************
 **
 ** Author: Marc Bowes
+** Author: Tim Sjoberg
 **
 ** emits one HTTP packet at a time
 **
@@ -282,8 +283,8 @@ void Connection::HTTP_read(int id, bool error)
   buffer.append(http.readAll());
   if (!buffer.isEmpty()) {
     QList<QByteArray> packets = buffer.split('\2');
-    int idx = 0, idx_27 = -1;
-    QByteArray packet27;
+    int idx = 0, idx_27 = -1;   /* Packet 27 has data split by \2, */
+    QByteArray packet27;        /* but it always the last packet */
     Q_FOREACH(const QByteArray &packet, packets) {
       idx++;
       if (packet.left(2) == "27")
