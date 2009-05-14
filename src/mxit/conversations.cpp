@@ -119,8 +119,21 @@ void Conversations::rebuild(const ContactList &contacts)
       toUpdate.insert(conversation);
   
   /* each updated Conversation must be resorted */
-  Q_FOREACH(const Conversation* conversation, toUpdate)
-    ; // conversation->sortString();
+  Q_FOREACH(const Conversation* conversation, toUpdate) {
+    /* find the Conversation */
+    OrderedConversationMap::iterator itr = ordered.find(conversation->displayName); /* FIXME */
+    
+    /* need to resolve conflicts against group/private Conversations with same displayName */
+    while (itr != ordered.end() && itr.key().endsWith(conversation->displayName))
+      if (itr.value()->type == conversation->type) break;
+    
+    Conversation *update = itr.value(); /* will break for itr == .end() */
+    
+    /* don't even care about checking for timestamping difference (almost guarenteed) */
+    /* now reorder (reinsert) if Presence has changed */
+    ordered.erase(itr);
+    ordered.insert(update->lastTimestamp().toString() + update->displayName, update); /* FIXME */
+  }
 }
 
 
@@ -150,6 +163,9 @@ void Conversations::injectNewConversation(Conversation *conversation)
   /* invert the Conversation for fast Contact-involvement lookups */
   Q_FOREACH(const Contact *contact, conversation->getContacts())
     involvements[contact].insert(conversation);
+  
+  /* insert into a time-ordered map for sorting */
+  ordered.insert(conversation->lastTimestamp().toString() + conversation->displayName, conversation); /* FIXME */
 }
 
 }

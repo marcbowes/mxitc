@@ -19,6 +19,8 @@
 namespace MXit
 {
 
+typedef QMap<QString, Conversation*> OrderedConversationMap;
+
 class Conversations : public QObject
 {
   Q_OBJECT
@@ -34,6 +36,7 @@ class Conversations : public QObject
   
   public:         /* methods */
   
+  const OrderedConversationMap& getConversations();
   void newGroupConversation(const ContactSet &contacts,
     const QString &roomName="");
   void newPrivateConversation(const Contact *contact);
@@ -52,6 +55,8 @@ class Conversations : public QObject
   QHash< const Contact*, QSet<const Conversation*> >
                       involvements;
   ConversationHash    groupConversations;
+  OrderedConversationMap
+                      ordered;
   ConversationHash    privateConversations;
 };
 

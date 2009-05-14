@@ -154,6 +154,22 @@ const ContactSet& Conversation::getContacts() const
 **
 ** Author: Marc Bowes
 **
+** Returns a timestamp representing when last this Conversation was updated.
+**
+****************************************************************************/
+QTime Conversation::lastTimestamp() const
+{
+  if (messages.isEmpty())
+    return QTime();
+  else
+    return messages.last()->timestamp;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Removes a Contact from the interal ContactSet.
 ** This method works regardless of whether the Contact was in this
 **  Conversation.

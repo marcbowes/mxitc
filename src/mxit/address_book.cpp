@@ -210,7 +210,7 @@ Contact* AddressBook::insertContact(const QList<QByteArray> &fields)
 Contact* AddressBook::updateContact(const QList<QByteArray> &fields)
 {
   /* find the Contact */
-  OrderedContactMap::iterator itr = ordered.find(fields[1]);
+  OrderedContactMap::iterator itr = ordered.find(fields[1]); /* FIXME */
   Contact *contact = itr.value(); /* will break for itr == contacts.end() */
   
   /* remember Presence - this is important for ordering! */

@@ -14,6 +14,7 @@
 #define __MXIT_CONVERSATION_H__
 
 #include <QHash>
+#include <QTime>
 
 #include "contact.h"
 #include "message.h"
@@ -46,6 +47,7 @@ class Conversation : public QObject
   void addContacts(const ContactList &contacts);
   void appendMessage(const Message &message);
   const ContactSet& getContacts() const;
+  QTime lastTimestamp() const;
   void removeContact(const Contact *contact);
   void removeContacts(const ContactList &contacts);
 
