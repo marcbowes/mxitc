@@ -28,6 +28,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handlers/11_register.cpp
   protocol/handlers/12_updateprofile.cpp
   protocol/handlers/17_polldifference.cpp
+  protocol/handlers/26_getprofile.cpp
   protocol/handlers/27_getmultimediamessage.cpp
   protocol/handlers/32_setshownpresenceandstatus.cpp
   protocol/handlers/33_blocksubscription.cpp

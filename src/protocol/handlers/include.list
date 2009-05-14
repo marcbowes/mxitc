@@ -9,6 +9,7 @@
 #include "11_register.h"
 #include "12_updateprofile.h"
 #include "17_polldifference.h"
+#include "26_getprofile.h"
 #include "27_getmultimediamessage.h"
 #include "32_setshownpresenceandstatus.h"
 #include "33_blocksubscription.h"

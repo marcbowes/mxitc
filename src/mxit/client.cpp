@@ -567,7 +567,7 @@ void Client::keepAlive()
 ****************************************************************************/
 void Client::httpPoll()
 {
-  if (connection->isHTTP()) {
+  if ((connection->getState() == MXit::Network::Connection::CONNECTED)&&(connection->isHTTP())) {
     sendPacket("polldifference");
   }
 }
@@ -601,7 +601,7 @@ MXit::Network::Packet* Client::buildPacket()
   
   /* HTTP only */
   if (connection->isHTTP()) {
-    static_cast<MXit::Network::Packets::HTTP*>(packet)->setSessionID(variables["sessionid"].toInt());
+    static_cast<MXit::Network::Packets::HTTP*>(packet)->setSessionID(variables["sesid"].toInt());
   }
   
   return packet;

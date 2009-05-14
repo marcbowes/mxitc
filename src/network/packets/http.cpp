@@ -78,8 +78,10 @@ HTTP::operator QByteArray() const
   
   /* next three lines of code creates the {"s"=[ sesid \1 ] seqno &} part */
   self.append   ( QString("s=")                            );
-  if (sessionID > 0)
-    self.append ( QString("%1%01")    .arg(sessionID)      );
+  if ((sessionID > 0)&&(command != "1")) {
+    self.append ( QString("%1")    .arg(sessionID)      );
+    self.append ( "%01" );
+  }
   self.append   ( QString("%1&")      .arg(sequenceNumber) );
   self.append   ( QString("cm=%1")    .arg(command)        );
   

@@ -21,6 +21,7 @@ namespace Handlers
 **
 ** Author: Marc Bowes
 ** Author: Richard Baxter
+** Author: Tim Sjoberg
 **
 ** Populates a packet with the information required to login
 **
@@ -137,6 +138,7 @@ void Login::build(MXit::Network::Packet *packet, VariableHash &variables)
 /****************************************************************************
 **
 ** Author: Marc Bowes
+** Author: Tim Sjoberg
 **
 ** Extracts variable information from the login packet
 ** FIXME: Poll data looks fishy
@@ -218,7 +220,7 @@ VariableHash Login::handle(const QByteArray &packet)
   VariableHash pass1 = hashVariables(packet, variables, '\0');
   pass1.remove("command");                  /* we know this is 1 */
   pass1.remove("error");                    /* no error, handled earlier */
-  
+  qDebug() << pass1;
   /* need to expand data section */
   variables.clear();
   variables.append("deprecated");
