@@ -208,32 +208,8 @@ void AddressBook::insertContact(const QList<QByteArray> &fields)
     presence, type, mood);
   contacts.insert(contactAddress, contact);
   
-  /* FIXME: ordered insertion */
-  QString order = contactAddress.toLower();
-  {
-    using namespace Protocol::Enumerables::Contact;
-    switch (contact->presence) {
-    case Available:
-      order.prepend('0');
-      break;
-    case Online:
-      order.prepend('1');
-      break;
-    case Away:
-      order.prepend('2');
-      break;
-    case DoNotDisturb:
-      order.prepend('3');
-      break;
-    case Offline:
-      order.prepend('4');
-      break;
-    default:
-      order.prepend('9');
-      break;
-  }
-  }
-  ordered.insert(order, contact);
+  /* ordered insert (QMap uses heaps to order keys) */
+  ordered.insert(contact->sortString(), contact);
 }
 
 }

@@ -93,6 +93,45 @@ bool Contact::operator==(const Contact &other)
 **
 ** Author: Marc Bowes
 **
+** Returns a prefix (from presence) for use with sorting
+**
+****************************************************************************/
+QString Contact::sortString()
+{
+  QString sortString; /* setup */
+  
+  /* get prepended value from presence */
+  using namespace Protocol::Enumerables::Contact;
+  switch (presence) {
+    case Available:
+      sortString.append('0');
+      break;
+    case Online:
+      sortString.append('1');
+      break;
+    case Away:
+      sortString.append('2');
+      break;
+    case DoNotDisturb:
+      sortString.append('3');
+      break;
+    case Offline:
+      sortString.append('4');
+      break;
+    default:
+      sortString.append('9');
+      break;
+  }
+  
+  sortString.append(contactAddress.toLower());
+  return sortString;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Updates fields (except contactAddress) from raw MXit data
 **
 ****************************************************************************/

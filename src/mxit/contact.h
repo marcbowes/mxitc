@@ -34,6 +34,7 @@ class Contact
   
   public:        /* methods */
   
+  QString sortString();
   void updateFromRaw(const QList<QByteArray> &fields);
   
   public:        /* variables */
