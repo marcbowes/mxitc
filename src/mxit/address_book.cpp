@@ -71,6 +71,11 @@ ContactList AddressBook::addOrUpdateContacts(const QByteArray &data)
     if (changed)
       changeSet.append(changed);
   }
+  
+  if (!changeSet.isEmpty())
+    emit updated(changeSet);
+  
+  return changeSet;
 }
 
 

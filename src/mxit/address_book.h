@@ -24,12 +24,18 @@ namespace MXit
 
 typedef QMap <QString, Contact*> OrderedContactMap;
 
-class AddressBook
+class AddressBook : public QObject
 {
+  Q_OBJECT
+  
   public:         /* class specific */
   
   AddressBook();
   ~AddressBook();
+  
+  signals:
+  
+  void updated(const ContactList&);
   
   public:         /* methods */
 

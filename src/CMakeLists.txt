@@ -75,6 +75,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   network/connection.h
   protocol/handshaker.h
   mxit/client.h
+  mxit/address_book.h
   
   gui/dock_widgets/log.h
   gui/dock_widgets/options.h
