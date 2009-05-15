@@ -85,6 +85,7 @@ Conversation::~Conversation()
 void Conversation::addContact(const Contact *contact)
 {
   contacts.insert(contact);
+  emit updated(this);
 }
 
 
@@ -100,6 +101,7 @@ void Conversation::addContact(const Contact *contact)
 void Conversation::addContacts(const ContactList &contacts)
 {
   this->contacts.unite(ContactSet::fromList(contacts));
+  emit updated(this);
 }
 
 

@@ -160,6 +160,7 @@ void Conversations::rebuild(const ContactList &contacts)
     QString orderString = conversation->lastTimestamp().toString() + conversation->uniqueIdentifier;
     orderLookup[conversation->uniqueIdentifier] = orderString;
     ordered.insert(orderString, update);
+    emit updated(conversation);
   }
 }
 
