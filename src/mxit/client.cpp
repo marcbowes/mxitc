@@ -71,6 +71,7 @@ Client::Client()
   /* 27 */ handlers["getmultimediamessage"]       = new GetMultimediaMessage();
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
   /* 33 */ handlers["blocksubscription"]          = new BlockSubscription();
+  /* 41 */ handlers["setmood"]                    = new SetMood();
   /* 43 */ handlers["loginkick"]                  = new LoginKick();
   /* 51 */ handlers["getnewsubscription"]         = new GetNewSubscription();
   /* 52 */ handlers["allowsubscription"]          = new AllowSubscription();
