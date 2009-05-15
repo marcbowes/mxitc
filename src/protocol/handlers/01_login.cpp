@@ -213,8 +213,6 @@ VariableHash Login::handle(const QByteArray &packet)
   
   /* extract \0 seperated values */
   VariableHash pass1 = hashVariables(packet, variables, '\0');
-  pass1.remove("command");                  /* we know this is 1 */
-  pass1.remove("error");                    /* no error, handled earlier */
 
   /* need to expand data section */
   variables.clear();
