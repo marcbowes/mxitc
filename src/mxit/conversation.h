@@ -50,9 +50,11 @@ class Conversation : public QObject
   QTime lastTimestamp() const;
   void removeContact(const Contact *contact);
   void removeContacts(const ContactList &contacts);
+  void toggleActive();
 
   public:         /* variables */
   
+  bool            active;
   const QString  displayName;
   const Type     type;
 

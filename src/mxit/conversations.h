@@ -12,6 +12,8 @@
 #ifndef __MXIT_CONVERSATIONS_H__
 #define __MXIT_CONVERSATIONS_H__
 
+#include "protocol/enumerables/message.h"
+
 #include "address_book.h"
 #include "contact.h"
 #include "conversation.h"
@@ -40,6 +42,10 @@ class Conversations : public QObject
   void newGroupConversation(const ContactSet &contacts,
     const QString &roomName="");
   void newPrivateConversation(const Contact *contact);
+  void updateConversation(const QByteArray &contactAddress,
+    const QByteArray &dateTime, const QByteArray &time,
+    const QByteArray &id, const QByteArray &flags,
+    const QByteArray &msg);
   
   private slots:
   
@@ -51,7 +57,7 @@ class Conversations : public QObject
   
   private:        /* variables */
   
-  AddressBook const *address_book;
+  AddressBook        *address_book;
   QHash< const Contact*, QSet<const Conversation*> >
                       involvements;
   ConversationHash    groupConversations;

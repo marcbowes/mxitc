@@ -93,6 +93,40 @@ void Conversations::newPrivateConversation(const Contact *contact)
 
 
 /****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Finds a Conversation (by name and type) and appends a Message.
+**
+****************************************************************************/
+void Conversations::updateConversation(const QByteArray &contactAddress,
+    const QByteArray &dateTime, const QByteArray &time,
+    const QByteArray &id, const QByteArray &flags,
+    const QByteArray &msg)
+{
+  Conversation *conversation = NULL;
+  
+  /* decide which hash to search */
+  switch (Protocol::Enumerables::Message::Type(flags.toUInt())) {
+    case Protocol::Enumerables::Message::GroupChat:
+      conversation = groupConversations.value(id);
+      break;
+    default:
+      conversation = privateConversations.value(id);
+      break;
+  }
+  
+  /* safety check */
+  if (conversation) {
+    Contact *contact = address_book->contactFromAddress(contactAddress);
+    /* safety check */
+    if (contact)
+      conversation->appendMessage(Message(*contact, msg));
+  }
+}
+
+
+/****************************************************************************
                _           __            __     __    
      ___  ____(_)  _____ _/ /____   ___ / /__  / /____
     / _ \/ __/ / |/ / _ `/ __/ -_) (_-</ / _ \/ __(_-<

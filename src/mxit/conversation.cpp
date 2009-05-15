@@ -49,7 +49,7 @@ QString buildDisplayName(const ContactSet &contacts, const QString &roomName)
 **
 ****************************************************************************/
 Conversation::Conversation(const Contact *contact)
-  : displayName(contact->contactAddress), type(Private)
+  : active(true), displayName(contact->contactAddress), type(Private)
 {
   contacts.insert(contact);
 }
@@ -63,7 +63,7 @@ Conversation::Conversation(const Contact *contact)
 **
 ****************************************************************************/
 Conversation::Conversation(const ContactSet &contacts, const QString &roomName)
-  : displayName(buildDisplayName(contacts, roomName)), type(Group)
+  : active(false), displayName(buildDisplayName(contacts, roomName)), type(Group)
 {
   this->contacts = contacts; /* copy */
 }
@@ -178,6 +178,20 @@ QTime Conversation::lastTimestamp() const
 void Conversation::removeContact(const Contact *contact)
 {
   contacts.remove(contact);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Toggles the active state of this Conversation.
+**
+****************************************************************************/
+void Conversation::toggleActive()
+{
+  active = !active;
+  emit updated(this);
 }
 
 
