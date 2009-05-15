@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to rename a group
 **
 ****************************************************************************/
-void RenameGroup::build(MXit::Network::Packet *packet, VariableHash &variables)
+void RenameGroup::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -45,11 +45,7 @@ void RenameGroup::build(MXit::Network::Packet *packet, VariableHash &variables)
   **                      by this command
   **
   ***************************************************************************
-  
   */
-  
-  /* packet header setup */
-  packet->setCommand("29");
   
   (*packet) << variables["group"]
             << variables["numContacts"]
