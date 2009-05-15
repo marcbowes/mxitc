@@ -102,9 +102,11 @@ void Conversations::addMessage(const QByteArray &contactAddress,
   /* safety check */
   if (conversation = conversations.value(id)) {
     Contact *contact = address_book->contactFromAddress(contactAddress);
-    /* safety check */
+    /* either from a contact, or from us */
     if (contact)
       conversation->appendMessage(Message(*contact, msg));
+    else
+      conversation->appendMessage(Message(msg));
   }
 }
 
