@@ -84,18 +84,6 @@ void Conversations::addConversation(Conversation *conversation)
   ordered.insert(orderString, conversation);
 }
 
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** Returns a [timestamp, name]-ordered list of Conversations
-**
-****************************************************************************/
-const OrderedConversationMap& Conversations::getConversations()
-{
-  return ordered;
-}
-
 
 /****************************************************************************
 **
@@ -118,6 +106,32 @@ void Conversations::addMessage(const QByteArray &contactAddress,
     if (contact)
       conversation->appendMessage(Message(*contact, msg));
   }
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Returns a pointer to a Conversation (if exists).
+**
+****************************************************************************/
+const Conversation* Conversations::getConversation(const QString &uniqueIdentifier)
+{
+  return conversations.value(uniqueIdentifier);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Returns a [timestamp, name]-ordered list of Conversations
+**
+****************************************************************************/
+const OrderedConversationMap& Conversations::getConversations()
+{
+  return ordered;
 }
 
 
