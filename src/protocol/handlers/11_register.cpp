@@ -32,7 +32,7 @@ void Register::build(MXit::Network::Packet *packet, VariableHash &variables)
   **  cm=11\0
   **  ms=password \1 version \1 maxReplyLen [ \1 name ] \1 dateOfBirth \1 
   **  gender \1 location \1 capabilities \1 dc \1 features \1 dialingCode \1
-  **  locale \0 FIXME: find out if this actually should be null terminated
+  **  locale
   **
   ***************************************************************************
   
@@ -66,8 +66,19 @@ void Register::build(MXit::Network::Packet *packet, VariableHash &variables)
   /* packet header setup */
   packet->setCommand("11");
   
-  /* packet data setup */
-  (*packet) << "0";
+  /* packet data setup FIXME: not all this stuff is stored i dont think*/
+  (*packet) << variables["password"]
+            << variables["maxReplyLen"]
+            << variables["name"]
+            << variables["dateOfBirth"]
+            << variables["gender"]
+            << variables["location"]
+            << variables["capabilities"]
+            << variables["dc"]
+            << variables["features"]
+            << variables["dialingCode"]
+            << variables["locale"]
+  ;
 }
 
 /****************************************************************************
@@ -116,6 +127,32 @@ VariableHash Register::handle(const QByteArray &packet)
   **
   ***************************************************************************
   */
+  
+  StringVec variables;
+  
+  /* first break up packet by \0 into variable sections */
+  variables.append("sesid");                /* sesid\0 */
+  variables.append("data");                 /* deprecated..flags\0 */
+  variables.append("hiddenLoginname");
+  
+  /* extract \0 seperated values */
+  VariableHash pass1 = hashVariables(packet, variables, '\0');
+
+  /* need to expand data section */
+  variables.clear();
+  variables.append("deprecated");
+  variables.append("loginname");
+  variables.append("dateTime");
+  variables.append("URL");
+  variables.append("maxSuppertedVer");
+  variables.append("pricePlan");
+  variables.append("flags");
+  
+  /* extract \1 seperated values */
+  VariableHash pass2 = hashVariables(pass1["data"], variables, '\1');
+  
+  /* no clean-up needed, just return the variables */
+  return pass1.unite(pass2);
   
   return VariableHash();
 }
