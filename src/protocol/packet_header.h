@@ -19,7 +19,7 @@ namespace MXit
 namespace Protocol
 {
 
-VariableHash packetHeader(const QByteArray &packet);
+VariableHash packetHeader(QByteArray &packet);
 
 }
 

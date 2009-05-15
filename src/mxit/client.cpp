@@ -421,7 +421,7 @@ void Client::incomingError(const QString &error)
 ** this SLOT is triggered by the connection receiving a packet
 **
 ****************************************************************************/
-void Client::incomingPacket(const QByteArray &packet)
+void Client::incomingPacket(QByteArray &packet)
 {
   /* error checking */
   VariableHash packetHeader = MXit::Protocol::packetHeader(packet);

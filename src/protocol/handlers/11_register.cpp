@@ -44,20 +44,21 @@ void Register::build(MXit::Network::Packet *packet, VariableHash &variables)
   **  version             the version number (see 1. Login)
   **  maxReplyLen         the maximum length a single reply may be
   **  name                the user's name/nickname
-  **  dateOfBirth         an ISO 8601 date of the user’s birth (format 
+  **  dateOfBirth         an ISO 8601 date of the user's birth (format 
   **                      YYYY-MM-DD)
   **  gender              the user's gender:
   **                        0 - female
   **                        1 - male
-  **  location            a string describing the user’s location (max 64 
+  **  location            a string describing the user's location (max 64 
   **                      characters)
   **  capabilities        see Login command
   **  dc                  distribution code that identifies the 
   **                      loginname/installation combination
   **                      uniquely
   **  features            a bitset describing client features (see 1. Login)
-  **  dialingCode         the international dialing code for the user's country (see Appendix A)
-  **  locale              the user’s locale (see Appendix A)
+  **  dialingCode         the international dialing code for the user's country 
+  **                      (see Appendix A)
+  **  locale              the user's locale (see Appendix A)
   **
   ***************************************************************************
   */
@@ -97,20 +98,20 @@ VariableHash Register::handle(const QByteArray &packet)
   **
   **  errorCode           see 1. Login
   **  deprecated          deprecated functionality (expect an empty string)
-  **  loginname           is the user’s loginname
+  **  loginname           is the user's loginname
   **  timeStamp           the number of seconds since 1 January 1970 (UTC)
   **  serverIP            the IP address of the server
   **  maxSupportedVer     maximum protocol version supported by the server
   **                      (major*10+minor)
   **  pricePlan           the price plan the user is on:
-  **                        1 – free
-  **                        2 – premium
+  **                        1 - free
+  **                        2 - premium
   **  flags               specific flags for this user
-  **  hiddenLoginname     specifies whether the user’s loginname should be 
+  **  hiddenLoginname     specifies whether the user's loginname should be 
   **                      hidden when inviting a contact:
-  **                        0 – not hidden
-  **                        1 – hidden
-  **  poll data           this will contain the user’s contacts as well as 
+  **                        0 - not hidden
+  **                        1 - hidden
+  **  poll data           this will contain the user's contacts as well as 
   **                      their presence information and all new messages.
   **
   ***************************************************************************

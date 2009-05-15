@@ -107,17 +107,12 @@ VariableHash GetNewMessages::handle(const QByteArray &packet)
   /* setup */
   StringVec variables;
   
-  /* first break up packet by \0 into variable sections */
-  if (packet.startsWith("ln="))
-    variables.append("ln");                   /* ln=X\0 */
-  variables.append("command");              /* 8\0 */
-  variables.append("error");                /* errorCode[\1errorMessage]\0 */
   variables.append("contactData");          /* contactAddress \1 dateTime \1 type [ \1 id \1 flags ]\0 */
   variables.append("message");              /* msg */
 
   /* extract \0 seperated values */
   VariableHash rawMessage = hashVariables(packet, variables, '\0');
-qDebug() << rawMessage;  
+
   variables.clear();
   variables.append("contactAddress");
   variables.append("dateTime");
@@ -126,7 +121,7 @@ qDebug() << rawMessage;
   variables.append("flags");
   
   VariableHash contactDetails = hashVariables(rawMessage["contactData"], variables, '\1');
-  qDebug() << contactDetails;
+
   return rawMessage.unite(contactDetails);
 }
 

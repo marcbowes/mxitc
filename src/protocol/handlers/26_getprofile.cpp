@@ -58,10 +58,7 @@ VariableHash GetProfile::handle(const QByteArray &packet)
   **  name \1 hiddenLoginname \1 yearOfBirth \1 gender
   **
   ***************************************************************************
-  
-  */
-  
-  
+  */  
   
   return VariableHash();
 }

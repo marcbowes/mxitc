@@ -85,7 +85,7 @@ class Client : public QObject
   private slots:
   
   void incomingError(const QString &);
-  void incomingPacket(const QByteArray &);
+  void incomingPacket(QByteArray &);
   void incomingVariables(const VariableHash &);
   void keepAlive();
   void httpPoll();

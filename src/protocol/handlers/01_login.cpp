@@ -208,19 +208,14 @@ VariableHash Login::handle(const QByteArray &packet)
   StringVec variables;
   
   /* first break up packet by \0 into variable sections */
-  if (packet.startsWith("ln="))
-    variables.append("ln");                   /* ln=X\0 */
-  variables.append("command");              /* 1\0 */
-  variables.append("error");                /* errorCode[\1errorMessage]\0 */
   variables.append("sesid");                /* sesid\0 */
   variables.append("data");                 /* deprecated..flags\0 */
-  variables.append("poll data");            /* [\0Poll data] */
   
   /* extract \0 seperated values */
   VariableHash pass1 = hashVariables(packet, variables, '\0');
   pass1.remove("command");                  /* we know this is 1 */
   pass1.remove("error");                    /* no error, handled earlier */
-  qDebug() << pass1;
+
   /* need to expand data section */
   variables.clear();
   variables.append("deprecated");
@@ -233,8 +228,6 @@ VariableHash Login::handle(const QByteArray &packet)
   
   /* extract \1 seperated values */
   VariableHash pass2 = hashVariables(pass1["data"], variables, '\1');
-  
-  /* TODO poll data */
   
   /* no clean-up needed, just return the variables */
   return pass1.unite(pass2);
