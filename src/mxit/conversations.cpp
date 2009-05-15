@@ -121,7 +121,7 @@ void Conversations::rebuild(const ContactList &contacts)
   /* each updated Conversation must be resorted */
   Q_FOREACH(const Conversation* conversation, toUpdate) {
     /* find the Conversation */
-    OrderedConversationMap::iterator itr = ordered.find(conversation->displayName); /* FIXME */
+    OrderedConversationMap::iterator itr = ordered.find(orderLookup[conversation->displayName]);
     
     /* need to resolve conflicts against group/private Conversations with same displayName */
     while (itr != ordered.end() && itr.key().endsWith(conversation->displayName))
@@ -132,7 +132,9 @@ void Conversations::rebuild(const ContactList &contacts)
     /* don't even care about checking for timestamping difference (almost guarenteed) */
     /* now reorder (reinsert) if Presence has changed */
     ordered.erase(itr);
-    ordered.insert(update->lastTimestamp().toString() + update->displayName, update); /* FIXME */
+    QString orderString = conversation->lastTimestamp().toString() + conversation->displayName;
+    orderLookup[conversation->displayName] = orderString;
+    ordered.insert(orderString, update);
   }
 }
 
@@ -165,7 +167,9 @@ void Conversations::injectNewConversation(Conversation *conversation)
     involvements[contact].insert(conversation);
   
   /* insert into a time-ordered map for sorting */
-  ordered.insert(conversation->lastTimestamp().toString() + conversation->displayName, conversation); /* FIXME */
+  QString orderString = conversation->lastTimestamp().toString() + conversation->displayName;
+  orderLookup.insert(conversation->displayName, orderString);
+  ordered.insert(orderString, conversation);
 }
 
 }

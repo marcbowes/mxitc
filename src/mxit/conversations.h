@@ -55,6 +55,8 @@ class Conversations : public QObject
   QHash< const Contact*, QSet<const Conversation*> >
                       involvements;
   ConversationHash    groupConversations;
+  QHash<QString, QString>
+                      orderLookup;
   OrderedConversationMap
                       ordered;
   ConversationHash    privateConversations;
