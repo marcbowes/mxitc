@@ -11,6 +11,7 @@
 #include "17_polldifference.h"
 #include "26_getprofile.h"
 #include "27_getmultimediamessage.h"
+#include "29_renamegroup.h"
 #include "32_setshownpresenceandstatus.h"
 #include "33_blocksubscription.h"
 #include "41_setmood.h"
