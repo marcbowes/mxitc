@@ -5,7 +5,7 @@
 ****************************************************************************/
 
 #include <QRegExp>
-#include <QUrl>
+#include <QTextDocument>
 
 #include "message.h"
 
@@ -89,27 +89,23 @@ Message::~Message()
 QString Message::markup(const QString &markup)
 {
   /* CGI escape so that any HTML in the message isn't interpreted */
-  QString markedUp = QUrl::toPercentEncoding(markup);
+  QString markedUp = Qt::escape(markup);
   
-  /* roll through each rule (scopes are just for grouping) */
+  /* roll through each rule */
+  QRegExp rx;
+  rx.setMinimal(true);
   
   /* *word* = <b>word</b> */
-  {
-    QRegExp rx("\\*(.+)\\*");
-    markedUp.replace(rx, "<b>\\1</b>");
-  }
+  rx.setPattern("\\*(.+)\\*");
+  markedUp.replace(rx, "<b>\\1</b>");
   
   /* /word/ = <i>word</i> */
-  {
-    QRegExp rx("\\/(.+)\\/");
-    markedUp.replace(rx, "<i>\\1</i>");
-  }
+  rx.setPattern("\\/(.+)\\/");
+  markedUp.replace(rx, "<i>\\1</i>");
   
   /* _word_ = <u>word</u> */
-  {
-    QRegExp rx("_(.+)_");
-    markedUp.replace(rx, "<u>\\1</i>");
-  }
+  rx.setPattern("_(.+)_");
+  markedUp.replace(rx, "<u>\\1</u>");
   
   return markedUp;
 }

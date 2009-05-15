@@ -27,7 +27,7 @@
 
 #include "mxit/client.h"
 #include "mxit/contact.h"
-
+#include <QTextDocument>
 #include "gui/dock_widgets/log.h"
 #include "gui/dock_widgets/debug.h"
 #include "gui/dock_widgets/options.h"

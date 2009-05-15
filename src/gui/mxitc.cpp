@@ -886,6 +886,30 @@ bool MXitC::ensureExistanceOfChatSession(MXit::Contact & contact) {
   
 }
 
+QString markup(const QString &markup)
+{
+  /* CGI escape so that any HTML in the message isn't interpreted */
+  QString markedUp = Qt::escape(markup);
+  
+  /* roll through each rule */
+  QRegExp rx;
+  rx.setMinimal(true);
+  
+  /* *word* = <b>word</b> */
+  rx.setPattern("\\*(.+)\\*");
+  markedUp.replace(rx, "<b>\\1</b>");
+  
+  /* /word/ = <i>word</i> */
+  rx.setPattern("\\/(.+)\\/");
+  markedUp.replace(rx, "<i>\\1</i>");
+  
+  /* _word_ = <u>word</u> */
+  rx.setPattern("_(.+)_");
+  markedUp.replace(rx, "<u>\\1</u>");
+  
+  return markedUp;
+}
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
@@ -904,7 +928,8 @@ void MXitC::messageReceived(){
     MXit::Contact& sender = contacts[contactAddress];
     //qDebug() << sender.nickname;
     ensureExistanceOfChatSession(sender);
-    chatSessions[sender.nickname].incomingMessage( Message(&sender, mxit->variableValue("message")) );
+    
+    chatSessions[sender.nickname].incomingMessage( Message(&sender, markup(mxit->variableValue("message"))) );
     
     /* if the chatSession that received the message is the one displayed, we need to set the unread message variable to false so that it won't be marked as 'unread'*/
     if (currentChatSession)
@@ -1031,8 +1056,8 @@ void MXitC::refreshChatBox(){
   //mainChatArea->setRowCount(0);
   if (currentChatSession != NULL) {
     Q_FOREACH(const Message& m, currentChatSession->chatHistory) {
-    
-      mainTextArea->append (  QString("<") +(m.sender()?m.sender()->nickname:QString("You")) + QString("> ") +m.message() );
+      mainTextArea->insertHtml ("<p>" +   QString("<") +(m.sender()?m.sender()->nickname:QString("You")) + QString("> ") +m.message() + "</p>");
+      qDebug() << m.message();
     }
   }
   
