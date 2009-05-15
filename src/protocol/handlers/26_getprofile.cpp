@@ -60,6 +60,15 @@ VariableHash GetProfile::handle(const QByteArray &packet)
   ***************************************************************************
   */  
   
+  StringVec variables;
+  
+  variables.append("name");
+  variables.append("hiddenLoginname");
+  variables.append("yearOfBirth");
+  variables.append("gender");
+  
+  VariableHash profileData = hashVariables(packet, variables, '\1');
+  
   return VariableHash();
 }
 

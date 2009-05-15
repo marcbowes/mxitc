@@ -67,6 +67,7 @@ Client::Client()
   /* 11 */ handlers["register"]                   = new Register();
   /* 12 */ handlers["updateprofile"]              = new UpdateProfile();
   /* 17 */ handlers["polldifference"]             = new PollDifference();
+  /* 26 */ handlers["getprofile"]                 = new GetProfile();
   /* 27 */ handlers["getmultimediamessage"]       = new GetMultimediaMessage();
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
   /* 33 */ handlers["blocksubscription"]          = new BlockSubscription();
@@ -461,6 +462,7 @@ void Client::incomingPacket(QByteArray packet)
       
       /* start the first pollDifference */
       pollTimer.start(variables["polltimer"].toUInt());
+      
       break;
     case LOGOUT:
       connection->close();
