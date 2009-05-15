@@ -15,6 +15,7 @@
 #include "33_blocksubscription.h"
 #include "41_setmood.h"
 #include "44_createnewgroupchat.h"
+#include "45_addnewgroupchatmember.h"
 #include "43_loginkick.h"
 #include "51_getnewsubscription.h"
 #include "52_allowsubscription.h"

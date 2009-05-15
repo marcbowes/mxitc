@@ -74,6 +74,7 @@ Client::Client()
   /* 41 */ handlers["setmood"]                    = new SetMood();
   /* 43 */ handlers["loginkick"]                  = new LoginKick();
   /* 44 */ handlers["createnewgroupchat"]         = new CreateNewGroupchat();
+  /* 45 */ handlers["addnewgroupchatmember"]      = new AddNewGroupchatMember();
   /* 51 */ handlers["getnewsubscription"]         = new GetNewSubscription();
   /* 52 */ handlers["allowsubscription"]          = new AllowSubscription();
   /* 55 */ handlers["denysubscription"]           = new DenySubscription();
