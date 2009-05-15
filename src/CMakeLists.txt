@@ -34,6 +34,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handlers/33_blocksubscription.cpp
   protocol/handlers/41_setmood.cpp
   protocol/handlers/43_loginkick.cpp
+  protocol/handlers/44_createnewgroupchat.cpp
   protocol/handlers/51_getnewsubscription.cpp
   protocol/handlers/52_allowsubscription.cpp
   protocol/handlers/55_denysubscription.cpp

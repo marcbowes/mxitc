@@ -73,6 +73,7 @@ Client::Client()
   /* 33 */ handlers["blocksubscription"]          = new BlockSubscription();
   /* 41 */ handlers["setmood"]                    = new SetMood();
   /* 43 */ handlers["loginkick"]                  = new LoginKick();
+  /* 44 */ handlers["createnewgroupchat"]         = new CreateNewGroupChat();
   /* 51 */ handlers["getnewsubscription"]         = new GetNewSubscription();
   /* 52 */ handlers["allowsubscription"]          = new AllowSubscription();
   /* 55 */ handlers["denysubscription"]           = new DenySubscription();
