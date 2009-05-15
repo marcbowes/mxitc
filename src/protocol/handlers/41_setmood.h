@@ -4,17 +4,17 @@
 **
 ** Author: Tim Sjoberg, 2009
 **
-** MXit::Network::Handlers::Register deals with registering a new account
+** MXit::Network::Handlers::SetMood sets the users mood on MXit
 ** see build/handle definitions in .cpp file for implementation details
 **
 ****************************************************************************/
 
-#ifndef __MXIT_PROTOCOL_HANDLERS_REGISTER_H__
-#define __MXIT_PROTOCOL_HANDLERS_REGISTER_H__
+#ifndef __MXIT_PROTOCOL_HANDLERS_SETMOOD_H__
+#define __MXIT_PROTOCOL_HANDLERS_SETMOOD_H__
 
 #include "protocol/handler.h"
 
-#define REGISTER 11
+#define SETMOOD 41
 
 namespace MXit
 {
@@ -25,11 +25,11 @@ namespace Protocol
 namespace Handlers
 {
 
-class Register : public Handler
+class SetMood : public Handler
 {
   public:
   
-  Register() { command = REGISTER; }
+  SetMood() { command = SETMOOD; }
   
   virtual void buildPacket(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);

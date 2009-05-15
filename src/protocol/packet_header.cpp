@@ -19,7 +19,7 @@ namespace Protocol
 ** extracts the error code from a response
 **
 ****************************************************************************/
-VariableHash packetHeader(const QByteArray &packet)
+VariableHash packetHeader(QByteArray &packet)
 {
   /* == Example
    * ln=x\0                           TCP only
@@ -54,6 +54,9 @@ VariableHash packetHeader(const QByteArray &packet)
     ret["errorCode"] = error.left(idx2);
     ret["errorMessage"] = error.mid(idx2 + 1);
   }
+  
+  /* now strip the header information out the packet (don't need it) */
+  packet.remove(0, (idx1 > idx2 ? idx1 : idx2) + 1);
   
   return ret;
 }

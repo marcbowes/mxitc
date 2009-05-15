@@ -23,7 +23,7 @@ namespace Handlers
 ** information
 **
 ****************************************************************************/
-void UpdateContactInfo::build(MXit::Network::Packet *packet, VariableHash &variables)
+void UpdateContactInfo::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -44,9 +44,6 @@ void UpdateContactInfo::build(MXit::Network::Packet *packet, VariableHash &varia
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("5");
   
   /* packet data setup */
   (*packet) << variables["group"]

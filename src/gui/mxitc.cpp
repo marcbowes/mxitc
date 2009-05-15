@@ -76,8 +76,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   optionsWidget->setBaseThemeDirectory(settings->value("themeBaseDirectory").toString());
   optionsWidget->setSelectedTheme(settings->value("selectedTheme").toString());
   
-  
-  resize(settings->value("mainWindowSize").toSize());
+  if (settings->contains("mainWindowSize")) // FIXME: oh god, please FIXME
+    resize(settings->value("mainWindowSize").toSize());
   
   /* normally the optionsWidget->setSelectedTheme will trigger the optionWidget's themeChanged SIGNAL which will (in a few lines) be connected to this class's themeChange SLOT
   We can't connect the themeChanged SIGNAL/SLOTs up since that would cause a QSettings save on the 'selected theme' on index 0 of the list and this->themeChanged which will overwrite the restored (correct!) QSettings value for 'selected theme' (something [TODO find out again] sets index to 0 => changes index of list => optionsWidget's loadTheme => this class's themeChanged => which overwrites the settings)*/

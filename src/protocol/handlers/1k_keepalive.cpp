@@ -22,7 +22,7 @@ namespace Handlers
 ** Empty command to prevent a login-kick (#43)
 **
 ****************************************************************************/
-void KeepAlive::build(MXit::Network::Packet *packet, VariableHash &variables)
+void KeepAlive::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -33,9 +33,6 @@ void KeepAlive::build(MXit::Network::Packet *packet, VariableHash &variables)
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("1000");
   
   /* no data */
 }

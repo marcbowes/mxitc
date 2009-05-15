@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to request contacts
 **
 ****************************************************************************/
-void GetContacts::build(MXit::Network::Packet *packet, VariableHash &variables)
+void GetContacts::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -33,9 +33,6 @@ void GetContacts::build(MXit::Network::Packet *packet, VariableHash &variables)
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("3");
   
   /* no data */
 }
@@ -117,23 +114,12 @@ VariableHash GetContacts::handle(const QByteArray &packet)
   **      10 - Sleepy
   **
   ***************************************************************************
-  
   */
   
-  int i = 0, count = 0;
+  VariableHash variables;
+  variables["contacts"] = packet;
   
-  while (count < (packet.startsWith("ln=") ? 3 : 2)) {
-    i++;
-    if (packet.at(i) == '\0')
-      count++;
-  }
-  
-  QByteArray contactData = packet.right(packet.size() - i - 1);
-  
-  VariableHash variable;
-  variable["contacts"] = contactData;
-  
-  return variable;
+  return variables;
 }
 
 }

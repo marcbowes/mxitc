@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include "06_subscribetoanewcontact.h"
+#include "41_setmood.h"
 
 namespace MXit
 {
@@ -19,59 +19,61 @@ namespace Handlers
 **
 ** Author: Tim Sjoberg
 **
-** Populates a packet with the information required to request a contact
-** addition
+** Populates a packet with the information required to set the users mood
 **
 ****************************************************************************/
-void SubscribeToANewContact::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
+void SetMood::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
   ***************************************************************************
   **
   **  id=loginname[\1sesid]\0
-  **  cm=6\0
-  **  ms=group \1 contact_loginname \1 nickname \1 type \1 msg
+  **  cm=41
+  **  ms=mood
   **
   ***************************************************************************
   
   == DEFINITIONS
   ***************************************************************************
   **
-  **  group               is the group the contact should be entered into
-  **  contact_loginname   identifies the contact uniquely
-  **  nickname            the contact's nickname
-  **  type                specifies the type of contact (see 3. Get Contacts)
-  **  msg                 an optional invitation message
-  **
+  **  mood specifies the user's mood. Empty implies no mood.
+  **    0 - no mood
+  **    1 - angry
+  **    2 - excited
+  **    3 - grumpy
+  **    4 - happy
+  **    5 - in love
+  **    6 - invincible
+  **    7 - sad
+  **    8 - hot
+  **    9 - sick
+  **    10 - sleepy
   ***************************************************************************
   */
   
-  /* packet data setup */
-  (*packet) << variables["group"];
-  (*packet) << variables["contact_loginname"];
-  (*packet) << variables["nickname"];
-  (*packet) << variables["type"];
-  (*packet) << variables["msg"];
+  /* no data */
+  (*packet) << variables["mood"];
 }
 
 /****************************************************************************
 **
 ** Author: Tim Sjoberg
 **
-** Extracts variable information from the add contact packet reply
+** Extracts variable information from the set mood packet
 **
 ****************************************************************************/
-VariableHash SubscribeToANewContact::handle(const QByteArray &packet)
+VariableHash SetMood::handle(const QByteArray &packet)
 {
   /*
   == PACKET FORMAT
   ***************************************************************************
   **
-  **  6\0
+  **  41\0
   **  errorCode[\1errorMessage]
   **
   ***************************************************************************
+  
   */
   
   return VariableHash();

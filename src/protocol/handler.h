@@ -29,10 +29,14 @@ class Handler
   
   Handler() : command(0) {}
   
-  virtual void build(MXit::Network::Packet *packet, VariableHash &variables) = 0;
+  void build(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet) = 0;
   
   unsigned int command;
+  
+  protected:
+  
+  virtual void buildPacket(MXit::Network::Packet *packet, VariableHash &variables) = 0;
 };
 
 typedef QHash         <QString, Handler*> HandlerHash;

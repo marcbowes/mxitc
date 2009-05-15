@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include "02_logout.h"
+#include "26_getprofile.h"
 
 namespace MXit
 {
@@ -19,51 +19,52 @@ namespace Handlers
 **
 ** Author: Tim Sjoberg
 **
-** Populates a packet with the information required to logout
+** Populates a packet with the information required to request contacts
 **
 ****************************************************************************/
-void Logout::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
+void GetProfile::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
   ***************************************************************************
   **
   **  id=loginname[\1sesid]\0
-  **  cm=2\0
-  **  ms=deprecated
-  **
-  ***************************************************************************
-  
-  == DEFINITIONS
-  ***************************************************************************
-  **
-  **  deprecated          should be 0
+  **  cm=26
   **
   ***************************************************************************
   */
   
-  /* packet data setup */
-  (*packet) << "0";
+  /* no data */
 }
 
 /****************************************************************************
 **
 ** Author: Tim Sjoberg
 **
-** Extracts variable information from the logout packet
+** Extracts variable information from the get contacts packet
 **
 ****************************************************************************/
-VariableHash Logout::handle(const QByteArray &packet)
+VariableHash GetProfile::handle(const QByteArray &packet)
 {
   /*
   == PACKET FORMAT
   ***************************************************************************
   **
-  **  2\0
-  **  errorCode[\1errorMessage]
+  **  26\0
+  **  errorCode[\1errorMessage]\0
+  **  name \1 hiddenLoginname \1 yearOfBirth \1 gender
   **
   ***************************************************************************
-  */
+  */  
+  
+  StringVec variables;
+  
+  variables.append("name");
+  variables.append("hiddenLoginname");
+  variables.append("yearOfBirth");
+  variables.append("gender");
+  
+  VariableHash profileData = hashVariables(packet, variables, '\1');
   
   return VariableHash();
 }

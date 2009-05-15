@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to register a new account
 **
 ****************************************************************************/
-void Register::build(MXit::Network::Packet *packet, VariableHash &variables)
+void Register::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -32,7 +32,7 @@ void Register::build(MXit::Network::Packet *packet, VariableHash &variables)
   **  cm=11\0
   **  ms=password \1 version \1 maxReplyLen [ \1 name ] \1 dateOfBirth \1 
   **  gender \1 location \1 capabilities \1 dc \1 features \1 dialingCode \1
-  **  locale \0 FIXME: find out if this actually should be null terminated
+  **  locale
   **
   ***************************************************************************
   
@@ -44,29 +44,38 @@ void Register::build(MXit::Network::Packet *packet, VariableHash &variables)
   **  version             the version number (see 1. Login)
   **  maxReplyLen         the maximum length a single reply may be
   **  name                the user's name/nickname
-  **  dateOfBirth         an ISO 8601 date of the user’s birth (format 
+  **  dateOfBirth         an ISO 8601 date of the user's birth (format 
   **                      YYYY-MM-DD)
   **  gender              the user's gender:
   **                        0 - female
   **                        1 - male
-  **  location            a string describing the user’s location (max 64 
+  **  location            a string describing the user's location (max 64 
   **                      characters)
   **  capabilities        see Login command
   **  dc                  distribution code that identifies the 
   **                      loginname/installation combination
   **                      uniquely
   **  features            a bitset describing client features (see 1. Login)
-  **  dialingCode         the international dialing code for the user's country (see Appendix A)
-  **  locale              the user’s locale (see Appendix A)
+  **  dialingCode         the international dialing code for the user's country 
+  **                      (see Appendix A)
+  **  locale              the user's locale (see Appendix A)
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("11");
-  
-  /* packet data setup */
-  (*packet) << "0";
+    
+  /* packet data setup FIXME: not all this stuff is stored i dont think*/
+  (*packet) << variables["password"]
+            << variables["maxReplyLen"]
+            << variables["name"]
+            << variables["dateOfBirth"]
+            << variables["gender"]
+            << variables["location"]
+            << variables["capabilities"]
+            << variables["dc"]
+            << variables["features"]
+            << variables["dialingCode"]
+            << variables["locale"]
+  ;
 }
 
 /****************************************************************************
@@ -97,24 +106,50 @@ VariableHash Register::handle(const QByteArray &packet)
   **
   **  errorCode           see 1. Login
   **  deprecated          deprecated functionality (expect an empty string)
-  **  loginname           is the user’s loginname
+  **  loginname           is the user's loginname
   **  timeStamp           the number of seconds since 1 January 1970 (UTC)
   **  serverIP            the IP address of the server
   **  maxSupportedVer     maximum protocol version supported by the server
   **                      (major*10+minor)
   **  pricePlan           the price plan the user is on:
-  **                        1 – free
-  **                        2 – premium
+  **                        1 - free
+  **                        2 - premium
   **  flags               specific flags for this user
-  **  hiddenLoginname     specifies whether the user’s loginname should be 
+  **  hiddenLoginname     specifies whether the user's loginname should be 
   **                      hidden when inviting a contact:
-  **                        0 – not hidden
-  **                        1 – hidden
-  **  poll data           this will contain the user’s contacts as well as 
+  **                        0 - not hidden
+  **                        1 - hidden
+  **  poll data           this will contain the user's contacts as well as 
   **                      their presence information and all new messages.
   **
   ***************************************************************************
   */
+  
+  StringVec variables;
+  
+  /* first break up packet by \0 into variable sections */
+  variables.append("sesid");                /* sesid\0 */
+  variables.append("data");                 /* deprecated..flags\0 */
+  variables.append("hiddenLoginname");
+  
+  /* extract \0 seperated values */
+  VariableHash pass1 = hashVariables(packet, variables, '\0');
+
+  /* need to expand data section */
+  variables.clear();
+  variables.append("deprecated");
+  variables.append("loginname");
+  variables.append("dateTime");
+  variables.append("URL");
+  variables.append("maxSuppertedVer");
+  variables.append("pricePlan");
+  variables.append("flags");
+  
+  /* extract \1 seperated values */
+  VariableHash pass2 = hashVariables(pass1["data"], variables, '\1');
+  
+  /* no clean-up needed, just return the variables */
+  return pass1.unite(pass2);
   
   return VariableHash();
 }

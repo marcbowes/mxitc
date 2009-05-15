@@ -22,7 +22,7 @@ namespace Handlers
 ** allows a subscription (friend) request and assigns a handle
 **
 ****************************************************************************/
-void AllowSubscription::build(MXit::Network::Packet *packet, VariableHash &variables)
+void AllowSubscription::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -34,9 +34,6 @@ void AllowSubscription::build(MXit::Network::Packet *packet, VariableHash &varia
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("52");
   
   /* build packet data */
   (*packet) << variables["contactAddress"]

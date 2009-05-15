@@ -32,7 +32,7 @@ class SubscribeToANewContact : public Handler
   
   SubscribeToANewContact() { command = SUBSCRIBETOANEWCONTACT; }
   
-  virtual void build(MXit::Network::Packet *packet, VariableHash &variables);
+  virtual void buildPacket(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);
 };
 

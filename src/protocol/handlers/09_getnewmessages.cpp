@@ -3,7 +3,7 @@
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
 ****************************************************************************/
-
+#include <QDebug>
 #include "09_getnewmessages.h"
 
 namespace MXit
@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to request new messages
 **
 ****************************************************************************/
-void GetNewMessages::build(MXit::Network::Packet *packet, VariableHash &variables)
+void GetNewMessages::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -32,12 +32,9 @@ void GetNewMessages::build(MXit::Network::Packet *packet, VariableHash &variable
   **  cm=9
   **
   ***************************************************************************
-  
   */
   
-  /* packet header setup */
-  packet->setCommand("9");
-  
+  /* no data */  
 }
 
 /****************************************************************************
@@ -107,16 +104,12 @@ VariableHash GetNewMessages::handle(const QByteArray &packet)
   /* setup */
   StringVec variables;
   
-  /* first break up packet by \0 into variable sections */
-  variables.append("ln");                   /* ln=X\0 */
-  variables.append("command");              /* 8\0 */
-  variables.append("error");                /* errorCode[\1errorMessage]\0 */
   variables.append("contactData");          /* contactAddress \1 dateTime \1 type [ \1 id \1 flags ]\0 */
   variables.append("message");              /* msg */
-  
+
   /* extract \0 seperated values */
   VariableHash rawMessage = hashVariables(packet, variables, '\0');
-  
+
   variables.clear();
   variables.append("contactAddress");
   variables.append("dateTime");
@@ -125,7 +118,7 @@ VariableHash GetNewMessages::handle(const QByteArray &packet)
   variables.append("flags");
   
   VariableHash contactDetails = hashVariables(rawMessage["contactData"], variables, '\1');
-  
+
   return rawMessage.unite(contactDetails);
 }
 

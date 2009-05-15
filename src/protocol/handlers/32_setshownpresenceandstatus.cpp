@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information for setting a presence
 **
 ****************************************************************************/
-void SetShownPresenceAndStatus::build(MXit::Network::Packet *packet, VariableHash &variables)
+void SetShownPresenceAndStatus::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -54,9 +54,6 @@ void SetShownPresenceAndStatus::build(MXit::Network::Packet *packet, VariableHas
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("32");
   
   (*packet) << variables["show"]
             << variables["status"]

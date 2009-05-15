@@ -4,17 +4,18 @@
 **
 ** Author: Tim Sjoberg, 2009
 **
-** MXit::Network::Handlers::Register deals with registering a new account
+** MXit::Network::Handlers::GetProfile deals with retrieving the currect 
+** users profile from MXit
 ** see build/handle definitions in .cpp file for implementation details
 **
 ****************************************************************************/
 
-#ifndef __MXIT_PROTOCOL_HANDLERS_REGISTER_H__
-#define __MXIT_PROTOCOL_HANDLERS_REGISTER_H__
+#ifndef __MXIT_PROTOCOL_HANDLERS_GETPROFILE_H__
+#define __MXIT_PROTOCOL_HANDLERS_GETPROFILE_H__
 
 #include "protocol/handler.h"
 
-#define REGISTER 11
+#define GETPROFILE 26
 
 namespace MXit
 {
@@ -25,11 +26,11 @@ namespace Protocol
 namespace Handlers
 {
 
-class Register : public Handler
+class GetProfile : public Handler
 {
   public:
   
-  Register() { command = REGISTER; }
+  GetProfile() { command = GETPROFILE; }
   
   virtual void buildPacket(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);

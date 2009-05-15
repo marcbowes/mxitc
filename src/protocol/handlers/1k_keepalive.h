@@ -31,7 +31,7 @@ class KeepAlive : public Handler
   
   KeepAlive() { command = KEEPALIVE; }
   
-  virtual void build(MXit::Network::Packet *packet, VariableHash &variables);
+  virtual void buildPacket(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);
 };
 

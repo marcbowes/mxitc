@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include "02_logout.h"
+#include "45_addnewgroupchatmember.h"
 
 namespace MXit
 {
@@ -19,53 +19,60 @@ namespace Handlers
 **
 ** Author: Tim Sjoberg
 **
-** Populates a packet with the information required to logout
+** Populates a packet with the information required to add a new member to a
+** groupchat
 **
 ****************************************************************************/
-void Logout::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
+void AddNewGroupchatMember::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
   ***************************************************************************
   **
   **  id=loginname[\1sesid]\0
-  **  cm=2\0
-  **  ms=deprecated
-  **
-  ***************************************************************************
-  
-  == DEFINITIONS
-  ***************************************************************************
-  **
-  **  deprecated          should be 0
+  **  cm=45
+  **  ms=roomid \1 numContacts \1 contactAddress0 \1 ... \1 contactAddressN
   **
   ***************************************************************************
   */
   
-  /* packet data setup */
-  (*packet) << "0";
+  /* no data */
 }
 
 /****************************************************************************
 **
 ** Author: Tim Sjoberg
 **
-** Extracts variable information from the logout packet
+** Extracts variable information from the add new group chat member
 **
 ****************************************************************************/
-VariableHash Logout::handle(const QByteArray &packet)
+VariableHash AddNewGroupchatMember::handle(const QByteArray &packet)
 {
   /*
   == PACKET FORMAT
   ***************************************************************************
   **
-  **  2\0
-  **  errorCode[\1errorMessage]
+  **  45\0
+  **  errorCode[\1errorMessage]\0
+  **  roomid
   **
   ***************************************************************************
+  
+  == DEFINITIONS
+  ***************************************************************************
+  **
+  **  roomid              an identifier that identifies this chatroom 
+  **                      uniquely for each of its members.
+  **
+  ***************************************************************************
+  
   */
   
-  return VariableHash();
+  //FIXME: should we really send this back?
+  VariableHash variables;
+  variables["roomid"] = packet;
+  
+  return variables;
 }
 
 }
