@@ -56,12 +56,12 @@ class Conversation : public QObject
   
   bool            active;
   const QString  displayName;
+  MessageList     messages;
   const Type     type;
 
   private:        /* variables */
   
   ContactSet      contacts;
-  MessageList     messages;
 };
 
 typedef QHash<QString, Conversation*> ConversationHash;
