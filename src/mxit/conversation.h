@@ -55,9 +55,9 @@ class Conversation : public QObject
   public:         /* variables */
   
   bool            active;
-  const QString  displayName;
   MessageList     messages;
   const Type     type;
+  const QString  uniqueIdentifier;
 
   private:        /* variables */
   

@@ -12,26 +12,6 @@ namespace MXit
 {
 
 /****************************************************************************
-**
-** Author: Marc Bowes
-**
-** Creates a display name from a ContactSet or roomName
-**
-****************************************************************************/
-QString buildDisplayName(const ContactSet &contacts, const QString &roomName)
-{
-  if (roomName.isEmpty()) {
-    QStringList addressList;
-    Q_FOREACH(const Contact *contact, contacts)
-      addressList << contact->contactAddress;
-    return addressList.join(", ");
-  }
-  else
-    return roomName;
-}
-
-
-/****************************************************************************
         __                                _ ____    
    ____/ /__ ____ ___   ___ ___  ___ ____(_) _(_)___
   / __/ / _ `(_-<(_-<  (_-</ _ \/ -_) __/ / _/ / __/
@@ -49,7 +29,7 @@ QString buildDisplayName(const ContactSet &contacts, const QString &roomName)
 **
 ****************************************************************************/
 Conversation::Conversation(const Contact *contact)
-  : active(true), displayName(contact->contactAddress), type(Private)
+  : active(true), uniqueIdentifier(contact->contactAddress), type(Private)
 {
   contacts.insert(contact);
 }
@@ -63,7 +43,7 @@ Conversation::Conversation(const Contact *contact)
 **
 ****************************************************************************/
 Conversation::Conversation(const ContactSet &contacts, const QString &roomName)
-  : active(false), displayName(buildDisplayName(contacts, roomName)), type(Group)
+  : active(false), uniqueIdentifier(roomName), type(Group)
 {
   this->contacts = contacts; /* copy */
 }

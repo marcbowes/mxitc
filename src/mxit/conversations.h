@@ -38,11 +38,8 @@ class Conversations : public QObject
   
   public:         /* methods */
   
-  const OrderedConversationMap& getConversations();
-  void newGroupConversation(const ContactSet &contacts,
-    const QString &roomName="");
-  void newPrivateConversation(const Contact *contact);
-  void updateConversation(const QByteArray &contactAddress,
+  void addConversation(Conversation *conversation);
+  void addMessage(const QByteArray &contactAddress,
     const QByteArray &dateTime, const QByteArray &time,
     const QByteArray &id, const QByteArray &flags,
     const QByteArray &msg);
@@ -51,21 +48,16 @@ class Conversations : public QObject
   
   void rebuild(const ContactList &contacts);
   
-  private:        /* methods */
-  
-  void injectNewConversation(Conversation *conversation);
-  
   private:        /* variables */
   
   AddressBook        *address_book;
+  ConversationHash    conversations;
   QHash< const Contact*, QSet<const Conversation*> >
                       involvements;
-  ConversationHash    groupConversations;
   QHash<QString, QString>
                       orderLookup;
   OrderedConversationMap
                       ordered;
-  ConversationHash    privateConversations;
 };
 
 }

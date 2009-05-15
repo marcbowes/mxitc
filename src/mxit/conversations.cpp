@@ -43,9 +43,7 @@ Conversations::Conversations(AddressBook *address_book)
 ****************************************************************************/
 Conversations::~Conversations()
 {
-  Q_FOREACH(Conversation *conversation, groupConversations)
-    delete conversation;
-  Q_FOREACH(Conversation *conversation, privateConversations)
+  Q_FOREACH(Conversation *conversation, conversations)
     delete conversation;
 }
 
@@ -64,31 +62,26 @@ Conversations::~Conversations()
 **
 ** Author: Marc Bowes
 **
-** Constructs a new group Conversation from a QSet of Contacts and assigns a
-**  roomName to the Conversation.
+** Injects the Convesation into the internal hashes
 **
 ****************************************************************************/
-void Conversations::newGroupConversation(const ContactSet &contacts,
-  const QString &roomName)
+void Conversations::addConversation(Conversation *conversation)
 {
-  Conversation *conversation = new Conversation(contacts, roomName);
-  groupConversations.insert(conversation->displayName, conversation);
-  injectNewConversation(conversation);
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** Constructs a new private Conversation from a Contact.
-**
-****************************************************************************/
-void Conversations::newPrivateConversation(const Contact *contact)
-{
-  Conversation *conversation = new Conversation(contact);
-  privateConversations.insert(conversation->displayName, conversation);
-  injectNewConversation(conversation);
+  /* bubble the Conversation's update SIGNAL */
+  connect(conversation, SIGNAL(updated(const Conversation*)),
+          this, SIGNAL(updated(const Conversation*)));
+  
+  /* invert the Conversation for fast Contact-involvement lookups */
+  Q_FOREACH(const Contact *contact, conversation->getContacts())
+    involvements[contact].insert(conversation);
+  
+  /* insert into local store */
+  conversations.insert(conversation->uniqueIdentifier, conversation);
+  
+  /* insert into a time-ordered map for sorting */
+  QString orderString = conversation->lastTimestamp().toString() + conversation->uniqueIdentifier;
+  orderLookup.insert(conversation->uniqueIdentifier, orderString);
+  ordered.insert(orderString, conversation);
 }
 
 
@@ -99,25 +92,15 @@ void Conversations::newPrivateConversation(const Contact *contact)
 ** Finds a Conversation (by name and type) and appends a Message.
 **
 ****************************************************************************/
-void Conversations::updateConversation(const QByteArray &contactAddress,
+void Conversations::addMessage(const QByteArray &contactAddress,
     const QByteArray &dateTime, const QByteArray &time,
     const QByteArray &id, const QByteArray &flags,
     const QByteArray &msg)
 {
-  Conversation *conversation = NULL;
-  
-  /* decide which hash to search */
-  switch (Protocol::Enumerables::Message::Type(flags.toUInt())) {
-    case Protocol::Enumerables::Message::GroupChat:
-      conversation = groupConversations.value(id);
-      break;
-    default:
-      conversation = privateConversations.value(id);
-      break;
-  }
+  Conversation *conversation;
   
   /* safety check */
-  if (conversation) {
+  if (conversation = conversations.value(id)) {
     Contact *contact = address_book->contactFromAddress(contactAddress);
     /* safety check */
     if (contact)
@@ -155,55 +138,17 @@ void Conversations::rebuild(const ContactList &contacts)
   /* each updated Conversation must be resorted */
   Q_FOREACH(const Conversation* conversation, toUpdate) {
     /* find the Conversation */
-    OrderedConversationMap::iterator itr = ordered.find(orderLookup[conversation->displayName]);
-    
-    /* need to resolve conflicts against group/private Conversations with same displayName */
-    while (itr != ordered.end() && itr.key().endsWith(conversation->displayName))
-      if (itr.value()->type == conversation->type) break;
+    OrderedConversationMap::iterator itr = ordered.find(orderLookup[conversation->uniqueIdentifier]);
     
     Conversation *update = itr.value(); /* will break for itr == .end() */
     
     /* don't even care about checking for timestamping difference (almost guarenteed) */
     /* now reorder (reinsert) if Presence has changed */
     ordered.erase(itr);
-    QString orderString = conversation->lastTimestamp().toString() + conversation->displayName;
-    orderLookup[conversation->displayName] = orderString;
+    QString orderString = conversation->lastTimestamp().toString() + conversation->uniqueIdentifier;
+    orderLookup[conversation->uniqueIdentifier] = orderString;
     ordered.insert(orderString, update);
   }
-}
-
-
-/****************************************************************************
-               _           __                  __  __           __  
-     ___  ____(_)  _____ _/ /____   __ _  ___ / /_/ /  ___  ___/ /__
-    / _ \/ __/ / |/ / _ `/ __/ -_) /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
-   / .__/_/ /_/|___/\_,_/\__/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
-  /_/                                                               
-
-****************************************************************************/
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** Hooks up a new Conversation to the internal workings.
-**
-****************************************************************************/
-void Conversations::injectNewConversation(Conversation *conversation)
-{
-  /* bubble the Conversation's update SIGNAL */
-  connect(conversation, SIGNAL(updated(const Conversation*)),
-          this, SIGNAL(updated(const Conversation*)));
-  
-  /* invert the Conversation for fast Contact-involvement lookups */
-  Q_FOREACH(const Contact *contact, conversation->getContacts())
-    involvements[contact].insert(conversation);
-  
-  /* insert into a time-ordered map for sorting */
-  QString orderString = conversation->lastTimestamp().toString() + conversation->displayName;
-  orderLookup.insert(conversation->displayName, orderString);
-  ordered.insert(orderString, conversation);
 }
 
 }
