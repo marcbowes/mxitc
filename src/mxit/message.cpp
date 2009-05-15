@@ -110,6 +110,8 @@ QString Message::markup(const QString &markup)
     QRegExp rx("_(.+)_");
     markedUp.replace(rx, "<u>\\1</i>");
   }
+  
+  return markedUp;
 }
 
 }
