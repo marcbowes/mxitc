@@ -458,6 +458,9 @@ void Client::incomingPacket(QByteArray packet)
       variables["show"]   = "1";        /* online */
       variables["status"] = "mxitc";
       sendPacket("setshownpresenceandstatus");
+      
+      /* start the first pollDifference */
+      pollTimer.start(variables["polltimer"].toUInt());
       break;
     case LOGOUT:
       connection->close();

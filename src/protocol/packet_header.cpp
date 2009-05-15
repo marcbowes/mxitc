@@ -56,7 +56,7 @@ VariableHash packetHeader(QByteArray &packet)
   }
   
   /* now strip the header information out the packet (don't need it) */
-  packet.remove(0, idx1 > idx2 ? idx1 : idx2);
+  packet.remove(0, (idx1 > idx2 ? idx1 : idx2) + 1);
   
   return ret;
 }
