@@ -142,6 +142,9 @@ void AddressBook::removeContact(const QString &contactAddress)
 ****************************************************************************/
 Contact* AddressBook::addOrUpdateContact(const QByteArray &data)
 {
+  if (data.isEmpty())
+    return NULL;
+  
   /* for data format, refer to Handler #03, GetContacts */
   QList<QByteArray> fields = data.split('\1');
   
