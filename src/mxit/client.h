@@ -84,11 +84,10 @@ class Client : public QObject
   
   private slots:
   
-  void incomingError(const QString &);
-  void incomingPacket(QByteArray &);
-  void incomingVariables(const VariableHash &);
+  void incomingError(const QString &errir);
+  void incomingPacket(QByteArray packet);
+  void incomingVariables(const VariableHash &variables);
   void keepAlive();
-  void httpPoll();
 
   private:        /* methods */
   
@@ -109,7 +108,7 @@ class Client : public QObject
   Protocol::HandlerHash       handlers;
   Protocol::Handshaker       *handshaker;
   QTimer                      keepAliveTimer;
-  QTimer                      httpPollTimer;
+  QTimer                      pollTimer;
   Status                      state;
   VariableHash                variables;
 };

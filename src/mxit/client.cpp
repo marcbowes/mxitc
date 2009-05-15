@@ -37,7 +37,7 @@ Client::Client()
   
   /* incoming packets */
   connect(connection, SIGNAL(outgoingPacket(const QByteArray &)),
-    this, SLOT(incomingPacket(const QByteArray &)));
+    this, SLOT(incomingPacket(QByteArray)));
   
   /* variable passing */
   connect(handshaker, SIGNAL(outgoingVariables(const VariableHash &)),
@@ -51,9 +51,8 @@ Client::Client()
   connect(&keepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
   keepAliveTimer.setSingleShot(true);
   
-  /* httpPoll timer FIXME: use a variable for timing*/
-  connect(&httpPollTimer, SIGNAL(timeout()), this, SLOT(httpPoll()));
-  httpPollTimer.start(15000);
+  /* poll difference */
+  connect(&pollTimer, SIGNAL(timeout()), this, SLOT(pollDifference()));
   
   /* create handlers */
   using namespace MXit::Protocol::Handlers;
@@ -262,10 +261,15 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
 **
 ** Author: Marc Bowes
 **
+** Sends a pollDifference packet, only intended for use with HTTP.
+**
 ****************************************************************************/
 void Client::pollDifference()
 {
-  /* FIXME: stub */
+  if (connection->isHTTP()) {
+    sendPacket("polldifference");
+    pollTimer.start(variables["polltimer"].toUInt());
+  }
 }
 
 
@@ -421,7 +425,7 @@ void Client::incomingError(const QString &error)
 ** this SLOT is triggered by the connection receiving a packet
 **
 ****************************************************************************/
-void Client::incomingPacket(QByteArray &packet)
+void Client::incomingPacket(QByteArray packet)
 {
   /* error checking */
   VariableHash packetHeader = MXit::Protocol::packetHeader(packet);
@@ -450,7 +454,7 @@ void Client::incomingPacket(QByteArray &packet)
       /* variable scrubbing */
       useVariable("loginname", 0);
       
-      /* need to send presence to remain online */
+      /* send custom online presence */
       variables["show"]   = "1";        /* online */
       variables["status"] = "mxitc";
       sendPacket("setshownpresenceandstatus");
@@ -554,22 +558,6 @@ void Client::incomingVariables(const VariableHash &params)
 void Client::keepAlive()
 {
   sendPacket("keepalive");
-}
-
-
-/****************************************************************************
-**
-** Author: Tim Sjoberg
-**
-** Called every so often by keepAliveTimer
-** sends packet 17 to get new info from mxit if on http
-**
-****************************************************************************/
-void Client::httpPoll()
-{
-  if ((connection->getState() == MXit::Network::Connection::CONNECTED)&&(connection->isHTTP())) {
-    sendPacket("polldifference");
-  }
 }
 
 
