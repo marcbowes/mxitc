@@ -30,6 +30,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handlers/17_polldifference.cpp
   protocol/handlers/26_getprofile.cpp
   protocol/handlers/27_getmultimediamessage.cpp
+  protocol/handlers/29_renamegroup.cpp
   protocol/handlers/32_setshownpresenceandstatus.cpp
   protocol/handlers/33_blocksubscription.cpp
   protocol/handlers/41_setmood.cpp

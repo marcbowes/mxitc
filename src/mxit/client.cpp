@@ -69,6 +69,7 @@ Client::Client()
   /* 17 */ handlers["polldifference"]             = new PollDifference();
   /* 26 */ handlers["getprofile"]                 = new GetProfile();
   /* 27 */ handlers["getmultimediamessage"]       = new GetMultimediaMessage();
+  /* 29 */ handlers["renamegroup"]                = new RenameGroup();
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
   /* 33 */ handlers["blocksubscription"]          = new BlockSubscription();
   /* 41 */ handlers["setmood"]                    = new SetMood();
