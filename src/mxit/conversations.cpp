@@ -105,7 +105,7 @@ const OrderedConversationMap& Conversations::getConversations()
 **
 ****************************************************************************/
 void Conversations::addMessage(const QByteArray &contactAddress,
-    const QByteArray &dateTime, const QByteArray &time,
+    const QByteArray &dateTime, const QByteArray &type,
     const QByteArray &id, const QByteArray &flags,
     const QByteArray &msg)
 {

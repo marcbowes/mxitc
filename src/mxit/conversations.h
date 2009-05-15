@@ -40,7 +40,7 @@ class Conversations : public QObject
   
   void addConversation(Conversation *conversation);
   void addMessage(const QByteArray &contactAddress,
-    const QByteArray &dateTime, const QByteArray &time,
+    const QByteArray &dateTime, const QByteArray &type,
     const QByteArray &id, const QByteArray &flags,
     const QByteArray &msg);
   const OrderedConversationMap& getConversations();
