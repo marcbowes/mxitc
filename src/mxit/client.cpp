@@ -461,6 +461,8 @@ void Client::incomingPacket(QByteArray packet)
       sendPacket("setshownpresenceandstatus");
       
       /* start the first pollDifference */
+      if (variables["polltimer"].toUInt() == 0)
+        variables["polltimer"] = "30"; /* default */
       pollTimer.start(variables["polltimer"].toUInt());
       
       break;
