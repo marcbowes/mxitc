@@ -84,6 +84,18 @@ void Conversations::addConversation(Conversation *conversation)
   ordered.insert(orderString, conversation);
 }
 
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Returns a [timestamp, name]-ordered list of Conversations
+**
+****************************************************************************/
+const OrderedConversationMap& Conversations::getConversations()
+{
+  return ordered;
+}
+
 
 /****************************************************************************
 **

@@ -61,7 +61,7 @@
     </property>
     <addaction name="actionOptions"/>
     <addaction name="actionContacts"/>
-    <addaction name="actionChat_Sessions"/>
+    <addaction name="actionConversations"/>
     <addaction name="actionAdd_Contact"/>
     <addaction name="actionLogs"/>
     <addaction name="actionDebug_Variables"/>
@@ -152,9 +152,9 @@
     <string>Alt+A</string>
    </property>
   </action>
-  <action name="actionChat_Sessions">
+  <action name="actionConversations">
    <property name="text">
-    <string>Chat Sessions</string>
+    <string>Conversations</string>
    </property>
   </action>
  </widget>

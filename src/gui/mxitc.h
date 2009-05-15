@@ -27,16 +27,17 @@
 
 #include "mxit/client.h"
 #include "mxit/contact.h"
+#include "mxit/address_book.h"
+#include "mxit/conversations.h"
 
 #include "gui/dock_widgets/log.h"
 #include "gui/dock_widgets/debug.h"
 #include "gui/dock_widgets/options.h"
-#include "gui/dock_widgets/chat_sessions.h"
+#include "gui/dock_widgets/conversations.h"
 #include "gui/dock_widgets/contacts.h"
 #include "gui/dock_widgets/add_contact.h"
 
 #include "gui/dialogs/login.h"
-#include "gui/dialogs/allow_subscription.h"
 #include "gui/theme.h"
 
 #include "protocol/enumerables/message.h"
@@ -69,32 +70,20 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void setStatusBar();
   
-  
-  void contactsReceived();
+  /* action handlers */
+  //void contactsReceived();
   void messageReceived();
-  void subscriptionsReceived();
+  //void subscriptionsReceived();
   
-  bool ensureExistanceOfContact(const QString & contactAddress);
+  void refreshChatBox(); /*FIXME slot ? - rax*/
   
-  bool ensureExistanceOfChatSession(MXit::Contact & contact);
-  
-  void removeContactFromGUI(const QString& contactAddress);
-  
-  /* chat session creation deletion*/
-  void startChatSessionWithContact (MXit::Contact & contact);
-  void closeChatSession(const QString & chatSessionName);
   
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
   
   /* TODO change to a QList that is sorted by alphabetical order, starting with the "" group*/
-  QSet<QString> getGroupSet();
+  /* TODO soon to be moved to AddressBook*/
+  //QSet<QString> getGroupSet();
 
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  void refreshChatBox(); /*FIXME slot ? - rax*/
-  void refreshChatSessions();
-  void refreshContacts();
-  
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
   public slots:
@@ -114,11 +103,10 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void incomingAction(Action action);
   
-  void setCurrentChatSession(QListWidgetItem * item);
-  void setCurrentChatSession(const QString & chatSessionName);
+  void setCurrentConversation(Conversation * conversation);
   
-  void chatRequestedViaContact ( QListWidgetItem * item);
-  void chatRequestedViaContact ( const QString& nickname );
+  //void chatRequestedViaContact ( QListWidgetItem * item);
+  //void chatRequestedViaContact ( const QString& nickname );
   
   void saveLayout(bool b);
   void saveLayout(Qt::DockWidgetArea area = Qt::NoDockWidgetArea); 
@@ -127,23 +115,15 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void themeChanged();
   
-  /* context munu functions*/
-  void chatSessionsMenu(const QPoint & pos, const QString& chatSessionName);
-  void contactsMenu(const QPoint & pos, const QString& nickname);
-  
   
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
   private:        /* variables */
   
+  AddressBook addressBook;
+  Conversations *conversations;
   
-  QHash<QString, QString> nicknameToContactAddress; // converts contactAddresses to their unique nickname
-  QHash<QString, ChatSession> chatSessions; // identified by chatSession name (which is nickname if it's a single person)
-  QHash<QString, MXit::Contact> contacts; // identified by contactAddress (NOT nickname)
-  
-  //QHash<MXit::Contact*, ChatSession*> contactsChatSession; /*TODO deprecated?*/
-  
-  ChatSession * currentChatSession;
+  Conversation * currentConversation;
   
   MXit::Client *mxit;
   QApplication *application;
@@ -159,7 +139,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   /* Dockable Widgets*/
   QVector<QDockWidget *> dockWidgets;
   
-  DockWidget::ChatSessions * chatSessionsWidget;
+  DockWidget::Conversations * conversationsWidget;
   DockWidget::Contacts * contactsWidget;
   DockWidget::Log * logWidget;
   DockWidget::Options * optionsWidget;

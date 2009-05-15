@@ -43,6 +43,7 @@ class Conversations : public QObject
     const QByteArray &dateTime, const QByteArray &time,
     const QByteArray &id, const QByteArray &flags,
     const QByteArray &msg);
+  const OrderedConversationMap& getConversations();
   
   private slots:
   

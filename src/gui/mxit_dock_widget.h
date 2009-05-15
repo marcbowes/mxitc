@@ -27,6 +27,10 @@ class MXitDockWidget : public QDockWidget
   
   MXitDockWidget(QWidget *parent, Theme &theme);
   virtual ~MXitDockWidget();
+  
+  signals:
+  
+  void sendLog(const QString& message);
 
   private: /* methods */
 

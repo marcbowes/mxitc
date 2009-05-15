@@ -22,6 +22,7 @@
 namespace MXit
 {
 
+
 class Conversation : public QObject
 {
   Q_OBJECT
@@ -65,6 +66,8 @@ class Conversation : public QObject
 };
 
 typedef QHash<QString, Conversation*> ConversationHash;
+typedef QList<const Conversation*>   ConversationList;
+typedef QSet<const Conversation*>    ConversationSet;
 
 }
 

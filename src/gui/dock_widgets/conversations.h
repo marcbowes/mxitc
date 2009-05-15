@@ -14,12 +14,22 @@
 
 #include <QHash>
 
+#include "mxit/address_book.h"
+#include "mxit/conversations.h"
 #include "mxit/conversation.h"
+#include "mxit/client.h"
+
+#include "gui/mxit_dock_widget.h"
+
+#include "ui_conversations.h"
 
 namespace MXit
 {
 
 namespace GUI
+{
+
+namespace DockWidget
 {
 
 class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
@@ -28,27 +38,48 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
   
   public:         /* class specific */
 
-  Conversations(QWidget *parent, Theme &theme);
+  Conversations(QWidget *parent, Theme &theme, MXit::Client& mxit, MXit::Conversations & conversations);
   ~Conversations();
   
   signals:
   
-  void conversationSelected(QListWidgetItem*);
-  void contextMenuRequest(QListWidgetItem*);
+  //void outgoingItemPressed ( QListWidgetItem *  ); // depricated maybe
   
-  public:         /* methods */
   
-  void newConversation(const ContactSet &contacts);
-  void newConversation(const ContactSet &contacts, const QString &roomName);
+  void chatRequest ( Conversation * conversation );
   
-  public:        /* variables */
+  public:
   
-  QHash<QString, Conversation*> conversations;
+  void refresh(const MXit::OrderedConversationMap& conversations);
+  
+  private:
+  
+  void refreshListWidgetItem(QListWidgetItem* lwi);
+
+  public slots:
+  
+  void refreshThemeing();
 
   private slots:
   
-  void conversationContextMenuRequest(const QPoint &point);
+  void emitChatRequest(QListWidgetItem *lwi);
+  
+  void conversationsUpdated(const MXit::ConversationList& conversations);
+  void popUpContextMenu(const QPoint & pos);
+  
+  
+  private:
+  
+  MXit::Conversations& conversations;
+  MXit::Client& mxit;
+  
+  
+  QHash<MXit::Conversation*, QListWidgetItem*> conversationToLwi;
+  QHash<QListWidgetItem*, MXit::Conversation*> lwiToConversation;
+  
 };
+
+} /* end of DockWidget namespace */
 
 }
 
