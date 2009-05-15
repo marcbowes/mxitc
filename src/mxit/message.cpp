@@ -4,6 +4,7 @@
 **
 ****************************************************************************/
 
+#include <QRegExp>
 #include <QUrl>
 
 #include "message.h"
@@ -87,7 +88,28 @@ Message::~Message()
 ****************************************************************************/
 QString Message::markup(const QString &markup)
 {
+  /* CGI escape so that any HTML in the message isn't interpreted */
   QString markedUp = QUrl::toPercentEncoding(markup);
+  
+  /* roll through each rule (scopes are just for grouping) */
+  
+  /* *word* = <b>word</b> */
+  {
+    QRegExp rx("\\*(.+)\\*");
+    markedUp.replace(rx, "<b>\\1</b>");
+  }
+  
+  /* /word/ = <i>word</i> */
+  {
+    QRegExp rx("\\/(.+)\\/");
+    markedUp.replace(rx, "<i>\\1</i>");
+  }
+  
+  /* _word_ = <u>word</u> */
+  {
+    QRegExp rx("_(.+)_");
+    markedUp.replace(rx, "<u>\\1</i>");
+  }
 }
 
 }
