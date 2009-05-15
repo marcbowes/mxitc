@@ -192,6 +192,7 @@ Contact* AddressBook::insertContact(const QList<QByteArray> &fields)
   contacts.insert(contactAddress, contact);
   
   /* ordered insert (QMap uses heaps to order keys) */
+  orderLookup.insert(contact->contactAddress, contact->sortString());
   ordered.insert(contact->sortString(), contact);
   
   return contact;
@@ -210,7 +211,7 @@ Contact* AddressBook::insertContact(const QList<QByteArray> &fields)
 Contact* AddressBook::updateContact(const QList<QByteArray> &fields)
 {
   /* find the Contact */
-  OrderedContactMap::iterator itr = ordered.find(fields[1]); /* FIXME */
+  OrderedContactMap::iterator itr = ordered.find(orderLookup[fields[1]]);
   Contact *contact = itr.value(); /* will break for itr == contacts.end() */
   
   /* remember Presence - this is important for ordering! */
@@ -222,6 +223,7 @@ Contact* AddressBook::updateContact(const QList<QByteArray> &fields)
   /* now reorder (reinsert) if Presence has changed */
   if (current != contact->presence) {
     ordered.erase(itr);
+    orderLookup[contact->contactAddress] = contact->sortString();
     ordered.insert(contact->sortString(), contact);
     return contact;
   }

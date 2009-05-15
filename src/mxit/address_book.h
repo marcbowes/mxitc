@@ -54,6 +54,8 @@ class AddressBook : public QObject
   private:       /* variables */
   
   ContactHash       contacts;
+  QHash<QString, QString>
+                    orderLookup;
   OrderedContactMap ordered;
 };
 
