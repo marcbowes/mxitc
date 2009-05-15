@@ -23,7 +23,7 @@ namespace Handlers
 ** connection
 **
 ****************************************************************************/
-void PollDifference::build(MXit::Network::Packet *packet, VariableHash &variables)
+void PollDifference::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -36,8 +36,7 @@ void PollDifference::build(MXit::Network::Packet *packet, VariableHash &variable
   ***************************************************************************
   */
   
-  /* packet header setup */
-  packet->setCommand("17");
+  /* no data */
 }
 
 /****************************************************************************

@@ -31,7 +31,7 @@ class LoginKick : public Handler
   
   LoginKick() { command = LOGINKICK; }
   
-  virtual void build(MXit::Network::Packet *packet, VariableHash &variables);
+  virtual void buildPacket(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);
 };
 

@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to request new messages
 **
 ****************************************************************************/
-void GetNewMessages::build(MXit::Network::Packet *packet, VariableHash &variables)
+void GetNewMessages::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -32,12 +32,9 @@ void GetNewMessages::build(MXit::Network::Packet *packet, VariableHash &variable
   **  cm=9
   **
   ***************************************************************************
-  
   */
   
-  /* packet header setup */
-  packet->setCommand("9");
-  
+  /* no data */  
 }
 
 /****************************************************************************

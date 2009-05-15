@@ -22,7 +22,7 @@ namespace Handlers
 ** Denies a subscription (friend) request
 **
 ****************************************************************************/
-void DenySubscription::build(MXit::Network::Packet *packet, VariableHash &variables)
+void DenySubscription::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -34,9 +34,6 @@ void DenySubscription::build(MXit::Network::Packet *packet, VariableHash &variab
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("55");
   
   /* build packet data */
   (*packet) << variables["contactAddress"];

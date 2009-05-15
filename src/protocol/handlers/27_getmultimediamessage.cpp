@@ -23,7 +23,7 @@ namespace Handlers
 ** Populates a packet with the information required to send binary data
 **
 ****************************************************************************/
-void GetMultimediaMessage::build(MXit::Network::Packet *packet, VariableHash &variables)
+void GetMultimediaMessage::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -42,10 +42,6 @@ void GetMultimediaMessage::build(MXit::Network::Packet *packet, VariableHash &va
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("27");
-  
   int type, length;
   
   type = variables["type"].toInt();

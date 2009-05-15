@@ -23,7 +23,7 @@ namespace Handlers
 ** addition
 **
 ****************************************************************************/
-void SubscribeToANewContact::build(MXit::Network::Packet *packet, VariableHash &variables)
+void SubscribeToANewContact::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -46,9 +46,6 @@ void SubscribeToANewContact::build(MXit::Network::Packet *packet, VariableHash &
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("6");
   
   /* packet data setup */
   (*packet) << variables["group"];

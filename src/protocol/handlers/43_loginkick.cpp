@@ -22,7 +22,7 @@ namespace Handlers
 ** Stub
 **
 ****************************************************************************/
-void LoginKick::build(MXit::Network::Packet *packet, VariableHash &variables)
+void LoginKick::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /* nothing */
 }

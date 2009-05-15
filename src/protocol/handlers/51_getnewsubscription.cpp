@@ -22,7 +22,7 @@ namespace Handlers
 ** stub
 **
 ****************************************************************************/
-void GetNewSubscription::build(MXit::Network::Packet *packet, VariableHash &variables)
+void GetNewSubscription::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -33,9 +33,6 @@ void GetNewSubscription::build(MXit::Network::Packet *packet, VariableHash &vari
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("51");
   
   /* no data */
 }

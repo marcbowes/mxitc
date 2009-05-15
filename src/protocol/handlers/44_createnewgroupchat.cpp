@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to create a new chatroom
 **
 ****************************************************************************/
-void CreateNewGroupchat::build(MXit::Network::Packet *packet, VariableHash &variables)
+void CreateNewGroupchat::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -34,9 +34,6 @@ void CreateNewGroupchat::build(MXit::Network::Packet *packet, VariableHash &vari
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("44");
   
   (*packet) << variables["roomname"]
             << variables["numContacts"]

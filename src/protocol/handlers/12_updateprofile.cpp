@@ -23,7 +23,7 @@ namespace Handlers
 ** information
 **
 ****************************************************************************/
-void UpdateProfile::build(MXit::Network::Packet *packet, VariableHash &variables)
+void UpdateProfile::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -47,9 +47,6 @@ void UpdateProfile::build(MXit::Network::Packet *packet, VariableHash &variables
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("12");
   
   /* packet data setup */
   (*packet) << variables["pin"]

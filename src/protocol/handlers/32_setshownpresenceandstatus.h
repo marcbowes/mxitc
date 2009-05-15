@@ -32,7 +32,7 @@ class SetShownPresenceAndStatus : public Handler
   
   SetShownPresenceAndStatus() { command = SETSHOWNPRESENCEANDSTATUS; }
   
-  virtual void build(MXit::Network::Packet *packet, VariableHash &variables);
+  virtual void buildPacket(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);
 };
 

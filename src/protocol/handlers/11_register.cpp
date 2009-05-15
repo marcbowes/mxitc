@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to register a new account
 **
 ****************************************************************************/
-void Register::build(MXit::Network::Packet *packet, VariableHash &variables)
+void Register::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -62,10 +62,7 @@ void Register::build(MXit::Network::Packet *packet, VariableHash &variables)
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("11");
-  
+    
   /* packet data setup FIXME: not all this stuff is stored i dont think*/
   (*packet) << variables["password"]
             << variables["maxReplyLen"]

@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to send a message
 **
 ****************************************************************************/
-void SendNewMessage::build(MXit::Network::Packet *packet, VariableHash &variables)
+void SendNewMessage::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -54,9 +54,6 @@ void SendNewMessage::build(MXit::Network::Packet *packet, VariableHash &variable
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("10");
   
   /* packet data setup */
   (*packet) << variables["contactAddress"]

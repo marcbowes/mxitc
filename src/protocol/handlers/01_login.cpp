@@ -26,7 +26,7 @@ namespace Handlers
 ** Populates a packet with the information required to login
 **
 ****************************************************************************/
-void Login::build(MXit::Network::Packet *packet, VariableHash &variables)
+void Login::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -94,9 +94,6 @@ void Login::build(MXit::Network::Packet *packet, VariableHash &variables)
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("1");
   
   /* packet data setup */
   

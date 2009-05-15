@@ -22,7 +22,7 @@ namespace Handlers
 ** Denies a subscription (friend) request permanently
 **
 ****************************************************************************/
-void BlockSubscription::build(MXit::Network::Packet *packet, VariableHash &variables)
+void BlockSubscription::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -34,9 +34,6 @@ void BlockSubscription::build(MXit::Network::Packet *packet, VariableHash &varia
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("33");
   
   /* build packet data */
   (*packet) << variables["contactAddress"];

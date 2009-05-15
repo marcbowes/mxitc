@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to set the users mood
 **
 ****************************************************************************/
-void SetMood::build(MXit::Network::Packet *packet, VariableHash &variables)
+void SetMood::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -37,7 +37,7 @@ void SetMood::build(MXit::Network::Packet *packet, VariableHash &variables)
   == DEFINITIONS
   ***************************************************************************
   **
-  **  mood specifies the user’s mood. Empty implies no mood.
+  **  mood specifies the user's mood. Empty implies no mood.
   **    0 - no mood
   **    1 - angry
   **    2 - excited
@@ -50,11 +50,7 @@ void SetMood::build(MXit::Network::Packet *packet, VariableHash &variables)
   **    9 - sick
   **    10 - sleepy
   ***************************************************************************
-
   */
-  
-  /* packet header setup */
-  packet->setCommand("41");
   
   /* no data */
   (*packet) << variables["mood"];

@@ -22,7 +22,7 @@ namespace Handlers
 ** Populates a packet with the information required to remove a contact
 **
 ****************************************************************************/
-void RemoveContact::build(MXit::Network::Packet *packet, VariableHash &variables)
+void RemoveContact::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -41,9 +41,6 @@ void RemoveContact::build(MXit::Network::Packet *packet, VariableHash &variables
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("8");
   
   /* packet data setup */
   (*packet) << variables["contactAddress"];

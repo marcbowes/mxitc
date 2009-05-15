@@ -23,7 +23,7 @@ namespace Handlers
 ** groupchat
 **
 ****************************************************************************/
-void AddNewGroupchatMember::build(MXit::Network::Packet *packet, VariableHash &variables)
+void AddNewGroupchatMember::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
 {
   /*
   == PACKET FORMAT
@@ -35,9 +35,6 @@ void AddNewGroupchatMember::build(MXit::Network::Packet *packet, VariableHash &v
   **
   ***************************************************************************
   */
-  
-  /* packet header setup */
-  packet->setCommand("45");
   
   /* no data */
 }
