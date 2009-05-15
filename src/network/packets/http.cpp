@@ -79,7 +79,7 @@ HTTP::operator QByteArray() const
   /* next three lines of code creates the {"s"=[ sesid \1 ] seqno &} part */
   self.append   ( QString("s=")                            );
   if ((sessionID > 0)&&(command != "1")) {
-    self.append ( QString("%1")    .arg(sessionID)      );
+    self.append ( QString("%1")       .arg(sessionID)      );
     self.append ( "%01" );
   }
   self.append   ( QString("%1&")      .arg(sequenceNumber) );
@@ -87,7 +87,7 @@ HTTP::operator QByteArray() const
   
   QString ms = QUrl::toPercentEncoding(getData()).replace('\1', "%01");
   if (!ms.isEmpty())
-    self.append ( QString("&ms=%1")    .arg(ms)      );
+    self.append ( QString("&ms=%1")    .arg(ms)            );
   
   self.append   ( extra );
   self.append   ("&"); /* HTTP record terminator */

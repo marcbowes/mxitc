@@ -4,6 +4,8 @@
 **
 ****************************************************************************/
 
+#include <QUrl>
+
 #include "message.h"
 
 namespace MXit
@@ -27,7 +29,7 @@ namespace MXit
 **
 ****************************************************************************/
 Message::Message(const QString &message)
-  : contact(NULL), message(message), timestamp(QTime::currentTime())
+  : contact(NULL), message(markup(message)), timestamp(QTime::currentTime())
 {
   /* Nothing */
 }
@@ -41,7 +43,7 @@ Message::Message(const QString &message)
 **
 ****************************************************************************/
 Message::Message(const Contact &contact, const QString &message)
-  : contact(&contact), message(message), timestamp (QTime::currentTime())
+  : contact(&contact), message(markup(message)), timestamp (QTime::currentTime())
 {
   /* Nothing */
 }
@@ -71,6 +73,21 @@ Message::Message(const Message &other)
 Message::~Message()
 {
   /* Nothing */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Implements MXit Markup
+** All text is first CGI escaped, and then markup-up into HTML using MXit-
+**  specifc rules.
+**
+****************************************************************************/
+QString Message::markup(const QString &markup)
+{
+  QString markedUp = QUrl::toPercentEncoding(markup);
 }
 
 }

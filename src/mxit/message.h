@@ -29,6 +29,8 @@ class Message
   Message(const Message &other);
   ~Message();
   
+  static QString markup(const QString &markup);
+  
   public:         /* variables */
   
   const Contact *contact;
