@@ -2,6 +2,8 @@
 
 #include "options.h"
 
+#include <QDebug>
+
 namespace MXit
 {
 
@@ -20,22 +22,32 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Options::Options(QWidget* parent, Theme &theme) : MXitDockWidget(parent, theme)
+Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockWidget(parent, theme), settings(settings)
 {
   setupUi(this);
   
+  /* gateway tab */
   connect(httpRadioButton, SIGNAL(toggled ( bool )), httpWidget, SLOT(setEnabled ( bool )));
   
-  connect(httpRadioButton, SIGNAL(toggled ( bool )), this, SIGNAL(gatewaySelected( bool )));
+  connect(applyButton, SIGNAL(released ()), this, SLOT(emitGatewaySignal()));
   
+  /*gateway settings save*/
+  connect(httpRadioButton, SIGNAL(toggled ( bool )), httpWidget, SLOT(saveSettings ( bool )));
+  
+    /*TODO send port and proxy down*/
+  connect(httpProxyLineEdit, SIGNAL(editingFinished ()), httpWidget, SLOT(saveSettings ( )));
+  connect(portLineEdit, SIGNAL(editingFinished ()), httpWidget, SLOT(saveSettings ( )));
+  
+  /* theme tab*/
   connect(themeOpenButton, SIGNAL( released () )   , this, SLOT(openThemeBrowser ()));
   
   connect(
             themeComboBox, SIGNAL( currentIndexChanged ( const QString & ) ), 
             this, SLOT(loadTheme(const QString &)));
   
-  connect(dirLineEdit , SIGNAL(editingFinished ()), this, SLOT (refreshComboBox ())); 
+  connect(directoryLineEdit , SIGNAL(editingFinished ()), this, SLOT (refreshComboBox ())); 
   
+  /*TODO load settings*/
   
 }
 
@@ -52,6 +64,71 @@ Options::~Options()
 {
 
 }
+
+/*=========================================================================*/
+/*=========================================================================*/
+/*=========================================================================*/
+/* START OF GATEWAY SECTION*/
+/*=========================================================================*/
+/*=========================================================================*/
+/*=========================================================================*/
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Options::setSelectedGateway(const QString& gateway) {
+
+  gatewayComboBox->setCurrentIndex( gatewayComboBox->findText ( gateway ));
+}
+  
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Options::addGateway(const QString& gateway) {
+  
+  gatewayComboBox->addItem(gateway);
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Options::emitGatewaySignal () {
+  qDebug() << "emitting " << gatewayComboBox->currentText ();
+  emit gatewaySelected(gatewayComboBox->currentText ());
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Options::saveGatewaySettings(bool nothing) {
+  /*TODO*/
+  //settings->setValue("httpProxy", );
+}
+
+/*=========================================================================*/
+/*=========================================================================*/
+/*=========================================================================*/
+/* END OF GATEWAY SECTION*/
+/*=========================================================================*/
+/*=========================================================================*/
+/* START OF THEME SECTION*/
+/*=========================================================================*/
+/*=========================================================================*/
+/*=========================================================================*/
+
 
 /****************************************************************************
 **
@@ -77,7 +154,7 @@ void Options::openThemeBrowser () {
 
 
 QString Options::getSelectedTheme() {
-  return themeComboBox->itemText ( themeComboBox->currentIndex () );
+  return themeComboBox->currentText ();
 }
 
 /****************************************************************************
@@ -102,7 +179,7 @@ void Options::setSelectedTheme(const QString& theme) {
 
 
 QString Options::getBaseThemeDirectory() {
-  return dirLineEdit->text();
+  return directoryLineEdit->text();
 }
 
 /****************************************************************************
@@ -113,7 +190,7 @@ QString Options::getBaseThemeDirectory() {
 
 void Options::setBaseThemeDirectory(const QString& dir) {
     /*TODO check if directory exists, if not, display it in red and return - rax*/
-    dirLineEdit->setText(dir);
+    directoryLineEdit->setText(dir);
   
     refreshComboBox();
 }
@@ -125,10 +202,10 @@ void Options::setBaseThemeDirectory(const QString& dir) {
 ****************************************************************************/
 void Options::refreshComboBox ()
 {
-  QDir dir(dirLineEdit->text());
+  QDir dir(directoryLineEdit->text());
 
   if (dir.exists()) {
-    //dirLineEdit->setForground(QBrush(Qt::black));
+    //directoryLineEdit->setForground(QBrush(Qt::black));
     themeComboBox->clear();
     QFileInfoList fil = dir.entryInfoList ( QStringList(), QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name );
     
@@ -137,7 +214,7 @@ void Options::refreshComboBox ()
     }
   }
   else {
-    //dirLineEdit->setForground(QBrush(Qt::red));
+    //directoryLineEdit->setForground(QBrush(Qt::red));
     themeComboBox->clear();
   }
 }
@@ -149,6 +226,15 @@ void Options::loadTheme(const QString &dir){
   
   emit themeChanged();
 }
+
+
+/*=========================================================================*/
+/*=========================================================================*/
+/*=========================================================================*/
+/* END OF THEME SECTION*/
+/*=========================================================================*/
+/*=========================================================================*/
+/*=========================================================================*/
 
 } /* end of DockWidget namespace */
 

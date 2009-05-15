@@ -10,6 +10,7 @@
 #define __MXIT_GUI_DOCKWIDGET_OPTIONS_H__
 
 #include <QFileDialog>
+#include <QSettings>
 
 #include "gui/mxit_dock_widget.h"
 
@@ -30,32 +31,40 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   
   public: /*class specific */
 
-  Options(QWidget* parent, Theme &theme);
+  Options(QWidget* parent, Theme &theme, QSettings& settings);
   ~Options();
   
   
   public: /*method */
+  
+  void addGateway(const QString& gateway);
+  void setSelectedGateway(const QString& gateway);
   
   QString getBaseThemeDirectory();
   void setBaseThemeDirectory(const QString& dir);
   QString getSelectedTheme();
   void setSelectedTheme(const QString& theme);
   
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  signals:
-  void gatewaySelected(bool http);
   
   signals:
+  void gatewaySelected(const QString& gateway);
+  
   void themeChanged();
   
   
-  public slots:
-  
-  
   private slots:
+  
+  void emitGatewaySignal ();
+  void saveGatewaySettings(bool nothing = false);
+  
+  
   void openThemeBrowser ();
   void refreshComboBox ();
   void loadTheme(const QString & dir);
+  
+  private: /* variables */
+  
+  QSettings& settings;
 
 
 };
