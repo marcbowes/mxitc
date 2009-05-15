@@ -87,7 +87,7 @@ void GetMultimediaMessage::buildPacket(MXit::Network::Packet *packet, VariableHa
       //numContacts
       data.append(variables["numContacts"]);
       
-      //addresses
+      //addresses FIXME: this only supports 1 at the moment. we need a way of passing a list
       data.append(QByteArray::number(variables["addresses"].length()));
       data.append(variables["addresses"]);
       
