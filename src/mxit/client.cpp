@@ -73,13 +73,16 @@ Client::Client()
   /* 30 */ handlers["removegroup"]                = new RemoveGroup();
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
   /* 33 */ handlers["blocksubscription"]          = new BlockSubscription();
+  /* 34 */ handlers["sendmessagetogroup"]         = new SendMessageToGroup();
   /* 41 */ handlers["setmood"]                    = new SetMood();
   /* 43 */ handlers["loginkick"]                  = new LoginKick();
   /* 44 */ handlers["createnewgroupchat"]         = new CreateNewGroupchat();
   /* 45 */ handlers["addnewgroupchatmember"]      = new AddNewGroupchatMember();
   /* 51 */ handlers["getnewsubscription"]         = new GetNewSubscription();
   /* 52 */ handlers["allowsubscription"]          = new AllowSubscription();
+  /* 54 */ handlers["registergateway"]            = new RegisterGateway();
   /* 55 */ handlers["denysubscription"]           = new DenySubscription();
+  /* 56 */ handlers["unregistergateway"]          = new UnregisterGateway();
   /* 1k */ handlers["keepalive"]                  = new KeepAlive();
 }
 
