@@ -46,10 +46,11 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
   //void outgoingItemPressed ( QListWidgetItem *  ); // depricated maybe
   
   
-  void chatRequest ( Conversation * conversation );
+  void conversationRequest ( const Conversation * conversation );
   
   public:
   
+  void conversationRead(const Conversation * conversation);
   void refresh(const MXit::OrderedConversationMap& conversations);
   
   private:
@@ -62,9 +63,9 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
 
   private slots:
   
-  void emitChatRequest(QListWidgetItem *lwi);
+  void emitConversationRequest(QListWidgetItem *lwi);
   
-  void conversationsUpdated(const MXit::ConversationList& conversations);
+  void conversationUpdated(const Conversation* conversation);
   void popUpContextMenu(const QPoint & pos);
   
   
@@ -74,8 +75,8 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
   MXit::Client& mxit;
   
   
-  QHash<MXit::Conversation*, QListWidgetItem*> conversationToLwi;
-  QHash<QListWidgetItem*, MXit::Conversation*> lwiToConversation;
+  QHash<const MXit::Conversation*, QListWidgetItem*> conversationToLwi;
+  QHash<QListWidgetItem*, const MXit::Conversation*> lwiToConversation;
   
 };
 

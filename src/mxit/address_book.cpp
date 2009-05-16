@@ -6,6 +6,8 @@
 
 #include "address_book.h"
 
+#include <QDebug>
+
 namespace MXit
 {
 
@@ -115,6 +117,7 @@ const OrderedContactMap& AddressBook::getContacts()
 ****************************************************************************/
 void AddressBook::removeContact(const QString &contactAddress)
 {
+  qDebug() << "AddressBook::removeContact(const QString &contactAddress)";
   if (contacts.contains(contactAddress)) {
     Contact *_delete = *contacts.find(contactAddress);
     contacts.remove(_delete->contactAddress);

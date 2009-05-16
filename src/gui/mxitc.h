@@ -77,6 +77,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void refreshChatBox(); /*FIXME slot ? - rax*/
   
+  const Conversation * ensureExistanceOfConversation(const QString & uniqueId);
   
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
   
@@ -103,7 +104,9 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void incomingAction(Action action);
   
-  void setCurrentConversation(Conversation * conversation);
+  void setCurrentConversation(const Conversation * conversation);
+  void setCurrentConversation(const Contact * contact);
+  void setCurrentConversation(const QString & uniqueId);
   
   //void chatRequestedViaContact ( QListWidgetItem * item);
   //void chatRequestedViaContact ( const QString& nickname );
@@ -123,7 +126,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   AddressBook addressBook;
   Conversations *conversations;
   
-  Conversation * currentConversation;
+  const Conversation * currentConversation;
   
   MXit::Client *mxit;
   QApplication *application;

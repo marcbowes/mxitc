@@ -10,6 +10,7 @@
 #define __MXIT_GUI_DOCKWIDGET_CONTACTS_H__
 
 #include "mxit/address_book.h"
+#include "mxit/conversations.h"
 #include "mxit/contact.h"
 #include "mxit/client.h"
 
@@ -32,7 +33,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   public: /*class specific */
 
-  Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBook & addressBook);
+  Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBook & addressBook, MXit::Conversations & conversations);
   ~Contacts();
   
   signals:
@@ -40,7 +41,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   //void outgoingItemPressed ( QListWidgetItem *  ); // depricated maybe
   
   signals:
-  void chatRequest ( QListWidgetItem * lwi );
+  void conversationRequest ( const Contact * );
   
   public: /* methods */
   
@@ -49,11 +50,14 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   private: /* methods */
   
   void refreshListWidgetItem(QListWidgetItem* lwi);
+  void removeAndDeleteContactFromGUI (QListWidgetItem * lwi);
 
   public slots:
   void refreshThemeing();
 
   private slots:
+  
+  void emitConversationRequest (QListWidgetItem* lwi);
   
   void contactsUpdated(const ContactList& contacts);
   void popUpContextMenu(const QPoint & pos);
@@ -61,10 +65,11 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   private: /* variables */
   
+  MXit::Conversations& conversations;
   AddressBook& addressBook;
   MXit::Client& mxit;
   
-  
+  /* TODO sohuld be const Contact* */
   QHash<MXit::Contact*, QListWidgetItem*> contactToLwi;
   QHash<QListWidgetItem*, MXit::Contact*> lwiToContact;
   

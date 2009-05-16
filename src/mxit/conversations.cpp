@@ -82,6 +82,8 @@ void Conversations::addConversation(Conversation *conversation)
   QString orderString = conversation->lastTimestamp().toString() + conversation->uniqueIdentifier;
   orderLookup.insert(conversation->uniqueIdentifier, orderString);
   ordered.insert(orderString, conversation);
+  
+  emit updated(conversation);
 }
 
 

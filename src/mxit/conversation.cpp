@@ -30,7 +30,7 @@ namespace MXit
 ****************************************************************************/
 Conversation::Conversation(const Contact *contact)
   : active(true), displayName(contact->contactAddress),
-    uniqueIdentifier(contact->nickname), type(Private)
+    uniqueIdentifier(contact->contactAddress), type(Private)
 {
   contacts.insert(contact);
 }

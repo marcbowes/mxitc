@@ -29,7 +29,7 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Contacts::Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBook & addressBook) : MXitDockWidget(parent, theme), mxit(mxit), addressBook(addressBook)
+Contacts::Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBook & addressBook, MXit::Conversations & conversations) : MXitDockWidget(parent, theme), mxit(mxit), addressBook(addressBook), conversations(conversations)
 {
   setupUi(this);
   
@@ -38,6 +38,8 @@ Contacts::Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBoo
             this, 
             SIGNAL(outgoingItemPressed( QListWidgetItem *  )));*///depricated
   
+  connect(  &addressBook, SIGNAL( updated(const ContactList&)),
+            this, SLOT (contactsUpdated(const ContactList&)));
   
   connect(
         contactsList, 
@@ -50,7 +52,7 @@ Contacts::Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBoo
         contactsList, 
         SIGNAL( itemDoubleClicked ( QListWidgetItem * ) ),
         this, 
-        SIGNAL( chatRequest( QListWidgetItem * ) )  );
+        SLOT( emitConversationRequest( QListWidgetItem * ) )  );
 }
 
 
@@ -109,21 +111,6 @@ void Contacts::refreshThemeing() {
 **
 ** Author: Richard Baxter
 **
-** refreshes a listWidgetItem (just icon for now)
-**
-****************************************************************************/
-
-void Contacts::refreshListWidgetItem(QListWidgetItem *item) {
-  Contact * contact = lwiToContact[item];
-  item->setIcon(QPixmap(16,16)/*theme.contact.presence.pixmap(conversation->presence)*/);
-  item->setText(contact->nickname);
-}
-
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
 ** pops up a context menu
 **
 ****************************************************************************/
@@ -139,14 +126,14 @@ Q_FOREACH(QAction * act, hash){ delete act; } \
 if (__ret) return;  \
 }
 
-void Contacts::popUpContextMenu(const QPoint & lovalPos) {
+void Contacts::popUpContextMenu(const QPoint & point) {
   
+  QListWidgetItem * lwi = (contactsList->itemAt ( point.x(), point.y() ));
   Contact * contact;
   QPoint pos;
   
-  QListWidgetItem * lwi = (contactsList->itemAt ( pos.x(), pos.y() ));
   if (lwi) {
-    pos = contactsList->mapToGlobal ( pos );
+    pos = contactsList->mapToGlobal ( point );
     contact = lwiToContact[lwi];
   }
   else
@@ -231,7 +218,7 @@ void Contacts::popUpContextMenu(const QPoint & lovalPos) {
   {
     if (selection == "Chat") 
     {
-      emit chatRequest(lwi);
+      emitConversationRequest(lwi);
     }
     else if (selection == "Change Nickname") {
       /* TODO */
@@ -253,6 +240,13 @@ void Contacts::popUpContextMenu(const QPoint & lovalPos) {
         mxit.removeContact(contact->contactAddress);
         emit sendLog("GUI:: contact \""+contact->contactAddress+"\" removed");
         addressBook.removeContact(contact->contactAddress);
+        /*removing from gui*/
+        QSet<const Conversation*> involvements = conversations.getInvolvements(contact);
+        Q_FOREACH(const Conversation* conversation, involvements) {
+          if (conversation->type == MXit::Conversation::Private)
+            conversations.toggleActive(conversation->uniqueIdentifier);
+        }
+        removeAndDeleteContactFromGUI(lwi);
       }
     }
   }
@@ -267,6 +261,32 @@ void Contacts::popUpContextMenu(const QPoint & lovalPos) {
 **
 ** Author: Richard Baxter
 **
+** emits a conversation request with a pointer to the appropriate contact
+**
+****************************************************************************/
+
+void Contacts::emitConversationRequest(QListWidgetItem *item) {
+  emit conversationRequest(lwiToContact[item]);
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** refreshes a listWidgetItem (just icon for now)
+**
+****************************************************************************/
+
+void Contacts::refreshListWidgetItem(QListWidgetItem *item) {
+  Contact * contact = lwiToContact[item];
+  item->setIcon(theme.contact.presence.pixmap(contact->presence));
+  item->setText(contact->nickname);
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
 **
 ****************************************************************************/
 
@@ -278,19 +298,19 @@ void Contacts::contactsUpdated(const ContactList& contacts) {
 **
 ** Author: Richard Baxter
 **
-**
 ****************************************************************************/
 
 void Contacts::refresh(const OrderedContactMap& contacts) {
 
   QSet<QListWidgetItem*> shouldBeInList;
   
-  contactsList->clear();
+  while(contactsList->count())
+    contactsList->takeItem(0);
 
   /* adding/updating contacts that should be in list*/
   Q_FOREACH(Contact* contact, contacts.values()) {
-  
-    QListWidgetItem* itemToAdd;
+    
+    QListWidgetItem* itemToAdd = NULL;
   
     if (contactToLwi.contains(contact)) {
       /* then this contact already has an associated lwi*/
@@ -311,11 +331,12 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
       lwiToContact[itemToAdd] = contact;
     }
     /* updating listWidgetItem's lable and pixmap*/
-    *itemToAdd = QListWidgetItem();
     refreshListWidgetItem(itemToAdd);
     
     contactsList->addItem(itemToAdd);
     shouldBeInList.insert(itemToAdd);
+    
+    
   }
   
   
@@ -330,15 +351,25 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
     else {
       /* then the lwi should NOT be in the list */
       /* remove it and clean up */
-      contactsList->removeItemWidget(lwi);
-      contactToLwi.remove(lwiToContact[lwi]);
-      lwiToContact.remove(lwi);
-      delete lwi;
+      removeAndDeleteContactFromGUI (lwi);
       i--; /*since all the indexes above will have shifted down one and the next item will have index i now*/
     }
   }
 }
 
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Contacts::removeAndDeleteContactFromGUI (QListWidgetItem * lwi) {
+  contactsList->removeItemWidget(lwi);
+  contactToLwi.remove(lwiToContact[lwi]);
+  lwiToContact.remove(lwi);
+  delete lwi;
+}
 
 
 

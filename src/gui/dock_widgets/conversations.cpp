@@ -39,9 +39,13 @@ Conversations::Conversations(QWidget* parent, Theme &theme, MXit::Client& mxit, 
 {
   setupUi(this);
   
+  
+  connect(  &conversations, SIGNAL( updated(const Conversation*)),
+            this, SLOT (conversationUpdated(const Conversation*)));
+  
   /* clicking on a conversation emits signal#conversationSelected */
   connect(conversationsList, SIGNAL(itemPressed(QListWidgetItem*)),
-          this,              SLOT(emitChatRequest(QListWidgetItem*)));
+          this,              SLOT(emitConversationRequest(QListWidgetItem*)));
   
   /* right clicking on a conversation emits signal#conversationContextMenuRequest */
   connect(conversationsList, SIGNAL(customContextMenuRequested(const QPoint&)), 
@@ -108,10 +112,10 @@ void Conversations::refreshThemeing() {
 ****************************************************************************/
 
 void Conversations::refreshListWidgetItem(QListWidgetItem *item) {
-  Conversation * conversation = lwiToConversation[item];
+  const Conversation * conversation = lwiToConversation[item];
   item->setIcon(QPixmap(16,16)/*theme.contact.presence.pixmap(conversation->presence)*/);
   /*TODO make displayName*/
-  item->setText(conversation->uniqueIdentifier);
+  item->setText(conversation->displayName);
 }
 
 /****************************************************************************
@@ -123,6 +127,18 @@ void Conversations::refreshListWidgetItem(QListWidgetItem *item) {
 
 ****************************************************************************/
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** tells this class that the conversation has been read
+**
+****************************************************************************/
+
+void Conversations::conversationRead(const Conversation * conversation) {
+  
+  conversationToLwi[conversation]->setForeground ( QBrush(Qt::black) );
+}
 
 
 /****************************************************************************
@@ -134,6 +150,7 @@ void Conversations::refreshListWidgetItem(QListWidgetItem *item) {
 
 /***************************************************************************/
 
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
@@ -142,8 +159,10 @@ void Conversations::refreshListWidgetItem(QListWidgetItem *item) {
 **
 ****************************************************************************/
 
-void Conversations::emitChatRequest(QListWidgetItem *lwi) {
-  emit chatRequest (lwiToConversation[lwi]);
+void Conversations::emitConversationRequest(QListWidgetItem *lwi) {
+  emit conversationRequest (lwiToConversation[lwi]);
+  
+  //lwi->setForeground ( QBrush(Qt::black) );
 }
 
 /****************************************************************************
@@ -169,18 +188,22 @@ if (__ret) return;  \
   
 void Conversations::popUpContextMenu(const QPoint &point) {
   
-  Conversation * conversation;
+  QListWidgetItem * lwi = (conversationsList->itemAt ( point.x(), point.y() ));
+  const Conversation * conversation;
   QPoint pos;
   
-  QListWidgetItem * lwi = (conversationsList->itemAt ( pos.x(), pos.y() ));
   if (lwi) {
-    pos = conversationsList->mapToGlobal ( pos );
+    pos = conversationsList->mapToGlobal ( point );
     conversation = lwiToConversation[lwi];
   }
   else
     return;
     
   MENU_START(conversation->uniqueIdentifier); /* FIXME displayName rather*/
+  
+  //QAction title (conversation->uniqueIdentifier, this);
+  //title.setEnabled(false);
+  //contextMenu.addAction(&title);
   
   MENU_ITEM("Close Conversation");
  
@@ -189,8 +212,7 @@ void Conversations::popUpContextMenu(const QPoint &point) {
   
   if (selection == "Close Conversation") {
     /* closes conversation */
-    /*TODO uncomment*/
-    //conversations->closeConversation(conversation);
+    conversations.toggleActive(conversation->uniqueIdentifier);
     
   }
 }
@@ -208,9 +230,13 @@ void Conversations::popUpContextMenu(const QPoint &point) {
 **
 ****************************************************************************/
 
-void Conversations::conversationsUpdated(const MXit::ConversationList& conversationsList) {
-  /*TODO use the list*/
+void Conversations::conversationUpdated(const MXit::Conversation* conversation) {
+  /*TODO use the pointer*/
   refresh(conversations.getConversations());
+  
+  /*FIXME add remove add remove segfaults, tries to re add instead of retoggle - FIXME FIXME*/
+  if (conversationToLwi.contains(conversation))
+    conversationToLwi.value(conversation)->setForeground ( QBrush(Qt::red) );
   
 }
 
@@ -225,7 +251,8 @@ void Conversations::refresh(const MXit::OrderedConversationMap& conversationsMap
 
   QSet<QListWidgetItem*> shouldBeInList;
   
-  conversationsList->clear();
+  while(conversationsList->count())
+    conversationsList->takeItem(0);
 
   /* adding/updating contacts that should be in list*/
   Q_FOREACH(Conversation* conversation, conversationsMap) {
@@ -256,7 +283,7 @@ void Conversations::refresh(const MXit::OrderedConversationMap& conversationsMap
     
     conversationsList->addItem(itemToAdd);
     if (conversation->active)
-    shouldBeInList.insert(itemToAdd);
+      shouldBeInList.insert(itemToAdd);
   }
   
   
@@ -276,7 +303,7 @@ void Conversations::refresh(const MXit::OrderedConversationMap& conversationsMap
       lwiToConversation.remove(lwi);
       delete lwi;
       i--; /*since all the indexes above will have shifted down one and the next item will have index i now*/
-      /*messing with the for loop variable is bad for optimisation things... but this is a slow parsing algorithm anyway*/
+      /*messing with the for loop variable (i) is bad for optimisation things... but this is a linear (slow!) parsing algorithm anyway*/
     }
   }
 }
