@@ -42,7 +42,7 @@ Contact::Contact()
 **
 ****************************************************************************/
 Contact::Contact(const QString &group, const QString &contactAddress, const QString &nickname,
-    quint16 presence, quint16 type, quint16 mood)
+  quint16 presence, quint16 type, quint16 mood)
 {
   this->group           = group;
   this->contactAddress  = contactAddress;
@@ -50,6 +50,25 @@ Contact::Contact(const QString &group, const QString &contactAddress, const QStr
   this->presence        = (Protocol::Enumerables::Contact::Presence)presence;
   this->type            = (Protocol::Enumerables::Contact::Type)type;
   this->mood            = (Protocol::Enumerables::Contact::Mood)mood;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Contact constructor (subscription version)
+**
+****************************************************************************/
+Contact::Contact(const QString &contactAddress, const QString &nickname,
+  quint16 type, bool hiddenLogin, const QString &joinMessage)
+{
+  this->contactAddress  = contactAddress;
+  this->nickname        = nickname;
+  this->presence        = Protocol::Enumerables::Contact::Unaffiliated;
+  this->type            = (Protocol::Enumerables::Contact::Type)type;
+  this->hideAddress     = hiddenLogin;
+  this->inviteMessage   = joinMessage;
 }
 
 

@@ -4,6 +4,8 @@
 **
 ****************************************************************************/
 
+#include <QStringList>
+
 #include "conversation.h"
 
 namespace MXit
@@ -23,12 +25,14 @@ namespace MXit
 **
 ** Author: Marc Bowes
 **
-** Default constructor
+** Constructor for a private Conversation
 **
 ****************************************************************************/
-Conversation::Conversation()
+Conversation::Conversation(const Contact *contact)
+  : active(true), displayName(contact->nickname),
+    uniqueIdentifier(contact->contactAddress), type(Private)
 {
-  /* Nothing */
+  contacts.insert(contact);
 }
 
 
@@ -39,7 +43,9 @@ Conversation::Conversation()
 ** Constructor which accepts a pre-formed ContactSet
 **
 ****************************************************************************/
-Conversation::Conversation(const ContactSet &contacts)
+Conversation::Conversation(const ContactSet &contacts, const QString &roomName)
+  : active(true), displayName(roomName.isEmpty() ? buildDisplayName(contacts) : roomName),
+    uniqueIdentifier(roomName), type(Group)
 {
   this->contacts = contacts; /* copy */
 }
@@ -81,6 +87,7 @@ Conversation::~Conversation()
 void Conversation::addContact(const Contact *contact)
 {
   contacts.insert(contact);
+  emit updated(this);
 }
 
 
@@ -96,6 +103,7 @@ void Conversation::addContact(const Contact *contact)
 void Conversation::addContacts(const ContactList &contacts)
 {
   this->contacts.unite(ContactSet::fromList(contacts));
+  emit updated(this);
 }
 
 
@@ -109,6 +117,7 @@ void Conversation::addContacts(const ContactList &contacts)
 void Conversation::appendMessage(const Message &message)
 {
   messages.append(new Message(message));
+  emit updated(this);
 }
 
 
@@ -119,9 +128,25 @@ void Conversation::appendMessage(const Message &message)
 ** Returns the ContactSet in this Conversation
 **
 ****************************************************************************/
-const ContactSet& Conversation::getContacts()
+const ContactSet& Conversation::getContacts() const
 {
   return contacts;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Returns a timestamp representing when last this Conversation was updated.
+**
+****************************************************************************/
+QTime Conversation::lastTimestamp() const
+{
+  if (messages.isEmpty())
+    return QTime();
+  else
+    return messages.last()->timestamp;
 }
 
 
@@ -144,6 +169,20 @@ void Conversation::removeContact(const Contact *contact)
 **
 ** Author: Marc Bowes
 **
+** Toggles the active state of this Conversation.
+**
+****************************************************************************/
+void Conversation::toggleActive()
+{
+  active = !active;
+  emit updated(this);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Removes a Contact for each Contact in the given ContactList
 **
 ****************************************************************************/
@@ -151,6 +190,32 @@ void Conversation::removeContacts(const ContactList &contacts)
 {
   Q_FOREACH(const Contact *contact, contacts)
     removeContact(contact);
+}
+
+
+/****************************************************************************
+               _           __                  __  __           __  
+     ___  ____(_)  _____ _/ /____   __ _  ___ / /_/ /  ___  ___/ /__
+    / _ \/ __/ / |/ / _ `/ __/ -_) /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
+   / .__/_/ /_/|___/\_,_/\__/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
+  /_/                                                               
+
+****************************************************************************/
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Creates a displayName from the ContactSet's contactAddress's.
+**
+****************************************************************************/
+QString Conversation::buildDisplayName(const ContactSet &contacts)
+{
+  QStringList list;
+  Q_FOREACH(const Contact *contact, contacts)
+    list << contact->nickname;
+  return list.join(", ");
 }
 
 }

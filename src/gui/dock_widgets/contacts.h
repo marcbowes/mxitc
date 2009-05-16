@@ -9,7 +9,10 @@
 #ifndef __MXIT_GUI_DOCKWIDGET_CONTACTS_H__
 #define __MXIT_GUI_DOCKWIDGET_CONTACTS_H__
 
+#include "mxit/address_book.h"
+#include "mxit/conversations.h"
 #include "mxit/contact.h"
+#include "mxit/client.h"
 
 #include "gui/mxit_dock_widget.h"
 
@@ -30,33 +33,45 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   public: /*class specific */
 
-  Contacts(QWidget* parent, Theme &theme);
+  Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBook & addressBook, MXit::Conversations & conversations);
   ~Contacts();
   
   signals:
   
-  void outgoingItemPressed ( QListWidgetItem *  );
-  
-  void contextMenuRequest(const QPoint &, const QString& nickname);
+  //void outgoingItemPressed ( QListWidgetItem *  ); // depricated maybe
   
   signals:
-  void chatRequest ( QListWidgetItem * );
+  void conversationRequest ( const Contact * );
   
-  public:
+  public: /* methods */
   
-  void refresh(const QList<MXit::Contact>& contacts);
+  void refresh(const OrderedContactMap& contacts);
+  
+  private: /* methods */
+  
+  void refreshListWidgetItem(QListWidgetItem* lwi);
+  void removeAndDeleteContactFromGUI (QListWidgetItem * lwi);
+
+  public slots:
+  void refreshThemeing();
 
   private slots:
   
-  void contactsListContextMenuRequest(const QPoint & pos);
+  void emitConversationRequest (QListWidgetItem* lwi);
+  
+  void contactsUpdated(const ContactList& contacts);
+  void popUpContextMenu(const QPoint & pos);
   
   
-  private:
+  private: /* variables */
   
-  //void clearList();
-  QListWidgetItem * addContact(const MXit::Contact & c);
+  MXit::Conversations& conversations;
+  AddressBook& addressBook;
+  MXit::Client& mxit;
   
-  QHash<QString, QListWidgetItem*> listItemWidgets; // from nickname to listItemWidget
+  /* TODO sohuld be const Contact* */
+  QHash<MXit::Contact*, QListWidgetItem*> contactToLwi;
+  QHash<QListWidgetItem*, MXit::Contact*> lwiToContact;
   
 
 };

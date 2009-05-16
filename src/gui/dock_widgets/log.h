@@ -34,7 +34,7 @@ class Log : public MXitDockWidget, private Ui::LogDockWidget
   signals:
   
   
-  public:
+  public slots:
   
   void logMessage(const QString&);
 

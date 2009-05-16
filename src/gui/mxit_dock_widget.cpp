@@ -45,7 +45,7 @@ MXitDockWidget::~MXitDockWidget()
 void MXitDockWidget::toggleVisibility() {
   
   /*TODO make a trigger raise if not raised else show if not shown else not show if shown( and raised)*/
-  /*qDebug() << widget->isVisible();
+  /*
   if (!widget->isActiveWindow()) {
     widget->show();
     widget->raise();

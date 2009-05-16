@@ -58,7 +58,6 @@ void Debug::refreshRequested()
 ****************************************************************************/
 void Debug::incomingVariableHash(const VariableHash& variables)
 {
-  //qDebug() << "DebugDockWidget::incomingVaraibleHash(const VariableHash& variables)";
   if (isVisible()) {
     listWidget->clear();
     

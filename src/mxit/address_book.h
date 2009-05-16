@@ -11,7 +11,7 @@
 
 #ifndef __MXIT_ADDRESSBOOK_H__
 #define __MXIT_ADDRESSBOOK_H__
-
+#include <QDebug>
 #include <QByteArray>
 #include <QList>
 #include <QMap>
@@ -22,33 +22,44 @@
 namespace MXit
 {
 
-typedef QMap <QString, Contact*> OrderedContactMap;
+typedef QMap<QString, Contact*> OrderedContactMap;
 
-class AddressBook
+class AddressBook : public QObject
 {
+  Q_OBJECT
+  
   public:         /* class specific */
   
   AddressBook();
   ~AddressBook();
   
+  signals:
+  
+  void updated(const ContactList&);
+  
   public:         /* methods */
 
-  void addContact(const QByteArray &data);
-  void addContact(const QList<QByteArray> &fields);
-  void addContacts(const QByteArray &data);
+  ContactList addOrUpdateContacts(const QByteArray &data);
+  ContactList addSubscriptions(const QByteArray &data);
+  Contact* contactFromAddress(const QString &contactAddress);
   const OrderedContactMap& getContacts();
   void removeContact(const QString &contactAddress);
-  void updateContact(const QByteArray &data);
-  void updateContact(const QList<QByteArray> &fields);
-  void updateContacts(const QByteArray &data);
   
   private:       /* methods */
   
-  void insertContact(const QList<QByteArray> &fields);
+  Contact* addOrUpdateContact(const QByteArray &data);
+  Contact* addOrUpdateContact(const QList<QByteArray> &fields);
+  Contact* addSubscription(const QByteArray &data);
+  Contact* addSubscription(const QList<QByteArray> &fields);
+  Contact* insertContact(const QList<QByteArray> &fields);
+  Contact* insertSubscription(const QList<QByteArray> &fields);
+  Contact* updateContact(const QList<QByteArray> &fields);
   
   private:       /* variables */
   
   ContactHash       contacts;
+  QHash<QString, QString>
+                    orderLookup;
   OrderedContactMap ordered;
 };
 

@@ -6,6 +6,8 @@
 
 #include "address_book.h"
 
+#include <QDebug>
+
 namespace MXit
 {
 
@@ -60,15 +62,22 @@ AddressBook::~AddressBook()
 **
 ** Author: Marc Bowes
 **
-** Splits data into fields and forwards to real method
+** Invokes #addContact for each Contact found in the MXit data.
 **
 ****************************************************************************/
-void AddressBook::addContact(const QByteArray &data)
+ContactList AddressBook::addOrUpdateContacts(const QByteArray &data)
 {
-  /* for data format, refer to Handler #03, GetContacts */
-  QList<QByteArray> fields = data.split('\1');
+  ContactList changeSet;
+  Q_FOREACH(const QByteArray &row, data.split('\0')) {
+    Contact *changed = addOrUpdateContact(row);
+    if (changed)
+      changeSet.append(changed);
+  }
   
-  addContact(fields);
+  if (!changeSet.isEmpty())
+    emit updated(changeSet);
+  
+  return changeSet;
 }
 
 
@@ -76,17 +85,22 @@ void AddressBook::addContact(const QByteArray &data)
 **
 ** Author: Marc Bowes
 **
-** Builds a Contact from MXit data and updates the internal list.
-** This method is safe - adding an existing Contact will auto-forward to
-**  #updateContact
+** Adds new subscriptions to the AddressBook.
 **
 ****************************************************************************/
-void AddressBook::addContact(const QList<QByteArray> &fields)
+ContactList AddressBook::addSubscriptions(const QByteArray &data)
 {
-  if (contacts.contains(fields[0]))
-    updateContact(fields);
-  else
-    insertContact(fields);
+  ContactList changeSet;
+  Q_FOREACH(const QByteArray &row, data.split('\0')) {
+    Contact *contact = addSubscription(row);
+    if (contact)
+      changeSet.append(contact);
+  }
+  
+  if (!changeSet.isEmpty())
+    emit updated(changeSet);
+  
+  return changeSet;
 }
 
 
@@ -94,13 +108,12 @@ void AddressBook::addContact(const QList<QByteArray> &fields)
 **
 ** Author: Marc Bowes
 **
-** Invokes #addContact for each Contact found in the MXit data
+** Returns a Contact* from a given address, or NULL if non-existant.
 **
 ****************************************************************************/
-void AddressBook::addContacts(const QByteArray &data)
+Contact* AddressBook::contactFromAddress(const QString &contactAddress)
 {
-  Q_FOREACH(const QByteArray &row, data.split('\0'))
-    addContact(row);
+  return contacts.value(contactAddress);
 }
 
 
@@ -129,57 +142,11 @@ void AddressBook::removeContact(const QString &contactAddress)
 {
   if (contacts.contains(contactAddress)) {
     Contact *_delete = *contacts.find(contactAddress);
-    contacts.remove(_delete->contactAddress);
+    contacts.remove(_delete->contactAddress); /* from store */
+    ordered.remove(orderLookup[_delete->contactAddress]); /* from order */
+    orderLookup.remove(_delete->contactAddress); /* from lookup */
     delete _delete;
   }
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** Splits data into fields and forwards to real method
-**
-****************************************************************************/
-void AddressBook::updateContact(const QByteArray &data)
-{
-  /* for data format, refer to Handler #03, GetContacts */
-  QList<QByteArray> fields = data.split('\1');
-  
-  updateContact(fields);
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** Updates a Contact from MXit data.
-** This method is safe - adding an non-existant Contact will auto-forward to
-**  #insertContact
-**
-****************************************************************************/
-void AddressBook::updateContact(const QList<QByteArray> &fields)
-{
-  if (!contacts.contains(fields[0]))
-    insertContact(fields);
-  else
-    (*contacts.find(fields[0]))->updateFromRaw(fields);
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
-** Invokes #updateContact for each Contact found in the MXit data
-**
-****************************************************************************/
-void AddressBook::updateContacts(const QByteArray &data)
-{
-  Q_FOREACH(const QByteArray &row, data.split('\0'))
-    updateContact(row);
 }
 
 
@@ -193,7 +160,88 @@ void AddressBook::updateContacts(const QByteArray &data)
 ****************************************************************************/
 
 
-void AddressBook::insertContact(const QList<QByteArray> &fields)
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Splits data into fields and forwards to real method.
+**
+****************************************************************************/
+Contact* AddressBook::addOrUpdateContact(const QByteArray &data)
+{
+  if (data.isEmpty())
+    return NULL;
+  
+  /* for data format, refer to Handler #03, GetContacts */
+  QList<QByteArray> fields = data.split('\1');
+  
+  return addOrUpdateContact(fields);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Builds a Contact from MXit data and updates the internal list.
+** This method is safe - adding an existing Contact will auto-forward to
+**  #updateContact
+**
+****************************************************************************/
+Contact* AddressBook::addOrUpdateContact(const QList<QByteArray> &fields)
+{
+  if (contacts.contains(fields[1]))
+    return updateContact(fields);
+  else
+    return insertContact(fields);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Splits data into fields and forwards to real method.
+**
+****************************************************************************/
+Contact* AddressBook::addSubscription(const QByteArray &data)
+{
+  if (data.isEmpty())
+    return NULL;
+  
+  /* for data format, refer to Handler #51, GetNewSubscription */
+  QList<QByteArray> fields = data.split('\1');
+  
+  return addSubscription(fields);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Builds a Contact from MXit data and updates the internal list.
+**
+****************************************************************************/
+Contact* AddressBook::addSubscription(const QList<QByteArray> &fields)
+{
+  if (!contacts.contains(fields[0]))
+    return insertSubscription(fields);
+  else
+    return NULL;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Inserts a Contact into the local Contact store. Also inserts the Contact
+**  into an ordered structure.
+** **REQUIRES** the contact to not exist.
+**
+****************************************************************************/
+Contact* AddressBook::insertContact(const QList<QByteArray> &fields)
 {  
   /* type conversions (really only for neatness) */
   QString group           = fields[0];
@@ -209,7 +257,74 @@ void AddressBook::insertContact(const QList<QByteArray> &fields)
   contacts.insert(contactAddress, contact);
   
   /* ordered insert (QMap uses heaps to order keys) */
+  orderLookup.insert(contact->contactAddress, contact->sortString());
   ordered.insert(contact->sortString(), contact);
+  
+  return contact;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Inserts a Contact into the local Contact store. Also inserts the Contact
+**  into an ordered structure.
+** **REQUIRES** the contact to not exist.
+**
+****************************************************************************/
+Contact* AddressBook::insertSubscription(const QList<QByteArray> &fields)
+{
+  /* type conversions (really only for neatness) */
+  QString contactAddress  = fields[0];
+  QString nickname        = fields[1];
+  quint16 type            = fields[2].toUInt();
+  bool    hiddenLogin     = fields[3] == "1" ? true : false;
+  QString joinMessage     = fields[4];
+  
+  /* insert into storage */
+  Contact *contact = new Contact(contactAddress, nickname, type, hiddenLogin, joinMessage);
+  contacts.insert(contactAddress, contact);
+  
+  /* ordered insert (QMap uses heaps to order keys) */
+  orderLookup.insert(contact->contactAddress, contact->sortString());
+  ordered.insert(contact->sortString(), contact);
+  
+  return contact;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Updates a Contact with new fields, returning a Contact* if the Presence
+**  changed (i.e. reordered).
+** **REQUIRES** the contact to exist.
+**
+****************************************************************************/
+Contact* AddressBook::updateContact(const QList<QByteArray> &fields)
+{
+  /* find the Contact */
+  OrderedContactMap::iterator itr = ordered.find(orderLookup[fields[1]]);
+  Contact *contact = itr.value(); /* will break for itr == contacts.end() */
+  
+  /* remember Presence - this is important for ordering! */
+  Protocol::Enumerables::Contact::Presence current = contact->presence;
+  
+  /* perform update */
+  contact->updateFromRaw(fields);
+  
+  /* now reorder (reinsert) if Presence has changed */
+  if (current != contact->presence) {
+    ordered.erase(itr);
+    orderLookup[contact->contactAddress] = contact->sortString();
+    ordered.insert(contact->sortString(), contact);
+    return contact;
+  }
+  
+  /* not changed */
+  return NULL;
 }
 
 }

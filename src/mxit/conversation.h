@@ -13,34 +13,66 @@
 #ifndef __MXIT_CONVERSATION_H__
 #define __MXIT_CONVERSATION_H__
 
+#include <QHash>
+#include <QTime>
+
 #include "contact.h"
 #include "message.h"
 
 namespace MXit
 {
 
-class Conversation
+
+class Conversation : public QObject
 {
+  Q_OBJECT
+  
   public:         /* class specific */
 	
-  Conversation();
-  Conversation(const ContactSet &contacts);
+  Conversation(const Contact *contact);
+  Conversation(const ContactSet &contacts, const QString &roomName="");
   ~Conversation();
+  
+  enum Type {
+    Group,
+    Private
+  };
+  
+  signals:
+  
+  void updated(const Conversation*);
 
   public:         /* methods */
   
   void addContact(const Contact *contact);
   void addContacts(const ContactList &contacts);
   void appendMessage(const Message &message);
-  const ContactSet& getContacts();
+  const ContactSet& getContacts() const;
+  QTime lastTimestamp() const;
   void removeContact(const Contact *contact);
   void removeContacts(const ContactList &contacts);
+  void toggleActive();
+
+  public:         /* variables */
+  
+  bool            active;
+  const QString   displayName;
+  MessageList     messages;
+  const Type     type;
+  const QString  uniqueIdentifier;
+  
+  private:        /* methods */
+  
+  static QString buildDisplayName(const ContactSet &contacts);
 
   private:        /* variables */
   
   ContactSet      contacts;
-  MessageList     messages;
 };
+
+typedef QHash<QString, Conversation*> ConversationHash;
+typedef QList<const Conversation*>   ConversationList;
+typedef QSet<const Conversation*>    ConversationSet;
 
 }
 

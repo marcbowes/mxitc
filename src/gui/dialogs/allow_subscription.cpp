@@ -20,7 +20,7 @@ AllowSubscription::AllowSubscription(const QString & inviteMessage, const QStrin
  QDialog(parent),  nickname(nickname), groups(groups)
 {
   setupUi(this);
-  qDebug() << inviteMessage;
+  
   inviteMessageTextEdit->setText(inviteMessage);
   nicknameLineEdit->setText(nickname);
   

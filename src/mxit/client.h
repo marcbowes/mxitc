@@ -14,6 +14,7 @@
 #ifndef __MXIT_CLIENT_H__
 #define __MXIT_CLIENT_H__
 
+#include <QDate>
 #include <QHash>
 #include <QTimer>
 
@@ -76,7 +77,8 @@ class Client : public QObject
     Protocol::Enumerables::Message::Type, unsigned int flags);
   void signup();
   void updateContactInfo();
-  void updateProfile();
+  void updateProfile(const QString &pin, const QString &name, bool hiddenLoginname,
+    const QDate &dateOfBirth, const QString &gender);
   
   public:         /* methods */
   
