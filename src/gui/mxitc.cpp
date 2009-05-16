@@ -620,10 +620,12 @@ void MXitC::refreshChatBox(){
   if (currentConversation != NULL) {
     conversationsWidget->conversationRead(currentConversation);
     
+    mainTextArea->insertHtml("<dl>");
     Q_FOREACH(const Message *m, currentConversation->messages/*can't get hold of chatHistory*/) {
-      QString chatLine = "<" + (m->contact ? m->contact->nickname : "You")  + ">";
-      mainTextArea->append(chatLine + " " + m->message);
+      QString chatLine = (m->contact ? m->contact->nickname : "You");
+      mainTextArea->insertHtml("<dt>" + chatLine + "</dt><dd>" + m->message + "</dd>");
     }
+    mainTextArea->insertHtml("</dl>");
   }
   
   
