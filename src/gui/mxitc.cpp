@@ -1056,8 +1056,7 @@ void MXitC::refreshChatBox(){
   //mainChatArea->setRowCount(0);
   if (currentChatSession != NULL) {
     Q_FOREACH(const Message& m, currentChatSession->chatHistory) {
-      mainTextArea->insertHtml ("<p>" +   QString("<") +(m.sender()?m.sender()->nickname:QString("You")) + QString("> ") +m.message() + "</p>");
-      qDebug() << m.message();
+      mainTextArea->insertHtml (QString("(") +(m.sender()?m.sender()->nickname:QString("You")) + QString(") ") +m.message() + "<br />");
     }
   }
   
