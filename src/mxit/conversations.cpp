@@ -141,6 +141,20 @@ const OrderedConversationMap& Conversations::getConversations()
 **
 ** Author: Marc Bowes
 **
+** Returns a set of Conversation pointers for which the given Contact is
+**  involved.
+**
+****************************************************************************/
+QSet<const Conversation*> Conversations::getInvolvements(const Contact *contact)
+{
+  return involvements.value(contact);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Bubbles to the Conversation#toggleActive
 **
 ****************************************************************************/

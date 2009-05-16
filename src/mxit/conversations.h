@@ -45,6 +45,7 @@ class Conversations : public QObject
     const QByteArray &msg);
   const Conversation* getConversation(const QString &uniqueIdentifier);
   const OrderedConversationMap& getConversations();
+  QSet<const Conversation*> getInvolvements(const Contact *contact);
   void toggleActive(const QString &uniqueIdentifier);
   
   private slots:
