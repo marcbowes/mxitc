@@ -157,6 +157,21 @@ QSet<const Conversation*> Conversations::getInvolvements(const Contact *contact)
 **
 ** Author: Marc Bowes
 **
+** Bubbles to the Conversation#conversationHtml
+**
+****************************************************************************/
+void Conversations::setHtml(const QString &uniqueIdentifier, const QString &html)
+{
+  Conversation *conversation = conversations.value(uniqueIdentifier);
+  if (conversation)
+    conversation->conversationHtml = html;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Bubbles to the Conversation#toggleActive
 **
 ****************************************************************************/
