@@ -476,7 +476,7 @@ void MXitC::incomingAction(Action action)
     //--------------------------------------
     case SUBSCRIPTIONS_RECEIVED:
       logWidget->logMessage("GUI::SUBSCRIPTIONS_RECEIVED");
-      addressBook.addOrUpdateContacts(mxit->variableValue("contacts"));
+      addressBook.addSubscriptions(mxit->variableValue("contacts"));
     break;
   }
 
@@ -649,15 +649,17 @@ void MXitC::themeChanged(){
 ****************************************************************************/
 
 void MXitC::setCurrentConversation(const Conversation * conversation){
-
-  qDebug() << "WTFF" << conversation;
+  
   currentConversation = conversation;
   refreshChatBox();
 }
 
 void MXitC::setCurrentConversation(const Contact * contact) {
   
-  setCurrentConversation(ensureExistanceOfConversation(contact->contactAddress));
+  if (contact == NULL)
+    setCurrentConversation((const Conversation *) NULL);
+  else
+    setCurrentConversation(ensureExistanceOfConversation(contact->contactAddress));
 }
 
 
@@ -677,7 +679,8 @@ void MXitC::setCurrentConversation(const QString & uniqueId) {
 const Conversation * MXitC::ensureExistanceOfConversation(const QString & uniqueId) {
 
   const Conversation* conversation = conversations->getConversation(uniqueId);
-  
+
+
   if (!conversation) {
     /* conversations does not exist, need to create it*/
     /* create personal (single contact) conversation */
@@ -685,6 +688,11 @@ const Conversation * MXitC::ensureExistanceOfConversation(const QString & unique
     
     /*this *will* return a valid pointer*/
     conversation = conversations->getConversation(uniqueId);
+  }
+  else {
+    /* conversations does exist, need to ensure it is active*/
+    if (!conversation->active)
+      conversations->toggleActive(uniqueId);
   }
   
   return conversation;
@@ -701,6 +709,8 @@ const Conversation * MXitC::ensureExistanceOfConversation(const QString & unique
 
 void MXitC::setStatusBar()
 {
+/*TODO make this a set status function*/
+/*TODO disable main chat area when logged out and logging in*/
   switch (currentState) {
   
     case LOGGED_IN:  statusLabel->setText("LOGGED_IN");  break;

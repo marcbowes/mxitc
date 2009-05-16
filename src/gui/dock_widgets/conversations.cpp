@@ -113,8 +113,8 @@ void Conversations::refreshThemeing() {
 
 void Conversations::refreshListWidgetItem(QListWidgetItem *item) {
   const Conversation * conversation = lwiToConversation[item];
+  /*FIXME*/
   item->setIcon(QPixmap(16,16)/*theme.contact.presence.pixmap(conversation->presence)*/);
-  /*TODO make displayName*/
   item->setText(conversation->displayName);
 }
 
@@ -137,7 +137,8 @@ void Conversations::refreshListWidgetItem(QListWidgetItem *item) {
 
 void Conversations::conversationRead(const Conversation * conversation) {
   
-  conversationToLwi[conversation]->setForeground ( QBrush(Qt::black) );
+  if (conversationToLwi.contains(conversation))
+    conversationToLwi.value(conversation)->setForeground ( QBrush(Qt::black) );
 }
 
 
@@ -213,7 +214,7 @@ void Conversations::popUpContextMenu(const QPoint &point) {
   if (selection == "Close Conversation") {
     /* closes conversation */
     conversations.toggleActive(conversation->uniqueIdentifier);
-    
+    emit conversationRequest(NULL);
   }
 }
 

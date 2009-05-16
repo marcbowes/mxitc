@@ -158,7 +158,6 @@ void Contacts::popUpContextMenu(const QPoint & point) {
   MENU_EXEC(selection);
   
   
-  //qDebug() << selection;
   
   if (contact->presence == Protocol::Enumerables::Contact::Unaffiliated) {
     if (selection == "Accept") 
@@ -177,40 +176,35 @@ void Contacts::popUpContextMenu(const QPoint & point) {
       //else do nothing
         
     }
-    else if (selection == "Reject") 
+    else if (selection == "Reject" || selection == "Reject Permanently") 
     {
+      bool block = (selection == "Reject Permanently");
+      QString informativeText = "";
+      
       QMessageBox sure;
-      sure.setText("Are you sure you wish to reject \""+contact->nickname+"\"");
-      if (contact->inviteMessage != "")
-        sure.setInformativeText(contact->nickname+" sent you an invite message: \"" + contact->inviteMessage+"\"");
+      sure.setText("Are you sure you wish to reject \""+contact->nickname+"\""+ (block?" permanently":"")+"?");
+      
+      if (block) {
+        informativeText+="In order to unblock, you need to add "+contact->nickname+" as a contact";
+      }
+      
+      if (contact->inviteMessage != "") {
+        if (block) informativeText+="\n";
+        informativeText+=contact->nickname+" sent you an invite message: \"" + contact->inviteMessage+"\"";
+      }
+      
+      
+      sure.setInformativeText(informativeText);
         
       sure.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
       sure.setDefaultButton(QMessageBox::Cancel);
       
       if (sure.exec() == QMessageBox::Ok) {
         /* send rejection to client*/
-        mxit.denySubscription(contact->contactAddress);
-        emit sendLog("GUI::Contacts "+contact->nickname+" subscription denyed");
+        mxit.denySubscription(contact->contactAddress, block);
+        emit sendLog("GUI::Contacts "+contact->nickname+" subscription"+(block?" permanently":"")+" denyed");
         addressBook.removeContact(contact->contactAddress);
-      }
-    }
-    else if (selection == "Reject Permanently") 
-    {
-      QMessageBox sure;
-      sure.setText("Are you sure you wish to reject permanently \""+contact->nickname+"\"");
-      QString informativeText = "In order to unblock, you need to add "+contact->nickname+" as a contact";
-      if (contact->inviteMessage != "")
-        informativeText+= "\n"+contact->nickname+" sent you an invite message: \"" + contact->inviteMessage+"\"";
-        
-      sure.setInformativeText(informativeText);
-      sure.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-      sure.setDefaultButton(QMessageBox::Cancel);
-      
-      if (sure.exec() == QMessageBox::Ok) {
-        /* send permanent rejection to client*/
-        mxit.denySubscription(contact->contactAddress, true);
-        emit sendLog("GUI::Contacts "+contact->nickname+" subscription permanently denyed");
-        addressBook.removeContact(contact->contactAddress);
+        removeAndDeleteContactFromGUI(lwi);
       }
     }
   }
@@ -281,6 +275,9 @@ void Contacts::refreshListWidgetItem(QListWidgetItem *item) {
   Contact * contact = lwiToContact[item];
   item->setIcon(theme.contact.presence.pixmap(contact->presence));
   item->setText(contact->nickname);
+  
+    
+  item->setForeground(contact->presence == Protocol::Enumerables::Contact::Unaffiliated?Qt::blue:Qt::black);
 }
 
 

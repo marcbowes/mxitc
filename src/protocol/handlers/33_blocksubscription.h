@@ -14,7 +14,7 @@
 
 #include "protocol/handler.h"
 
-#define BLOCKSUBSCRIPTION 55
+#define BLOCKSUBSCRIPTION 33
 
 namespace MXit
 {

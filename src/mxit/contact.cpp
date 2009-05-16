@@ -65,6 +65,7 @@ Contact::Contact(const QString &contactAddress, const QString &nickname,
 {
   this->contactAddress  = contactAddress;
   this->nickname        = nickname;
+  this->presence        = Protocol::Enumerables::Contact::Unaffiliated;
   this->type            = (Protocol::Enumerables::Contact::Type)type;
   this->hideAddress     = hiddenLogin;
   this->inviteMessage   = joinMessage;

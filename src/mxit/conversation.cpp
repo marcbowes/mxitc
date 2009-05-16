@@ -29,7 +29,7 @@ namespace MXit
 **
 ****************************************************************************/
 Conversation::Conversation(const Contact *contact)
-  : active(true), displayName(contact->contactAddress),
+  : active(true), displayName(contact->nickname),
     uniqueIdentifier(contact->contactAddress), type(Private)
 {
   contacts.insert(contact);
