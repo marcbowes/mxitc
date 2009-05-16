@@ -47,7 +47,14 @@ enum Type {
 **
 ****************************************************************************/
 enum Flags {
-  MayContainMarkup = 0x200
+  DeliveryNotification = 0x2,
+  ReadNotification = 0x4,
+  PasswordEncrypted = 0x10,
+  TransportEncrypted = 0x20,
+  ReplyPasswordEncrypted = 0x40,
+  ReplyTransportEncrypted = 0x80,
+  MayContainMarkup = 0x200,
+  CustomEmoticons = 0x400
 };
 
 }

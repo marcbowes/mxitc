@@ -8,6 +8,7 @@
 #include <QTextDocument>
 
 #include "message.h"
+#include "protocol/enumerables/message.h"
 
 namespace MXit
 {
@@ -150,49 +151,49 @@ QString Message::markup(const QString &markup)
 
 bool Message::flagDeliveryNotification(const QByteArray flags)
 {
-  return false;
+  return flags.toInt() & MXit::Protocol::Enumerables::Message::DeliveryNotification;
 }
 
 
 bool Message::flagReadNotification(const QByteArray flags)
 {
-  return false;
+  return flags.toInt() & MXit::Protocol::Enumerables::Message::ReadNotification;
 }
 
 
 bool Message::flagPasswordEncrypted(const QByteArray flags)
 {
-  return false;
+  return flags.toInt() & MXit::Protocol::Enumerables::Message::PasswordEncrypted;
 }
 
 
 bool Message::flagTransportEncrypted(const QByteArray flags)
 {
-  return false;
+  return flags.toInt() & MXit::Protocol::Enumerables::Message::TransportEncrypted;
 }
 
 
 bool Message::flagReplyShouldBePasswordEncrypted(const QByteArray flags)
 {
-  return false;
+  return flags.toInt() & MXit::Protocol::Enumerables::Message::ReplyPasswordEncrypted;
 }
 
 
 bool Message::flagReplyShouldBeTransportEncrypted(const QByteArray flags)
 {
-  return false;
+  return flags.toInt() & MXit::Protocol::Enumerables::Message::ReplyTransportEncrypted;
 }
 
 
 bool Message::flagContainsMarkup(const QByteArray flags)
 {
-  return flags.toInt() & 0x200;
+  return flags.toInt() & MXit::Protocol::Enumerables::Message::MayContainMarkup;
 }
 
 
 bool Message::flagContainsCustomEmoticons(const QByteArray flags)
 {
-  return false;
+  return flags.toInt() & MXit::Protocol::Enumerables::Message::CustomEmoticons;
 }
 
 
