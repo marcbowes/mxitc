@@ -59,6 +59,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   mxit/conversations.cpp
   mxit/message.cpp
 
+  gui/theme_components/chat.cpp
   gui/theme_components/contact/base.cpp  
   gui/theme_components/contact/presence.cpp
   gui/theme_components/contact/type.cpp  

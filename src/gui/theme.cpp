@@ -38,6 +38,10 @@ void Theme::load(QDir theme)
   }
   
   /* components */
+  if (theme.cd("chat")) {
+    chat.load(theme);
+    theme.cdUp();
+  }
   if (theme.cd("contact")) {
     contact.load(theme);
     theme.cdUp();
@@ -60,6 +64,7 @@ void Theme::loadDefaults()
   windowIcon.fill(Qt::blue);
   
   /* components */
+  chat.loadDefaults();
   contact.loadDefaults();
 }
 

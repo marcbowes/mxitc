@@ -9,6 +9,7 @@
 #ifndef __MXIT_GUI_DOCKWIDGET_OPTIONS_H__
 #define __MXIT_GUI_DOCKWIDGET_OPTIONS_H__
 
+#include <QDir>
 #include <QFileDialog>
 #include <QSettings>
 
@@ -33,20 +34,22 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
 
   Options(QWidget* parent, Theme &theme, QSettings& settings);
   ~Options();
-  
-  
+    
   public: /*method */
   
   void addGateway(const QString& gateway);
   void setSelectedGateway(const QString& gateway);
   
   QString getBaseThemeDirectory();
+  void setBaseConversationsDirectory(const QString& dir);
   void setBaseThemeDirectory(const QString& dir);
   QString getSelectedTheme();
   void setSelectedTheme(const QString& theme);
   
   
   signals:
+  
+  void conversationLogDirectorySelected(const QDir &dir);
   void gatewaySelected(const QString& gateway);
   
   void themeChanged();
@@ -57,7 +60,7 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   void emitGatewaySignal ();
   void saveGatewaySettings(bool nothing = false);
   
-  
+  void openConversationsBrowser ();
   void openThemeBrowser ();
   void refreshComboBox ();
   void loadTheme(const QString & dir);

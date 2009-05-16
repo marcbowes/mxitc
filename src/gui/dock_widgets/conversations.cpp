@@ -143,6 +143,19 @@ void Conversations::conversationRead(const Conversation * conversation) {
 
 
 /****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Copies the current theme's CSS into the Conversation directory.
+**
+****************************************************************************/
+void Conversations::copyThemeCss()
+{
+  //
+}
+
+
+/****************************************************************************
                _           __            __     __    
      ___  ____(_)  _____ _/ /____   ___ / /__  / /____
     / _ \/ __/ / |/ / _ `/ __/ -_) (_-</ / _ \/ __(_-<
