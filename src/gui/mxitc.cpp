@@ -7,6 +7,7 @@
 //#include <QWebView>
 #include "mxitc.h"
 #include <QTextDocument>
+#include <QWebFrame>
 
 namespace MXit
 {
@@ -618,8 +619,10 @@ void MXitC::refreshChatBox(){
   if (currentConversation) {
     chattingToLabel->setText(currentConversation->displayName); /*FIXME displayName rather*/
     mainWebView->setHtml(currentConversation->conversationHtml);
-    qDebug () << currentConversation->conversationHtml;
-    mainWebView->
+    
+    QWebFrame * frame = mainWebView->page ()->currentFrame ();
+    frame->setScrollBarValue(Qt::Vertical, frame->scrollBarMaximum(Qt::Vertical));
+    conversationsWidget->conversationRead(currentConversation);
   }
   else {
     chattingToLabel->setText("Chatting to nobody");
