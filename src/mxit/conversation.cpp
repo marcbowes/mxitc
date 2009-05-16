@@ -130,7 +130,7 @@ void Conversation::appendMessage(const Message &message)
 {
   QString thclass = message.contact ? "" : " class=\"you\"";
   QString author  = message.contact ? message.contact->nickname : "You";
-  QString insertion = QString("<tr><th%1>%2</th><td>%3</td></tr>")
+  QString insertion = QString("<tr><th%1>%2</th><td%1>%3</td></tr>")
     .arg(thclass).arg(author)
     .arg(message.message());
   conversationHtml.insert(conversationHtml.size()- 31, insertion);
