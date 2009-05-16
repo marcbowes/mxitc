@@ -154,7 +154,7 @@ void Conversations::conversationRead(const Conversation * conversation) {
 ****************************************************************************/
 void Conversations::setConversationCss()
 {
-  conversations.setCss(theme.location.absolutePath());
+  conversations.setCss(theme.chat.stylesheet);
 }
 
 

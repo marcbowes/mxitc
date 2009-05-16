@@ -732,7 +732,7 @@ const Conversation * MXitC::ensureExistanceOfConversation(const QString & unique
     /* conversations does not exist, need to create it*/
     /* create personal (single contact) conversation */
     Conversation *newConversation = new Conversation(addressBook.contactFromAddress(uniqueId));
-    newConversation->setCss(theme.location.absolutePath());
+    newConversation->setCss(theme.chat.stylesheet);
     conversations->addConversation(newConversation);
     
     /*this *will* return a valid pointer*/

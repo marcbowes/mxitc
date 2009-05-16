@@ -25,7 +25,7 @@ const static QString initialHtml ("\
   <!DOCTYPE HTML \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\"> \
   <html> \
     <head> \
-      <link href=\"stylesheet.css\" rel=\"stylesheet\" type=\"text/css\" /> \
+      <style></style> \
     </head> \
   <body> \
     <table></table> \
@@ -192,11 +192,11 @@ void Conversation::removeContact(const Contact *contact)
 **  HTML-escaped, so only concern is performance..
 **
 ****************************************************************************/
-void Conversation::setCss(const QString &location)
+void Conversation::setCss(const QString &css)
 {
-  QRegExp rx("<link href=\"(.*)\" rel=\"stylesheet\" type=\"text/css\" />");
+  QRegExp rx("<style>(.*)</style>");
   conversationHtml.replace(rx,
-    QString("<link href=\"file://%1/chat/stylesheet.css\" rel=\"stylesheet\" type=\"text/css\" />").arg(location));
+    QString("<style>%1</style>").arg(css));
   emit updated(this);
 }
 

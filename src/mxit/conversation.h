@@ -51,7 +51,7 @@ class Conversation : public QObject
   QTime lastTimestamp() const;
   void removeContact(const Contact *contact);
   void removeContacts(const ContactList &contacts);
-  void setCss(const QString &location);
+  void setCss(const QString &style);
   void toggleActive();
 
   public:         /* variables */

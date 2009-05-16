@@ -61,6 +61,10 @@
      <widget class="QLineEdit" name="chatInput" />
     </item>
    </layout>
+   <zorder>chattingToLabel</zorder>
+   <zorder>frame</zorder>
+   <zorder>chatInput</zorder>
+   <zorder>mainWebView</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar" >
    <property name="geometry" >
@@ -68,7 +72,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
