@@ -26,8 +26,8 @@ namespace MXit
 ** Constructor, using an address book to manage Contacts
 **
 ****************************************************************************/
-Conversations::Conversations(AddressBook *address_book)
-  : address_book(address_book)
+Conversations::Conversations(AddressBook *address_book, const QDir &log)
+  : address_book(address_book), log(log)
 {
   connect(address_book, SIGNAL(updated(const ContactList&)),
           this,         SLOT(rebuild(const ContactList&)));

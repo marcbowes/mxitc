@@ -51,6 +51,7 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
   public:
   
   void conversationRead(const Conversation * conversation);
+  void copyThemeCss();
   void refresh(const MXit::OrderedConversationMap& conversations);
   
   private:

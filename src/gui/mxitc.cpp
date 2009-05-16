@@ -41,7 +41,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /* Loading settings */
   settings = new QSettings ( "mxitc", "env", this );
   
-  conversations = new MXit::Conversations(&addressBook);
+  conversations = new MXit::Conversations(&addressBook, QDir(settings->value("logConversations").toString()));
   
   /*------------------------------------------------------------------------------------------*/
   /* Adding MXitDockWidgets - appendDockWidget will restore their closed& floating states as well as add thme to the necessary data structures*/
@@ -153,6 +153,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(  optionsWidget, SIGNAL(themeChanged()), conversationsWidget, SLOT(refreshThemeing()));
   connect(  optionsWidget, SIGNAL(themeChanged()), contactsWidget, SLOT(refreshThemeing()));
   
+  /* Conversation log dir */
+  connect(optionsWidget, SIGNAL(conversationLogDirectorySelected(const QDir&)),
+          this,         SLOT(logConversations(const QDir&)));
   
   /*------------------------------------------------------------------------------------------*/
   /* Setting up status bar
@@ -625,9 +628,24 @@ void MXitC::refreshChatBox(){
       mainTextArea->insertHtml("<tr><th>" + chatLine + "</th><td>" + m->message + "</td></tr>");
     }
     mainTextArea->insertHtml("</table>");
+    
+    qDebug() << mainTextArea->toHtml();
+    qDebug() << "---";
   }
   
   
+}
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Sets up Conversations to log to a directory
+**
+****************************************************************************/
+void MXitC::logConversations(const QDir &log)
+{
+  settings->setValue("logConversations", log.absolutePath());
 }
 
 /****************************************************************************
@@ -647,8 +665,7 @@ void MXitC::themeChanged(){
   }
   //refreshConversations();
   //refreshContacts();
-  mainTextArea->document()->setDefaultStyleSheet(theme.chat.htmlStylesheet);
-  mainTextArea->setStyleSheet(theme.chat.stylesheet);
+  conversationsWidget->copyThemeCss();
   
   addContactWidget->refresh(); /* since it contains icons*/
   /*TODO maybe make refresh a MXitDockWidget function and loop over all widgets. i.e. generalise? - rax*/

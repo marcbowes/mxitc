@@ -41,6 +41,9 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
   /* theme tab*/
   connect(themeOpenButton, SIGNAL( released () )   , this, SLOT(openThemeBrowser ()));
   
+  /* conversations tab*/
+  connect(conversationsOpenButton, SIGNAL( released () )   , this, SLOT(openConversationsBrowser ()));
+  
   connect(
             themeComboBox, SIGNAL( currentIndexChanged ( const QString & ) ), 
             this, SLOT(loadTheme(const QString &)));
@@ -146,6 +149,23 @@ void Options::openThemeBrowser () {
   }
 }
 
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Options::openConversationsBrowser () {
+  QFileDialog fileDiag ( this, "Choose your Conversations directory");
+  fileDiag.setFileMode(QFileDialog::DirectoryOnly);
+  if (fileDiag.exec ()){
+    QDir selection = fileDiag.selectedFiles ().front();
+    
+    setBaseConversationsDirectory(selection.absolutePath ());
+  }
+}
+
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
@@ -180,6 +200,19 @@ void Options::setSelectedTheme(const QString& theme) {
 
 QString Options::getBaseThemeDirectory() {
   return directoryLineEdit->text();
+}
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Options::setBaseConversationsDirectory(const QString& dir) {
+  /*TODO check if directory exists, if not, display it in red and return - rax*/
+  conversationsLineEdit->setText(dir);
+  QDir log(conversationsLineEdit->text());
+  if (log.exists())
+    emit conversationLogDirectorySelected(log);
 }
 
 /****************************************************************************
