@@ -143,7 +143,9 @@ void AddressBook::removeContact(const QString &contactAddress)
   qDebug() << "AddressBook::removeContact(const QString &contactAddress)";
   if (contacts.contains(contactAddress)) {
     Contact *_delete = *contacts.find(contactAddress);
-    contacts.remove(_delete->contactAddress);
+    contacts.remove(_delete->contactAddress); /* from store */
+    ordered.remove(orderLookup[_delete->contactAddress]); /* from order */
+    orderLookup.remove(_delete->contactAddress); /* from lookup */
     delete _delete;
   }
 }
