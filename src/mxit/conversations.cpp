@@ -138,6 +138,21 @@ const OrderedConversationMap& Conversations::getConversations()
 
 
 /****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Bubbles to the Conversation#toggleActive
+**
+****************************************************************************/
+void Conversations::toggleActive(const QString &uniqueIdentifier)
+{
+  Conversation *conversation = conversations.value(uniqueIdentifier);
+  if (conversation)
+    conversation->toggleActive();
+}
+
+
+/****************************************************************************
                _           __            __     __    
      ___  ____(_)  _____ _/ /____   ___ / /__  / /____
     / _ \/ __/ / |/ / _ `/ __/ -_) (_-</ / _ \/ __(_-<
