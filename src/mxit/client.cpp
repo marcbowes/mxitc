@@ -362,9 +362,17 @@ void Client::updateContactInfo()
 ** Author: Marc Bowes
 **
 ****************************************************************************/
-void Client::updateProfile()
+void Client::updateProfile(const QString &pin, const QString &name, bool hiddenLoginname,
+    const QDate &dateOfBirth, const QString &gender)
 {
-  /* FIXME: stub */
+  VariableHash profileVariables;
+  profileVariables["pin"]             = pin.toUtf8();
+  profileVariables["name"]            = name.toUtf8();
+  profileVariables["hiddenLoginname"] = hiddenLoginname ? "1" : "0";
+  profileVariables["dateOfBirth"]     = dateOfBirth.toString(Qt::ISODate).toUtf8();
+  profileVariables["gender"]          = gender.toLower() == "male" ? "1" : "0";
+  
+  sendPacket("updateprofile", profileVariables);
 }
 
 
