@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include <QRegExp>
+#include <QDebug>
 #include <QTextDocument>
 
 #include "protocol/enumerables/message.h"
@@ -120,23 +120,63 @@ Message::~Message()
 QString Message::markup(const QString &markup)
 {
   /* CGI escape so that any HTML in the message isn't interpreted */
-  QString markedUp = Qt::escape(markup);
+  QString escaped = Qt::escape(markup);
+  QString markedUp;
   
-  /* roll through each rule */
-  QRegExp rx;
-  rx.setMinimal(true);
+  bool boldOpen = false;
+  bool italicOpen = false;
+  bool underlineOpen = false;
   
-  /* /word/ = <i>word</i> */
-  rx.setPattern("\\/(.+)\\/");
-  markedUp.replace(rx, "<i>\\1</i>");
+  int position = 0;
   
-  /* *word* = <b>word</b> */
-  rx.setPattern("\\*(.+)\\*");
-  markedUp.replace(rx, "<b>\\1</b>");
+  while (position < escaped.length()) {
+    if (escaped.at(position) != '\\') {
+      if (escaped.at(position) == '/') {
+        if (italicOpen) {
+          markedUp += "</i>";
+          italicOpen = false;
+        } else {
+          markedUp += "<i>";
+          italicOpen = true;
+        }
+      } else if (escaped.at(position) == '*') {
+        if (boldOpen) {
+          markedUp += "</b>";
+          boldOpen = false;
+        } else {
+          markedUp += "<b>";
+          boldOpen = true;
+        }
+      } else if (escaped.at(position) == '_') {
+        if (underlineOpen) {
+          markedUp += "</u>";
+          underlineOpen = false;
+        } else {
+          markedUp += "<u>";
+          underlineOpen = true;
+        }
+      } else {
+        markedUp += escaped.at(position);
+      }
+    } else {
+      if ((position != (escaped.length() - 1)) && 
+      ((escaped.at(position + 1) == '*') || (escaped.at(position+ 1) == '/') || (escaped.at(position + 1) == '_'))) {
+        markedUp += escaped.at(position + 1);
+        position++;
+      } else {
+        markedUp += escaped.at(position);
+      }
+    }
+    
+    position++;
+  }
   
-  /* _word_ = <u>word</u> */
-  rx.setPattern("_(.+)_");
-  markedUp.replace(rx, "<u>\\1</u>");
+  if (boldOpen)
+    markedUp += "</b>";
+  if (italicOpen)
+    markedUp += "</i>";
+  if (underlineOpen)
+    markedUp += "</u>";
   
   return markedUp;
 }
