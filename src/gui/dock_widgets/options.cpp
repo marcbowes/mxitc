@@ -32,11 +32,11 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
   connect(applyButton, SIGNAL(released ()), this, SLOT(emitGatewaySignal()));
   
   /*gateway settings save*/
-  connect(httpRadioButton, SIGNAL(toggled ( bool )), httpWidget, SLOT(saveSettings ( bool )));
+  connect(httpRadioButton, SIGNAL(toggled ( bool )), this, SLOT(saveGatewaySettings ( bool )));
   
     /*TODO send port and proxy down*/
-  connect(httpProxyLineEdit, SIGNAL(editingFinished ()), httpWidget, SLOT(saveSettings ( )));
-  connect(portLineEdit, SIGNAL(editingFinished ()), httpWidget, SLOT(saveSettings ( )));
+  connect(httpProxyLineEdit, SIGNAL(editingFinished ()), this, SLOT(saveGatewaySettings ( )));
+  connect(portLineEdit, SIGNAL(editingFinished ()), this, SLOT(saveGatewaySettings ( )));
   
   /* theme tab*/
   connect(themeOpenButton, SIGNAL( released () )   , this, SLOT(openThemeBrowser ()));
@@ -103,7 +103,7 @@ void Options::addGateway(const QString& gateway) {
 
 void Options::emitGatewaySignal () {
   qDebug() << "emitting " << gatewayComboBox->currentText ();
-  emit gatewaySelected(gatewayComboBox->currentText ());
+  emit gatewaySelected(gatewayComboBox->currentText ()/*TODO add proxy and thing to this*/);
 }
 
 

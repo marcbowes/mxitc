@@ -8,7 +8,6 @@ INCLUDE(${QT_USE_FILE})
 
 # .cxx sources
 SET(MXIT_CLIENT_SRCS_CXX
-  common/chat_session.cpp
   common/hash_variables.cpp
 
   network/packets/http.cpp
