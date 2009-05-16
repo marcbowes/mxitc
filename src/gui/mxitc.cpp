@@ -618,6 +618,7 @@ void MXitC::refreshChatBox(){
 
   if (currentConversation) {
     chattingToLabel->setText(currentConversation->displayName); /*FIXME displayName rather*/
+    qDebug() << currentConversation->conversationHtml;
     mainWebView->setHtml(currentConversation->conversationHtml);
     
     QWebFrame * frame = mainWebView->page ()->currentFrame ();

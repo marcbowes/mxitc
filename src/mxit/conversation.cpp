@@ -21,7 +21,17 @@ namespace MXit
 
 ****************************************************************************/
 
-const static QString initialHtml ("<!DOCTYPE HTML \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\"><html><body><table></table></body></html>");
+const static QString initialHtml ("\
+  <!DOCTYPE HTML \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\"> \
+  <html> \
+    <head> \
+      <link href=\"stylesheet.css\" rel=\"stylesheet\" type=\"text/css\" /> \
+    </head> \
+  <body> \
+    <table></table> \
+  </body> \
+  </html> \
+  ");
 
 /****************************************************************************
 **
@@ -118,7 +128,12 @@ void Conversation::addContacts(const ContactList &contacts)
 ****************************************************************************/
 void Conversation::appendMessage(const Message &message)
 {
-  conversationHtml.insert(conversationHtml.size()-22, QString("<tr><td>%1</td><td>%2</td></tr>").arg(message.contact?message.contact->nickname:"You").arg(message.message));
+  QString thclass = message.contact ? "" : " class=\"you\"";
+  QString author  = message.contact ? message.contact->nickname : "You";
+  QString insertion = QString("<tr><th%1>%2</th><td>%3</td></tr>")
+    .arg(thclass).arg(author)
+    .arg(message.message);
+  conversationHtml.insert(conversationHtml.size()- 31, insertion);
   messages.append(new Message(message));
   emit updated(this);
 }
@@ -181,7 +196,7 @@ void Conversation::setCss(const QString &location)
 {
   QRegExp rx("<link href=\"(.*)\" rel=\"stylesheet\" type=\"text/css\" />");
   conversationHtml.replace(rx,
-    QString("<link href=\"%1\" rel=\"stylesheet\" type=\"text/css\" />").arg(location));
+    QString("<link href=\"file://%1/chat/stylesheet.css\" rel=\"stylesheet\" type=\"text/css\" />").arg(location));
   emit updated(this);
 }
 
