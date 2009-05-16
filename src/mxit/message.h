@@ -30,28 +30,37 @@ class Message
   ~Message();
   
   static QString markup(const QString &markup);
+  
+  /* flag creator methods */
+  static bool flagContainsCustomEmoticons(const QByteArray flags);
+  static bool flagContainsMarkup(const QByteArray flags);
   static bool flagDeliveryNotification(const QByteArray flags);
-  static bool flagReadNotification(const QByteArray flags);
   static bool flagPasswordEncrypted(const QByteArray flags);
-  static bool flagTransportEncrypted(const QByteArray flags);
+  static bool flagReadNotification(const QByteArray flags);
   static bool flagReplyShouldBePasswordEncrypted(const QByteArray flags);
   static bool flagReplyShouldBeTransportEncrypted(const QByteArray flags);
-  static bool flagContainsMarkup(const QByteArray flags);
-  static bool flagContainsCustomEmoticons(const QByteArray flags);
+  static bool flagTransportEncrypted(const QByteArray flags);
+
+  public:         /* methods */
   
+  const QString message() const;
+    
   public:         /* variables */
   
   const Contact *contact;
-  const QString  message;
+  const QString  markedupMessage;
+  const QString  rawMessage;
   const QTime    timestamp;
+  
+  /* flags */
+  const bool containsCustomEmoticons;
+  const bool containsMarkup;
   const bool deliveryNotification;
-  const bool readNotification;
   const bool passwordEncrypted;
-  const bool transportEncrypted;
+  const bool readNotification;
   const bool replyShouldBePasswordEncrypted;
   const bool replyShouldBeTransportEncrypted;
-  const bool containsMarkup;
-  const bool containsCustomEmoticons;
+  const bool transportEncrypted;
 };
 
 typedef QList<Message*> MessageList;

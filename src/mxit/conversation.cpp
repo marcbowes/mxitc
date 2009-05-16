@@ -132,7 +132,7 @@ void Conversation::appendMessage(const Message &message)
   QString author  = message.contact ? message.contact->nickname : "You";
   QString insertion = QString("<tr><th%1>%2</th><td>%3</td></tr>")
     .arg(thclass).arg(author)
-    .arg(message.message);
+    .arg(message.message());
   conversationHtml.insert(conversationHtml.size()- 31, insertion);
   messages.append(new Message(message));
   emit updated(this);

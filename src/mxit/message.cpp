@@ -30,7 +30,7 @@ namespace MXit
 **
 ****************************************************************************/
 Message::Message(const QString &message, const bool hasMarkup)
-  : contact(NULL), message(message),
+  : contact(NULL), markedupMessage(markup(message)), rawMessage(message),
     timestamp(QTime::currentTime()),
     containsMarkup(hasMarkup),
     deliveryNotification(false),
@@ -53,7 +53,7 @@ Message::Message(const QString &message, const bool hasMarkup)
 **
 ****************************************************************************/
 Message::Message(const Contact &contact, const QString &message, const QByteArray flags)
-  : contact(&contact), message(markup(message)),
+  : contact(&contact), markedupMessage(markup(message)), rawMessage(message),
     timestamp (QTime::currentTime()),
     deliveryNotification(flagDeliveryNotification(flags)),
     readNotification(flagReadNotification(flags)),
@@ -77,7 +77,8 @@ Message::Message(const Contact &contact, const QString &message, const QByteArra
 ****************************************************************************/
 Message::Message(const Message &other)
   : contact(other.contact), 
-    message(other.message),
+    rawMessage(other.rawMessage),
+    markedupMessage(other.markedupMessage),
     timestamp(other.timestamp),
     deliveryNotification(other.deliveryNotification),
     readNotification(other.readNotification),
@@ -138,45 +139,83 @@ QString Message::markup(const QString &markup)
   return markedUp;
 }
 
+
+/****************************************************************************
+**
+** Author: Tim Sjoberg
+**
+** Static flag methods..
+**
+****************************************************************************/
+
 bool Message::flagDeliveryNotification(const QByteArray flags)
 {
   return false;
 }
+
+
 bool Message::flagReadNotification(const QByteArray flags)
 {
   return false;
 }
+
 
 bool Message::flagPasswordEncrypted(const QByteArray flags)
 {
   return false;
 }
 
+
 bool Message::flagTransportEncrypted(const QByteArray flags)
 {
   return false;
 }
+
 
 bool Message::flagReplyShouldBePasswordEncrypted(const QByteArray flags)
 {
   return false;
 }
 
+
 bool Message::flagReplyShouldBeTransportEncrypted(const QByteArray flags)
 {
   return false;
 }
+
 
 bool Message::flagContainsMarkup(const QByteArray flags)
 {
   return false;
 }
 
+
 bool Message::flagContainsCustomEmoticons(const QByteArray flags)
 {
   return false;
 }
 
+
+/****************************************************************************
+                __   ___                 __  __           __  
+     ___  __ __/ /  / (_)___  __ _  ___ / /_/ /  ___  ___/ /__
+    / _ \/ // / _ \/ / / __/ /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
+   / .__/\_,_/_.__/_/_/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
+  /_/                                                         
+
+****************************************************************************/
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Returns the display-ready version of the message's contact (markup or not).
+**
+****************************************************************************/
+const QString Message::message() const
+{
+  return containsMarkup ? markedupMessage : rawMessage;
+}
 
 }
 
