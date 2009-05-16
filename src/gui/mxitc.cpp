@@ -6,7 +6,6 @@
 
 #include "mxitc.h"
 
-
 namespace MXit
 {
 
@@ -620,12 +619,12 @@ void MXitC::refreshChatBox(){
   if (currentConversation != NULL) {
     conversationsWidget->conversationRead(currentConversation);
     
-    mainTextArea->insertHtml("<dl>");
+    mainTextArea->insertHtml("<table>");
     Q_FOREACH(const Message *m, currentConversation->messages/*can't get hold of chatHistory*/) {
       QString chatLine = (m->contact ? m->contact->nickname : "You");
-      mainTextArea->insertHtml("<dt>" + chatLine + "</dt><dd>" + m->message + "</dd>");
+      mainTextArea->insertHtml("<tr><th>" + chatLine + "</th><td>" + m->message + "</td></tr>");
     }
-    mainTextArea->insertHtml("</dl>");
+    mainTextArea->insertHtml("</table>");
   }
   
   
@@ -648,7 +647,8 @@ void MXitC::themeChanged(){
   }
   //refreshConversations();
   //refreshContacts();
-  //mainTextArea->setStyleSheet(theme.chat.stylesheet);
+  mainTextArea->document()->setDefaultStyleSheet(theme.chat.htmlStylesheet);
+  mainTextArea->setStyleSheet(theme.chat.stylesheet);
   
   addContactWidget->refresh(); /* since it contains icons*/
   /*TODO maybe make refresh a MXitDockWidget function and loop over all widgets. i.e. generalise? - rax*/

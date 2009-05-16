@@ -4,18 +4,15 @@
 **
 ** Author: Marc Bowes, 2009
 **
-** MXit::GUI::Theme acts as a holder for theming components
+** Class for styling the main Chat window.
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_THEME_H__
-#define __MXIT_GUI_THEME_H__
+#ifndef __MXIT_GUID_THEMECOMPONENTS_CHAT_H__
+#define __MXIT_GUID_THEMECOMPONENTS_CHAT_H__
 
 #include <QDir>
-#include <QPixmap>
-
-#include "theme_components/chat.h"
-#include "theme_components/contact/base.h"
+#include <QString>
 
 namespace MXit
 {
@@ -23,28 +20,32 @@ namespace MXit
 namespace GUI
 {
 
-class Theme
+namespace ThemeComponents
+{
+
+class Chat
 {
   public:         /* class specific */
-  
-  Theme()   {}
-  ~Theme()  {}
+
+  Chat()  {}
+  ~Chat() {}
 
   public:         /* methods */
   
   void load(QDir theme);
   void loadDefaults();
+
+  public:         /* variables */
   
-  public:        /* variables */
-  
-  ThemeComponents::Chat           chat;
-  ThemeComponents::Contact::Base  contact;
-  QPixmap                         windowIcon;
+  QString   htmlStylesheet;
+  QString   stylesheet;
 };
 
 }
 
 }
 
-#endif /* __MXIT_GUI_THEME_H__ */
+}
+
+#endif /* __MXIT_GUID_THEMECOMPONENTS_CHAT_H__ */
 
