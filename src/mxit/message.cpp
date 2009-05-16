@@ -95,13 +95,13 @@ QString Message::markup(const QString &markup)
   QRegExp rx;
   rx.setMinimal(true);
   
-  /* *word* = <b>word</b> */
-  rx.setPattern("\\*(.+)\\*");
-  markedUp.replace(rx, "<b>\\1</b>");
-  
   /* /word/ = <i>word</i> */
   rx.setPattern("\\/(.+)\\/");
   markedUp.replace(rx, "<i>\\1</i>");
+  
+  /* *word* = <b>word</b> */
+  rx.setPattern("\\*(.+)\\*");
+  markedUp.replace(rx, "<b>\\1</b>");
   
   /* _word_ = <u>word</u> */
   rx.setPattern("_(.+)_");
