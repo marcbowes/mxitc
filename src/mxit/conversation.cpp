@@ -30,7 +30,7 @@ namespace MXit
 ****************************************************************************/
 Conversation::Conversation(const Contact *contact)
   : active(true), displayName(contact->contactAddress),
-    uniqueIdentifier(contact->contactAddress), type(Private)
+    uniqueIdentifier(contact->nickname), type(Private)
 {
   contacts.insert(contact);
 }
@@ -214,7 +214,7 @@ QString Conversation::buildDisplayName(const ContactSet &contacts)
 {
   QStringList list;
   Q_FOREACH(const Contact *contact, contacts)
-    list << contact->contactAddress;
+    list << contact->nickname;
   return list.join(", ");
 }
 
