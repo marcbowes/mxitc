@@ -12,6 +12,8 @@
 #ifndef __MXIT_CONVERSATIONS_H__
 #define __MXIT_CONVERSATIONS_H__
 
+#include <QDir>
+
 #include "protocol/enumerables/message.h"
 
 #include "address_book.h"
@@ -29,7 +31,7 @@ class Conversations : public QObject
   
   public:         /* class specific */
 
-  Conversations(AddressBook *address_book);
+  Conversations(AddressBook *address_book, const QDir &log);
   ~Conversations();
   
   signals:
@@ -46,8 +48,13 @@ class Conversations : public QObject
   const Conversation* getConversation(const QString &uniqueIdentifier);
   const OrderedConversationMap& getConversations();
   QSet<const Conversation*> getInvolvements(const Contact *contact);
+  void setCss(const QString &location);
   void setHtml(const QString &uniqueIdentifier, const QString &html);
   void toggleActive(const QString &uniqueIdentifier);
+
+  public:         /* variables */
+  
+  QDir log;
   
   private slots:
   

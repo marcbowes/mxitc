@@ -25,6 +25,8 @@ namespace GUI
 ****************************************************************************/
 void Theme::load(QDir theme)
 {
+  location = theme;
+  
   /* load defaults */
   loadDefaults();
   

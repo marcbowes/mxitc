@@ -37,7 +37,6 @@ class Chat
 
   public:         /* variables */
   
-  QString   htmlStylesheet;
   QString   stylesheet;
 };
 

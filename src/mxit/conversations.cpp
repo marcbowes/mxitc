@@ -26,8 +26,8 @@ namespace MXit
 ** Constructor, using an address book to manage Contacts
 **
 ****************************************************************************/
-Conversations::Conversations(AddressBook *address_book)
-  : address_book(address_book)
+Conversations::Conversations(AddressBook *address_book, const QDir &log)
+  : address_book(address_book), log(log)
 {
   connect(address_book, SIGNAL(updated(const ContactList&)),
           this,         SLOT(rebuild(const ContactList&)));
@@ -150,6 +150,20 @@ const OrderedConversationMap& Conversations::getConversations()
 QSet<const Conversation*> Conversations::getInvolvements(const Contact *contact)
 {
   return involvements.value(contact);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Rewrites the stylesheet link for each Conversation
+**
+****************************************************************************/
+void Conversations::setCss(const QString &location)
+{
+  Q_FOREACH(Conversation *conversation, conversations)
+    conversation->setCss(location);
 }
 
 

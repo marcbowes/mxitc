@@ -143,6 +143,19 @@ void Conversations::conversationRead(const Conversation * conversation) {
 
 
 /****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Changes HTML head to use theme's CSS file
+**
+****************************************************************************/
+void Conversations::setConversationCss()
+{
+  conversations.setCss(theme.location.absolutePath());
+}
+
+
+/****************************************************************************
                _           __            __     __    
      ___  ____(_)  _____ _/ /____   ___ / /__  / /____
     / _ \/ __/ / |/ / _ `/ __/ -_) (_-</ / _ \/ __(_-<

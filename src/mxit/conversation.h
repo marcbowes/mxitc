@@ -51,17 +51,17 @@ class Conversation : public QObject
   QTime lastTimestamp() const;
   void removeContact(const Contact *contact);
   void removeContacts(const ContactList &contacts);
+  void setCss(const QString &location);
   void toggleActive();
 
   public:         /* variables */
   
   bool            active;
+  QString         conversationHtml;
   const QString   displayName;
   MessageList     messages;
   const Type      type;
   const QString   uniqueIdentifier;
-  
-  QString         conversationHtml;
   
   private:        /* methods */
   
@@ -71,6 +71,7 @@ class Conversation : public QObject
   
   ContactSet      contacts;
 };
+
 
 typedef QHash<QString, Conversation*> ConversationHash;
 typedef QList<const Conversation*>   ConversationList;

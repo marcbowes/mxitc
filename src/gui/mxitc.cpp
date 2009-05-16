@@ -4,7 +4,10 @@
 **
 ****************************************************************************/
 
+//#include <QWebView>
 #include "mxitc.h"
+#include <QTextDocument>
+#include <QWebFrame>
 
 namespace MXit
 {
@@ -41,7 +44,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /* Loading settings */
   settings = new QSettings ( "mxitc", "env", this );
   
-  conversations = new MXit::Conversations(&addressBook);
+  conversations = new MXit::Conversations(&addressBook, QDir(settings->value("logConversations").toString()));
   
   /*------------------------------------------------------------------------------------------*/
   /* Adding MXitDockWidgets - appendDockWidget will restore their closed& floating states as well as add thme to the necessary data structures*/
@@ -107,7 +110,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
   /*TODO put this somewhere useful*/
-  mainTextArea->setFocusProxy(chatInput);
+  mainWebView->setFocusProxy(chatInput);
   
   /*------------------------------------------------------------------------------------------*/
   /* Unsorted connects
@@ -153,6 +156,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(  optionsWidget, SIGNAL(themeChanged()), conversationsWidget, SLOT(refreshThemeing()));
   connect(  optionsWidget, SIGNAL(themeChanged()), contactsWidget, SLOT(refreshThemeing()));
   
+  /* Conversation log dir */
+  connect(optionsWidget, SIGNAL(conversationLogDirectorySelected(const QDir&)),
+          this,         SLOT(logConversations(const QDir&)));
   
   /*------------------------------------------------------------------------------------------*/
   /* Setting up status bar
@@ -610,24 +616,32 @@ void MXitC::sendMessageFromChatInput()
 void MXitC::refreshChatBox(){
 
 
-  if (currentConversation)
+  if (currentConversation) {
     chattingToLabel->setText(currentConversation->displayName); /*FIXME displayName rather*/
-  else
-    chattingToLabel->setText("Chatting to nobody");
+    mainWebView->setHtml(currentConversation->conversationHtml);
     
-  mainTextArea->clear();
-  if (currentConversation != NULL) {
+    QWebFrame * frame = mainWebView->page ()->currentFrame ();
+    frame->setScrollBarValue(Qt::Vertical, frame->scrollBarMaximum(Qt::Vertical));
     conversationsWidget->conversationRead(currentConversation);
-    
-    mainTextArea->insertHtml("<table>");
-    Q_FOREACH(const Message *m, currentConversation->messages/*can't get hold of chatHistory*/) {
-      QString chatLine = (m->contact ? m->contact->nickname : "You");
-      mainTextArea->insertHtml("<tr><th>" + chatLine + "</th><td>" + m->message + "</td></tr>");
-    }
-    mainTextArea->insertHtml("</table>");
+  }
+  else {
+    chattingToLabel->setText("Chatting to nobody");
+    mainWebView->setHtml("");
   }
   
   
+}
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Sets up Conversations to log to a directory
+**
+****************************************************************************/
+void MXitC::logConversations(const QDir &log)
+{
+  settings->setValue("logConversations", log.absolutePath());
 }
 
 /****************************************************************************
@@ -647,8 +661,7 @@ void MXitC::themeChanged(){
   }
   //refreshConversations();
   //refreshContacts();
-  mainTextArea->document()->setDefaultStyleSheet(theme.chat.htmlStylesheet);
-  mainTextArea->setStyleSheet(theme.chat.stylesheet);
+  conversationsWidget->setConversationCss();
   
   addContactWidget->refresh(); /* since it contains icons*/
   /*TODO maybe make refresh a MXitDockWidget function and loop over all widgets. i.e. generalise? - rax*/
@@ -680,9 +693,11 @@ void MXitC::themeChanged(){
 **
 ****************************************************************************/
 
+/* TODO some of this logic would be better in ensure existance(?)*/
 void MXitC::setCurrentConversation(const Conversation * conversation){
   
   currentConversation = conversation;
+  chatInput->setFocus(Qt::OtherFocusReason);
   refreshChatBox();
 }
 
@@ -716,7 +731,9 @@ const Conversation * MXitC::ensureExistanceOfConversation(const QString & unique
   if (!conversation) {
     /* conversations does not exist, need to create it*/
     /* create personal (single contact) conversation */
-    conversations->addConversation(new Conversation(addressBook.contactFromAddress(uniqueId)));
+    Conversation *newConversation = new Conversation(addressBook.contactFromAddress(uniqueId));
+    newConversation->setCss(theme.location.absolutePath());
+    conversations->addConversation(newConversation);
     
     /*this *will* return a valid pointer*/
     conversation = conversations->getConversation(uniqueId);

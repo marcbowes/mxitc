@@ -17,6 +17,7 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QTextBlock>
@@ -27,7 +28,6 @@
 
 #include "mxit/client.h"
 #include "mxit/contact.h"
-#include <QTextDocument>
 #include "mxit/address_book.h"
 #include "mxit/conversations.h"
 #include "gui/dock_widgets/log.h"
@@ -99,6 +99,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
 
   private slots:
   
+  void logConversations(const QDir &log);
   void openLoginDialog();
   void loggingIn();
   void environmentVariablesReady();

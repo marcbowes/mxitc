@@ -4,6 +4,7 @@
 **
 ****************************************************************************/
 
+#include <QRegExp>
 #include <QStringList>
 
 #include "conversation.h"
@@ -20,6 +21,17 @@ namespace MXit
 
 ****************************************************************************/
 
+const static QString initialHtml ("\
+  <!DOCTYPE HTML \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\"> \
+  <html> \
+    <head> \
+      <link href=\"stylesheet.css\" rel=\"stylesheet\" type=\"text/css\" /> \
+    </head> \
+  <body> \
+    <table></table> \
+  </body> \
+  </html> \
+  ");
 
 /****************************************************************************
 **
@@ -30,7 +42,7 @@ namespace MXit
 ****************************************************************************/
 Conversation::Conversation(const Contact *contact)
   : active(true), displayName(contact->nickname),
-    uniqueIdentifier(contact->contactAddress), type(Private)
+    uniqueIdentifier(contact->contactAddress), type(Private), conversationHtml(initialHtml)
 {
   contacts.insert(contact);
 }
@@ -45,7 +57,7 @@ Conversation::Conversation(const Contact *contact)
 ****************************************************************************/
 Conversation::Conversation(const ContactSet &contacts, const QString &roomName)
   : active(true), displayName(roomName.isEmpty() ? buildDisplayName(contacts) : roomName),
-    uniqueIdentifier(roomName), type(Group)
+    uniqueIdentifier(roomName), type(Group), conversationHtml(initialHtml)
 {
   this->contacts = contacts; /* copy */
 }
@@ -116,6 +128,12 @@ void Conversation::addContacts(const ContactList &contacts)
 ****************************************************************************/
 void Conversation::appendMessage(const Message &message)
 {
+  QString thclass = message.contact ? "" : " class=\"you\"";
+  QString author  = message.contact ? message.contact->nickname : "You";
+  QString insertion = QString("<tr><th%1>%2</th><td>%3</td></tr>")
+    .arg(thclass).arg(author)
+    .arg(message.message);
+  conversationHtml.insert(conversationHtml.size()- 31, insertion);
   messages.append(new Message(message));
   emit updated(this);
 }
@@ -162,6 +180,24 @@ QTime Conversation::lastTimestamp() const
 void Conversation::removeContact(const Contact *contact)
 {
   contacts.remove(contact);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Rewrites HEAD to use the location specified.
+** Note: don't worry about QString#replace being global, because chat is
+**  HTML-escaped, so only concern is performance..
+**
+****************************************************************************/
+void Conversation::setCss(const QString &location)
+{
+  QRegExp rx("<link href=\"(.*)\" rel=\"stylesheet\" type=\"text/css\" />");
+  conversationHtml.replace(rx,
+    QString("<link href=\"file://%1/chat/stylesheet.css\" rel=\"stylesheet\" type=\"text/css\" />").arg(location));
+  emit updated(this);
 }
 
 
