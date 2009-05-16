@@ -648,6 +648,7 @@ void MXitC::themeChanged(){
   }
   //refreshConversations();
   //refreshContacts();
+  //mainTextArea->setStyleSheet(theme.chat.stylesheet);
   
   addContactWidget->refresh(); /* since it contains icons*/
   /*TODO maybe make refresh a MXitDockWidget function and loop over all widgets. i.e. generalise? - rax*/

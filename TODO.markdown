@@ -9,3 +9,4 @@
 ##Options
 * add to preferences: a checkbox to use or not use mxit markup
 * make autologin button do sometihng
+* proper capabilities in login/register. needs to be saved to settings

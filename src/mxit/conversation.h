@@ -58,8 +58,10 @@ class Conversation : public QObject
   bool            active;
   const QString   displayName;
   MessageList     messages;
-  const Type     type;
-  const QString  uniqueIdentifier;
+  const Type      type;
+  const QString   uniqueIdentifier;
+  
+  QString         conversationHtml;
   
   private:        /* methods */
   
