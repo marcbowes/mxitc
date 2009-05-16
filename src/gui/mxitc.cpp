@@ -618,7 +618,6 @@ void MXitC::refreshChatBox(){
 
   if (currentConversation) {
     chattingToLabel->setText(currentConversation->displayName); /*FIXME displayName rather*/
-    qDebug() << currentConversation->conversationHtml;
     mainWebView->setHtml(currentConversation->conversationHtml);
     
     QWebFrame * frame = mainWebView->page ()->currentFrame ();
@@ -732,7 +731,9 @@ const Conversation * MXitC::ensureExistanceOfConversation(const QString & unique
   if (!conversation) {
     /* conversations does not exist, need to create it*/
     /* create personal (single contact) conversation */
-    conversations->addConversation(new Conversation(addressBook.contactFromAddress(uniqueId)));
+    Conversation *newConversation = new Conversation(addressBook.contactFromAddress(uniqueId));
+    newConversation->setCss(theme.location.absolutePath());
+    conversations->addConversation(newConversation);
     
     /*this *will* return a valid pointer*/
     conversation = conversations->getConversation(uniqueId);
