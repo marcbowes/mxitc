@@ -186,7 +186,7 @@ bool Message::flagReplyShouldBeTransportEncrypted(const QByteArray flags)
 
 bool Message::flagContainsMarkup(const QByteArray flags)
 {
-  return false;
+  return flags.toInt() & 0x200;
 }
 
 
