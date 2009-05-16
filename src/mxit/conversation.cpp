@@ -4,6 +4,7 @@
 **
 ****************************************************************************/
 
+#include <QRegExp>
 #include <QStringList>
 
 #include "conversation.h"
@@ -162,6 +163,24 @@ QTime Conversation::lastTimestamp() const
 void Conversation::removeContact(const Contact *contact)
 {
   contacts.remove(contact);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Rewrites HEAD to use the location specified.
+** Note: don't worry about QString#replace being global, because chat is
+**  HTML-escaped, so only concern is performance..
+**
+****************************************************************************/
+void Conversation::setCss(const QString &location)
+{
+  QRegExp rx("<link href=\"(.*)\" rel=\"stylesheet\" type=\"text/css\" />");
+  conversationHtml.replace(rx,
+    QString("<link href=\"%1\" rel=\"stylesheet\" type=\"text/css\" />").arg(location));
+  emit updated(this);
 }
 
 

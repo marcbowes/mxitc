@@ -39,6 +39,7 @@ class Theme
   
   ThemeComponents::Chat           chat;
   ThemeComponents::Contact::Base  contact;
+  QDir                            location;
   QPixmap                         windowIcon;
 };
 

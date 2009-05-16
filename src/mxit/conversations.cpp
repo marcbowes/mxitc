@@ -157,6 +157,20 @@ QSet<const Conversation*> Conversations::getInvolvements(const Contact *contact)
 **
 ** Author: Marc Bowes
 **
+** Rewrites the stylesheet link for each Conversation
+**
+****************************************************************************/
+void Conversations::setCss(const QString &location)
+{
+  Q_FOREACH(Conversation *conversation, conversations)
+    conversation->setCss(location);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Bubbles to the Conversation#conversationHtml
 **
 ****************************************************************************/

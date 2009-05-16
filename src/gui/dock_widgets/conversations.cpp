@@ -146,12 +146,12 @@ void Conversations::conversationRead(const Conversation * conversation) {
 **
 ** Author: Marc Bowes
 **
-** Copies the current theme's CSS into the Conversation directory.
+** Changes HTML head to use theme's CSS file
 **
 ****************************************************************************/
-void Conversations::copyThemeCss()
+void Conversations::setConversationCss()
 {
-  //
+  conversations.setCss(theme.location.absolutePath());
 }
 
 

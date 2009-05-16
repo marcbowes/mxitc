@@ -665,7 +665,7 @@ void MXitC::themeChanged(){
   }
   //refreshConversations();
   //refreshContacts();
-  conversationsWidget->copyThemeCss();
+  conversationsWidget->setConversationCss();
   
   addContactWidget->refresh(); /* since it contains icons*/
   /*TODO maybe make refresh a MXitDockWidget function and loop over all widgets. i.e. generalise? - rax*/
