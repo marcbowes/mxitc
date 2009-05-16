@@ -72,6 +72,7 @@ class Conversation : public QObject
   ContactSet      contacts;
 };
 
+
 typedef QHash<QString, Conversation*> ConversationHash;
 typedef QList<const Conversation*>   ConversationList;
 typedef QSet<const Conversation*>    ConversationSet;
