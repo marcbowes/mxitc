@@ -697,6 +697,7 @@ void MXitC::themeChanged(){
 void MXitC::setCurrentConversation(const Conversation * conversation){
   
   currentConversation = conversation;
+  chatInput->setFocus(Qt::OtherFocusReason);
   refreshChatBox();
 }
 
