@@ -21,6 +21,7 @@ namespace MXit
 
 ****************************************************************************/
 
+const static QString initialHtml ("<!DOCTYPE HTML \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\"><html><body><table></table></body></html>");
 
 /****************************************************************************
 **
@@ -31,7 +32,7 @@ namespace MXit
 ****************************************************************************/
 Conversation::Conversation(const Contact *contact)
   : active(true), displayName(contact->nickname),
-    uniqueIdentifier(contact->contactAddress), type(Private)
+    uniqueIdentifier(contact->contactAddress), type(Private), conversationHtml(initialHtml)
 {
   contacts.insert(contact);
 }
@@ -46,7 +47,7 @@ Conversation::Conversation(const Contact *contact)
 ****************************************************************************/
 Conversation::Conversation(const ContactSet &contacts, const QString &roomName)
   : active(true), displayName(roomName.isEmpty() ? buildDisplayName(contacts) : roomName),
-    uniqueIdentifier(roomName), type(Group)
+    uniqueIdentifier(roomName), type(Group), conversationHtml(initialHtml)
 {
   this->contacts = contacts; /* copy */
 }
@@ -117,6 +118,7 @@ void Conversation::addContacts(const ContactList &contacts)
 ****************************************************************************/
 void Conversation::appendMessage(const Message &message)
 {
+  conversationHtml.insert(conversationHtml.size()-22, QString("<tr><td>%1</td><td>%2</td></tr>").arg(message.contact?message.contact->nickname:"You").arg(message.message));
   messages.append(new Message(message));
   emit updated(this);
 }

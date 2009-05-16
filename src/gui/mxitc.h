@@ -28,7 +28,6 @@
 
 #include "mxit/client.h"
 #include "mxit/contact.h"
-#include <QTextDocument>
 #include "mxit/address_book.h"
 #include "mxit/conversations.h"
 #include "gui/dock_widgets/log.h"

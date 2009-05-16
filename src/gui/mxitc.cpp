@@ -4,7 +4,10 @@
 **
 ****************************************************************************/
 
+//#include <QWebView>
 #include "mxitc.h"
+#include <QTextDocument>
+#include <QWebFrame>
 
 namespace MXit
 {
@@ -107,7 +110,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
   /*TODO put this somewhere useful*/
-  mainTextArea->setFocusProxy(chatInput);
+  mainWebView->setFocusProxy(chatInput);
   
   /*------------------------------------------------------------------------------------------*/
   /* Unsorted connects
@@ -613,24 +616,17 @@ void MXitC::sendMessageFromChatInput()
 void MXitC::refreshChatBox(){
 
 
-  if (currentConversation)
+  if (currentConversation) {
     chattingToLabel->setText(currentConversation->displayName); /*FIXME displayName rather*/
-  else
-    chattingToLabel->setText("Chatting to nobody");
+    mainWebView->setHtml(currentConversation->conversationHtml);
     
-  mainTextArea->clear();
-  if (currentConversation != NULL) {
+    QWebFrame * frame = mainWebView->page ()->currentFrame ();
+    frame->setScrollBarValue(Qt::Vertical, frame->scrollBarMaximum(Qt::Vertical));
     conversationsWidget->conversationRead(currentConversation);
-    
-    mainTextArea->insertHtml("<table>");
-    Q_FOREACH(const Message *m, currentConversation->messages/*can't get hold of chatHistory*/) {
-      QString chatLine = (m->contact ? m->contact->nickname : "You");
-      mainTextArea->insertHtml("<tr><th>" + chatLine + "</th><td>" + m->message + "</td></tr>");
-    }
-    mainTextArea->insertHtml("</table>");
-    
-    qDebug() << mainTextArea->toHtml();
-    qDebug() << "---";
+  }
+  else {
+    chattingToLabel->setText("Chatting to nobody");
+    mainWebView->setHtml("");
   }
   
   
@@ -697,6 +693,7 @@ void MXitC::themeChanged(){
 **
 ****************************************************************************/
 
+/* TODO some of this logic would be better in ensure existance(?)*/
 void MXitC::setCurrentConversation(const Conversation * conversation){
   
   currentConversation = conversation;
