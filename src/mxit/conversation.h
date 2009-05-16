@@ -56,9 +56,14 @@ class Conversation : public QObject
   public:         /* variables */
   
   bool            active;
+  const QString   displayName;
   MessageList     messages;
   const Type     type;
   const QString  uniqueIdentifier;
+  
+  private:        /* methods */
+  
+  static QString buildDisplayName(const ContactSet &contacts);
 
   private:        /* variables */
   

@@ -29,7 +29,8 @@ namespace MXit
 **
 ****************************************************************************/
 Conversation::Conversation(const Contact *contact)
-  : active(true), uniqueIdentifier(contact->contactAddress), type(Private)
+  : active(true), displayName(contact->contactAddress),
+    uniqueIdentifier(contact->contactAddress), type(Private)
 {
   contacts.insert(contact);
 }
@@ -43,7 +44,8 @@ Conversation::Conversation(const Contact *contact)
 **
 ****************************************************************************/
 Conversation::Conversation(const ContactSet &contacts, const QString &roomName)
-  : active(false), uniqueIdentifier(roomName), type(Group)
+  : active(true), displayName(roomName.isEmpty() ? buildDisplayName(contacts) : roomName),
+    uniqueIdentifier(roomName), type(Group)
 {
   this->contacts = contacts; /* copy */
 }
@@ -188,6 +190,32 @@ void Conversation::removeContacts(const ContactList &contacts)
 {
   Q_FOREACH(const Contact *contact, contacts)
     removeContact(contact);
+}
+
+
+/****************************************************************************
+               _           __                  __  __           __  
+     ___  ____(_)  _____ _/ /____   __ _  ___ / /_/ /  ___  ___/ /__
+    / _ \/ __/ / |/ / _ `/ __/ -_) /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
+   / .__/_/ /_/|___/\_,_/\__/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
+  /_/                                                               
+
+****************************************************************************/
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Creates a displayName from the ContactSet's contactAddress's.
+**
+****************************************************************************/
+QString Conversation::buildDisplayName(const ContactSet &contacts)
+{
+  QStringList list;
+  Q_FOREACH(const Contact *contact, contacts)
+    list << contact->contactAddress;
+  return list.join(", ");
 }
 
 }
