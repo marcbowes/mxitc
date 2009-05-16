@@ -6,6 +6,8 @@
 
 #include "chat.h"
 
+#define DEFAULT_SIZE QSize(16, 16)
+
 namespace MXit
 {
 
@@ -30,6 +32,14 @@ void Chat::load(QDir theme)
   if (css.exists()) {
     stylesheet = QLatin1String(css.readAll());
   }
+  
+  /* load from disk */
+  QImage _group = QImage(theme.absoluteFilePath("group.png"));
+  
+  /* build pixmaps from images, or use defaults */
+  if (!_group.isNull()) {
+    group = QPixmap::fromImage(_group);
+  }
 }
 
 
@@ -42,7 +52,10 @@ void Chat::load(QDir theme)
 ****************************************************************************/
 void Chat::loadDefaults()
 {
-  stylesheet     = QString();
+  stylesheet = QString();
+  
+  group = QPixmap(DEFAULT_SIZE);
+  group.fill(Qt::black);
 }
 
 }

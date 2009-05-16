@@ -7,8 +7,9 @@
 #include <QDebug>
 #include <QTextDocument>
 
-#include "message.h"
 #include "protocol/enumerables/message.h"
+
+#include "message.h"
 
 namespace MXit
 {
