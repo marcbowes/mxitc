@@ -28,6 +28,8 @@ class Contact
 	Contact();
   Contact(const QString &group, const QString &contactAddress, const QString &nickname,
     quint16 presence, quint16 type, quint16 mood);
+  Contact(const QString &contactAddress, const QString &nickname,
+    quint16 type, bool hiddenLogin, const QString &joinMessage);
   ~Contact();
   
   bool operator==(const Contact &other);

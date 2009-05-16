@@ -40,6 +40,7 @@ class AddressBook : public QObject
   public:         /* methods */
 
   ContactList addOrUpdateContacts(const QByteArray &data);
+  ContactList addSubscriptions(const QByteArray &data);
   Contact* contactFromAddress(const QString &contactAddress);
   const OrderedContactMap& getContacts();
   void removeContact(const QString &contactAddress);
@@ -48,7 +49,10 @@ class AddressBook : public QObject
   
   Contact* addOrUpdateContact(const QByteArray &data);
   Contact* addOrUpdateContact(const QList<QByteArray> &fields);
+  Contact* addSubscription(const QByteArray &data);
+  Contact* addSubscription(const QList<QByteArray> &fields);
   Contact* insertContact(const QList<QByteArray> &fields);
+  Contact* insertSubscription(const QList<QByteArray> &fields);
   Contact* updateContact(const QList<QByteArray> &fields);
   
   private:       /* variables */

@@ -85,6 +85,29 @@ ContactList AddressBook::addOrUpdateContacts(const QByteArray &data)
 **
 ** Author: Marc Bowes
 **
+** Adds new subscriptions to the AddressBook.
+**
+****************************************************************************/
+ContactList AddressBook::addSubscriptions(const QByteArray &data)
+{
+  ContactList changeSet;
+  Q_FOREACH(const QByteArray &row, data.split('\0')) {
+    Contact *contact = addSubscription(row);
+    if (contact)
+      changeSet.append(contact);
+  }
+  
+  if (!changeSet.isEmpty())
+    emit updated(changeSet);
+  
+  return changeSet;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Returns a Contact* from a given address, or NULL if non-existant.
 **
 ****************************************************************************/
@@ -177,6 +200,41 @@ Contact* AddressBook::addOrUpdateContact(const QList<QByteArray> &fields)
 **
 ** Author: Marc Bowes
 **
+** Splits data into fields and forwards to real method.
+**
+****************************************************************************/
+Contact* AddressBook::addSubscription(const QByteArray &data)
+{
+  if (data.isEmpty())
+    return NULL;
+  
+  /* for data format, refer to Handler #51, GetNewSubscription */
+  QList<QByteArray> fields = data.split('\1');
+  
+  return addSubscription(fields);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Builds a Contact from MXit data and updates the internal list.
+**
+****************************************************************************/
+Contact* AddressBook::addSubscription(const QList<QByteArray> &fields)
+{
+  if (!contacts.contains(fields[0]))
+    return insertSubscription(fields);
+  else
+    return NULL;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Inserts a Contact into the local Contact store. Also inserts the Contact
 **  into an ordered structure.
 ** **REQUIRES** the contact to not exist.
@@ -195,6 +253,36 @@ Contact* AddressBook::insertContact(const QList<QByteArray> &fields)
   /* insert into storage */
   Contact *contact = new Contact(group, contactAddress, nickname,
     presence, type, mood);
+  contacts.insert(contactAddress, contact);
+  
+  /* ordered insert (QMap uses heaps to order keys) */
+  orderLookup.insert(contact->contactAddress, contact->sortString());
+  ordered.insert(contact->sortString(), contact);
+  
+  return contact;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Inserts a Contact into the local Contact store. Also inserts the Contact
+**  into an ordered structure.
+** **REQUIRES** the contact to not exist.
+**
+****************************************************************************/
+Contact* AddressBook::insertSubscription(const QList<QByteArray> &fields)
+{
+  /* type conversions (really only for neatness) */
+  QString contactAddress  = fields[0];
+  QString nickname        = fields[1];
+  quint16 type            = fields[2].toUInt();
+  bool    hiddenLogin     = fields[3] == "1" ? true : false;
+  QString joinMessage     = fields[4];
+  
+  /* insert into storage */
+  Contact *contact = new Contact(contactAddress, nickname, type, hiddenLogin, joinMessage);
   contacts.insert(contactAddress, contact);
   
   /* ordered insert (QMap uses heaps to order keys) */
