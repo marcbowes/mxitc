@@ -115,7 +115,7 @@ void Connection::close()
   /* determine type of connection to open */
   switch (gateway.type) {
     case Gateway::HTTP:
-      /* FIXME: anything in particular? */
+      emit outgoingState(DISCONNECTED);
       break;
     case Gateway::TCP:
       TCP_disconnect();
@@ -201,10 +201,11 @@ void Connection::setGateway(const QString &connectionString)
 void Connection::sendPacket(const Packet *packet)
 {
   if (state != CONNECTED) {
-    if (state != CONNECTING) {
-      emit outgoingError("No connection has been opened");
-    } else {
-      socket->waitForConnected();
+    if (gateway.type == Gateway::TCP) {
+      if (state != CONNECTING)
+        emit outgoingError("No connection has been opened");
+      else
+        socket->waitForConnected();
     }
     
     /* determine type of connection to open */

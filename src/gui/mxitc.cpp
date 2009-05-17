@@ -242,6 +242,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*if the settings was able to load all the necessary variables, the autologin can commence*/
   /*TODO don't autologin if user has set it to not do so in options*/
   if (hasAllVariables) {
+    mxit->setGateway(settings->value("gateway"));
     loggingIn();
     mxit->authenticate(variableHash);
   }

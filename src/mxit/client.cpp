@@ -547,10 +547,12 @@ void Client::incomingPacket(QByteArray packet)
       variables["status"] = "mxitc";
       sendPacket("setshownpresenceandstatus");
       
-      /* start the first pollDifference */
-      if (variables["polltimer"].toUInt() == 0)
-        variables["polltimer"] = "30"; /* default */
-      pollTimer.start(variables["polltimer"].toUInt());
+      if (connection->isHTTP()) {
+        /* start the first pollDifference */
+        if (variables["polltimer"].toUInt() == 0)
+          variables["polltimer"] = QByteArray::number(15 * 1000); /* default */
+        pollTimer.start(variables["polltimer"].toUInt());
+      }
       break;
     case LOGOUT:
       connection->close();
