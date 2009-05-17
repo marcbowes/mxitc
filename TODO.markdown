@@ -10,6 +10,8 @@
 ##Details
 * splash screen
 * add gateway subscriptions (if time)
+* clear contacts and grey out chat area when logged off
+* marc needs to emit logged off action when we get logged off
 
 ##List
 * message in open conversations if te contact goes online/offline (system messages)

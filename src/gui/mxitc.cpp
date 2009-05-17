@@ -115,7 +115,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   connect(mxit, SIGNAL(environmentReady()), this, SLOT(environmentVariablesReady()));
   
-  connect(contactsWidget, SIGNAL (groupsUpdated( const QMap<QString, bool>& )), addContactWidget, SLOT(updateGroups(const QMap<QString, bool>& )));
+  connect(contactsWidget, SIGNAL (groupsUpdated( const QStringList & )), addContactWidget, SLOT(updateGroups(const QStringList & )));
   
   connect(mainWebView, SIGNAL(linkClicked(const QUrl&)), mxit, SLOT(linkClicked(const QUrl&)));
   /*TODO put this somewhere useful*/

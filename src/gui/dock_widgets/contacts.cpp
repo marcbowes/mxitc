@@ -179,6 +179,7 @@ void Contacts::popUpContextMenu(const QPoint & point) {
       menuItems.append("Change Group Name");
       
     menuItems.append("Send Message To Group");
+    menuItems.append("Start Group Chat");
     menuItems.append("Remove Group");
   }
   else if (menuType == MULTI && (menuFunction = &Contacts::multiContactMenu)) {
@@ -365,7 +366,12 @@ void Contacts::groupContactMenu(const QString & selection, const QList<QTreeWidg
     /*TODO*/
   }
   else if (selection == "Send Message To Group") {
-    /*TODO*/
+    ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
+    //mxit->sendGroupMessage();/*TODO hook up to client*/
+  }
+  else if (selection == "Start Group Chat") {
+    ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
+    createNewGroupChat(contactList);
   }
   else if (selection == "Remove Group") {
     /*TODO*/
@@ -380,13 +386,10 @@ void Contacts::groupContactMenu(const QString & selection, const QList<QTreeWidg
 
 void Contacts::multiContactMenu(const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi) {
 
-  /*QList<Contacts*> contactList;
-  Q_FOREACH(QTreeWidgetItem * twi, selectedTwi) {
-    if ()
-  
-  }*/
-
   if (selection == "Start Group Chat") {
+    /**/
+    ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
+    createNewGroupChat(contactList);
     /*TODO*/
   }
   else if (selection == "Change Group") {
@@ -397,6 +400,38 @@ void Contacts::multiContactMenu(const QString & selection, const QList<QTreeWidg
   }
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Contacts::createNewGroupChat(const ContactList& contactList) {
+  mxit.createNewGroupChat("test room name", contactList);
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+
+ContactList Contacts::genContactsListFromTwiSelection(const QList<QTreeWidgetItem *>& selectedTwi) {
+
+  ContactList contactList;
+  Q_FOREACH(QTreeWidgetItem * twi, selectedTwi) {
+    if (twiToGroup.contains(twi)) {
+      /* add all contacts in group*/
+      for (int i = 0 ; i < twi->childCount () ; i++)
+        contactList.append(twiToContact.value(twi->child(i)));
+    }
+    else
+      contactList.append(twiToContact.value(twi));
+  
+  }
+  return contactList;
+}
 
 
 /****************************************************************************
@@ -411,17 +446,17 @@ void Contacts::emitConversationRequest(QTreeWidgetItem *item, int index) {
   emit conversationRequest(twiToContact.value(item));
 }
 
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
 **
-** returns an orderedset of group names
+** returns an ordered list of group names
 **
 ****************************************************************************/
 
-const QMap<QString, bool>& Contacts::getGroupNames() {
-
-  return orderedGroupNames;
+QStringList Contacts::getGroupNames() {
+  return orderedGroupNames.keys();
 }
 
 /****************************************************************************
@@ -621,8 +656,10 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
   
   }
   
+  
+  
   //qDebug() <<orderedGroupNames; /*TODO test groupMap thing*/
-  emit groupsUpdated(orderedGroupNames);
+  emit groupsUpdated(getGroupNames());
 }
 
 

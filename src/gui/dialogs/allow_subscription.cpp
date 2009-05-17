@@ -16,7 +16,7 @@ namespace Dialog
 ** Author: Richard Baxter
 **
 ****************************************************************************/
-AllowSubscription::AllowSubscription(const QString & inviteMessage, const QString & nickname, const QMap<QString, bool>& groups, QWidget *parent) :
+AllowSubscription::AllowSubscription(const QString & inviteMessage, const QString & nickname, const QStringList& groups, QWidget *parent) :
  QDialog(parent)
 {
   setupUi(this);
@@ -24,9 +24,7 @@ AllowSubscription::AllowSubscription(const QString & inviteMessage, const QStrin
   inviteMessageTextEdit->setText(inviteMessage);
   nicknameLineEdit->setText(nickname);
   
-  Q_FOREACH(QString s, groups.keys()) {
-    groupComboBox->addItem ( s );
-  }
+  groupComboBox->addItems ( groups );
 }
 
 

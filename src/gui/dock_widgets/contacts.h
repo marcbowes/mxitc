@@ -42,11 +42,11 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   signals:
   void conversationRequest ( const Contact * contact );
   
-  void groupsUpdated( const QMap<QString, bool>& groupNames);
+  void groupsUpdated( const QStringList& groupNames);
   
   public: /* methods */
   
-  const QMap<QString, bool>& getGroupNames();
+  QStringList getGroupNames(); /* recreates list... slow! FIXME ?*/
   void refresh(const OrderedContactMap& contacts);
   
   private: /* methods */
@@ -60,6 +60,10 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   void groupContactMenu         (const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi);
   void multiContactMenu         (const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi);
   void singleContactMenu        (const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi);
+  
+  
+  void createNewGroupChat(const ContactList& contactList);
+  ContactList genContactsListFromTwiSelection(const QList<QTreeWidgetItem *>& selectedTwi);
   
   public slots:
   void refreshThemeing();
@@ -80,6 +84,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   MXit::Client& mxit;
   
   QMap<QString, bool> orderedGroupNames;
+  
   QHash<QString, QTreeWidgetItem*> groupToTwi;
   QHash<QTreeWidgetItem*, QString> twiToGroup;
   QHash<MXit::Contact*, QTreeWidgetItem*> contactToTwi;
