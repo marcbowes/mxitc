@@ -108,9 +108,9 @@ void Conversations::addMessage(const QByteArray &contactAddress,
     Contact *contact = address_book->contactFromAddress(contactAddress);
     /* either from a contact, or from us */
     if (contact)
-      conversation->appendMessage(Message(contact, msg, flags));
+      conversation->appendMessage(Message(contact, msg, flags, type.toInt()));
     else
-      conversation->appendMessage(Message(msg, true));//FIXME: use a value from prefs
+      conversation->appendMessage(Message(msg, true, 2));//FIXME: use a value from prefs
     
     /* FIXME: only write new message */
     if (log.exists()) {
@@ -135,7 +135,7 @@ void Conversations::addSystemMessage(const QByteArray &id, const QByteArray &msg
   
   /* safety check */
   if (conversation = conversations.value(id))
-    conversation->appendMessage(Message(NULL, msg, 0));
+    conversation->appendMessage(Message(NULL, msg, 0, 2));
 }
 
 

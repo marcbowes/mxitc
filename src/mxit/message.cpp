@@ -6,6 +6,7 @@
 
 #include <QTextDocument>
 #include <QRegExp>
+#include <QStringList>
 
 #include "protocol/enumerables/message.h"
 
@@ -31,12 +32,13 @@ namespace MXit
 ** Constructor for outgoing chat (to a Contact)
 **
 ****************************************************************************/
-Message::Message(const QString &message, bool hasMarkup)
+Message::Message(const QString &message, const bool hasMarkup, const int messageType)
   : contact(NULL), markedupMessage(markup(message)), rawMessage(message),
     system(false),
     timestamp(QTime::currentTime()),
     
     containsMarkup(hasMarkup),
+    type(messageType),
     deliveryNotification(false),
     readNotification(false),
     passwordEncrypted(false),
@@ -56,11 +58,10 @@ Message::Message(const QString &message, bool hasMarkup)
 ** Constructor for incoming chat (from a Contact)
 **
 ****************************************************************************/
-Message::Message(const Contact *contact, const QString &message, const QByteArray flags)
+Message::Message(const Contact *contact, const QString &message, const QByteArray flags, const int messageType)
   : contact(contact), markedupMessage(markup(message)), rawMessage(message),
     system(contact == NULL),
     timestamp (QTime::currentTime()),
-    
     deliveryNotification(flagDeliveryNotification(flags)),
     readNotification(flagReadNotification(flags)),
     passwordEncrypted(flagPasswordEncrypted(flags)),
@@ -68,7 +69,8 @@ Message::Message(const Contact *contact, const QString &message, const QByteArra
     replyShouldBePasswordEncrypted(flagReplyShouldBePasswordEncrypted(flags)),
     replyShouldBeTransportEncrypted(flagReplyShouldBeTransportEncrypted(flags)),
     containsMarkup(flagContainsMarkup(flags)),
-    containsCustomEmoticons(flagContainsCustomEmoticons(flags))
+    containsCustomEmoticons(flagContainsCustomEmoticons(flags)),
+    type(messageType)
 {
   /* Nothing */
 }
@@ -95,7 +97,8 @@ Message::Message(const Message &other)
     replyShouldBePasswordEncrypted(other.replyShouldBePasswordEncrypted),
     replyShouldBeTransportEncrypted(other.replyShouldBeTransportEncrypted),
     containsMarkup(other.containsMarkup),
-    containsCustomEmoticons(other.containsCustomEmoticons)
+    containsCustomEmoticons(other.containsCustomEmoticons),
+    type(other.type)
 {
   /* Nothing */
 }
@@ -208,6 +211,30 @@ QString Message::markup(const QString &markup)
   return markedUp;
 }
 
+QString Message::commandUp(const QString &markup)
+{
+  QStringList lines(markup.split('\n'));
+  QRegExp rx("::(.*)\\):(.*)");
+  QString markedUp;
+  
+  Q_FOREACH(const QString &line, lines) {
+    if (!line.isEmpty()) {
+      if (rx.indexIn(line) != -1) {
+        markedUp += "<a href=";
+        markedUp += rx.cap(1);
+        markedUp += ">";
+        markedUp += rx.cap(2);
+        markedUp += "</a><br>";
+      } else {
+        markedUp += line;
+        markedUp += "<br>";
+      }
+    }
+  }
+  
+  return markedUp;
+}
+
 
 /****************************************************************************
 **
@@ -283,7 +310,10 @@ bool Message::flagContainsCustomEmoticons(const QByteArray flags)
 ****************************************************************************/
 const QString Message::message() const
 {
-  return containsMarkup ? markedupMessage : rawMessage;
+  if (type == MXit::Protocol::Enumerables::Message::Command) {
+    return commandUp(rawMessage);
+  } else
+    return containsMarkup ? markedupMessage : rawMessage;
 }
 
 }

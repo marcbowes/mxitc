@@ -24,12 +24,15 @@ class Message
 {
   public:         /* class specific */
   
-  Message(const QString &message, bool hasMarkup);
-  Message(const Contact *contact, const QString &message, const QByteArray flags);
+
+  Message(const QString &message, const bool hasMarkup, const int messageType);
+  Message(const Contact *contact, const QString &message, const QByteArray flags, const int messageType);
+
   Message(const Message &other);
   ~Message();
   
   static QString markup(const QString &markup);
+  static QString commandUp(const QString &markup);
   
   /* flag creator methods */
   static bool flagContainsCustomEmoticons(const QByteArray flags);
@@ -62,6 +65,8 @@ class Message
   const bool replyShouldBePasswordEncrypted;
   const bool replyShouldBeTransportEncrypted;
   const bool transportEncrypted;
+  
+  const int type;
 };
 
 typedef QList<Message*> MessageList;
