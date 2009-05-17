@@ -367,7 +367,7 @@ void Contacts::groupContactMenu(const QString & selection, const QList<QTreeWidg
   }
   else if (selection == "Send Message To Group") {
     ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
-    //mxit->sendGroupMessage();/*TODO hook up to client*/
+    //mxit->sendGroupMessage(const QString &group, const ContactList &contacts, const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags); /*TODO WTF do these mean!??*/
   }
   else if (selection == "Start Group Chat") {
     ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
@@ -407,6 +407,7 @@ void Contacts::multiContactMenu(const QString & selection, const QList<QTreeWidg
 ****************************************************************************/
 
 void Contacts::createNewGroupChat(const ContactList& contactList) {
+  QDialog selectGroupName();
   mxit.createNewGroupChat("test room name", contactList);
 }
 

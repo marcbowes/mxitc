@@ -31,6 +31,8 @@ Conversations::Conversations(AddressBook *address_book, const QDir &log)
 {
   connect(address_book, SIGNAL(updated(const ContactList&)),
           this,         SLOT(rebuild(const ContactList&)));
+          
+
 }
 
 
