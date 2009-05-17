@@ -49,6 +49,7 @@ Login::Login(
   connect(password, SIGNAL(returnPressed()), this, SLOT(login()));
   connect(captcha, SIGNAL(returnPressed()), this, SLOT(login()));
   connect(loginButton, SIGNAL(released()), this, SLOT(login()));
+  connect(registerButton, SIGNAL(released()), this, SLOT(login(true)));
   connect(cancelButton, SIGNAL(released()), this, SLOT(reject ()));
   
   /* when a CAPTCHA is received from the MXit gateway, display it */
@@ -131,6 +132,7 @@ void Login::environmentVariablesReady()
 ****************************************************************************/
 void Login::cellphoneChanged(const QString &text)
 {
+  registerButton->setDisabled(text.isEmpty() ? true : false);
   loginButton->setDisabled(text.isEmpty() ? true : false);
 }
 
@@ -156,17 +158,25 @@ void Login::error(const QString &text)
 ** this SLOT is triggered by pressing 'Login' or typing return
 **
 ****************************************************************************/
-void Login::login()
+void Login::login(bool register_)
 {
   if (!captcha->text().isEmpty()) {
     loginButton->setDisabled(true);
+    registerButton->setDisabled(true);
     loginButton->setText("Logging in..");
     
     VariableHash variables;
     variables["locale"] = languageComboBox->itemData(languageComboBox->currentIndex ()).toByteArray(); /*language code - locale*/
     variables["cc"] = countriesComboBox->itemData(countriesComboBox->currentIndex ()).toByteArray().replace('-', '_'); /*country code*/
     
-    mxit->login(cellphone->text().toLatin1(), password->text().toLatin1(),captcha->text().toLatin1(), variables);
+    /*TODO does successful registration mean it logs you in automatically*/
+    if (register_) {
+      /*TODO wait for implementation*/
+      //mxit->register(cellphone->text().toLatin1(), password->text().toLatin1(),captcha->text().toLatin1(), variables);
+    }
+    else {
+      mxit->login(cellphone->text().toLatin1(), password->text().toLatin1(),captcha->text().toLatin1(), variables);
+    }
     emit loggingIn();
     
     settings->setValue("locale", variables["locale"]);
@@ -185,6 +195,7 @@ void Login::login()
 ****************************************************************************/
 void Login::resetButtons()
 {
+  registerButton->setDisabled(false);
   loginButton->setDisabled(false);
   loginButton->setText("Login");
 }
@@ -201,6 +212,7 @@ void Login::resetButtons()
 ****************************************************************************/
 void Login::passwordChanged(const QString &text)
 {
+  registerButton->setDisabled(text.isEmpty() ? true : false);
   loginButton->setDisabled(text.isEmpty() ? true : false);
 }
 

@@ -73,9 +73,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*------------------------------------------------------------------------------------------*/
   /*Settings restore */
   /*------------------------------------------------------------------------------------------*/
-  /* TODO save window size and maximised state*/
-  /* After all the MXitDockWidgets have been added, their attributes can be restored*/
-  restoreState(settings->value("gui layout").toByteArray());
   
   /* Restoring theme information */
   optionsWidget->setBaseThemeDirectory(settings->value("themeBaseDirectory").toString());
@@ -153,6 +150,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*------------------------------------------------------------------------------------------*/
   
   connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+  connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(refreshChatBox()));
   connect(  optionsWidget, SIGNAL(themeChanged()), conversationsWidget, SLOT(refreshThemeing()));
   connect(  optionsWidget, SIGNAL(themeChanged()), contactsWidget, SLOT(refreshThemeing()));
   
@@ -285,32 +283,6 @@ void MXitC::environmentVariablesReady() {
 
 
 
-
-
-  
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** Closes and cleans up the requested chat session
-** NOTE assumes the conversationName is correct, error checking should be done higher up!
-** FIXME all logs will be lost if you do this, logging system still to be implemented
-**
-****************************************************************************/
-
-/* moved elsewhere*/
-/*void MXitC::closeConversation(Conversation* conversation) {
-
-  /* if user closes the currentConversation*/
-  /*if(conversationName == currentConversation->conversationName)
-     currentConversation = 0;
-     
-  conversations.remove(conversation);
-  refreshConversations();
-  refreshChatBox();
-}*/
-
-
 /****************************************************************************
 **
 ** Author: Richard Baxter
@@ -353,6 +325,7 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
   dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
   dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
     
+  dockWidget->resize(settings->value(QString("size?")+dockWidget->objectName ()).toSize());
   /* connecting the associated action to it's toggleVisibility SLOT*/
   /* TODO still haven't figured out how to check if the widget is raised or not, right now it only toggles visibility and doesn't cycle from visible but not raised -> visible and raised -> not visible -> visible and raised*/
   connect(action, SIGNAL(triggered()), dockWidget, SLOT(toggleVisibility()));
@@ -372,6 +345,9 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
           logWidget, 
           SLOT(logMessage( const QString& ))  );
   
+  /* After the MXitDockWidget has been added, it attributes can be restored*/
+  /* this function is a bit inefficient but what the hell, this happens only once pre application run*/
+  restoreState(settings->value("gui layout").toByteArray());
 }
 
 
@@ -395,6 +371,7 @@ void MXitC::saveLayout(Qt::DockWidgetArea area) {
   
     settings->setValue(QString("visible?")+dw->objectName (), dw->isVisible());
     settings->setValue(QString("floating?")+dw->objectName (), dw->isFloating());
+    settings->setValue(QString("size?")+dw->objectName (), dw->size());
   }
   
   settings->setValue("gui layout", saveState());

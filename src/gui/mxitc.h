@@ -75,8 +75,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void messageReceived();
   //void subscriptionsReceived();
   
-  void refreshChatBox();
-  
   const Conversation * ensureExistanceOfConversation(const QString & uniqueId);
   
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
@@ -119,6 +117,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void sendGatewayToClient(const QString& gateway);
   
   void themeChanged();
+  
+  void refreshChatBox();
   
   
   private:        /* variables */
