@@ -117,6 +117,10 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   connect(contactsWidget, SIGNAL (groupsUpdated( const QMap<QString, bool>& )), addContactWidget, SLOT(updateGroups(const QMap<QString, bool>& )));
   
+  connect(mainWebView, SIGNAL(linkClicked(const QUrl&)), mxit, SLOT(linkClicked(const QUrl&)));
+  /*TODO put this somewhere useful*/
+  mainWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+  
   /*------------------------------------------------------------------------------------------*/
   /* Connecting new variables SIGNAL from the widgets to the client
   /*------------------------------------------------------------------------------------------*/

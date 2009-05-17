@@ -23,3 +23,5 @@
 * proper capabilities in login/register. needs to be saved to settings
 * option dockwidget doesn't reload whether it's open
 
+##Low level
+* handle font size and colour markups

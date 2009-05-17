@@ -17,6 +17,7 @@
 #include <QDate>
 #include <QHash>
 #include <QTimer>
+#include <QUrl>
 
 #include "common/actions.h"
 
@@ -80,6 +81,7 @@ class Client : public QObject
     const QString &nickname);
   void updateProfile(const QString &pin, const QString &name, bool hiddenLoginname,
     const QDate &dateOfBirth, const QString &gender);
+  void linkClicked(const QUrl &url);
   
   public:         /* methods */
   
