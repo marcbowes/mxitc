@@ -115,6 +115,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   connect(mxit, SIGNAL(environmentReady()), this, SLOT(environmentVariablesReady()));
   
+  connect(contactsWidget, SIGNAL (groupsUpdated( const QMap<QString, bool>& )), addContactWidget, SLOT(updateGroups(const QMap<QString, bool>& )));
+  
   /*------------------------------------------------------------------------------------------*/
   /* Connecting new variables SIGNAL from the widgets to the client
   /*------------------------------------------------------------------------------------------*/
