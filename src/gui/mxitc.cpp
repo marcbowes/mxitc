@@ -708,7 +708,7 @@ void MXitC::themeChanged(){
 void MXitC::presenceToggled(const MXit::Contact* contact) {
   
   Q_FOREACH (const MXit::Conversation* conversation, conversations->getInvolvements(contact)) {
-    conversations->addSystemMessage(conversation->uniqueIdentifier.toAscii (), (contact->nickname + " is now "+ getPresenceString((int)contact->presence) ).toAscii ());
+    conversations->addSystemMessage(conversation->uniqueIdentifier.toAscii (), (contact->nickname + " is now "+ getPresenceString(contact->presence)).toAscii ());
   
   }
   
@@ -716,14 +716,22 @@ void MXitC::presenceToggled(const MXit::Contact* contact) {
 
 /****************************************************************************
 **
-** Author: Lord Kelvin
+** Author: Marc Bowes
 **
 ****************************************************************************/
-
-QString MXitC::getPresenceString (int type /*too lazy to type out the name :p*/) {
-
-  return "WICKED!";
-
+QString MXitC::getPresenceString(Protocol::Enumerables::Contact::Presence presence)
+{
+  using namespace Protocol::Enumerables::Contact;
+  switch (presence) {
+    case Offline:       return "Offline";
+    case Online:        return "Online";
+    case Away:          return "Away";
+    case Available:     return "Available";
+    case DoNotDisturb:  return "Do Not Disturb";
+    case Unaffiliated:  return "Unaffiliated";
+  }
+  
+  return "Unknown"; 
 }
 
 /****************************************************************************

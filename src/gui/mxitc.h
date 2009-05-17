@@ -82,7 +82,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
   
-  QString getPresenceString (int type /*too lazy to type out the name :p*/);
+  QString getPresenceString(Protocol::Enumerables::Contact::Presence presence);
   
  
 
