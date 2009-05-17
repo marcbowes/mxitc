@@ -117,6 +117,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   connect(contactsWidget, SIGNAL (groupsUpdated( const QStringList & )), addContactWidget, SLOT(updateGroups(const QStringList & )));
   
+  connect(conversations, SIGNAL (updated(const Conversation* )), this, SLOT(refreshChatBox(const  Conversation* ))); /*refreshChatBox(const  Conversation* ) HACK HACK HACK*/
+  
   connect(mainWebView, SIGNAL(linkClicked(const QUrl&)), mxit, SLOT(linkClicked(const QUrl&)));
   /*TODO put this somewhere useful*/
   mainWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
@@ -600,7 +602,7 @@ void MXitC::sendMessageFromChatInput()
 **
 ****************************************************************************/
 
-void MXitC::refreshChatBox(){
+void MXitC::refreshChatBox(const Conversation * conversation /*hack?*/){
 
 
   if (currentConversation) {
@@ -670,10 +672,8 @@ void MXitC::themeChanged(){
 
 void MXitC::presenceToggled(const MXit::Contact* contact) {
   
-  
-  QByteArray flags;
-  Q_FOREACH (const MXit::Conversation* converastion, conversations->getInvolvements(contact)) {
-    //converastion->appendSystemMessage(converastion->uniqueIdMessage((Contact *)NULL, contact->nickname + " is now "+ getPresenceString((int)contact->presence), flags));
+  Q_FOREACH (const MXit::Conversation* conversation, conversations->getInvolvements(contact)) {
+    conversations->addSystemMessage(conversation->uniqueIdentifier.toAscii (), (contact->nickname + " is now "+ getPresenceString((int)contact->presence) ).toAscii ());
   
   }
   
