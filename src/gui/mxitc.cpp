@@ -642,6 +642,7 @@ void MXitC::refreshChatBox(){
 void MXitC::logConversations(const QDir &log)
 {
   settings->setValue("logConversations", log.absolutePath());
+  conversations->log = log;
 }
 
 /****************************************************************************
