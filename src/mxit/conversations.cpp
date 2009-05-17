@@ -124,6 +124,23 @@ void Conversations::addMessage(const QByteArray &contactAddress,
 **
 ** Author: Marc Bowes
 **
+** Finds a Conversation (by name and type) and appends a System Message.
+**
+****************************************************************************/
+void Conversations::addSystemMessage(const QByteArray &id, const QByteArray &msg)
+{
+  Conversation *conversation;
+  
+  /* safety check */
+  if (conversation = conversations.value(id))
+    conversation->appendMessage(Message(NULL, msg, 0));
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Returns a pointer to a Conversation (if exists).
 **
 ****************************************************************************/

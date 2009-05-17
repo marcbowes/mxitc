@@ -574,6 +574,11 @@ void Client::incomingPacket(QByteArray packet)
       variables.remove("id");
       variables.remove("flags");
       break;
+    case GETMULTIMEDIAMESSAGE:
+      emit outgoingAction(MULTIMEDIA_RECEIVED);
+      
+      /* variable scrubbing */
+      break;
     case GETNEWSUBSCRIPTION:
       emit outgoingAction(SUBSCRIPTIONS_RECEIVED);
 

@@ -45,6 +45,7 @@ class Conversations : public QObject
     const QByteArray &dateTime, const QByteArray &type,
     const QByteArray &id, const QByteArray &flags,
     const QByteArray &msg);
+  void addSystemMessage(const QByteArray &id, const QByteArray &msg);
   const Conversation* getConversation(const QString &uniqueIdentifier);
   const OrderedConversationMap& getConversations();
   QSet<const Conversation*> getInvolvements(const Contact *contact);
