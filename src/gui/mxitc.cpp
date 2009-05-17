@@ -668,12 +668,12 @@ void MXitC::themeChanged(){
 **
 ****************************************************************************/
 
-void MXitC::presenceToggled(const Contact* contact) {
+void MXitC::presenceToggled(const MXit::Contact* contact) {
   
   
-  
-  Q_FOREACH (const Conversation* converastion, conversations->getInvolvements(contact)) {
-    converastion->appendMessage((Contact *)NULL, contact->nickname + " is now "+ getPresenceString(contact->presence), QByteArray());
+  QByteArray flags;
+  Q_FOREACH (const MXit::Conversation* converastion, conversations->getInvolvements(contact)) {
+    //converastion->appendSystemMessage(converastion->uniqueIdMessage((Contact *)NULL, contact->nickname + " is now "+ getPresenceString((int)contact->presence), flags));
   
   }
   
@@ -687,7 +687,7 @@ void MXitC::presenceToggled(const Contact* contact) {
 
 QString MXitC::getPresenceString (int type /*too lazy to type out the name :p*/) {
 
-  return "WICKED!"
+  return "WICKED!";
 
 }
 
