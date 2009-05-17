@@ -31,9 +31,11 @@ namespace MXit
 ** Constructor for outgoing chat (to a Contact)
 **
 ****************************************************************************/
-Message::Message(const QString &message, const bool hasMarkup)
+Message::Message(const QString &message, bool hasMarkup)
   : contact(NULL), markedupMessage(markup(message)), rawMessage(message),
+    system(false),
     timestamp(QTime::currentTime()),
+    
     containsMarkup(hasMarkup),
     deliveryNotification(false),
     readNotification(false),
@@ -54,9 +56,11 @@ Message::Message(const QString &message, const bool hasMarkup)
 ** Constructor for incoming chat (from a Contact)
 **
 ****************************************************************************/
-Message::Message(const Contact &contact, const QString &message, const QByteArray flags)
-  : contact(&contact), markedupMessage(markup(message)), rawMessage(message),
+Message::Message(const Contact *contact, const QString &message, const QByteArray flags)
+  : contact(contact), markedupMessage(markup(message)), rawMessage(message),
+    system(contact == NULL),
     timestamp (QTime::currentTime()),
+    
     deliveryNotification(flagDeliveryNotification(flags)),
     readNotification(flagReadNotification(flags)),
     passwordEncrypted(flagPasswordEncrypted(flags)),
@@ -81,7 +85,9 @@ Message::Message(const Message &other)
   : contact(other.contact), 
     rawMessage(other.rawMessage),
     markedupMessage(other.markedupMessage),
+    system(other.system),
     timestamp(other.timestamp),
+    
     deliveryNotification(other.deliveryNotification),
     readNotification(other.readNotification),
     passwordEncrypted(other.passwordEncrypted),
