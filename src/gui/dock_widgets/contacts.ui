@@ -24,8 +24,11 @@
        <enum>Qt::CustomContextMenu</enum>
       </property>
       <property name="dragDropMode">
-       <enum>QAbstractItemView::DragDrop</enum>
+       <enum>QAbstractItemView::DragOnly</enum>
       </property>
+      <attribute name="headerVisible">
+       <bool>false</bool>
+      </attribute>
       <attribute name="headerVisible">
        <bool>false</bool>
       </attribute>

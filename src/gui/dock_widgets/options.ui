@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="generalTab">
        <attribute name="title">
@@ -299,7 +299,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>Conversations directory</string>
+         <string>Conversation Log directory</string>
         </property>
        </widget>
       </widget>
