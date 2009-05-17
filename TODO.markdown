@@ -8,6 +8,7 @@
 
 
 ##Details
+* fix settings
 * splash screen
 * add gateway subscriptions (if time)
 * clear contacts and grey out chat area when logged off
@@ -27,3 +28,6 @@
 
 ##Low level
 * handle font size and colour markups
+
+##probably not ever going to happen
+* saveing splash screen advert in settings

@@ -28,8 +28,7 @@ namespace GUI
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentState(LOGGED_OUT), currentConversation(NULL), splash(this)
-{
+MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentConversation(NULL), splash(this) {
   
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   if (QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -69,8 +68,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   addContactWidget = new DockWidget::AddContact (this, theme);
   appendDockWidget(addContactWidget, Qt::LeftDockWidgetArea, actionAdd_Contact);
   
-  
-  
+  /* After the MXitDockWidget has been added, it attributes can be restored*/
+  /* this function is a bit inefficient but what the hell, this happens only once pre application run*/
+  restoreState(settings->value("gui layout").toByteArray());
   /*------------------------------------------------------------------------------------------*/
   /*Settings restore */
   /*------------------------------------------------------------------------------------------*/
@@ -81,10 +81,17 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   if(settings->contains("mainWindowSize"))
     resize(settings->value("mainWindowSize").toSize());
+
+  /* After the MXitDockWidget has been added, it attributes can be restored*/
+  /* this function is a bit inefficient but what the hell, this happens only once pre application run*/
+  //restoreState(settings->value("gui layout").toByteArray());
   
   /* normally the optionsWidget->setSelectedTheme will trigger the optionWidget's themeChanged SIGNAL which will (in a few lines) be connected to this class's themeChange SLOT
   We can't connect the themeChanged SIGNAL/SLOTs up since that would cause a QSettings save on the 'selected theme' on index 0 of the list and this->themeChanged which will overwrite the restored (correct!) QSettings value for 'selected theme' (something [TODO find out again] sets index to 0 => changes index of list => optionsWidget's loadTheme => this class's themeChanged => which overwrites the settings)*/
   themeChanged(); /* so we just call this manually since we know now the correct theme is selected*/
+  
+  /* connecting widgets */
+  connectWidgets();
   
   /*------------------------------------------------------------------------------------------*/
   /* Connecting of functionality from child widgets to client*/
@@ -124,6 +131,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*TODO put this somewhere useful*/
   mainWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   
+  connect(mxit, SIGNAL(outgoingConnectionState(Network::Connection::State)), this, SLOT(incomingConnectionState(Network::Connection::State)));
           
   connect(&addressBook, SIGNAL(presenceToggled(const Contact*)),
           this,         SLOT(presenceToggled(const  Contact*)));
@@ -154,8 +162,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(  conversationsWidget, SIGNAL(conversationRequest ( const Conversation *  )), 
             this, SLOT(setCurrentConversation( const Conversation *  )));
   
-  connect(  optionsWidget, SIGNAL(gatewaySelected(const QString&)), 
-            this, SLOT(sendGatewayToClient(const QString&))  );  
+  connect(  optionsWidget, SIGNAL(gatewaySelected(const QString&, const QString&, const QString&)), 
+            this, SLOT(sendGatewayToClient(const QString&, const QString&, const QString&))  );  
 
   
   /*------------------------------------------------------------------------------------------*/
@@ -176,7 +184,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*------------------------------------------------------------------------------------------*/
   statusLabel = new QLabel("No status set!");
   statusbar->addPermanentWidget(statusLabel);
-  setStatusBar();
+  setStatus(LOGGED_OUT);
   
   /*------------------------------------------------------------------------------------------*/
   /* Loading client hash variables from QSettings and passing to client
@@ -234,6 +242,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*if the settings was able to load all the necessary variables, the autologin can commence*/
   /*TODO don't autologin if user has set it to not do so in options*/
   if (hasAllVariables) {
+    mxit->setGateway(settings->value("gateway").toByteArray(),
+      settings->value("proxyHost").toByteArray(),
+      settings->value("proxyPort").toUInt());
     loggingIn();
     mxit->authenticate(variableHash);
   }
@@ -305,10 +316,12 @@ void MXitC::environmentVariablesReady() {
 ****************************************************************************/
 
 /* TODO fix up the gateway stuff and the gateway stuff in options*/
-void MXitC::sendGatewayToClient(const QString& gateway)
+void MXitC::sendGatewayToClient(const QString& gateway, const QString &proxyHost, const QString &proxyPort)
 {
   settings->setValue("gateway", gateway);
-  mxit->setGateway(gateway);
+  settings->setValue("proxyHost", proxyHost);
+  settings->setValue("proxyPort", proxyPort);
+  mxit->setGateway(gateway, proxyHost, proxyPort.toUInt());
 }
 
 /****************************************************************************
@@ -326,6 +339,7 @@ void MXitC::sendGatewayToClient(const QString& gateway)
 
 void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea area, QAction* action){
 
+  dockWidgetToAction[dockWidget] = action;
   /* adding to vector */
   dockWidgets.append(dockWidget);
   
@@ -339,30 +353,42 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
   dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
     
   dockWidget->resize(settings->value(QString("size?")+dockWidget->objectName ()).toSize());
-  /* connecting the associated action to it's toggleVisibility SLOT*/
-  /* TODO still haven't figured out how to check if the widget is raised or not, right now it only toggles visibility and doesn't cycle from visible but not raised -> visible and raised -> not visible -> visible and raised*/
-  connect(action, SIGNAL(triggered()), dockWidget, SLOT(toggleVisibility()));
   
-  /* hooking it up so that if anything cahnges, the settings will pick it up and save it's location*/
-  connect(
-          dockWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), 
-          this, SLOT(saveLayout(Qt::DockWidgetArea)));
-  connect(
-          dockWidget, SIGNAL(visibilityChanged ( bool ) ), 
-          this, SLOT(saveLayout( bool )));
-          
-  if (dockWidget != logWidget)
-    connect(
-          dockWidget, 
-          SIGNAL(sendLog ( const QString& )), 
-          logWidget, 
-          SLOT(logMessage( const QString& ))  );
   
-  /* After the MXitDockWidget has been added, it attributes can be restored*/
-  /* this function is a bit inefficient but what the hell, this happens only once pre application run*/
-  restoreState(settings->value("gui layout").toByteArray());
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** saves all the widget's attributes
+**
+****************************************************************************/
+
+void MXitC::connectWidgets() {
+  
+  
+  Q_FOREACH (QDockWidget * dockWidget, dockWidgets) {
+    /* connecting the associated action to it's toggleVisibility SLOT*/
+    /* TODO still haven't figured out how to check if the widget is raised or not, right now it only toggles visibility and doesn't cycle from visible but not raised -> visible and raised -> not visible -> visible and raised*/
+    connect(dockWidgetToAction.value(dockWidget), SIGNAL(triggered()), dockWidget, SLOT(toggleVisibility()));
+    
+    /* hooking it up so that if anything cahnges, the settings will pick it up and save it's location*/
+    connect(
+            dockWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), 
+            this, SLOT(saveLayout(Qt::DockWidgetArea)));
+    connect(
+            dockWidget, SIGNAL(visibilityChanged ( bool ) ), 
+            this, SLOT(saveLayout( bool )));
+            
+    if (dockWidget != logWidget)
+      connect(
+            dockWidget, 
+            SIGNAL(sendLog ( const QString& )), 
+            logWidget, 
+            SLOT(logMessage( const QString& ))  );
+  }
+}
 
 /****************************************************************************
 **
@@ -400,6 +426,32 @@ void MXitC::resizeEvent ( QResizeEvent * event ) {
   
   settings->setValue("mainWindowSize", this->size ());
 
+}
+
+
+/****************************************************************************
+   ____                    _             ___      __  _             
+  /  _/__  _______  __ _  (_)__  ___ _  / _ |____/ /_(_)__  ___  ___
+ _/ // _ \/ __/ _ \/  ' \/ / _ \/ _ `/ / __ / __/ __/ / _ \/ _ \(_-<
+/___/_//_/\__/\___/_/_/_/_/_//_/\_, / /_/ |_\__/\__/_/\___/_//_/___/
+                               /___/                                
+
+****************************************************************************/
+
+void MXitC::incomingConnectionState(Network::Connection::State networkState) {
+  
+  if (networkState == Network::Connection::CONNECTING) {
+    /* TODO */
+  }
+  else if (networkState == Network::Connection::CONNECTED) {
+    /* FIXME reconnect? */
+  }
+  else if (networkState == Network::Connection::DISCONNECTING) {
+    /* TODO */
+  }
+  else if (networkState == Network::Connection::DISCONNECTED) {
+    setStatus(LOGGED_OUT);/*FIXME not really logged off ...*/
+  }
 }
 
 /****************************************************************************
@@ -461,8 +513,7 @@ void MXitC::incomingAction(Action action)
         }
         settings->sync();
         
-        currentState = LOGGED_IN;
-        setStatusBar();
+        setStatus(LOGGED_IN);
         
         /* closing the login window if it is open (i.e. login != NULL)*/
         if (login != NULL) {
@@ -480,8 +531,7 @@ void MXitC::incomingAction(Action action)
         ;/* do nothing TODO */
       else /* if (currentState == LOGGED_IN) */
       {
-        currentState = LOGGED_OUT;
-        setStatusBar();
+        setStatus(LOGGED_OUT);
       }
       break;
       
@@ -815,8 +865,10 @@ const Conversation * MXitC::ensureExistanceOfConversation(const QString & unique
 **
 ****************************************************************************/
 
-void MXitC::setStatusBar()
+void MXitC::setStatus(State newState)
 {
+
+  currentState = newState;
 /*TODO make this a set status function*/
 /*TODO disable main chat area when logged out and logging in*/
   switch (currentState) {
@@ -905,8 +957,7 @@ void MXitC::closeEvent(QCloseEvent *event)
 ****************************************************************************/
 
 void MXitC::loggingIn(){
-  currentState = LOGGING_IN;
-  setStatusBar();
+  setStatus(LOGGING_IN);
 }
 /****************************************************************************
 **

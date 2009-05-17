@@ -179,7 +179,7 @@ void Client::authenticate(const VariableHash &settings)
   emit environmentReady();
   emit outgoingVariables(variables);
   
-  connection->setGateway(variables["soc1"]);
+  connection->setGateway(variables["soc1"], "", 0);
   connection->open(getPacket("login"));
 }
 
@@ -336,14 +336,14 @@ void Client::removeContact(const QString &contactAddress)
 ** sets the gateway, and deals with reconnecting
 **
 ****************************************************************************/
-void Client::setGateway(const QString &connectionString)
+void Client::setGateway(const QString &connectionString, const QString &httpHost, quint16 port)
 {
   if (connection->getState() != MXit::Network::Connection::DISCONNECTED) {
     sendPacket("logout");
     connection->close();
     emit outgoingAction(LOGGED_OUT);
   }
-  connection->setGateway(connectionString);
+  connection->setGateway(connectionString, httpHost, port);
   connection->open(getPacket("login"));
 }
 
@@ -597,10 +597,12 @@ void Client::incomingPacket(QByteArray packet)
       variables["status"] = "mxitc";
       sendPacket("setshownpresenceandstatus");
       
-      /* start the first pollDifference */
-      if (variables["polltimer"].toUInt() == 0)
-        variables["polltimer"] = "30"; /* default */
-      pollTimer.start(variables["polltimer"].toUInt());
+      if (connection->isHTTP()) {
+        /* start the first pollDifference */
+        if (variables["polltimer"].toUInt() == 0)
+          variables["polltimer"] = QByteArray::number(15 * 1000); /* default */
+        pollTimer.start(variables["polltimer"].toUInt());
+      }
       break;
     case LOGOUT:
       connection->close();
@@ -941,7 +943,7 @@ void Client::setupReceived()
     return;
   }
   
-  connection->setGateway(variables["soc1"]);
+  connection->setGateway(variables["soc1"], "", 0);
   connection->open(getPacket("login"));
   
   /* cleanup */
