@@ -54,6 +54,13 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   void refreshTreeWidgetItem(QTreeWidgetItem* twi);
   void removeAndDeleteContactOrGroupFromGUI (QTreeWidgetItem* twi);
   
+  
+  void undefinedContactMenu     (const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi);
+  void unaffiliatedContactMenu  (const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi);
+  void groupContactMenu         (const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi);
+  void multiContactMenu         (const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi);
+  void singleContactMenu        (const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi);
+  
   public slots:
   void refreshThemeing();
  
