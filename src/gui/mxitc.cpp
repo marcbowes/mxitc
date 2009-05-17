@@ -121,6 +121,10 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*TODO put this somewhere useful*/
   mainWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   
+          
+  connect(&addressBook, SIGNAL(presenceToggled(const Contact*)),
+          this,         SLOT(presenceToggled(const  Contact*)));
+  
   /*------------------------------------------------------------------------------------------*/
   /* Connecting new variables SIGNAL from the widgets to the client
   /*------------------------------------------------------------------------------------------*/
@@ -658,6 +662,34 @@ void MXitC::themeChanged(){
   
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::presenceToggled(const Contact* contact) {
+  
+  
+  
+  Q_FOREACH (const Conversation* converastion, conversations->getInvolvements(contact)) {
+    converastion->appendMessage((Contact *)NULL, contact->nickname + " is now "+ getPresenceString(contact->presence), QByteArray());
+  
+  }
+  
+}
+
+/****************************************************************************
+**
+** Author: Lord Kelvin
+**
+****************************************************************************/
+
+QString MXitC::getPresenceString (int type /*too lazy to type out the name :p*/) {
+
+  return "WICKED!"
+
+}
 
 /****************************************************************************
   _____                               __  _             

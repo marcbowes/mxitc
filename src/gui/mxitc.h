@@ -80,9 +80,9 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
   
-  /* TODO change to a QList that is sorted by alphabetical order, starting with the "" group*/
-  /* TODO soon to be moved to AddressBook*/
-  //QSet<QString> getGroupSet();
+  QString getPresenceString (int type /*too lazy to type out the name :p*/);
+  
+ 
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
@@ -97,6 +97,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   virtual void closeEvent(QCloseEvent *event);
 
   private slots:
+  
   
   void logConversations(const QDir &log);
   void openLoginDialog();
@@ -120,6 +121,10 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void themeChanged();
   
   void refreshChatBox();
+  void presenceToggled(const  Contact*);
+  
+  
+
   
   
   private:        /* variables */
