@@ -151,6 +151,24 @@ void AddressBook::removeContact(const QString &contactAddress)
 
 
 /****************************************************************************
+**
+** Author: Marc Bowes
+**
+** For packet #5
+**
+****************************************************************************/
+void AddressBook::updateContact(const QString &group, const QString &contactAddress,
+  const QString &nickname)
+{
+  Contact *contact = contactFromAddress(contactAddress);
+  if (contact) {
+    contact->group = group;
+    contact->nickname = group;
+  }
+}
+
+
+/****************************************************************************
                _           __                  __  __           __  
      ___  ____(_)  _____ _/ /____   __ _  ___ / /_/ /  ___  ___/ /__
     / _ \/ __/ / |/ / _ `/ __/ -_) /  ' \/ -_) __/ _ \/ _ \/ _  (_-<

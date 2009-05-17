@@ -366,7 +366,7 @@ void Client::signup()
 ** Author: Marc Bowes
 **
 ****************************************************************************/
-void Client::updateContactInfo(const QString &contactAddress, const QString &group,
+void Client::updateContactInfo(const QString &group, const QString &contactAddress,
     const QString &nickname)
 {
   /* packet variables */

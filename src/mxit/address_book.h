@@ -44,6 +44,8 @@ class AddressBook : public QObject
   Contact* contactFromAddress(const QString &contactAddress);
   const OrderedContactMap& getContacts();
   void removeContact(const QString &contactAddress);
+  void updateContact(const QString &group, const QString &contactAddress,
+    const QString &nickname);
   
   private:       /* methods */
   
