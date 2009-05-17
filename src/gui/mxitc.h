@@ -120,7 +120,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void themeChanged();
   
-  void refreshChatBox();
+  void refreshChatBox(const Conversation * conversation = NULL);
   void presenceToggled(const  Contact*);
   
   
