@@ -71,7 +71,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   private: /* methods */
   void outgoingMessage(const QString & message);
   
-  void setStatusBar();
+  void setStatus(State newState);
   
   /* action handlers */
   //void contactsReceived();
@@ -84,6 +84,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   QString getPresenceString(Protocol::Enumerables::Contact::Presence presence);
   
+  void connectWidgets();
  
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -107,6 +108,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void environmentVariablesReady();
   
   void incomingAction(Action action);
+  void incomingConnectionState(Network::Connection::State networkState);
   
   void setCurrentConversation(const Conversation * conversation);
   void setCurrentConversation(const Contact * contact);
@@ -126,18 +128,16 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void presenceToggled(const  Contact*);
   
   
-
-  
   
   private:        /* variables */
+  
+  const Conversation * currentConversation;
   
   AddressBook addressBook;
   Conversations *conversations;
   
   QSplashScreen splash;
   QPixmap splashImage;
-  
-  const Conversation * currentConversation;
   
   MXit::Client *mxit;
   QApplication *application;
@@ -152,6 +152,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   /* Dockable Widgets*/
   QVector<QDockWidget *> dockWidgets;
+  QHash<QDockWidget *, QAction *> dockWidgetToAction;
   
   DockWidget::Conversations * conversationsWidget;
   DockWidget::Contacts * contactsWidget;
