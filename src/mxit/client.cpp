@@ -210,8 +210,7 @@ void Client::denySubscription(const QString &contactAddress, bool block)
 ** Creates a new Group Chat
 **
 ****************************************************************************/
-void Client::createNewGroupChat(const QString &group, const ContactList &contacts,
-    const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags)
+void Client::createNewGroupChat(const QString &roomName, const ContactList &contacts)
 {
   /* contact addresses */
   QStringList contactList;
@@ -221,11 +220,9 @@ void Client::createNewGroupChat(const QString &group, const ContactList &contact
   
   /* packet variables */
   VariableHash groupVariables;
-  groupVariables["group"] = group.toUtf8();
+  groupVariables["roomname"] = roomName.toUtf8();
   groupVariables["numComtacts"] = QByteArray::number(contacts.size());
   groupVariables["contactList"] = contactList.join("\1").toUtf8();
-  groupVariables["type"] = QByteArray::number(type);
-  groupVariables["flags"] = QByteArray::number(flags);
   
   sendPacket("createnewgroupchat", groupVariables);
 }
@@ -363,9 +360,24 @@ void Client::setShownPresenceAndStatus()
 ** Author: Marc Bowes
 **
 ****************************************************************************/
-void Client::sendGroupMessage()
+void Client::sendGroupMessage(const QString &group, const ContactList &contacts,
+    const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags)
 {
-  /* FIXME: stub */
+  /* contact addresses */
+  QStringList contactList;
+  Q_FOREACH(const Contact *contact, contacts)
+    if (contact->type != Protocol::Enumerables::Contact::Bot)
+      contactList << contact->contactAddress;
+  
+  /* packet variables */
+  VariableHash groupVariables;
+  groupVariables["group"] = group.toUtf8();
+  groupVariables["numComtacts"] = QByteArray::number(contacts.size());
+  groupVariables["contactList"] = contactList.join("\1").toUtf8();
+  groupVariables["type"] = QByteArray::number(type);
+  groupVariables["flags"] = QByteArray::number(flags);
+  
+  sendPacket("sendmessagetogroup", groupVariables);
 }
 
 
