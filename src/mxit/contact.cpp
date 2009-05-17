@@ -112,6 +112,27 @@ bool Contact::operator==(const Contact &other)
 **
 ** Author: Marc Bowes
 **
+** Checks the Contact#type against a list of known bot types
+**
+****************************************************************************/
+bool Contact::notBot() const
+{
+  using namespace Protocol::Enumerables::Contact;
+  switch (type) {
+    case Bot:
+    case Gallery:
+    case Info:
+      return false;
+    default:
+      return true;
+  };
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Returns a prefix (from presence) for use with sorting
 **
 ****************************************************************************/

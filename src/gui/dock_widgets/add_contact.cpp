@@ -145,16 +145,15 @@ void AddContact::sendAddContactInfo() {
 **
 ****************************************************************************/
 
-void AddContact::updateGroups(const QMap<QString, bool>& groupNames) {
+void AddContact::updateGroups(const QStringList& newGroupNames) {
 
   QString selectedGroup =  groupComboBox->currentText();
+  
   groupComboBox->clear();
-  Q_FOREACH(QString s, groupNames.keys()) {
-    groupComboBox->addItem ( s );
-  }
-
+  groupComboBox->addItems ( newGroupNames );
   
   groupComboBox->setCurrentIndex  ( groupComboBox->findText(selectedGroup) );
+
 
 }
 

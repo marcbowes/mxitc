@@ -30,7 +30,7 @@ class AllowSubscription : public QDialog, private Ui::AllowSubscriptionDialog
 
   public:         /* class specific */
   
-  AllowSubscription(const QString & inviteMessage, const QString & nickname, const QMap<QString, bool>& groups, QWidget *parent = 0);
+  AllowSubscription(const QString & inviteMessage, const QString & nickname, const QStringList& groups, QWidget *parent = 0);
   ~AllowSubscription();
   
   public: /* methods */

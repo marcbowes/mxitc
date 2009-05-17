@@ -24,8 +24,10 @@ class Message
 {
   public:         /* class specific */
   
+
   Message(const QString &message, const bool hasMarkup, const int messageType);
-  Message(const Contact &contact, const QString &message, const QByteArray flags, const int messageType);
+  Message(const Contact *contact, const QString &message, const QByteArray flags, const int messageType);
+
   Message(const Message &other);
   ~Message();
   
@@ -51,6 +53,7 @@ class Message
   const Contact *contact;
   const QString  markedupMessage;
   const QString  rawMessage;
+  const bool     system;
   const QTime    timestamp;
   
   /* flags */

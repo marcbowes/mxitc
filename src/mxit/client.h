@@ -29,6 +29,8 @@
 #include "protocol/enumerables/contact.h"
 #include "protocol/enumerables/message.h"
 
+#include "contact.h"
+
 namespace MXit
 {
 
@@ -53,6 +55,7 @@ class Client : public QObject
   void errorEncountered(const QString &);
   void outgoingAction(Action);
   void outgoingConnectionError(const QString &message);
+  void outgoingConnectionState(Network::Connection::State);
   void outgoingMessage(const QString & contactAddress, const QString & message);
   void outgoingError(int code, const QString &message);
   void outgoingVariables(const VariableHash&);
@@ -65,6 +68,7 @@ class Client : public QObject
     const QString &nickname);
   void authenticate(const VariableHash &settings);
   void denySubscription(const QString &contactAddress, bool block=false);
+  void createNewGroupChat(const QString &roomName, const ContactList &contacts);
   void initialize();
   void getContacts();
   void getNewMessages();
@@ -74,6 +78,8 @@ class Client : public QObject
   void removeContact(const QString &contactAddress);
   void setGateway(const QString &connectionString);
   void setShownPresenceAndStatus();
+  void sendGroupMessage(const QString &group, const ContactList &contacts,
+    const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags);
   void sendMessage(const QString &contactAddress, const QString &message,
     Protocol::Enumerables::Message::Type, unsigned int flags);
   void signup();
@@ -89,7 +95,7 @@ class Client : public QObject
   
   private slots:
   
-  void incomingError(const QString &errir);
+  void incomingError(const QString &error);
   void incomingPacket(QByteArray packet);
   void incomingVariables(const VariableHash &variables);
   void keepAlive();

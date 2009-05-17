@@ -48,9 +48,9 @@ class Connection : public QObject
 
   signals:
   
-  void outgoingError(const QString &message);
-  void outgoingPacket(const QByteArray &packet);
-  void outgoingState(const State &outgoing);
+  void outgoingError(const QString&);
+  void outgoingPacket(const QByteArray&);
+  void outgoingState(Network::Connection::State);
 
   public:         /* methods */
   

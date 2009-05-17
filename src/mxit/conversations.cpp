@@ -31,6 +31,8 @@ Conversations::Conversations(AddressBook *address_book, const QDir &log)
 {
   connect(address_book, SIGNAL(updated(const ContactList&)),
           this,         SLOT(rebuild(const ContactList&)));
+          
+
 }
 
 
@@ -106,7 +108,7 @@ void Conversations::addMessage(const QByteArray &contactAddress,
     Contact *contact = address_book->contactFromAddress(contactAddress);
     /* either from a contact, or from us */
     if (contact)
-      conversation->appendMessage(Message(*contact, msg, flags, type.toInt()));
+      conversation->appendMessage(Message(contact, msg, flags, type.toInt()));
     else
       conversation->appendMessage(Message(msg, true, 2));//FIXME: use a value from prefs
     
@@ -117,6 +119,23 @@ void Conversations::addMessage(const QByteArray &contactAddress,
         writeOut.write(conversation->conversationHtml.toUtf8());
     }
   }
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Finds a Conversation (by name and type) and appends a System Message.
+**
+****************************************************************************/
+void Conversations::addSystemMessage(const QByteArray &id, const QByteArray &msg)
+{
+  Conversation *conversation;
+  
+  /* safety check */
+  if (conversation = conversations.value(id))
+    conversation->appendMessage(Message(NULL, msg, 0, 2));
 }
 
 

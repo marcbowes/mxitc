@@ -115,179 +115,325 @@ void Contacts::refreshThemeing() {
 **
 ****************************************************************************/
 
-#define MENU_START(title) QMenu contextMenu(title, this); QHash<QString, QAction*> hash;
-#define MENU_ITEM(y) hash[y] = new QAction (y, this); contextMenu.addAction(hash[y]);
-#define MENU_EXEC(s) \
-{ \
-QAction* a = contextMenu.exec( pos ); \
-bool __ret = true; \
-if (a){ s = a->text(); __ret = false;} \
-Q_FOREACH(QAction * act, hash){ delete act; } \
-if (__ret) return;  \
-}
 
 void Contacts::popUpContextMenu(const QPoint & point) {
   
+  
+  enum MenuType {UNDEFINED, SINGLE, UNAFFILIATED, GROUP, MULTI, NONE};
+  MenuType menuType = UNDEFINED;
+  
   QTreeWidgetItem * twi = (contactsTree->itemAt ( point.x(), point.y() ));
-  Contact * contact;
-  QPoint pos;
-  //qDebug() << twi;
-  if (twi) {
-    pos = contactsTree->mapToGlobal ( point );
-    if (twiToGroup.contains(twi)) {
-      /*then this is a group item*/
-      contact = NULL;
+  QList<QTreeWidgetItem *> selectedItems =  contactsTree->selectedItems ();
+  
+  /* ======== selecting which menu to use ======== */
+  
+  if (selectedItems.size() == 0) {
+    menuType = NONE;
+    return; /* TODO is there a contect menu for nothing */
+  }
+  else if (selectedItems.size() > 1) {
+    menuType = MULTI;
+  }
+  else { //  if (selectedItems.size() == 1)
+    if (twi) {
+      if (twiToGroup.contains(twi)) {
+        /*then this is a group item*/
+        menuType = GROUP;
+      }
+      else {
+        /*then this is not a group icon => contact item*/
+        if (twiToContact.value(twi)->presence == Protocol::Enumerables::Contact::Unaffiliated)
+          menuType = UNAFFILIATED;
+        else
+          menuType = SINGLE;
+      }
     }
     else {
-      /*then this is not a group icon => contact item*/
-      contact = twiToContact.value(twi);
+      menuType = NONE;
     }
-  }
-  else {
-    return;
   }
   
-  MENU_START(contact?contact->nickname:twiToGroup.value(twi));
-  if (contact) {
+  /* ======== defining menus ======== */
   
-    if (contact->presence == Protocol::Enumerables::Contact::Unaffiliated) {
-      MENU_ITEM("Accept");
-      MENU_ITEM("Reject");
-      MENU_ITEM("Reject Permanently");
-    }
-    else {
-      MENU_ITEM("Chat");
-      MENU_ITEM("Change Nickname or Group");
-      //MENU_ITEM("Send File");
-      MENU_ITEM("Remove Contact");
-    }
+  void (Contacts::*menuFunction)(const QString&, const QList<QTreeWidgetItem *>&  ) = NULL;
+  QList<QString> menuItems;
+  QString title;
+  
+  
+  if (menuType == SINGLE && (menuFunction = &Contacts::singleContactMenu)) {
+    title = twiToContact[selectedItems.front()]->nickname;
+    menuItems.append("Chat");
+    menuItems.append("Change Nickname or Group");
+    menuItems.append("Send File");
+    menuItems.append("Remove Contact");
   }
-  else { /*group*/
-    
+  else if (menuType == UNAFFILIATED && (menuFunction = &Contacts::unaffiliatedContactMenu)) {
+    title = twiToContact[selectedItems.front()]->nickname;
+    menuItems.append("Accept");
+    menuItems.append("Reject");
+    menuItems.append("Reject Permanently");
+  }
+  else if (menuType == GROUP && (menuFunction = &Contacts::groupContactMenu)) {
+    title = twiToGroup.value(twi);
     if (twiToGroup[twi] != "")
-      MENU_ITEM("Change Group Name");
+      menuItems.append("Change Group Name");
       
-    MENU_ITEM("Send Message To Group");
-    MENU_ITEM("Remove Group");
-    
+    menuItems.append("Send Message To Group");
+    menuItems.append("Start Group Chat");
+    menuItems.append("Remove Group");
   }
- 
-  QString selection;
-  MENU_EXEC(selection);
-  
-  
-  
-  if (contact) {
-    if (contact->presence == Protocol::Enumerables::Contact::Unaffiliated) {
-      if (selection == "Accept") 
-      {
-        /* TODO need this function implemented*/
-        Dialog::AllowSubscription allow (contact->inviteMessage, contact->nickname, getGroupNames(), this);
-        
-        /*TODO check that they don't make duplicate nicknames*/
-        if (allow.exec() == QDialog::Accepted) {
-          
-          mxit.allowSubscription(contact->contactAddress, allow.getGroup(), allow.getNickname());
-          emit sendLog("GUI::Contacts "+contact->nickname+" subscribed to");
-          /* should get a contacts update back from network after this is sent*/
-        }
-        //else do nothing
-          
-      }
-      else if (selection == "Reject" || selection == "Reject Permanently") 
-      {
-        bool block = (selection == "Reject Permanently");
-        QString informativeText = "";
-        
-        QMessageBox sure;
-        sure.setText("Are you sure you wish to reject \""+contact->nickname+"\""+ (block?" permanently":"")+"?");
-        
-        if (block) {
-          informativeText+="In order to unblock, you need to add "+contact->nickname+" as a contact";
-        }
-        
-        if (contact->inviteMessage != "") {
-          if (block) informativeText+="\n";
-          informativeText+=contact->nickname+" sent you an invite message: \"" + contact->inviteMessage+"\"";
-        }
-        
-        
-        sure.setInformativeText(informativeText);
-          
-        sure.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-        sure.setDefaultButton(QMessageBox::Cancel);
-        
-        if (sure.exec() == QMessageBox::Ok) {
-          /* send rejection to client*/
-          mxit.denySubscription(contact->contactAddress, block);
-          emit sendLog("GUI::Contacts "+contact->nickname+" subscription"+(block?" permanently":"")+" denyed");
-          addressBook.removeContact(contact->contactAddress);
-          removeAndDeleteContactOrGroupFromGUI(twi);
-        }
-      }
-    }
-    else 
-    {
-      if (selection == "Chat") 
-      {
-        emitConversationRequest(twi);
-      }
-      else if (selection == "Change Nickname or Group") {
-        Dialog::UpdateContactInfo update(contact->nickname, getGroupNames(), contact->group, this);
-        /*TODO check that they don't make duplicate nicknames*/
-        if (update.exec() == QDialog::Accepted) {
-          
-          /*wait for implementsation in addressbook*/
-          addressBook.updateContact(update.getGroup(), contact->contactAddress, update.getNickname());
-          mxit.updateContactInfo(update.getGroup(), contact->contactAddress, update.getNickname());
-          emit sendLog("GUI::Contacts "+contact->nickname+" updated to "+update.getNickname() +" group " + update.getGroup());
-          /* should get a contacts update back from network after this is sent*/
-          /* NOTE, tested this, reply does NOT come...rage*/
-        }
-          
-      }
-      //else if (selection == "Send File") {
-        /* TODO */
-      //}
-      else if (selection == "Remove Contact") {
-        
-        QMessageBox sure;
-        sure.setText("Are you sure you wish to remove \""+contact->nickname+"\"");
-        sure.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-        sure.setDefaultButton(QMessageBox::Cancel);
-        
-        if (sure.exec() == QMessageBox::Ok) {
-          mxit.removeContact(contact->contactAddress);
-          emit sendLog("GUI:: contact \""+contact->contactAddress+"\" removed");
-          addressBook.removeContact(contact->contactAddress);
-          /*removing from gui*/
-          QSet<const Conversation*> involvements = conversations.getInvolvements(contact);
-          Q_FOREACH(const Conversation* conversation, involvements) {
-            if (conversation->type == MXit::Conversation::Private)
-              conversations.toggleActive(conversation->uniqueIdentifier);
-          }
-          removeAndDeleteContactOrGroupFromGUI(twi);
-        }
-      }
-    }
+  else if (menuType == MULTI && (menuFunction = &Contacts::multiContactMenu)) {
+    title = "Multiple Contacts";
+    menuItems.append("Start Group Chat");
+    menuItems.append("Change Group");
+    menuItems.append("Remove Contacts");
   }
-  else { /*group*/
-    if (selection == "Change Group Name") {
-      /*TODO*/
+  else if (menuType == NONE && (menuFunction = NULL)) {
+  }
+  else if (menuType == UNDEFINED && (menuFunction = NULL)) {
+  }
+  
+  /* running correct context menu */
+
+  if (menuFunction != NULL) {
+    QMenu contextMenu(title, this);
+    QHash<QString, QAction*> hash;
+    Q_FOREACH (const QString& str, menuItems) {
+      hash[str] = new QAction (str, this); 
+      contextMenu.addAction(hash[str]);
     }
-    else if (selection == "Send Message To Group") {
-      /*TODO*/
+    QString selectedString = "";
+    QAction* a = contextMenu.exec( contactsTree->mapToGlobal(point) );
+    bool nothingSelected = true;
+    if (a){ 
+      selectedString = a->text(); 
+      nothingSelected = false;
     }
-    else if (selection == "Remove Group") {
-      /*TODO*/
+    Q_FOREACH(QAction * act, hash){ 
+      delete act; 
+    }
+    if (nothingSelected) 
+      return;
+    else {
+      (this->*menuFunction)(selectedString, selectedItems);
+      
     }
   }
 }
 
 
-#undef MENU_START
-#undef MENU_ITEM
-#undef MENU_EXEC
+/****************************************************************************
+  _____          __          __    __  ___                
+ / ___/__  ___  / /______ __/ /_  /  |/  /__ ___  __ _____
+/ /__/ _ \/ _ \/ __/ -_) \ / __/ / /|_/ / -_) _ \/ // (_-<
+\___/\___/_//_/\__/\__/_\_\\__/ /_/  /_/\__/_//_/\_,_/___/
+
+                          
+****************************************************************************/
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Contacts::undefinedContactMenu(const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi) {
+
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Contacts::singleContactMenu(const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi) {
+
+  QTreeWidgetItem * twi = selectedTwi.front();
+  Contact * contact = twiToContact.value(twi);
+  if (selection == "Chat") 
+  {
+    emitConversationRequest(twi);
+  }
+  else if (selection == "Change Nickname or Group") {
+    Dialog::UpdateContactInfo update(contact->nickname, getGroupNames(), contact->group, this);
+    /*TODO check that they don't make duplicate nicknames*/
+    if (update.exec() == QDialog::Accepted) {
+      
+      /*wait for implementsation in addressbook*/
+      addressBook.updateContact(update.getGroup(), contact->contactAddress, update.getNickname());
+      mxit.updateContactInfo(update.getGroup(), contact->contactAddress, update.getNickname());
+      emit sendLog("GUI::Contacts "+contact->nickname+" updated to "+update.getNickname() +" group " + update.getGroup());
+      /* should get a contacts update back from network after this is sent*/
+      /* NOTE, tested this, reply does NOT come...rage*/
+    }
+      
+  }
+  else if (selection == "Send File") {
+    /* TODO */
+  }
+  else if (selection == "Remove Contact") {
+    
+    QMessageBox sure;
+    sure.setText("Are you sure you wish to remove \""+contact->nickname+"\"");
+    sure.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    sure.setDefaultButton(QMessageBox::Cancel);
+    
+    if (sure.exec() == QMessageBox::Ok) {
+      mxit.removeContact(contact->contactAddress);
+      emit sendLog("GUI:: contact \""+contact->contactAddress+"\" removed");
+      addressBook.removeContact(contact->contactAddress);
+      /*removing from gui*/
+      QSet<const Conversation*> involvements = conversations.getInvolvements(contact);
+      Q_FOREACH(const Conversation* conversation, involvements) {
+        if (conversation->type == MXit::Conversation::Private)
+          conversations.toggleActive(conversation->uniqueIdentifier);
+      }
+      removeAndDeleteContactOrGroupFromGUI(twi);
+    }
+  }
+
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+
+void Contacts::unaffiliatedContactMenu(const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi) {
+  QTreeWidgetItem * twi = selectedTwi.front();
+  Contact * contact = twiToContact.value(twi);
+  if (selection == "Accept") 
+  {
+    /* TODO need this function implemented*/
+    Dialog::AllowSubscription allow (contact->inviteMessage, contact->nickname, getGroupNames(), this);
+    
+    /*TODO check that they don't make duplicate nicknames*/
+    if (allow.exec() == QDialog::Accepted) {
+      
+      mxit.allowSubscription(contact->contactAddress, allow.getGroup(), allow.getNickname());
+      emit sendLog("GUI::Contacts "+contact->nickname+" subscribed to");
+      /* should get a contacts update back from network after this is sent*/
+    }
+    //else do nothing
+      
+  }
+  else if (selection == "Reject" || selection == "Reject Permanently") 
+  {
+    bool block = (selection == "Reject Permanently");
+    QString informativeText = "";
+    
+    QMessageBox sure;
+    sure.setText("Are you sure you wish to reject \""+contact->nickname+"\""+ (block?" permanently":"")+"?");
+    
+    if (block) {
+      informativeText+="In order to unblock, you need to add "+contact->nickname+" as a contact";
+    }
+    
+    if (contact->inviteMessage != "") {
+      if (block) informativeText+="\n";
+      informativeText+=contact->nickname+" sent you an invite message: \"" + contact->inviteMessage+"\"";
+    }
+    
+    
+    sure.setInformativeText(informativeText);
+      
+    sure.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    sure.setDefaultButton(QMessageBox::Cancel);
+    
+    if (sure.exec() == QMessageBox::Ok) {
+      /* send rejection to client*/
+      mxit.denySubscription(contact->contactAddress, block);
+      emit sendLog("GUI::Contacts "+contact->nickname+" subscription"+(block?" permanently":"")+" denyed");
+      addressBook.removeContact(contact->contactAddress);
+      removeAndDeleteContactOrGroupFromGUI(twi);
+    }
+  }
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+
+void Contacts::groupContactMenu(const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi) {
+
+  if (selection == "Change Group Name") {
+    /*TODO*/
+  }
+  else if (selection == "Send Message To Group") {
+    ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
+    //mxit->sendGroupMessage(const QString &group, const ContactList &contacts, const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags); /*TODO WTF do these mean!??*/
+  }
+  else if (selection == "Start Group Chat") {
+    ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
+    createNewGroupChat(contactList);
+  }
+  else if (selection == "Remove Group") {
+    /*TODO*/
+  }
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Contacts::multiContactMenu(const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi) {
+
+  if (selection == "Start Group Chat") {
+    /**/
+    ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
+    createNewGroupChat(contactList);
+    /*TODO*/
+  }
+  else if (selection == "Change Group") {
+    /*TODO*/
+  }
+  else if (selection == "Remove Contacts") {
+    /*TODO*/
+  }
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Contacts::createNewGroupChat(const ContactList& contactList) {
+  QDialog selectGroupName();
+  mxit.createNewGroupChat("test room name", contactList);
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+
+ContactList Contacts::genContactsListFromTwiSelection(const QList<QTreeWidgetItem *>& selectedTwi) {
+
+  ContactList contactList;
+  Q_FOREACH(QTreeWidgetItem * twi, selectedTwi) {
+    if (twiToGroup.contains(twi)) {
+      /* add all contacts in group*/
+      for (int i = 0 ; i < twi->childCount () ; i++)
+        contactList.append(twiToContact.value(twi->child(i)));
+    }
+    else
+      contactList.append(twiToContact.value(twi));
+  
+  }
+  return contactList;
+}
+
 
 /****************************************************************************
 **
@@ -301,17 +447,17 @@ void Contacts::emitConversationRequest(QTreeWidgetItem *item, int index) {
   emit conversationRequest(twiToContact.value(item));
 }
 
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
 **
-** returns an orderedset of group names
+** returns an ordered list of group names
 **
 ****************************************************************************/
 
-const QMap<QString, bool>& Contacts::getGroupNames() {
-
-  return orderedGroupNames;
+QStringList Contacts::getGroupNames() {
+  return orderedGroupNames.keys();
 }
 
 /****************************************************************************
@@ -511,8 +657,10 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
   
   }
   
+  
+  
   //qDebug() <<orderedGroupNames; /*TODO test groupMap thing*/
-  emit groupsUpdated(orderedGroupNames);
+  emit groupsUpdated(getGroupNames());
 }
 
 

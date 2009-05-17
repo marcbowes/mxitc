@@ -10,10 +10,14 @@
 ##Details
 * splash screen
 * add gateway subscriptions (if time)
+* clear contacts and grey out chat area when logged off
+* marc needs to emit logged off action when we get logged off
 
 ##List
 * message in open conversations if te contact goes online/offline (system messages)
 * make group and contact names go red when messages are waiting
+* make group change draggable
+* check that new groups start expanded, spotted some odd behaviour when moving people around
 
 ##Options
 * add to preferences: a checkbox to use or not use mxit markup

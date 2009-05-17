@@ -34,7 +34,9 @@ namespace MXit
 ****************************************************************************/
 Message::Message(const QString &message, const bool hasMarkup, const int messageType)
   : contact(NULL), markedupMessage(markup(message)), rawMessage(message),
+    system(false),
     timestamp(QTime::currentTime()),
+    
     containsMarkup(hasMarkup),
     type(messageType),
     deliveryNotification(false),
@@ -56,8 +58,9 @@ Message::Message(const QString &message, const bool hasMarkup, const int message
 ** Constructor for incoming chat (from a Contact)
 **
 ****************************************************************************/
-Message::Message(const Contact &contact, const QString &message, const QByteArray flags, const int messageType)
-  : contact(&contact), markedupMessage(markup(message)), rawMessage(message),
+Message::Message(const Contact *contact, const QString &message, const QByteArray flags, const int messageType)
+  : contact(contact), markedupMessage(markup(message)), rawMessage(message),
+    system(contact == NULL),
     timestamp (QTime::currentTime()),
     deliveryNotification(flagDeliveryNotification(flags)),
     readNotification(flagReadNotification(flags)),
@@ -84,7 +87,9 @@ Message::Message(const Message &other)
   : contact(other.contact), 
     rawMessage(other.rawMessage),
     markedupMessage(other.markedupMessage),
+    system(other.system),
     timestamp(other.timestamp),
+    
     deliveryNotification(other.deliveryNotification),
     readNotification(other.readNotification),
     passwordEncrypted(other.passwordEncrypted),

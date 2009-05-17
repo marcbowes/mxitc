@@ -115,11 +115,15 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   connect(mxit, SIGNAL(environmentReady()), this, SLOT(environmentVariablesReady()));
   
-  connect(contactsWidget, SIGNAL (groupsUpdated( const QMap<QString, bool>& )), addContactWidget, SLOT(updateGroups(const QMap<QString, bool>& )));
+  connect(contactsWidget, SIGNAL (groupsUpdated( const QStringList & )), addContactWidget, SLOT(updateGroups(const QStringList & )));
   
   connect(mainWebView, SIGNAL(linkClicked(const QUrl&)), mxit, SLOT(linkClicked(const QUrl&)));
   /*TODO put this somewhere useful*/
   mainWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+  
+          
+  connect(&addressBook, SIGNAL(presenceToggled(const Contact*)),
+          this,         SLOT(presenceToggled(const  Contact*)));
   
   /*------------------------------------------------------------------------------------------*/
   /* Connecting new variables SIGNAL from the widgets to the client
@@ -658,6 +662,34 @@ void MXitC::themeChanged(){
   
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::presenceToggled(const MXit::Contact* contact) {
+  
+  
+  QByteArray flags;
+  Q_FOREACH (const MXit::Conversation* converastion, conversations->getInvolvements(contact)) {
+    //converastion->appendSystemMessage(converastion->uniqueIdMessage((Contact *)NULL, contact->nickname + " is now "+ getPresenceString((int)contact->presence), flags));
+  
+  }
+  
+}
+
+/****************************************************************************
+**
+** Author: Lord Kelvin
+**
+****************************************************************************/
+
+QString MXitC::getPresenceString (int type /*too lazy to type out the name :p*/) {
+
+  return "WICKED!";
+
+}
 
 /****************************************************************************
   _____                               __  _             

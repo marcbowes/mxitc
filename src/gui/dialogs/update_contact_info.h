@@ -15,6 +15,8 @@
 
 #include "ui_update_contact_info.h"
 
+#include <QString>
+
 namespace MXit
 {
 
@@ -30,7 +32,7 @@ class UpdateContactInfo : public QDialog, private Ui::UpdateContactInfoDialog
 
   public:         /* class specific */
   
-  UpdateContactInfo(const QString & nickname, const QMap<QString, bool>& groups, const QString& currentGroup, QWidget *parent = 0);
+  UpdateContactInfo(const QString & nickname, const QStringList& groups, const QString& currentGroup, QWidget *parent = 0);
   ~UpdateContactInfo();
   
   public: /* methods */

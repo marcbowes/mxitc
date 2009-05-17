@@ -16,17 +16,14 @@ namespace Dialog
 ** Author: Richard Baxter
 **
 ****************************************************************************/
-UpdateContactInfo::UpdateContactInfo(const QString & nickname, const QMap<QString, bool>& groups, const QString& currentGroup, QWidget *parent) :
+UpdateContactInfo::UpdateContactInfo(const QString & nickname, const QStringList& groups, const QString& currentGroup, QWidget *parent) :
  QDialog(parent)
 {
   setupUi(this);
   
   nicknameLineEdit->setText(nickname);
   
-  Q_FOREACH(QString s, groups.keys()) {
-    groupComboBox->addItem ( s );
-  }
-  
+  groupComboBox->addItems ( groups );
   groupComboBox->setCurrentIndex  ( groupComboBox->findText(currentGroup) );
 }
 

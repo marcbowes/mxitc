@@ -35,13 +35,17 @@ Client::Client()
   connection = new MXit::Network::Connection();
   handshaker = new MXit::Protocol::Handshaker();
   
+  /* variable passing */
+  connect(handshaker, SIGNAL(outgoingVariables(const VariableHash &)),
+    this, SLOT(incomingVariables(const VariableHash &)));
+  
   /* incoming packets */
   connect(connection, SIGNAL(outgoingPacket(const QByteArray &)),
     this, SLOT(incomingPacket(QByteArray)));
   
-  /* variable passing */
-  connect(handshaker, SIGNAL(outgoingVariables(const VariableHash &)),
-    this, SLOT(incomingVariables(const VariableHash &)));
+  /* incoming states */
+  connect(connection, SIGNAL(outgoingState(Network::Connection::State)),
+    this, SIGNAL(outgoingConnectionState(Network::Connection::State)));
   
   /* error bubbling between connection and ui */
   connect(connection, SIGNAL(outgoingError(const QString &)),
@@ -206,6 +210,31 @@ void Client::denySubscription(const QString &contactAddress, bool block)
 /****************************************************************************
 **
 ** Author: Marc Bowes
+**
+** Creates a new Group Chat
+**
+****************************************************************************/
+void Client::createNewGroupChat(const QString &roomName, const ContactList &contacts)
+{
+  /* contact addresses */
+  QStringList contactList;
+  Q_FOREACH(const Contact *contact, contacts)
+    if (contact->notBot())
+      contactList << contact->contactAddress;
+  
+  /* packet variables */
+  VariableHash groupVariables;
+  groupVariables["roomname"] = roomName.toUtf8();
+  groupVariables["numContacts"] = QByteArray::number(contacts.size());
+  groupVariables["contactList"] = contactList.join("\1").toUtf8();
+  
+  sendPacket("createnewgroupchat", groupVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
 ** Author: Richard Baxter
 **
 ** this method instructs the handshaker to request initial information
@@ -327,6 +356,32 @@ void Client::setGateway(const QString &connectionString)
 void Client::setShownPresenceAndStatus()
 {
   /* FIXME: stub */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::sendGroupMessage(const QString &group, const ContactList &contacts,
+    const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags)
+{
+  /* contact addresses */
+  QStringList contactList;
+  Q_FOREACH(const Contact *contact, contacts)
+    if (contact->type != Protocol::Enumerables::Contact::Bot)
+      contactList << contact->contactAddress;
+  
+  /* packet variables */
+  VariableHash groupVariables;
+  groupVariables["group"] = group.toUtf8();
+  groupVariables["numContacts"] = QByteArray::number(contacts.size());
+  groupVariables["contactList"] = contactList.join("\1").toUtf8();
+  groupVariables["type"] = QByteArray::number(type);
+  groupVariables["flags"] = QByteArray::number(flags);
+  
+  sendPacket("sendmessagetogroup", groupVariables);
 }
 
 
@@ -494,7 +549,6 @@ void Client::incomingPacket(QByteArray packet)
       if (variables["polltimer"].toUInt() == 0)
         variables["polltimer"] = "30"; /* default */
       pollTimer.start(variables["polltimer"].toUInt());
-      
       break;
     case LOGOUT:
       connection->close();
@@ -519,6 +573,11 @@ void Client::incomingPacket(QByteArray packet)
       variables.remove("id");
       variables.remove("flags");
       break;
+    case GETMULTIMEDIAMESSAGE:
+      emit outgoingAction(MULTIMEDIA_RECEIVED);
+      
+      /* variable scrubbing */
+      break;
     case GETNEWSUBSCRIPTION:
       emit outgoingAction(SUBSCRIPTIONS_RECEIVED);
 
@@ -529,11 +588,6 @@ void Client::incomingPacket(QByteArray packet)
       sendPacket("login");
       break;
   }
-  
-  /* global scrubbing */
-  variables.remove("ln");
-  variables.remove("command");
-  variables.remove("error");
   
   emit outgoingVariables(variables);
 }

@@ -343,6 +343,7 @@ Contact* AddressBook::updateContact(const QList<QByteArray> &fields)
     ordered.erase(itr);
     orderLookup[contact->contactAddress] = contact->sortString();
     ordered.insert(contact->sortString(), contact);
+    emit presenceToggled(contact);
     return contact;
   }
   

@@ -11,7 +11,7 @@
 
 #ifndef __MXIT_ADDRESSBOOK_H__
 #define __MXIT_ADDRESSBOOK_H__
-#include <QDebug>
+
 #include <QByteArray>
 #include <QList>
 #include <QMap>
@@ -35,6 +35,7 @@ class AddressBook : public QObject
   
   signals:
   
+  void presenceToggled(const Contact*);
   void updated(const ContactList&);
   
   public:         /* methods */
