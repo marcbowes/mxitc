@@ -234,11 +234,12 @@ void Contacts::popUpContextMenu(const QPoint & point) {
         /*TODO check that they don't make duplicate nicknames*/
         if (update.exec() == QDialog::Accepted) {
           
-          addressBook.updateContact(contact->contactAddress);
-          /*TODO wait for implementation in client*/
+          /*wait for implementsation in addressbook*/
+          //addressBook.updateContact(contact->contactAddress);
           mxit.updateContactInfo(contact->contactAddress, update.getGroup(), update.getNickname());
           emit sendLog("GUI::Contacts "+contact->nickname+" updated to "+update.getNickname() +" group " + update.getGroup());
           /* should get a contacts update back from network after this is sent*/
+          /* NOTE, tested this, reply does NOT come...rage*/
         }
           
       }
