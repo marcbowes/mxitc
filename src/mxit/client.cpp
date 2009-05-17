@@ -225,7 +225,7 @@ void Client::createNewGroupChat(const QString &roomName, const ContactList &cont
   /* packet variables */
   VariableHash groupVariables;
   groupVariables["roomname"] = roomName.toUtf8();
-  groupVariables["numComtacts"] = QByteArray::number(contacts.size());
+  groupVariables["numContacts"] = QByteArray::number(contacts.size());
   groupVariables["contactList"] = contactList.join("\1").toUtf8();
   
   sendPacket("createnewgroupchat", groupVariables);
@@ -376,7 +376,7 @@ void Client::sendGroupMessage(const QString &group, const ContactList &contacts,
   /* packet variables */
   VariableHash groupVariables;
   groupVariables["group"] = group.toUtf8();
-  groupVariables["numComtacts"] = QByteArray::number(contacts.size());
+  groupVariables["numContacts"] = QByteArray::number(contacts.size());
   groupVariables["contactList"] = contactList.join("\1").toUtf8();
   groupVariables["type"] = QByteArray::number(type);
   groupVariables["flags"] = QByteArray::number(flags);
