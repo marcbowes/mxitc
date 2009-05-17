@@ -113,11 +113,16 @@ void Conversations::refreshThemeing() {
 
 void Conversations::refreshListWidgetItem(QListWidgetItem *item) {
   const Conversation * conversation = lwiToConversation[item];
-  item->setIcon(
-    conversation->type == Conversation::Group
-      ? theme.chat.group
-      : theme.contact.presence.pixmap((*conversation->getContacts().begin())->presence)
-  );
+  
+  switch (conversation->type) {
+    case Protocol::Enumerables::Message::GroupChat:
+      item->setIcon(theme.chat.group);
+      break;
+    default:
+      item->setIcon(theme.contact.presence.pixmap((*conversation->getContacts().begin())->presence));
+      break;
+  }
+  
   item->setText(conversation->displayName);
 }
 

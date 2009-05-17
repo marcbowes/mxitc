@@ -290,7 +290,7 @@ void Contacts::singleContactMenu(const QString & selection, const QList<QTreeWid
       /*removing from gui*/
       QSet<const Conversation*> involvements = conversations.getInvolvements(contact);
       Q_FOREACH(const Conversation* conversation, involvements) {
-        if (conversation->type == MXit::Conversation::Private)
+        if (conversation->type == Protocol::Enumerables::Message::Normal)
           conversations.toggleActive(conversation->uniqueIdentifier);
       }
       removeAndDeleteContactOrGroupFromGUI(twi);

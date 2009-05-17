@@ -141,12 +141,11 @@ void Options::addGateway(const QString& gateway) {
 /****************************************************************************
 **
 ** Author: Richard Baxter
+** Author: Marc Bowes (proxy)
 **
 ****************************************************************************/
-
 void Options::emitGatewaySignal () {
-  qDebug() << "emitting " << gatewayComboBox->currentText ();
-  emit gatewaySelected(gatewayComboBox->currentText ()/*TODO add proxy and thing to this*/);
+  emit gatewaySelected(gatewayComboBox->currentText (), httpProxyLineEdit->text(), portLineEdit->text());
 }
 
 

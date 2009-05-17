@@ -31,8 +31,8 @@ class Message
   Message(const Message &other);
   ~Message();
   
-  static QString markup(const QString &markup);
-  static QString commandUp(const QString &markup);
+  static QString markup(const QString &markup, const Contact *contact);
+  static QString commandUp(const QString &markup, const Contact *contact);
   
   /* flag creator methods */
   static bool flagContainsCustomEmoticons(const QByteArray flags);

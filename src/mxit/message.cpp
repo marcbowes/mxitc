@@ -33,7 +33,7 @@ namespace MXit
 **
 ****************************************************************************/
 Message::Message(const QString &message, const bool hasMarkup, const int messageType)
-  : contact(NULL), markedupMessage(markup(message)), rawMessage(message),
+  : contact(NULL), markedupMessage(markup(message, NULL)), rawMessage(message),
     system(false),
     timestamp(QTime::currentTime()),
     
@@ -59,7 +59,7 @@ Message::Message(const QString &message, const bool hasMarkup, const int message
 **
 ****************************************************************************/
 Message::Message(const Contact *contact, const QString &message, const QByteArray flags, const int messageType)
-  : contact(contact), markedupMessage(markup(message)), rawMessage(message),
+  : contact(contact), markedupMessage(markup(message, contact)), rawMessage(message),
     system(contact == NULL),
     timestamp (QTime::currentTime()),
     deliveryNotification(flagDeliveryNotification(flags)),
@@ -126,12 +126,12 @@ Message::~Message()
 **  specifc rules.
 **
 ****************************************************************************/
-QString Message::markup(const QString &markup)
+QString Message::markup(const QString &markup, const Contact *contact)
 {
   /* CGI escape so that any HTML in the message isn't interpreted */
   QString escaped = Qt::escape(markup);
   QString markedUp;
-  QRegExp rx("[\\^\\][*/_\\$]");
+  QRegExp rx("[\\^\\][\\*\\/_\\$]");
   
   int position = 0;
   int nextPos;
@@ -182,9 +182,13 @@ QString Message::markup(const QString &markup)
           italicOpen = false;
           underlineOpen = false;
           
-          markedUp += "<a href=";
+          markedUp += "<a href=\"";
           markedUp += highlightText;
-          markedUp += ">";
+          markedUp += "/";
+          if (contact) {
+            markedUp += contact->contactAddress;
+          }
+          markedUp += "/2\">";
           markedUp += highlightText;
           markedUp += "</a>";
           
@@ -210,19 +214,23 @@ QString Message::markup(const QString &markup)
   
   return markedUp;
 }
-
-QString Message::commandUp(const QString &markup)
+\
+QString Message::commandUp(const QString &markup, const Contact *contact)
 {
   QStringList lines(markup.split('\n'));
-  QRegExp rx("::(.*)\\):(.*)");
+  //FIXME: reply only hack
+  QRegExp rx("::(.*):(.*)");
   QString markedUp;
   
   Q_FOREACH(const QString &line, lines) {
     if (!line.isEmpty()) {
       if (rx.indexIn(line) != -1) {
-        markedUp += "<a href=";
+        markedUp += "<a href=\"";
         markedUp += rx.cap(1);
-        markedUp += ">";
+        markedUp += "/";
+        markedUp += contact->contactAddress;
+        markedUp += "/7";
+        markedUp += "\">";
         markedUp += rx.cap(2);
         markedUp += "</a><br>";
       } else {
@@ -311,7 +319,7 @@ bool Message::flagContainsCustomEmoticons(const QByteArray flags)
 const QString Message::message() const
 {
   if (type == MXit::Protocol::Enumerables::Message::Command) {
-    return commandUp(rawMessage);
+    return commandUp(rawMessage, contact);
   } else
     return containsMarkup ? markedupMessage : rawMessage;
 }

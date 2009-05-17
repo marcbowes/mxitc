@@ -179,7 +179,7 @@ void Client::authenticate(const VariableHash &settings)
   emit environmentReady();
   emit outgoingVariables(variables);
   
-  connection->setGateway(variables["soc1"]);
+  connection->setGateway(variables["soc1"], "", 0);
   connection->open(getPacket("login"));
 }
 
@@ -336,14 +336,14 @@ void Client::removeContact(const QString &contactAddress)
 ** sets the gateway, and deals with reconnecting
 **
 ****************************************************************************/
-void Client::setGateway(const QString &connectionString)
+void Client::setGateway(const QString &connectionString, const QString &httpHost, quint16 port)
 {
   if (connection->getState() != MXit::Network::Connection::DISCONNECTED) {
     sendPacket("logout");
     connection->close();
     emit outgoingAction(LOGGED_OUT);
   }
-  connection->setGateway(connectionString);
+  connection->setGateway(connectionString, httpHost, port);
   connection->open(getPacket("login"));
 }
 
@@ -454,7 +454,57 @@ void Client::updateProfile(const QString &pin, const QString &name, bool hiddenL
 
 void Client::linkClicked(const QUrl &url)
 {
-  //TODO: this is where links that are clicked on should be handled
+  QString contactAddress, wholeUrl;
+  int position, type;
+  
+  wholeUrl = url.toString();
+  position = wholeUrl.lastIndexOf("/");
+  type = wholeUrl.right(wholeUrl.length() - position - 1).toInt();
+  wholeUrl = wholeUrl.left(position);
+  
+  position = wholeUrl.lastIndexOf("/");
+  contactAddress = wholeUrl.right(wholeUrl.length() - position - 1);
+  wholeUrl = wholeUrl.left(position);
+  
+  qDebug() << type;
+  qDebug() << contactAddress;
+  qDebug() << wholeUrl;
+  
+  if (contactAddress.isEmpty())
+    return;
+  
+  if (type == 2) {
+    VariableHash messageVariables;
+    messageVariables["contactAddress"]  = contactAddress.toUtf8();
+    messageVariables["message"]         = wholeUrl.toUtf8();
+    messageVariables["type"]            = QString("%1").arg(type).toUtf8();
+    messageVariables["flags"]           = QString("%1").arg(Protocol::Enumerables::Message::MayContainMarkup).toUtf8();
+  
+    sendPacket("sendnewmessage", messageVariables);
+  } else if (type == 7) {
+    //format reply FIXME: hack for reply only
+    QStringList tempData(wholeUrl.split("|"));
+    VariableHash tempHash;
+    
+    Q_FOREACH (const QString &option, tempData) {
+      int equalsPos = option.indexOf("=");
+      tempHash[option.mid(0, equalsPos)] = option.mid(equalsPos + 1).toUtf8();
+    }
+    
+    if (tempHash["type"] == "reply") {
+      wholeUrl = "::type=reply|res=";
+      wholeUrl += QString(tempHash["replymsg"]);
+      wholeUrl += "|err=0:";
+      
+      VariableHash messageVariables;
+      messageVariables["contactAddress"]  = contactAddress.toUtf8();
+      messageVariables["message"]         = wholeUrl.toUtf8();
+      messageVariables["type"]            = QString("%1").arg(type).toUtf8();
+      messageVariables["flags"]           = QString("%1").arg(0).toUtf8();
+    qDebug() << messageVariables;
+      sendPacket("sendnewmessage", messageVariables);
+    }
+  }
 }
 
 
@@ -547,10 +597,12 @@ void Client::incomingPacket(QByteArray packet)
       variables["status"] = "mxitc";
       sendPacket("setshownpresenceandstatus");
       
-      /* start the first pollDifference */
-      if (variables["polltimer"].toUInt() == 0)
-        variables["polltimer"] = "30"; /* default */
-      pollTimer.start(variables["polltimer"].toUInt());
+      if (connection->isHTTP()) {
+        /* start the first pollDifference */
+        if (variables["polltimer"].toUInt() == 0)
+          variables["polltimer"] = QByteArray::number(15 * 1000); /* default */
+        pollTimer.start(variables["polltimer"].toUInt());
+      }
       break;
     case LOGOUT:
       connection->close();
@@ -891,7 +943,7 @@ void Client::setupReceived()
     return;
   }
   
-  connection->setGateway(variables["soc1"]);
+  connection->setGateway(variables["soc1"], "", 0);
   connection->open(getPacket("login"));
   
   /* cleanup */
