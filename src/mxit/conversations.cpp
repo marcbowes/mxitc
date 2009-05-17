@@ -109,6 +109,13 @@ void Conversations::addMessage(const QByteArray &contactAddress,
       conversation->appendMessage(Message(*contact, msg, flags));
     else
       conversation->appendMessage(Message(msg, true));//FIXME: use a value from prefs
+    
+    /* FIXME: only write new message */
+    if (log.exists()) {
+      QFile writeOut(log.filePath(id + ".log.html"));
+      if (writeOut.open(QFile::WriteOnly))
+        writeOut.write(conversation->conversationHtml.toUtf8());
+    }
   }
 }
 
