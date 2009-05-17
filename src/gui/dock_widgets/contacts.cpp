@@ -85,7 +85,6 @@ Contacts::~Contacts()
 
 void Contacts::refreshThemeing() {
 
-  qDebug() << "emmintdkj";
   /*refreshing all contacts*/
   for (int i = 0 ; i < contactsTree->topLevelItemCount() ; i++) {
     QTreeWidgetItem * groupTwi = contactsTree->topLevelItem(i);
@@ -404,7 +403,7 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
         /* then this group is new to the tree and doesn't have an associated twi */
         /* create a new twi and add to hashs and then tree (done after the if statement since all the stuff is there)*/
         groupTreeItemToAdd = new QTreeWidgetItem();
-        groupTreeItemToAdd->setExpanded (true);
+        expandedItems.insert(groupTreeItemToAdd);
         
         /* add to lookup */
         groupToTwi[contact->group] = groupTreeItemToAdd;
@@ -426,8 +425,6 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
         refreshTreeWidgetItem(groupTreeItemToAdd);
         
         groupShouldBeInList.insert(groupTreeItemToAdd);
-        contactsTree->addTopLevelItem(groupTreeItemToAdd);
-        groupTreeItemToAdd->setExpanded (expandedItems.contains(groupTreeItemToAdd));
         
         groupAlreadyInGui.insert(groupTreeItemToAdd);
         
@@ -501,6 +498,17 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
       removeAndDeleteContactOrGroupFromGUI (groupTwi);
       j--; /*since all the indexes above will have shifted down one and the next item will have index j now*/
     }
+  }
+  
+  while(contactsTree->topLevelItemCount()) {
+    contactsTree->takeTopLevelItem ( 0 );
+  }
+  
+  Q_FOREACH(const QString & group, orderedGroupNames.keys()) {
+    contactsTree->addTopLevelItem ( groupToTwi.value(group) );
+    // contactsTree->addTopLevelItem(groupTreeItemToAdd);
+    groupToTwi.value(group)->setExpanded (expandedItems.contains(groupToTwi.value(group)));
+  
   }
   
   //qDebug() <<orderedGroupNames; /*TODO test groupMap thing*/
