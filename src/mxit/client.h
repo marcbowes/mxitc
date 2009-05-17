@@ -55,6 +55,7 @@ class Client : public QObject
   void errorEncountered(const QString &);
   void outgoingAction(Action);
   void outgoingConnectionError(const QString &message);
+  void outgoingConnectionState(Network::Connection::State);
   void outgoingMessage(const QString & contactAddress, const QString & message);
   void outgoingError(int code, const QString &message);
   void outgoingVariables(const VariableHash&);
@@ -94,7 +95,7 @@ class Client : public QObject
   
   private slots:
   
-  void incomingError(const QString &errir);
+  void incomingError(const QString &error);
   void incomingPacket(QByteArray packet);
   void incomingVariables(const VariableHash &variables);
   void keepAlive();

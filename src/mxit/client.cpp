@@ -35,13 +35,17 @@ Client::Client()
   connection = new MXit::Network::Connection();
   handshaker = new MXit::Protocol::Handshaker();
   
+  /* variable passing */
+  connect(handshaker, SIGNAL(outgoingVariables(const VariableHash &)),
+    this, SLOT(incomingVariables(const VariableHash &)));
+  
   /* incoming packets */
   connect(connection, SIGNAL(outgoingPacket(const QByteArray &)),
     this, SLOT(incomingPacket(QByteArray)));
   
-  /* variable passing */
-  connect(handshaker, SIGNAL(outgoingVariables(const VariableHash &)),
-    this, SLOT(incomingVariables(const VariableHash &)));
+  /* incoming states */
+  connect(connection, SIGNAL(outgoingState(Network::Connection::State)),
+    this, SIGNAL(outgoingConnectionState(Network::Connection::State)));
   
   /* error bubbling between connection and ui */
   connect(connection, SIGNAL(outgoingError(const QString &)),
