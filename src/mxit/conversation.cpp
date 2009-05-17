@@ -128,7 +128,7 @@ void Conversation::addContacts(const ContactList &contacts)
 ****************************************************************************/
 void Conversation::appendMessage(const Message &message)
 {
-  QString cssClass  = message.contact ? "" : " you";
+  QString cssClass  = message.contact ? "" : (message.system ? "system" : "you");
   QString author    = message.contact ? message.contact->nickname : "You";
   
   /* build insertion */
