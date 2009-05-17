@@ -42,7 +42,8 @@ const static QString initialHtml ("\
 ****************************************************************************/
 Conversation::Conversation(const Contact *contact)
   : active(true), displayName(contact->nickname),
-    uniqueIdentifier(contact->contactAddress), type(Private), conversationHtml(initialHtml)
+    uniqueIdentifier(contact->contactAddress), type(Protocol::Enumerables::Message::Normal),
+    conversationHtml(initialHtml)
 {
   contacts.insert(contact);
 }
@@ -57,7 +58,8 @@ Conversation::Conversation(const Contact *contact)
 ****************************************************************************/
 Conversation::Conversation(const ContactSet &contacts, const QString &roomName)
   : active(true), displayName(roomName.isEmpty() ? buildDisplayName(contacts) : roomName),
-    uniqueIdentifier(roomName), type(Group), conversationHtml(initialHtml)
+    uniqueIdentifier(roomName), type(Protocol::Enumerables::Message::GroupChat),
+    conversationHtml(initialHtml)
 {
   this->contacts = contacts; /* copy */
 }

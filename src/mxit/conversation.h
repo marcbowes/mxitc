@@ -16,7 +16,8 @@
 #include <QHash>
 #include <QTime>
 
-#include <QDebug>
+#include "protocol/enumerables/message.h"
+
 #include "contact.h"
 #include "message.h"
 
@@ -33,11 +34,6 @@ class Conversation : public QObject
   Conversation(const Contact *contact);
   Conversation(const ContactSet &contacts, const QString &roomName="");
   ~Conversation();
-  
-  enum Type {
-    Group,
-    Private
-  };
   
   signals:
   
@@ -61,7 +57,8 @@ class Conversation : public QObject
   QString         conversationHtml;
   const QString   displayName;
   MessageList     messages;
-  const Type      type;
+  const Protocol::Enumerables::Message::Type
+                  type;
   const QString   uniqueIdentifier;
   
   private:        /* methods */
