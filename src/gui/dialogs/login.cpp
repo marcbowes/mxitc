@@ -49,6 +49,7 @@ Login::Login(
   connect(password, SIGNAL(returnPressed()), this, SLOT(login()));
   connect(captcha, SIGNAL(returnPressed()), this, SLOT(login()));
   connect(loginButton, SIGNAL(released()), this, SLOT(login()));
+  /*FIXME*/
   connect(registerButton, SIGNAL(released()), this, SLOT(login(true)));
   connect(cancelButton, SIGNAL(released()), this, SLOT(reject ()));
   

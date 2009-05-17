@@ -101,6 +101,9 @@ class MXitC : public QMainWindow, private Ui::MXitC
 
   private slots:
   
+  void autoLogin (bool autologin = true);
+  
+  
   void dealWithMultimedia();
   void logConversations(const QDir &log);
   void openLoginDialog();
@@ -149,6 +152,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
  
   Dialog::Login * login;
   QLabel * statusLabel;
+  
+  StringVec requiredToAuth;
   
   /* Dockable Widgets*/
   QVector<QDockWidget *> dockWidgets;

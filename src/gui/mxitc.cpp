@@ -28,7 +28,8 @@ namespace GUI
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentConversation(NULL), splash(this) {
+MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentConversation(NULL), splash(this) 
+{
   
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   if (QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -128,6 +129,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(conversations, SIGNAL (updated(const Conversation* )), this, SLOT(refreshChatBox(const  Conversation* ))); /*refreshChatBox(const  Conversation* ) HACK HACK HACK*/
   
   connect(mainWebView, SIGNAL(linkClicked(const QUrl&)), mxit, SLOT(linkClicked(const QUrl&)));
+  
   /*TODO put this somewhere useful*/
   mainWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
   
@@ -135,6 +137,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
           
   connect(&addressBook, SIGNAL(presenceToggled(const Contact*)),
           this,         SLOT(presenceToggled(const  Contact*)));
+          
+  //connect(actionLogoff,  SIGNAL(triggered()), mxit, SLOT(logoff()));
+  connect(actionAuto_Logon,  SIGNAL(triggered()), this, SLOT(autoLogin()));/* TODO should check is authenticatable first*/
   
   /*------------------------------------------------------------------------------------------*/
   /* Connecting new variables SIGNAL from the widgets to the client
@@ -191,64 +196,39 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*------------------------------------------------------------------------------------------*/
   
   /* this is the list of variables that should be loaded*/
-  StringVec variables;
-  variables.append("err");                  /* 0 = success, else failed */
-  variables.append("url");                  /* URL that should be used for the Get PID request */
-  variables.append("sessionid");            /* unique identifier to identify the session for code image answer */
-  variables.append("captcha");              /* base64 encoded image data */
-  variables.append("countries");            /* list of available countries (countrycode|countryname)
+  
+  requiredToAuth.append("err");                  /* 0 = success, else failed */
+  requiredToAuth.append("url");                  /* URL that should be used for the Get PID request */
+  requiredToAuth.append("sessionid");            /* unique identifier to identify the session for code image answer */
+  requiredToAuth.append("captcha");              /* base64 encoded image data */
+  requiredToAuth.append("countries");            /* list of available countries (countrycode|countryname)
                                         * the list of country names should be presented to the user in order to
                                         * find the country code that should be used later on */
-  variables.append("languages");            /* list of supported languages (locale|languagename)
+  requiredToAuth.append("languages");            /* list of supported languages (locale|languagename)
                                         * the list of language names should be presented to the user and the
                                         * corresponding locale saved by the client to be used later on */
-  variables.append("defaultCountryName");   /* country name of the country detenced from the requestors IP */
-  variables.append("defaultCountryCode");   /* country code associated with the defaultCountryName */
-  variables.append("regions");              /* a '|' seperated list of regions if requested */
-  variables.append("defaultDialingCode");   /* dialing code associated with the defaultCountryName */
-  variables.append("defaultRegion");        /* a region of the detected IP */
-  variables.append("defaultNPF");           /* the national dialing prefix for the defaultCountryName, e.g. 0 */
-  variables.append("defaultIPF");           /* the international dialing prefix for the defaultCountryName, e.g. 00 */
-  variables.append("cities");               /* NOT IMPLEMENTED YET */
-  variables.append("defaultCity");          /* the city of the detected IP */
+  requiredToAuth.append("defaultCountryName");   /* country name of the country detenced from the requestors IP */
+  requiredToAuth.append("defaultCountryCode");   /* country code associated with the defaultCountryName */
+  requiredToAuth.append("regions");              /* a '|' seperated list of regions if requested */
+  requiredToAuth.append("defaultDialingCode");   /* dialing code associated with the defaultCountryName */
+  requiredToAuth.append("defaultRegion");        /* a region of the detected IP */
+  requiredToAuth.append("defaultNPF");           /* the national dialing prefix for the defaultCountryName, e.g. 0 */
+  requiredToAuth.append("defaultIPF");           /* the international dialing prefix for the defaultCountryName, e.g. 00 */
+  requiredToAuth.append("cities");               /* NOT IMPLEMENTED YET */
+  requiredToAuth.append("defaultCity");          /* the city of the detected IP */
 
-  variables.append("loginname");
-  variables.append("encryptedpassword");
-  variables.append("dc");
-  variables.append("soc1");
-  variables.append("http1");
-  variables.append("soc2");
-  variables.append("http2");
+  requiredToAuth.append("loginname");
+  requiredToAuth.append("encryptedpassword");
+  requiredToAuth.append("dc");
+  requiredToAuth.append("soc1");
+  requiredToAuth.append("http1");
+  requiredToAuth.append("soc2");
+  requiredToAuth.append("http2");
   
-  variables.append("locale");
+  requiredToAuth.append("locale");
   
+  autoLogin (optionsWidget->isAutoLogin());
   
-  /* creating the variable hash*/
-  VariableHash variableHash;
-  
-  bool hasAllVariables = true;
-  
-  Q_FOREACH(const QString &var, variables) {
-    /*if a variable that is needed (i.e. is in variables) is not in settings then the auto login won't work and we need to bail out of the autologin process*/
-    if (!settings->contains(var)) {
-      hasAllVariables = false;
-      break;
-    }
-    variableHash[var] = settings->value(var).toByteArray();
-  }
-  
-    /*TODO sort out autologin, what if the user has deselected it in options, how do the hash variables get to the client, does the user still want an autologin but just promted or does the user want to retype in their password and captch each time?*/
-    
-  /*if the settings was able to load all the necessary variables, the autologin can commence*/
-  /*TODO don't autologin if user has set it to not do so in options*/
-  if (hasAllVariables) {
-    loggingIn();
-    mxit->authenticate(variableHash);
-  }
-  else {
-    mxit->initialize();
-    openLoginDialog();
-  }
 }
 
 
@@ -261,9 +241,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
 ****************************************************************************/
 MXitC::~MXitC()
 {
-  settings->sync(); /*just in case*/
-  
-  delete settings;
   statusbar->removeWidget(statusLabel);
   delete statusLabel;
   
@@ -274,6 +251,48 @@ MXitC::~MXitC()
   
   if (trayIcon)
     delete trayIcon;
+    
+    
+  /* MUST delete this last as dockwidgets might be using it in their destructors*/
+  settings->sync(); /*just in case*/
+  
+  delete settings;
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+void MXitC::autoLogin (bool autologin) {
+
+  /* creating the variable hash*/
+  VariableHash variableHash;
+  
+  bool hasAllVariables = true;
+  
+  Q_FOREACH(const QString &var, requiredToAuth) {
+    /*if a variable that is needed (i.e. is in requiredToAuth) is not in settings then the auto login won't work and we need to bail out of the autologin process*/
+    if (!settings->contains(var)) {
+      hasAllVariables = false;
+      break;
+    }
+    /*else we add it to the hash needed to login*/
+    variableHash[var] = settings->value(var).toByteArray();
+  }
+  
+    /*TODO sort out autologin, what if the user has deselected it in options, how do the hash variables get to the client, does the user still want an autologin but just promted or does the user want to retype in their password and captch each time?*/
+    
+  /*if the settings was able to load all the necessary variables, the autologin can commence*/
+  /*TODO don't autologin if user has set it to not do so in options*/
+  if (autologin && hasAllVariables) {
+    loggingIn();
+    mxit->authenticate(variableHash);
+  }
+  else {
+    mxit->initialize();
+    openLoginDialog();
+  }
 }
 
 /****************************************************************************
@@ -868,13 +887,18 @@ void MXitC::setStatus(State newState)
 /*TODO disable main chat area when logged out and logging in*/
   switch (currentState) {
   
-    case LOGGED_IN:  statusLabel->setText("LOGGED_IN");  break;
-    case LOGGED_OUT: statusLabel->setText("LOGGED_OUT"); break;
-    case LOGGING_IN: statusLabel->setText("LOGGING_IN"); break;
+    case LOGGED_IN:  statusLabel->setText("LOGGED IN");  
+    break;
+    case LOGGED_OUT: statusLabel->setText("LOGGED OUT"); 
+    contactsWidget->refresh(OrderedContactMap ());
+    break;
+    case LOGGING_IN: statusLabel->setText("LOGGING IN");
+     break;
   
-        
   }
   logWidget->logMessage("GUI:: State set to "+statusLabel->text());
+  
+  centralwidget->setEnabled(currentState == LOGGED_IN);
 }
 
 /****************************************************************************

@@ -37,6 +37,9 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
     
   public: /*method */
   
+  /*accessors TODO make a variableHash*/
+  bool isAutoLogin();
+  
   void addGateway(const QString& gateway);
   void setSelectedGateway(const QString& gateway);
   
@@ -46,6 +49,8 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   QString getSelectedTheme();
   void setSelectedTheme(const QString& theme);
   
+  private slots:
+  void saveSettings( bool nothing = false);
   
   signals:
   

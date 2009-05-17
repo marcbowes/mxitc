@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>MXitC</class>
- <widget class="QMainWindow" name="MXitC" >
-  <property name="geometry" >
+ <widget class="QMainWindow" name="MXitC">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,45 +10,45 @@
     <height>601</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>MXit PC Client</string>
   </property>
-  <widget class="QWidget" name="centralwidget" >
-   <layout class="QVBoxLayout" name="verticalLayout" >
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QLabel" name="chattingToLabel" >
-      <property name="text" >
+     <widget class="QLabel" name="chattingToLabel">
+      <property name="text">
        <string>Chatting to nobody</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QFrame" name="frame" >
-      <property name="sizePolicy" >
-       <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+     <widget class="QFrame" name="frame">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>1</verstretch>
        </sizepolicy>
       </property>
-      <property name="frameShape" >
+      <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
-      <property name="frameShadow" >
+      <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" >
-       <property name="margin" >
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="margin">
         <number>0</number>
        </property>
        <item>
-        <widget class="QWebView" name="mainWebView" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+        <widget class="QWebView" name="mainWebView">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>1</verstretch>
           </sizepolicy>
          </property>
-         <property name="url" >
+         <property name="url">
           <url>
            <string>about:blank</string>
           </url>
@@ -58,149 +59,151 @@
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="chatInput" />
+     <widget class="QLineEdit" name="chatInput"/>
     </item>
    </layout>
-   <zorder>chattingToLabel</zorder>
-   <zorder>frame</zorder>
-   <zorder>chatInput</zorder>
-   <zorder>mainWebView</zorder>
   </widget>
-  <widget class="QMenuBar" name="menubar" >
-   <property name="geometry" >
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>27</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile" >
-    <property name="title" >
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionLogon_to_MXIT" />
-    <addaction name="actionLogoff" />
-    <addaction name="separator" />
-    <addaction name="actionQuit" />
+    <addaction name="actionLogon_to_MXIT"/>
+    <addaction name="actionLogoff"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menuView" >
-    <property name="tearOffEnabled" >
+   <widget class="QMenu" name="menuView">
+    <property name="tearOffEnabled">
      <bool>true</bool>
     </property>
-    <property name="title" >
+    <property name="title">
      <string>&amp;View</string>
     </property>
-    <addaction name="actionContacts" />
-    <addaction name="actionConversations" />
-    <addaction name="actionAdd_Contact" />
-    <addaction name="separator" />
-    <addaction name="actionProfile_Settings" />
-    <addaction name="actionOptions" />
-    <addaction name="separator" />
-    <addaction name="actionLogs" />
-    <addaction name="actionDebug_Variables" />
+    <addaction name="actionContacts"/>
+    <addaction name="actionConversations"/>
+    <addaction name="actionAdd_Contact"/>
+    <addaction name="separator"/>
+    <addaction name="actionProfile_Settings"/>
+    <addaction name="actionOptions"/>
+    <addaction name="separator"/>
+    <addaction name="actionLogs"/>
+    <addaction name="actionDebug_Variables"/>
    </widget>
-   <addaction name="menuFile" />
-   <addaction name="menuView" />
+   <addaction name="menuFile"/>
+   <addaction name="menuView"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar" />
-  <widget class="QToolBar" name="toolBar" >
-   <property name="sizePolicy" >
-    <sizepolicy vsizetype="MinimumExpanding" hsizetype="Preferred" >
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <property name="windowTitle" >
+   <property name="windowTitle">
     <string>toolBar</string>
    </property>
-   <attribute name="toolBarArea" >
+   <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
-   <attribute name="toolBarBreak" >
+   <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionLogon_to_MXIT" />
-   <addaction name="actionLogoff" />
+   <addaction name="actionAuto_Logon"/>
+   <addaction name="actionLogon_to_MXIT"/>
+   <addaction name="actionLogoff"/>
   </widget>
-  <action name="actionLogon_to_MXIT" >
-   <property name="text" >
+  <action name="actionLogon_to_MXIT">
+   <property name="text">
     <string>Logon to MXIT</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Alt+L</string>
    </property>
   </action>
-  <action name="actionLogoff" >
-   <property name="text" >
+  <action name="actionLogoff">
+   <property name="text">
     <string>Logoff</string>
    </property>
   </action>
-  <action name="actionQuit" >
-   <property name="text" >
+  <action name="actionQuit">
+   <property name="text">
     <string>Quit</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Alt+Q</string>
    </property>
   </action>
-  <action name="actionAddContact" >
-   <property name="text" >
+  <action name="actionAddContact">
+   <property name="text">
     <string>Add Contact</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Alt+A</string>
    </property>
   </action>
-  <action name="actionOptions" >
-   <property name="text" >
+  <action name="actionOptions">
+   <property name="text">
     <string>Preferences</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Alt+P</string>
    </property>
   </action>
-  <action name="actionDebug_Variables" >
-   <property name="text" >
+  <action name="actionDebug_Variables">
+   <property name="text">
     <string>&amp;Debug Variables</string>
    </property>
   </action>
-  <action name="actionContacts" >
-   <property name="text" >
+  <action name="actionContacts">
+   <property name="text">
     <string>Contacts</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Alt+O</string>
    </property>
   </action>
-  <action name="actionLogs" >
-   <property name="text" >
+  <action name="actionLogs">
+   <property name="text">
     <string>Activity &amp;Log</string>
    </property>
   </action>
-  <action name="actionAdd_Contact" >
-   <property name="text" >
+  <action name="actionAdd_Contact">
+   <property name="text">
     <string>Add Contact</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Alt+A</string>
    </property>
   </action>
-  <action name="actionConversations" >
-   <property name="text" >
+  <action name="actionConversations">
+   <property name="text">
     <string>Conversations</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Alt+C</string>
    </property>
   </action>
-  <action name="actionProfile_Settings" >
-   <property name="text" >
+  <action name="actionProfile_Settings">
+   <property name="text">
     <string>Profile Settings</string>
    </property>
-   <property name="shortcut" >
+   <property name="shortcut">
     <string>Alt+S</string>
+   </property>
+  </action>
+  <action name="actionAuto_Logon">
+   <property name="text">
+    <string>Auto Logon</string>
    </property>
   </action>
  </widget>

@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="generalTab">
        <attribute name="title">
@@ -26,19 +26,20 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
-         <widget class="QWidget" name="widget_4" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="QCheckBox" name="autoLoginCheckBox">
-             <property name="text">
-              <string>AutoLogin</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
+         <widget class="QCheckBox" name="autoLoginCheckBox">
+          <property name="text">
+           <string>AutoLogin</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox">
+          <property name="text">
+           <string>Hide offline contacts</string>
+          </property>
          </widget>
         </item>
         <item>

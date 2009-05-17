@@ -12,6 +12,10 @@
 #include "gui/dialogs/allow_subscription.h"
 
 #include "gui/dialogs/update_contact_info.h"
+
+#include "gui/dialogs/start_group_chat.h"
+
+
 namespace MXit
 {
 
@@ -407,8 +411,24 @@ void Contacts::multiContactMenu(const QString & selection, const QList<QTreeWidg
 ****************************************************************************/
 
 void Contacts::createNewGroupChat(const ContactList& contactList) {
-  QDialog selectGroupName();
-  mxit.createNewGroupChat("test room name", contactList);
+
+  Dialog::StartGroupChat start;
+  
+  QStringList stringList;
+  Q_FOREACH (const Contact * contact, contactList) { stringList.append(contact->nickname); }
+  
+  QString lastName = stringList.back(); stringList.pop_back();
+  
+  qDebug() << contactList.size();
+  QString names = (contactList.size() != 1?stringList.join(", ") + QString(" and ") + lastName:lastName);
+  start.setText("Select a room name for your chat with "+names);
+  
+  if (start.exec() == QDialog::Accepted) {
+    mxit.createNewGroupChat(start.getRoomname(), contactList);
+    emit sendLog("GUI::Contacts groupchat \""+start.getRoomname()+"\" created");
+      
+    /*FIXME cant switch to new group chat since it doesn't exist yet*/
+  }
 }
 
 /****************************************************************************
@@ -600,13 +620,17 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
         twiToContact[treeItemToAdd] = contact;
         
       }
-      //qDebug() << "adding " << contact->nickname;
-      /* updating listWidgetItem's lable and pixmap*/
-      refreshTreeWidgetItem(treeItemToAdd);
       
-      shouldBeInList.insert(treeItemToAdd);
-      groupToTwi[contact->group]->addChild (treeItemToAdd);
-      //shouldBeInTree.insert(treeItemToAdd);
+      bool hideOfflineContacts = false; /*TODO*/
+      if(!hideOfflineContacts) {
+        //qDebug() << "adding " << contact->nickname;
+        /* updating listWidgetItem's lable and pixmap*/
+        refreshTreeWidgetItem(treeItemToAdd);
+        
+        shouldBeInList.insert(treeItemToAdd);
+        groupToTwi[contact->group]->addChild (treeItemToAdd);
+        //shouldBeInTree.insert(treeItemToAdd);
+      }
     }
     
   }
