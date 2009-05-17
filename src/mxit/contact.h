@@ -36,6 +36,7 @@ class Contact
   
   public:        /* methods */
   
+  bool notBot() const;
   QString sortString();
   void updateFromRaw(const QList<QByteArray> &fields);
   

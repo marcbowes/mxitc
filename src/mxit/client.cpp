@@ -219,7 +219,7 @@ void Client::createNewGroupChat(const QString &roomName, const ContactList &cont
   /* contact addresses */
   QStringList contactList;
   Q_FOREACH(const Contact *contact, contacts)
-    if (contact->type != Protocol::Enumerables::Contact::Bot)
+    if (contact->notBot())
       contactList << contact->contactAddress;
   
   /* packet variables */
