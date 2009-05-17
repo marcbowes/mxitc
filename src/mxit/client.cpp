@@ -454,7 +454,57 @@ void Client::updateProfile(const QString &pin, const QString &name, bool hiddenL
 
 void Client::linkClicked(const QUrl &url)
 {
-  //TODO: this is where links that are clicked on should be handled
+  QString contactAddress, wholeUrl;
+  int position, type;
+  
+  wholeUrl = url.toString();
+  position = wholeUrl.lastIndexOf("/");
+  type = wholeUrl.right(wholeUrl.length() - position - 1).toInt();
+  wholeUrl = wholeUrl.left(position);
+  
+  position = wholeUrl.lastIndexOf("/");
+  contactAddress = wholeUrl.right(wholeUrl.length() - position - 1);
+  wholeUrl = wholeUrl.left(position);
+  
+  qDebug() << type;
+  qDebug() << contactAddress;
+  qDebug() << wholeUrl;
+  
+  if (contactAddress.isEmpty())
+    return;
+  
+  if (type == 2) {
+    VariableHash messageVariables;
+    messageVariables["contactAddress"]  = contactAddress.toUtf8();
+    messageVariables["message"]         = wholeUrl.toUtf8();
+    messageVariables["type"]            = QString("%1").arg(type).toUtf8();
+    messageVariables["flags"]           = QString("%1").arg(Protocol::Enumerables::Message::MayContainMarkup).toUtf8();
+  
+    sendPacket("sendnewmessage", messageVariables);
+  } else if (type == 7) {
+    //format reply FIXME: hack for reply only
+    QStringList tempData(wholeUrl.split("|"));
+    VariableHash tempHash;
+    
+    Q_FOREACH (const QString &option, tempData) {
+      int equalsPos = option.indexOf("=");
+      tempHash[option.mid(0, equalsPos)] = option.mid(equalsPos + 1).toUtf8();
+    }
+    
+    if (tempHash["type"] == "reply") {
+      wholeUrl = "::type=reply|res=";
+      wholeUrl += QString(tempHash["replymsg"]);
+      wholeUrl += "|err=0:";
+      
+      VariableHash messageVariables;
+      messageVariables["contactAddress"]  = contactAddress.toUtf8();
+      messageVariables["message"]         = wholeUrl.toUtf8();
+      messageVariables["type"]            = QString("%1").arg(type).toUtf8();
+      messageVariables["flags"]           = QString("%1").arg(0).toUtf8();
+    qDebug() << messageVariables;
+      sendPacket("sendnewmessage", messageVariables);
+    }
+  }
 }
 
 
