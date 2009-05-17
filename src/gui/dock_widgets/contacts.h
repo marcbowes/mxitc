@@ -14,6 +14,8 @@
 #include "mxit/contact.h"
 #include "mxit/client.h"
 
+#include <QTreeWidget>
+
 #include "gui/mxit_dock_widget.h"
 
 #include "ui_contacts.h"
@@ -36,28 +38,29 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBook & addressBook, MXit::Conversations & conversations);
   ~Contacts();
   
-  signals:
-  
-  //void outgoingItemPressed ( QListWidgetItem *  ); // depricated maybe
   
   signals:
   void conversationRequest ( const Contact * );
   
+  void groupsUpdated( const QMap<QString, bool>& groupNames);
+  
   public: /* methods */
   
+  const QMap<QString, bool>& getGroupNames();
   void refresh(const OrderedContactMap& contacts);
   
   private: /* methods */
   
-  void refreshListWidgetItem(QListWidgetItem* lwi);
-  void removeAndDeleteContactFromGUI (QListWidgetItem * lwi);
-
+  void refreshTreeWidgetItem(QTreeWidgetItem* twi);
+  void removeAndDeleteContactOrGroupFromGUI (QTreeWidgetItem* twi);
+  
   public slots:
   void refreshThemeing();
+ 
 
   private slots:
   
-  void emitConversationRequest (QListWidgetItem* lwi);
+  void emitConversationRequest (QTreeWidgetItem* twi, int index = 0);
   
   void contactsUpdated(const ContactList& contacts);
   void popUpContextMenu(const QPoint & pos);
@@ -69,9 +72,12 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   AddressBook& addressBook;
   MXit::Client& mxit;
   
-  /* TODO sohuld be const Contact* */
-  QHash<MXit::Contact*, QListWidgetItem*> contactToLwi;
-  QHash<QListWidgetItem*, MXit::Contact*> lwiToContact;
+  QMap<QString, bool> orderedGroupNames;
+  QHash<QString, QTreeWidgetItem*> groupToTwi;
+  QHash<QTreeWidgetItem*, QString> twiToGroup;
+  QHash<MXit::Contact*, QTreeWidgetItem*> contactToTwi;
+  QHash<QTreeWidgetItem*, MXit::Contact*> twiToContact;
+  
   
 
 };

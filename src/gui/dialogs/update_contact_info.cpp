@@ -1,5 +1,5 @@
 
-#include "allow_subscription.h"
+#include "update_contact_info.h"
 
 namespace MXit
 {
@@ -16,17 +16,18 @@ namespace Dialog
 ** Author: Richard Baxter
 **
 ****************************************************************************/
-AllowSubscription::AllowSubscription(const QString & inviteMessage, const QString & nickname, const QMap<QString, bool>& groups, QWidget *parent) :
+UpdateContactInfo::UpdateContactInfo(const QString & nickname, const QMap<QString, bool>& groups, const QString& currentGroup, QWidget *parent) :
  QDialog(parent)
 {
   setupUi(this);
   
-  inviteMessageTextEdit->setText(inviteMessage);
   nicknameLineEdit->setText(nickname);
   
   Q_FOREACH(QString s, groups.keys()) {
     groupComboBox->addItem ( s );
   }
+  
+  groupComboBox->setCurrentIndex  ( groupComboBox->findText(currentGroup) );
 }
 
 
@@ -35,7 +36,7 @@ AllowSubscription::AllowSubscription(const QString & inviteMessage, const QStrin
 ** Author: Richard Baxter
 **
 ****************************************************************************/
-AllowSubscription::~AllowSubscription(){}
+UpdateContactInfo::~UpdateContactInfo(){}
   
   
 
@@ -45,7 +46,7 @@ AllowSubscription::~AllowSubscription(){}
 **
 ****************************************************************************/
   
-QString AllowSubscription::getGroup() const{
+QString UpdateContactInfo::getGroup() const{
   return groupComboBox->currentText ();
 }
 
@@ -55,7 +56,7 @@ QString AllowSubscription::getGroup() const{
 **
 ****************************************************************************/
 
-QString AllowSubscription::getNickname()  const{
+QString UpdateContactInfo::getNickname()  const{
   return nicknameLineEdit->text();
 }
 

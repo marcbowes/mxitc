@@ -76,7 +76,8 @@ class Client : public QObject
   void sendMessage(const QString &contactAddress, const QString &message,
     Protocol::Enumerables::Message::Type, unsigned int flags);
   void signup();
-  void updateContactInfo();
+  void updateContactInfo(const QString &contactAddress, const QString &group,
+    const QString &nickname);
   void updateProfile(const QString &pin, const QString &name, bool hiddenLoginname,
     const QDate &dateOfBirth, const QString &gender);
   
