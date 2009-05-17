@@ -14,6 +14,8 @@
 ##List
 * message in open conversations if te contact goes online/offline (system messages)
 * make group and contact names go red when messages are waiting
+* make group change draggable
+* check that new groups start expanded, spotted some odd behaviour when moving people around
 
 ##Options
 * add to preferences: a checkbox to use or not use mxit markup
