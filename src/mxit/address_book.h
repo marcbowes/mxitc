@@ -35,6 +35,7 @@ class AddressBook : public QObject
   
   signals:
   
+  void presenceToggled(const Contact*);
   void updated(const ContactList&);
   
   public:         /* methods */
