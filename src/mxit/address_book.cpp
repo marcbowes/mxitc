@@ -164,6 +164,11 @@ void AddressBook::updateContact(const QString &group, const QString &contactAddr
   if (contact) {
     contact->group = group;
     contact->nickname = group;
+    
+    /* hacky means of emitting an update */
+    ContactList hack;
+    hack.append(contact);
+    emit updated(hack);
   }
 }
 
