@@ -162,8 +162,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(  conversationsWidget, SIGNAL(conversationRequest ( const Conversation *  )), 
             this, SLOT(setCurrentConversation( const Conversation *  )));
   
-  connect(  optionsWidget, SIGNAL(gatewaySelected(const QString&)), 
-            this, SLOT(sendGatewayToClient(const QString&))  );  
+  connect(  optionsWidget, SIGNAL(gatewaySelected(const QString&, const QString&, const QString&)), 
+            this, SLOT(sendGatewayToClient(const QString&, const QString&, const QString&))  );  
 
   
   /*------------------------------------------------------------------------------------------*/
@@ -242,7 +242,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*if the settings was able to load all the necessary variables, the autologin can commence*/
   /*TODO don't autologin if user has set it to not do so in options*/
   if (hasAllVariables) {
-    mxit->setGateway(settings->value("gateway"));
+    mxit->setGateway(settings->value("gateway").toByteArray(),
+      settings->value("proxyHost").toByteArray(),
+      settings->value("proxyPort").toUInt());
     loggingIn();
     mxit->authenticate(variableHash);
   }
@@ -314,10 +316,12 @@ void MXitC::environmentVariablesReady() {
 ****************************************************************************/
 
 /* TODO fix up the gateway stuff and the gateway stuff in options*/
-void MXitC::sendGatewayToClient(const QString& gateway)
+void MXitC::sendGatewayToClient(const QString& gateway, const QString &proxyHost, const QString &proxyPort)
 {
   settings->setValue("gateway", gateway);
-  mxit->setGateway(gateway);
+  settings->setValue("proxyHost", proxyHost);
+  settings->setValue("proxyPort", proxyPort);
+  mxit->setGateway(gateway, proxyHost, proxyPort.toUInt());
 }
 
 /****************************************************************************

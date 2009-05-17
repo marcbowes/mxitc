@@ -76,7 +76,7 @@ class Client : public QObject
     const VariableHash &settings);
   void pollDifference();
   void removeContact(const QString &contactAddress);
-  void setGateway(const QString &connectionString);
+  void setGateway(const QString &connectionString, const QString &proxyHost, quint16 proxyPort);
   void setShownPresenceAndStatus();
   void sendGroupMessage(const QString &group, const ContactList &contacts,
     const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags);

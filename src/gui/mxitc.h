@@ -120,7 +120,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void saveLayout(bool b);
   void saveLayout(Qt::DockWidgetArea area = Qt::NoDockWidgetArea); 
   
-  void sendGatewayToClient(const QString& gateway);
+  void sendGatewayToClient(const QString& gateway, const QString&, const QString&);
   
   void themeChanged();
   
