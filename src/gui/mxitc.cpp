@@ -4,10 +4,11 @@
 **
 ****************************************************************************/
 
-//#include <QWebView>
-#include "mxitc.h"
 #include <QTextDocument>
 #include <QWebFrame>
+
+#include "mxitc.h"
+
 
 namespace MXit
 {
@@ -27,7 +28,7 @@ namespace GUI
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentState(LOGGED_OUT), currentConversation(NULL)
+MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentState(LOGGED_OUT), currentConversation(NULL), splash(this)
 {
   
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
@@ -495,6 +496,11 @@ void MXitC::incomingAction(Action action)
     break;
     
     //--------------------------------------
+    case MULTIMEDIA_RECEIVED:
+      dealWithMultimedia();
+    break;
+    
+    //--------------------------------------
     case SUBSCRIPTIONS_RECEIVED:
       logWidget->logMessage("GUI::SUBSCRIPTIONS_RECEIVED");
       addressBook.addSubscriptions(mxit->variableValue("contacts"));
@@ -618,6 +624,32 @@ void MXitC::refreshChatBox(){
   
   
 }
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Saves multimedia data
+**
+****************************************************************************/
+void MXitC::dealWithMultimedia()
+{
+  QByteArray multimedia = mxit->variableValue(QString("%1_image").arg(QString(mxit->variableValue("handle"))));
+  quint16 type = mxit->variableValue(QString("%1_type").arg(QString(mxit->variableValue("handle")))).toUInt();
+  quint16 ttl = mxit->variableValue(QString("%1_timeToShow").arg(QString(mxit->variableValue("handle")))).toUInt();
+
+  if (type == Protocol::Enumerables::ChunkedData::SplashImage) {
+    QFile file(mxit->variableValue("handle"));
+    file.open(QFile::WriteOnly);
+    file.write(multimedia);
+    splashImage.loadFromData(multimedia);
+    splash.setPixmap(splashImage);
+    splash.show();
+    QTimer::singleShot(ttl * 1000, &splash, SLOT(close()));
+  }
+}
+
 
 /****************************************************************************
 **

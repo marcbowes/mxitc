@@ -21,6 +21,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTextBlock>
+#include <QSplashScreen>
 #include <QSystemTrayIcon>
 #include <QUrl>
 
@@ -41,6 +42,7 @@
 #include "gui/dialogs/login.h"
 #include "gui/theme.h"
 
+#include "protocol/enumerables/chunked_data.h"
 #include "protocol/enumerables/message.h"
 
 #include "ui_mxitc.h"
@@ -98,7 +100,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
 
   private slots:
   
-  
+  void dealWithMultimedia();
   void logConversations(const QDir &log);
   void openLoginDialog();
   void loggingIn();
@@ -131,6 +133,9 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   AddressBook addressBook;
   Conversations *conversations;
+  
+  QSplashScreen splash;
+  QPixmap splashImage;
   
   const Conversation * currentConversation;
   
