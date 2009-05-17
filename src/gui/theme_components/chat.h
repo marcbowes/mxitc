@@ -12,6 +12,7 @@
 #define __MXIT_GUID_THEMECOMPONENTS_CHAT_H__
 
 #include <QDir>
+#include <QPixmap>
 #include <QString>
 
 namespace MXit
@@ -37,6 +38,7 @@ class Chat
 
   public:         /* variables */
   
+  QPixmap   group;
   QString   stylesheet;
 };
 

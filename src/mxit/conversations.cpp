@@ -106,9 +106,9 @@ void Conversations::addMessage(const QByteArray &contactAddress,
     Contact *contact = address_book->contactFromAddress(contactAddress);
     /* either from a contact, or from us */
     if (contact)
-      conversation->appendMessage(Message(*contact, msg));
+      conversation->appendMessage(Message(*contact, msg, flags));
     else
-      conversation->appendMessage(Message(msg));
+      conversation->appendMessage(Message(msg, true));//FIXME: use a value from prefs
   }
 }
 

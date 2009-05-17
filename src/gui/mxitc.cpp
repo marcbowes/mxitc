@@ -568,7 +568,7 @@ void MXitC::outgoingMessage(const QString & message)
     /*TODO send message to Conversations*/
     
     Q_FOREACH(const Contact* contact, currentConversation->getContacts()) {
-      mxit->sendMessage(contact->contactAddress, message, Protocol::Enumerables::Message::Normal/*change this to */, 0);
+      mxit->sendMessage(contact->contactAddress, message, Protocol::Enumerables::Message::Normal /* FIXME? */, Protocol::Enumerables::Message::MayContainMarkup);
       
      /*void addMessage( const QByteArray &contactAddress,
                         const QByteArray &dateTime, 
@@ -732,7 +732,7 @@ const Conversation * MXitC::ensureExistanceOfConversation(const QString & unique
     /* conversations does not exist, need to create it*/
     /* create personal (single contact) conversation */
     Conversation *newConversation = new Conversation(addressBook.contactFromAddress(uniqueId));
-    newConversation->setCss(theme.location.absolutePath());
+    newConversation->setCss(theme.chat.stylesheet);
     conversations->addConversation(newConversation);
     
     /*this *will* return a valid pointer*/

@@ -25,7 +25,7 @@ const static QString initialHtml ("\
   <!DOCTYPE HTML \"-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd\"> \
   <html> \
     <head> \
-      <link href=\"stylesheet.css\" rel=\"stylesheet\" type=\"text/css\" /> \
+      <style></style> \
     </head> \
   <body> \
     <table></table> \
@@ -130,9 +130,9 @@ void Conversation::appendMessage(const Message &message)
 {
   QString thclass = message.contact ? "" : " class=\"you\"";
   QString author  = message.contact ? message.contact->nickname : "You";
-  QString insertion = QString("<tr><th%1>%2</th><td>%3</td></tr>")
+  QString insertion = QString("<tr><th%1>%2</th><td%1>%3</td></tr>")
     .arg(thclass).arg(author)
-    .arg(message.message);
+    .arg(message.message());
   conversationHtml.insert(conversationHtml.size()- 31, insertion);
   messages.append(new Message(message));
   emit updated(this);
@@ -192,11 +192,11 @@ void Conversation::removeContact(const Contact *contact)
 **  HTML-escaped, so only concern is performance..
 **
 ****************************************************************************/
-void Conversation::setCss(const QString &location)
+void Conversation::setCss(const QString &css)
 {
-  QRegExp rx("<link href=\"(.*)\" rel=\"stylesheet\" type=\"text/css\" />");
+  QRegExp rx("<style>(.*)</style>");
   conversationHtml.replace(rx,
-    QString("<link href=\"file://%1/chat/stylesheet.css\" rel=\"stylesheet\" type=\"text/css\" />").arg(location));
+    QString("<style>%1</style>").arg(css));
   emit updated(this);
 }
 
