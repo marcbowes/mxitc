@@ -26,7 +26,13 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
 {
   setupUi(this);
   
-  /* gateway tab */
+  /*TODO*/
+  /* ======= general tab ======= */
+  //if (settings.contains("autologin"))
+  //  autoLoginCheckBox->settings->value();
+  
+  
+  /* ======= gateway tab ======= */
   connect(httpRadioButton, SIGNAL(toggled ( bool )), httpWidget, SLOT(setEnabled ( bool )));
   
   connect(applyButton, SIGNAL(released ()), this, SLOT(emitGatewaySignal()));
@@ -38,10 +44,10 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
   connect(httpProxyLineEdit, SIGNAL(editingFinished ()), this, SLOT(saveGatewaySettings ( )));
   connect(portLineEdit, SIGNAL(editingFinished ()), this, SLOT(saveGatewaySettings ( )));
   
-  /* theme tab*/
+  /* ======= theme tab ======= */
   connect(themeOpenButton, SIGNAL( released () )   , this, SLOT(openThemeBrowser ()));
   
-  /* conversations tab*/
+  /* ======= conversations tab ======= */
   connect(conversationsOpenButton, SIGNAL( released () )   , this, SLOT(openConversationsBrowser ()));
   
   connect(

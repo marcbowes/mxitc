@@ -132,6 +132,7 @@ void Client::addContact(const QString &group, const QString &contactAddress, con
                                       = contactAddress.toUtf8();
   subscriptionVariables["nickname"]   = nickname.toUtf8();
   subscriptionVariables["type"]       = QString("%1").arg(type).toUtf8();
+  qDebug() << subscriptionVariables["type"];
   subscriptionVariables["msg"]        = message.toUtf8();
   
   sendPacket("subscribetoanewcontact", subscriptionVariables);
@@ -366,9 +367,19 @@ void Client::signup()
 ** Author: Marc Bowes
 **
 ****************************************************************************/
-void Client::updateContactInfo()
+void Client::updateContactInfo(const QString &contactAddress, const QString &group,
+    const QString &nickname)
 {
-  /* FIXME: stub */
+  /* packet variables */
+  VariableHash updateVariables;
+  updateVariables["contactAddress"]
+                           = contactAddress.toUtf8();
+  updateVariables["group"]
+                          = group.toUtf8();
+  updateVariables["nickname"]
+                          = nickname.toUtf8();
+  
+  sendPacket("updatecontactinfo", updateVariables);
 }
 
 

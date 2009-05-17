@@ -7,13 +7,13 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_DIALOG_ALLOWSUBSCPRIPTION_H__
-#define __MXIT_GUI_DIALOG_ALLOWSUBSCPRIPTION_H__
+#ifndef __MXIT_GUI_DIALOG_UPDATECONTACTINFO_H__
+#define __MXIT_GUI_DIALOG_UPDATECONTACTINFO_H__
 
 #include "mxit/client.h"
 //#include "gui/mxit_dialog.h"
 
-#include "ui_allow_subscription.h"
+#include "ui_update_contact_info.h"
 
 namespace MXit
 {
@@ -24,14 +24,14 @@ namespace GUI
 namespace Dialog
 {
 
-class AllowSubscription : public QDialog, private Ui::AllowSubscriptionDialog
+class UpdateContactInfo : public QDialog, private Ui::UpdateContactInfoDialog
 {
   Q_OBJECT
 
   public:         /* class specific */
   
-  AllowSubscription(const QString & inviteMessage, const QString & nickname, const QMap<QString, bool>& groups, QWidget *parent = 0);
-  ~AllowSubscription();
+  UpdateContactInfo(const QString & nickname, const QMap<QString, bool>& groups, const QString& currentGroup, QWidget *parent = 0);
+  ~UpdateContactInfo();
   
   public: /* methods */
   
