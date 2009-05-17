@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
+<ui version="4.0" >
  <class>ContactsDockWidget</class>
- <widget class="QDockWidget" name="ContactsDockWidget">
-  <property name="geometry">
+ <widget class="QDockWidget" name="ContactsDockWidget" >
+  <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
@@ -10,30 +9,27 @@
     <height>300</height>
    </rect>
   </property>
-  <property name="contextMenuPolicy">
+  <property name="contextMenuPolicy" >
    <enum>Qt::CustomContextMenu</enum>
   </property>
-  <property name="windowTitle">
+  <property name="windowTitle" >
    <string>Contacts</string>
   </property>
-  <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+  <widget class="QWidget" name="dockWidgetContents" >
+   <layout class="QHBoxLayout" name="horizontalLayout" >
     <item>
-     <widget class="QTreeWidget" name="contactsTree">
-      <property name="contextMenuPolicy">
+     <widget class="QTreeWidget" name="contactsTree" >
+      <property name="contextMenuPolicy" >
        <enum>Qt::CustomContextMenu</enum>
       </property>
-      <property name="dragDropMode">
+      <property name="dragDropMode" >
        <enum>QAbstractItemView::DragOnly</enum>
       </property>
-      <attribute name="headerVisible">
-       <bool>false</bool>
-      </attribute>
-      <attribute name="headerVisible">
-       <bool>false</bool>
-      </attribute>
+      <property name="headerHidden" >
+       <bool>true</bool>
+      </property>
       <column>
-       <property name="text">
+       <property name="text" >
         <string>1</string>
        </property>
       </column>
