@@ -549,7 +549,6 @@ void Client::incomingPacket(QByteArray packet)
       if (variables["polltimer"].toUInt() == 0)
         variables["polltimer"] = "30"; /* default */
       pollTimer.start(variables["polltimer"].toUInt());
-      
       break;
     case LOGOUT:
       connection->close();
@@ -589,11 +588,6 @@ void Client::incomingPacket(QByteArray packet)
       sendPacket("login");
       break;
   }
-  
-  /* global scrubbing */
-  variables.remove("ln");
-  variables.remove("command");
-  variables.remove("error");
   
   emit outgoingVariables(variables);
 }
