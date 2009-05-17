@@ -139,6 +139,25 @@ void AddContact::sendAddContactInfo() {
 }
 
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void AddContact::updateGroups(const QMap<QString, bool>& groupNames) {
+
+  QString selectedGroup =  groupComboBox->currentText();
+  groupComboBox->clear();
+  Q_FOREACH(QString s, groupNames.keys()) {
+    groupComboBox->addItem ( s );
+  }
+
+  
+  groupComboBox->setCurrentIndex  ( groupComboBox->findText(selectedGroup) );
+
+}
+
 } /* end of DockWidget namespace */
 
 

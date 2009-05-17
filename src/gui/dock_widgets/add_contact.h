@@ -40,6 +40,7 @@ class AddContact : public MXitDockWidget, private Ui::AddContactDockWidget
   
   public slots:
   void refresh();
+  void updateGroups(const QMap<QString, bool>& groupNames);
   
   private slots:
   void networkChanged ( int index );

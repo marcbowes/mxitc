@@ -40,7 +40,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   
   signals:
-  void conversationRequest ( const Contact * );
+  void conversationRequest ( const Contact * contact );
   
   void groupsUpdated( const QMap<QString, bool>& groupNames);
   
