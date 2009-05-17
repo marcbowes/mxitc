@@ -64,6 +64,7 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   void openThemeBrowser ();
   void refreshComboBox ();
   void loadTheme(const QString & dir);
+  void reloadCurrentTheme();
   
   private: /* variables */
   

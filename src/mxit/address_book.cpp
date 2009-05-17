@@ -163,7 +163,7 @@ void AddressBook::updateContact(const QString &group, const QString &contactAddr
   Contact *contact = contactFromAddress(contactAddress);
   if (contact) {
     contact->group = group;
-    contact->nickname = group;
+    contact->nickname = nickname;
     
     /* hacky means of emitting an update */
     ContactList hack;

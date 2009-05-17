@@ -85,11 +85,16 @@ Contacts::~Contacts()
 
 void Contacts::refreshThemeing() {
 
+  qDebug() << "emmintdkj";
   /*refreshing all contacts*/
   for (int i = 0 ; i < contactsTree->topLevelItemCount() ; i++) {
-    QTreeWidgetItem * twi = contactsTree->topLevelItem(i);
+    QTreeWidgetItem * groupTwi = contactsTree->topLevelItem(i);
     
-    refreshTreeWidgetItem(twi);
+    for (int i = 0 ; i < groupTwi->childCount ()  ; i++) {
+      QTreeWidgetItem * twi = groupTwi->child(i);
+      refreshTreeWidgetItem(twi);
+        
+    }
   }
 }
 
@@ -127,7 +132,7 @@ void Contacts::popUpContextMenu(const QPoint & point) {
   QTreeWidgetItem * twi = (contactsTree->itemAt ( point.x(), point.y() ));
   Contact * contact;
   QPoint pos;
-  qDebug() << twi;
+  //qDebug() << twi;
   if (twi) {
     pos = contactsTree->mapToGlobal ( point );
     if (twiToGroup.contains(twi)) {
@@ -141,7 +146,6 @@ void Contacts::popUpContextMenu(const QPoint & point) {
   }
   else {
     return;
-    /*TODO - implement NULL context menu -> add new group*/
   }
   
   MENU_START(contact?contact->nickname:twiToGroup.value(twi));
@@ -155,7 +159,7 @@ void Contacts::popUpContextMenu(const QPoint & point) {
     else {
       MENU_ITEM("Chat");
       MENU_ITEM("Change Nickname or Group");
-      MENU_ITEM("Send File");
+      //MENU_ITEM("Send File");
       MENU_ITEM("Remove Contact");
     }
   }
@@ -235,17 +239,17 @@ void Contacts::popUpContextMenu(const QPoint & point) {
         if (update.exec() == QDialog::Accepted) {
           
           /*wait for implementsation in addressbook*/
-          //addressBook.updateContact(contact->contactAddress);
-          mxit.updateContactInfo(contact->contactAddress, update.getGroup(), update.getNickname());
+          addressBook.updateContact(update.getGroup(), contact->contactAddress, update.getNickname());
+          mxit.updateContactInfo(update.getGroup(), contact->contactAddress, update.getNickname());
           emit sendLog("GUI::Contacts "+contact->nickname+" updated to "+update.getNickname() +" group " + update.getGroup());
           /* should get a contacts update back from network after this is sent*/
           /* NOTE, tested this, reply does NOT come...rage*/
         }
           
       }
-      else if (selection == "Send File") {
+      //else if (selection == "Send File") {
         /* TODO */
-      }
+      //}
       else if (selection == "Remove Contact") {
         
         QMessageBox sure;
@@ -362,7 +366,7 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
   QSet<QTreeWidgetItem*> expandedItems;
   for (int j = 0 ; j < contactsTree->topLevelItemCount() ; j++) {
     QTreeWidgetItem * groupTwi = contactsTree->topLevelItem(j);
-    qDebug() << groupTwi->text(0) << " expanded? " << groupTwi->isExpanded();
+    //qDebug() << groupTwi->text(0) << " expanded? " << groupTwi->isExpanded();
     if (groupTwi->isExpanded())
       expandedItems.insert(groupTwi);
   }
@@ -378,6 +382,8 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
     contactsTree->takeTopLevelItem ( 0 );
     
   }
+  
+  orderedGroupNames.clear();
 
   /* adding/updating contacts that should be in list*/
   Q_FOREACH(Contact* contact, contacts.values()) {
@@ -398,6 +404,7 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
         /* then this group is new to the tree and doesn't have an associated twi */
         /* create a new twi and add to hashs and then tree (done after the if statement since all the stuff is there)*/
         groupTreeItemToAdd = new QTreeWidgetItem();
+        groupTreeItemToAdd->setExpanded (true);
         
         /* add to lookup */
         groupToTwi[contact->group] = groupTreeItemToAdd;
@@ -405,8 +412,6 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
         twiToGroup[groupTreeItemToAdd] = contact->group;
         
         
-        orderedGroupNames[twiToGroup[groupTreeItemToAdd]] = true;
-        qDebug() << "adding group " << twiToGroup[groupTreeItemToAdd];
       }
       
       if (groupAlreadyInGui.contains(groupTreeItemToAdd)) {
@@ -425,6 +430,8 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
         groupTreeItemToAdd->setExpanded (expandedItems.contains(groupTreeItemToAdd));
         
         groupAlreadyInGui.insert(groupTreeItemToAdd);
+        
+        orderedGroupNames[twiToGroup[groupTreeItemToAdd]] = true;
       }
     }
     /* adding contact*/
@@ -466,7 +473,6 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
   for (int j = 0 ; j < contactsTree->topLevelItemCount() ; j++) {
     QTreeWidgetItem * groupTwi = contactsTree->topLevelItem(j);
     
-    
     if (groupShouldBeInList.contains(groupTwi)) {
       /* then the group twi should be in the list and is*/
       
@@ -491,15 +497,13 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
     else {
       /* then the group twi should NOT be in the list but is */
       
-      qDebug() << "removing group " << twiToGroup[groupTwi];
-      orderedGroupNames.remove(twiToGroup[groupTwi]);
       /* remove it and clean up */
       removeAndDeleteContactOrGroupFromGUI (groupTwi);
       j--; /*since all the indexes above will have shifted down one and the next item will have index j now*/
     }
   }
   
-  qDebug() <<orderedGroupNames; /*TODO test groupMap thing*/
+  //qDebug() <<orderedGroupNames; /*TODO test groupMap thing*/
   emit groupsUpdated(orderedGroupNames);
 }
 

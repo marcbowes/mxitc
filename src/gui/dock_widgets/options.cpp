@@ -47,12 +47,15 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
   /* ======= theme tab ======= */
   connect(themeOpenButton, SIGNAL( released () )   , this, SLOT(openThemeBrowser ()));
   
-  /* ======= conversations tab ======= */
-  connect(conversationsOpenButton, SIGNAL( released () )   , this, SLOT(openConversationsBrowser ()));
-  
   connect(
             themeComboBox, SIGNAL( currentIndexChanged ( const QString & ) ), 
             this, SLOT(loadTheme(const QString &)));
+  connect(
+            reloadButton, SIGNAL( released () ), 
+            this, SLOT(reloadCurrentTheme()));
+  
+  /* ======= conversations tab ======= */
+  connect(conversationsOpenButton, SIGNAL( released () )   , this, SLOT(openConversationsBrowser ()));
   
   connect(directoryLineEdit , SIGNAL(editingFinished ()), this, SLOT (refreshComboBox ())); 
   
@@ -258,6 +261,11 @@ void Options::refreshComboBox ()
   }
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
 void Options::loadTheme(const QString &dir){
   QDir themeDir = getBaseThemeDirectory();
   themeDir.cd(dir);
@@ -266,6 +274,15 @@ void Options::loadTheme(const QString &dir){
   emit themeChanged();
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Options::reloadCurrentTheme(){
+  loadTheme(themeComboBox->currentText ());
+}
 
 /*=========================================================================*/
 /*=========================================================================*/
