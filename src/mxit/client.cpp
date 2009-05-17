@@ -206,6 +206,34 @@ void Client::denySubscription(const QString &contactAddress, bool block)
 /****************************************************************************
 **
 ** Author: Marc Bowes
+**
+** Creates a new Group Chat
+**
+****************************************************************************/
+void Client::createNewGroupChat(const QString &group, const ContactList &contacts,
+    const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags)
+{
+  /* contact addresses */
+  QStringList contactList;
+  Q_FOREACH(const Contact *contact, contacts)
+    if (contact->type != Protocol::Enumerables::Contact::Bot)
+      contactList << contact->contactAddress;
+  
+  /* packet variables */
+  VariableHash groupVariables;
+  groupVariables["group"] = group.toUtf8();
+  groupVariables["numComtacts"] = QByteArray::number(contacts.size());
+  groupVariables["contactList"] = contactList.join("\1").toUtf8();
+  groupVariables["type"] = QByteArray::number(type);
+  groupVariables["flags"] = QByteArray::number(flags);
+  
+  sendPacket("createnewgroupchat", groupVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
 ** Author: Richard Baxter
 **
 ** this method instructs the handshaker to request initial information
@@ -325,6 +353,17 @@ void Client::setGateway(const QString &connectionString)
 **
 ****************************************************************************/
 void Client::setShownPresenceAndStatus()
+{
+  /* FIXME: stub */
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::sendGroupMessage()
 {
   /* FIXME: stub */
 }

@@ -29,6 +29,8 @@
 #include "protocol/enumerables/contact.h"
 #include "protocol/enumerables/message.h"
 
+#include "contact.h"
+
 namespace MXit
 {
 
@@ -65,6 +67,8 @@ class Client : public QObject
     const QString &nickname);
   void authenticate(const VariableHash &settings);
   void denySubscription(const QString &contactAddress, bool block=false);
+  void createNewGroupChat(const QString &group, const ContactList &contacts,
+    const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags);
   void initialize();
   void getContacts();
   void getNewMessages();
@@ -74,6 +78,7 @@ class Client : public QObject
   void removeContact(const QString &contactAddress);
   void setGateway(const QString &connectionString);
   void setShownPresenceAndStatus();
+  void sendGroupMessage();
   void sendMessage(const QString &contactAddress, const QString &message,
     Protocol::Enumerables::Message::Type, unsigned int flags);
   void signup();
