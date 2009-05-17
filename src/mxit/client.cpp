@@ -532,6 +532,8 @@ void Client::incomingPacket(QByteArray packet)
   VariableHash handledPacket = handler->handle(packet);
   variables.unite(handledPacket);
   
+  QByteArray handle; /* for #27 */
+  
   /* post packet-level handling */
   switch (packetHeader["command"].toUInt()) {
     case LOGIN:
@@ -577,6 +579,13 @@ void Client::incomingPacket(QByteArray packet)
       emit outgoingAction(MULTIMEDIA_RECEIVED);
       
       /* variable scrubbing */
+      handle = variables.value("handle");
+      variables.remove(handle + "_anchor");
+      variables.remove(handle + "_bgColour");
+      variables.remove(handle + "_image");
+      variables.remove(handle + "_timeToShow");
+      variables.remove(handle + "_type");
+      variables.remove("handle");
       break;
     case GETNEWSUBSCRIPTION:
       emit outgoingAction(SUBSCRIPTIONS_RECEIVED);
