@@ -4,8 +4,8 @@
 **
 ****************************************************************************/
 
-#include <QDebug>
 #include <QTextDocument>
+#include <QRegExp>
 
 #include "protocol/enumerables/message.h"
 
@@ -122,61 +122,82 @@ QString Message::markup(const QString &markup)
   /* CGI escape so that any HTML in the message isn't interpreted */
   QString escaped = Qt::escape(markup);
   QString markedUp;
+  QRegExp rx("[\\^\\][*/_\\$]");
+  
+  int position = 0;
+  int nextPos;
   
   bool boldOpen = false;
   bool italicOpen = false;
   bool underlineOpen = false;
   
-  int position = 0;
-  
   while (position < escaped.length()) {
-    if (escaped.at(position) != '\\') {
-      if (escaped.at(position) == '/') {
-        if (italicOpen) {
-          markedUp += "</i>";
-          italicOpen = false;
-        } else {
-          markedUp += "<i>";
-          italicOpen = true;
-        }
-      } else if (escaped.at(position) == '*') {
-        if (boldOpen) {
+    nextPos = escaped.indexOf(rx, position);
+
+    if (nextPos != -1) {
+      markedUp += escaped.mid(position, nextPos - position);
+      
+      if (escaped.at(nextPos) == '*') {
+        if (boldOpen)
           markedUp += "</b>";
-          boldOpen = false;
-        } else {
+        else
           markedUp += "<b>";
-          boldOpen = true;
-        }
-      } else if (escaped.at(position) == '_') {
-        if (underlineOpen) {
+        boldOpen = !boldOpen;
+      } else if (escaped.at(nextPos) == '/') {
+        if (italicOpen)
+          markedUp += "</i>";
+        else
+          markedUp += "<i>";
+        italicOpen = !italicOpen;
+      } else if (escaped.at(nextPos) == '_') {
+        if (underlineOpen)
           markedUp += "</u>";
-          underlineOpen = false;
-        } else {
+        else
           markedUp += "<u>";
-          underlineOpen = true;
-        }
-      } else {
-        markedUp += escaped.at(position);
+        underlineOpen = !underlineOpen;
+      } else if (escaped.at(nextPos) == '$') { //we dont interpret markup within highlight tags
+        int nextHighlight = escaped.indexOf(QRegExp("[\\^\\][\\$]"), nextPos + 1);
+        
+        if (nextHighlight != -1) { 
+          QString highlightText = escaped.mid(nextPos + 1, nextHighlight - nextPos - 1);
+          
+          //close tags
+          if (boldOpen)
+            markedUp += "</b>";
+          if (italicOpen)
+            markedUp += "</i>";
+          if (underlineOpen)
+            markedUp += "</u>";
+          
+          boldOpen = false;
+          italicOpen = false;
+          underlineOpen = false;
+          
+          markedUp += "<a href=";
+          markedUp += highlightText;
+          markedUp += ">";
+          markedUp += highlightText;
+          markedUp += "</a>";
+          
+          nextPos = nextHighlight;
+        } //otherise no other $s, ignore
       }
+      
+      position = nextPos + 1;
     } else {
-      if ((position != (escaped.length() - 1)) && 
-      ((escaped.at(position + 1) == '*') || (escaped.at(position+ 1) == '/') || (escaped.at(position + 1) == '_'))) {
-        markedUp += escaped.at(position + 1);
-        position++;
-      } else {
-        markedUp += escaped.at(position);
-      }
+      markedUp += escaped.mid(position);
+      
+      //close tags
+      if (boldOpen)
+        markedUp += "</b>";
+      if (italicOpen)
+        markedUp += "</i>";
+      if (underlineOpen)
+        markedUp += "</u>";
+      
+      position = escaped.length();
     }
-    
-    position++;
   }
-  
-  if (boldOpen)
-    markedUp += "</b>";
-  if (italicOpen)
-    markedUp += "</i>";
-  if (underlineOpen)
-    markedUp += "</u>";
   
   return markedUp;
 }
