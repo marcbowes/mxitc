@@ -28,7 +28,7 @@ const static QString initialHtml ("\
       <style></style> \
     </head> \
   <body> \
-    <table></table> \
+    <!-- start chat --> \
   </body> \
   </html> \
   ");
@@ -128,12 +128,18 @@ void Conversation::addContacts(const ContactList &contacts)
 ****************************************************************************/
 void Conversation::appendMessage(const Message &message)
 {
-  QString thclass = message.contact ? "" : " class=\"you\"";
-  QString author  = message.contact ? message.contact->nickname : "You";
-  QString insertion = QString("<tr><th%1>%2</th><td%1>%3</td></tr>")
-    .arg(thclass).arg(author)
-    .arg(message.message());
-  conversationHtml.insert(conversationHtml.size()- 31, insertion);
+  QString cssClass  = message.contact ? "" : " you";
+  QString author    = message.contact ? message.contact->nickname : "You";
+  
+  /* build insertion */
+  QString insertion;
+  insertion.append(QString("<div class=\"message%1\">").arg(cssClass));
+  insertion.append(QString("<span class=\"timestamp\">[%1]</span>").arg(message.timestamp.toString()));
+  insertion.append(QString("<span class=\"author\">%1</span>").arg(author));
+  insertion.append(QString("<span class=\"body\">%1</span>").arg(message.message()));
+  insertion.append(        "<br class=\"clear\" />");
+  insertion.append(        "</div>");
+  conversationHtml.insert(conversationHtml.size() - 21, insertion);
   messages.append(new Message(message));
   emit updated(this);
 }

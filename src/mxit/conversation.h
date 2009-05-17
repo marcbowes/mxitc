@@ -16,6 +16,7 @@
 #include <QHash>
 #include <QTime>
 
+#include <QDebug>
 #include "contact.h"
 #include "message.h"
 
