@@ -642,9 +642,12 @@ void MXitC::dealWithMultimedia()
   quint16 ttl = mxit->variableValue(QString("%1_timeToShow").arg(QString(mxit->variableValue("handle")))).toUInt();
 
   if (type == Protocol::Enumerables::ChunkedData::SplashImage) {
+    /* File saving temporarily disabled */
+    /*
     QFile file(mxit->variableValue("handle"));
     file.open(QFile::WriteOnly);
     file.write(multimedia);
+    */
     splashImage.loadFromData(multimedia);
     splash.setPixmap(splashImage);
     splash.show();
