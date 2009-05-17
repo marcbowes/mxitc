@@ -22,6 +22,7 @@
 #include <QFileInfo>
 #include <QTextBlock>
 #include <QSystemTrayIcon>
+#include <QUrl>
 
 #include "common/types.h"
 #include "common/actions.h"

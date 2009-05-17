@@ -397,6 +397,11 @@ void Client::updateProfile(const QString &pin, const QString &name, bool hiddenL
   sendPacket("updateprofile", profileVariables);
 }
 
+void Client::linkClicked(const QUrl &url)
+{
+  //TODO: this is where links that are clicked on should be handled
+}
+
 
 /****************************************************************************
                 __   ___                 __  __           __  
