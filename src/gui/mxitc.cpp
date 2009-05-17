@@ -523,7 +523,7 @@ void MXitC::messageReceived(){
   
   conversations->addMessage(  mxit->variableValue("contactAddress"),
                               mxit->variableValue("dateTime"), 
-                              mxit->variableValue("time"), /*TODO check if this exists*/
+                              mxit->variableValue("type"),
                               mxit->variableValue("contactAddress"), 
                               mxit->variableValue("flags"),
                               mxit->variableValue("message"));
