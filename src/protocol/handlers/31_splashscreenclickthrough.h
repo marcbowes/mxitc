@@ -2,19 +2,19 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
-** Author: Tim Sjoberg, 2009
+** Author: Marc Bowes, 2009
 **
-** MXit::Network::Handlers::RenameGroup handles exactly what it sounds like
-** see build/handle definitions in .cpp file for implementation details
+** MXit::Network::Handlers::SplashScreenClickthrough is a build-only packet
+** for letting MXit know that the splash screen was clicked on
 **
 ****************************************************************************/
 
-#ifndef __MXIT_PROTOCOL_HANDLERS_RENAMEGROUP_H__
-#define __MXIT_PROTOCOL_HANDLERS_RENAMEGROUP_H__
+#ifndef __MXIT_PROTOCOL_HANDLERS_SPLASHSCREENCLICKTHROUGH_H__
+#define __MXIT_PROTOCOL_HANDLERS_SPLASHSCREENCLICKTHROUGH_H__
 
 #include "protocol/handler.h"
 
-#define RENAMEGROUP 29
+#define SPLASHSCREENCLICKTHROUGH 31
 
 namespace MXit
 {
@@ -25,11 +25,11 @@ namespace Protocol
 namespace Handlers
 {
 
-class RenameGroup : public Handler
+class SplashScreenClickthrough : public Handler
 {
   public:
   
-  RenameGroup() { command = RENAMEGROUP; }
+  SplashScreenClickthrough() { command = SPLASHSCREENCLICKTHROUGH; }
   
   virtual void buildPacket(MXit::Network::Packet *packet, VariableHash &variables);
   virtual VariableHash handle(const QByteArray &packet);

@@ -33,6 +33,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   protocol/handlers/27_getmultimediamessage.cpp
   protocol/handlers/29_renamegroup.cpp
   protocol/handlers/30_removegroup.cpp
+  protocol/handlers/31_splashscreenclickthrough.cpp
   protocol/handlers/32_setshownpresenceandstatus.cpp
   protocol/handlers/33_blocksubscription.cpp
   protocol/handlers/34_sendmessagetogroup.cpp

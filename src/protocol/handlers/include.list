@@ -13,6 +13,7 @@
 #include "27_getmultimediamessage.h"
 #include "29_renamegroup.h"
 #include "30_removegroup.h"
+#include "31_splashscreenclickthrough.h"
 #include "32_setshownpresenceandstatus.h"
 #include "33_blocksubscription.h"
 #include "34_sendmessagetogroup.h"

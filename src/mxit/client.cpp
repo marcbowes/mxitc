@@ -75,6 +75,7 @@ Client::Client()
   /* 27 */ handlers["getmultimediamessage"]       = new GetMultimediaMessage();
   /* 29 */ handlers["renamegroup"]                = new RenameGroup();
   /* 30 */ handlers["removegroup"]                = new RemoveGroup();
+  /* 31 */ handlers["splashscreenclickthrough"]   = new SplashScreenClickthrough();
   /* 32 */ handlers["setshownpresenceandstatus"]  = new SetShownPresenceAndStatus();
   /* 33 */ handlers["blocksubscription"]          = new BlockSubscription();
   /* 34 */ handlers["sendmessagetogroup"]         = new SendMessageToGroup();
