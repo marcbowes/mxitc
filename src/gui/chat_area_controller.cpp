@@ -72,6 +72,12 @@ void ChatAreaController::emitConversationChanged ( int index ) {
 ****************************************************************************/
 
 void ChatAreaController::updateTabOf(const  Conversation* conversation) {
+  qDebug() << "updateTabOf(" <<conversation->uniqueIdentifier <<") active = " <<conversation->active;
+  if (!conversation->active)
+    return;
+    
+    
+  
   ChatArea * chatArea = ensureExistanceOfChatAreaAndTab(conversation->uniqueIdentifier);
   //chatArea = conversationToChatArea[conversation];
   if (chatArea == NULL) {
@@ -141,6 +147,7 @@ void ChatAreaController::outgoingMessage(const QString & message, const Conversa
 ****************************************************************************/
 
 const Conversation * ChatAreaController::ensureExistanceOfConversation(const QString & uniqueId) {
+  qDebug() << "ensureExistanceOfConversation(" << uniqueId << ")";
 
   const Conversation * conversation = conversations.getConversation(uniqueId);
 
@@ -187,18 +194,21 @@ const Conversation * ChatAreaController::ensureExistanceOfConversation(const QSt
 
 
 void ChatAreaController::switchToConversationTab(const Contact * contact) {
-  switchToConversationTab(contact->contactAddress);
+  if (contact)
+    switchToConversationTab(contact->contactAddress);
 }
 
 /***************************************************************************/
 
 void ChatAreaController::switchToConversationTab(const Conversation * conversation) {
-  switchToConversationTab(conversation->uniqueIdentifier);
+  if (conversation)
+    switchToConversationTab(conversation->uniqueIdentifier);
 }
 
 /***************************************************************************/
 
 void ChatAreaController::switchToConversationTab(const QString & uniqueId){
+  qDebug() << "switchToConversationTab(" << uniqueId << ")";
   ensureExistanceOfConversation(uniqueId);
   ensureExistanceOfChatAreaAndTab(uniqueId);
   chatTabWidget->setCurrentIndex(chatTabWidget->indexOf(conversationToChatArea[conversations.getConversation(uniqueId)]));
@@ -216,6 +226,8 @@ void ChatAreaController::switchToConversationTab(const QString & uniqueId){
 ****************************************************************************/
   
 ChatArea* ChatAreaController::ensureExistanceOfChatAreaAndTab(const QString & uniqueId) {
+  qDebug() << "ensureExistanceOfChatAreaAndTab(" << uniqueId << ")";
+
   const Conversation *conversation = ensureExistanceOfConversation(uniqueId);
 
   if (!conversationToChatArea.contains(conversation)) {
@@ -223,7 +235,7 @@ ChatArea* ChatAreaController::ensureExistanceOfChatAreaAndTab(const QString & un
     
     ChatArea* chatArea = conversationToChatArea[conversation];
     chatAreaToConversation[chatArea] = conversation;
-    chatTabWidget->addTab(chatArea, conversation->displayName);
+    chatTabWidget->addTab(chatArea, QIcon(QPixmap(16,16)), conversation->displayName);
     
     connect(
               chatArea->chatWebView, 
@@ -269,14 +281,25 @@ void ChatAreaController::removeAndDeleteConversationFromGUI( int index ){
 ****************************************************************************/
 
 void ChatAreaController::removeAndDeleteConversationFromGUI( const Conversation* conversation ) {
+  qDebug() << "removeAndDeleteConversationFromGUI(" << conversation->uniqueIdentifier << ")";
 
-  chatTabWidget->removeTab ( chatTabWidget->indexOf(conversationToChatArea[conversation]) );
+  if (conversationToChatArea.contains(conversation)) {
+    disconnect(
+                conversationToChatArea[conversation]->chatWebView, 
+                SIGNAL(linkClicked(const QUrl&)), 
+                &mxit, 
+                SLOT(linkClicked(const QUrl&)));
+                
+    
+    chatTabWidget->removeTab ( chatTabWidget->indexOf(conversationToChatArea[conversation]) );
 
-  chatAreaToConversation.remove(conversationToChatArea[conversation]);
-  conversationToChatArea.remove(conversation);
-  
-  conversations.toggleActive(conversation->uniqueIdentifier);
-  //-emit conversationRequest(NULL);
+    chatAreaToConversation.remove(conversationToChatArea[conversation]);
+    conversationToChatArea.remove(conversation);
+    
+    if (conversation->active)
+      conversations.toggleActive(conversation->uniqueIdentifier);
+    //emit conversationRequest(NULL);
+  }
 }
 
 

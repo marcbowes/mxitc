@@ -124,6 +124,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
             SIGNAL (updated(const Conversation* )), 
             chatAreaController, 
             SLOT(updateTabOf(const  Conversation* )));
+            
   connect(
             conversations, 
             SIGNAL (updated(const Conversation* )), 
@@ -139,7 +140,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   connect(  conversationsWidget, SIGNAL(conversationRequest ( const Conversation *  )), 
             chatAreaController, SLOT(switchToConversationTab( const Conversation *  )));
             
-  connect(  conversationsWidget, SIGNAL(conversationRemoved ( const Conversation *  )), 
+  connect(  conversationsWidget, SIGNAL(conversationRemovedFromGUI ( const Conversation *  )), 
             chatAreaController, SLOT(removeAndDeleteConversationFromGUI( const Conversation *  )));
             
             
@@ -627,6 +628,7 @@ void MXitC::incomingAction(Action action)
 
 void MXitC::messageReceived(){
 
+  qDebug() << "messageReceived()";
   /* make sure conversation exists */
   chatAreaController->ensureExistanceOfConversation(mxit->variableValue("contactAddress"));
   

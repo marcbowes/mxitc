@@ -96,6 +96,7 @@ void Contacts::refreshThemeing() {
   for (int i = 0 ; i < contactsTree->topLevelItemCount() ; i++) {
     QTreeWidgetItem * groupTwi = contactsTree->topLevelItem(i);
     
+    refreshTreeWidgetItem(groupTwi);
     for (int i = 0 ; i < groupTwi->childCount ()  ; i++) {
       QTreeWidgetItem * twi = groupTwi->child(i);
       refreshTreeWidgetItem(twi);
@@ -245,7 +246,7 @@ void Contacts::popUpContextMenu(const QPoint & point) {
 ****************************************************************************/
 
 void Contacts::undefinedContactMenu(const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi) {
-
+  /*blank*/
 }
 
 /****************************************************************************
@@ -606,7 +607,7 @@ void Contacts::refreshList(const OrderedContactMap& contacts) {
         
         
         //qDebug() << contact->group <<" added to GUI";
-        refreshTreeWidgetItem(groupTreeItemToAdd);
+        //refreshTreeWidgetItem(groupTreeItemToAdd);
         
         groupShouldBeInList.insert(groupTreeItemToAdd);
         
@@ -641,10 +642,10 @@ void Contacts::refreshList(const OrderedContactMap& contacts) {
       
       
       /* updating listWidgetItem's lable and pixmap*/
-      refreshTreeWidgetItem(treeItemToAdd);
-      shouldBeInList.insert(treeItemToAdd);
       
       groupToTwi[contact->group]->addChild (treeItemToAdd);
+      //refreshTreeWidgetItem(treeItemToAdd);
+      shouldBeInList.insert(treeItemToAdd);
     }
     
   }
@@ -695,7 +696,7 @@ void Contacts::refreshList(const OrderedContactMap& contacts) {
   
   }
   
-  
+  refreshThemeing();
   
   //qDebug() <<orderedGroupNames; /*TODO test groupMap thing*/
   emit groupsUpdated(getGroupNames());

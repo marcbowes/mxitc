@@ -44,7 +44,7 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
   signals:
   
   //void outgoingItemPressed ( QListWidgetItem *  ); // depricated maybe
-  
+  void conversationRemovedFromGUI ( const Conversation * conversation  );
   
   void conversationRequest ( const Conversation * conversation );
   
