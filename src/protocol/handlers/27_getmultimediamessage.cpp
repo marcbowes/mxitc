@@ -57,7 +57,7 @@ void GetMultimediaMessage::buildPacket(MXit::Network::Packet *packet, VariableHa
       data.append(variables["reason"]);
       
       //data
-      data.append(QByteArray::number(variables["data"].length()));
+      data.append(intToHex(variables["data"].length(), 2));
       data.append(variables["data"]);
       
       break;
@@ -87,20 +87,19 @@ void GetMultimediaMessage::buildPacket(MXit::Network::Packet *packet, VariableHa
       //numContacts
       data.append(variables["numContacts"]);
       
-      //addresses FIXME: this only supports 1 at the moment. we need a way of passing a list
-      data.append(QByteArray::number(variables["addresses"].length()));
+      //addresses /*this is handled in the calling function*/
       data.append(variables["addresses"]);
       
       //name
-      data.append(QByteArray::number(variables["name"].length()));
+      data.append(intToHex(variables["name"].length(), 2));
       data.append(variables["name"]);
       
       //mimetype
-      data.append(QByteArray::number(variables["mimetype"].length()));
+      data.append(intToHex(variables["mimetype"].length(), 2));
       data.append(variables["mimetype"]);
       
       //description
-      data.append(QByteArray::number(variables["description"].length()));
+      data.append(intToHex(variables["description"].length(), 2));
       data.append(variables["description"]);
       
       //crc
@@ -118,15 +117,15 @@ void GetMultimediaMessage::buildPacket(MXit::Network::Packet *packet, VariableHa
       data.append(variables["numContacts"]);
       
       //addresses
-      data.append(QByteArray::number(variables["addresses"].length()));
+      data.append(intToHex(variables["addresses"].length(), 2));
       data.append(variables["addresses"]);
       
       //name
-      data.append(QByteArray::number(variables["name"].length()));
+      data.append(intToHex(variables["name"].length(), 2));
       data.append(variables["name"]);
       
       //description
-      data.append(QByteArray::number(variables["description"].length()));
+      data.append(intToHex(variables["description"].length(), 2));
       data.append(variables["description"]);
       
       break;
@@ -138,7 +137,7 @@ void GetMultimediaMessage::buildPacket(MXit::Network::Packet *packet, VariableHa
   length = data.size();
   
   data.prepend(intToHex(length, 4));
-  data.prepend(variables["type"]); 
+  data.prepend(variables["type"]);
   
   /* packet data setup */
   (*packet) << data;

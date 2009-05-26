@@ -18,6 +18,7 @@
 #include <QHash>
 #include <QTimer>
 #include <QUrl>
+#include <QFile>
 
 #include "common/actions.h"
 
@@ -77,6 +78,7 @@ class Client : public QObject
     const VariableHash &settings);
   void pollDifference();
   void removeContact(const QString &contactAddress);
+  void sendFile(QFile &file, const ContactList &contacts);
   void setGateway(const QString &connectionString, const QString &proxyHost, quint16 proxyPort);
   void setMood(Protocol::Enumerables::Contact::Mood mood);
   void setShownPresenceAndStatus(Protocol::Enumerables::Contact::Presence presence,
