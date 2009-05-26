@@ -5,6 +5,7 @@
 ****************************************************************************/
 
 #include "protocol/packet_header.h"
+#include "protocol/enumerables/chunked_data.h"
 
 #include "client.h"
 
@@ -391,6 +392,64 @@ void Client::removeContact(const QString &contactAddress)
   removeVariables["contactAddress"]   = contactAddress.toUtf8();
 
   sendPacket("removecontact", removeVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Tim Sjoberg
+**
+** Passes parameters onto a packet handler and transmits result
+**
+****************************************************************************/
+void Client::sendFile(QFile &file, const ContactList &contacts)
+{
+  VariableHash fileVariables;
+  fileVariables["type"] = QByteArray::number(MXit::Protocol::Enumerables::ChunkedData::SendFileDirect);
+  
+  if (!file.isOpen())
+    file.open(QIODevice::ReadOnly);
+  
+  int size = file.size();
+  QByteArray temp = QByteArray::number(size, 16);
+  while (temp.size() < (4*2))
+    temp.prepend("0");
+  fileVariables["size"] = temp.toHex();
+  
+  int numContacts = contacts.size();
+  temp = QByteArray::number(numContacts, 16);
+  while (temp.size() < (2*2))
+    temp.prepend("0");
+  fileVariables["numContacts"] = temp;
+  
+  temp.clear();
+  Q_FOREACH(const Contact *contact, contacts) {
+    QString contactAddress = contact->contactAddress;
+    int length = contactAddress.length();
+    QByteArray byteLength = QByteArray::number(length, 16);
+    while (byteLength.size() < (2*2))
+      byteLength.prepend("0");
+    temp.append(byteLength.toHex());
+    temp.append(contactAddress);
+  }
+  fileVariables["addresses"] = temp;
+  
+  fileVariables["name"] = file.fileName().toUtf8();
+  
+  //FIXME: actually do mimetypes
+  fileVariables["mimetype"] = "application/octet-stream";
+  
+  fileVariables["description"] = "";
+  
+  //FIXME: implement crc
+  temp = QByteArray::number(0, 16);
+  while (temp.size() < (4*2))
+    temp.prepend("0");
+  fileVariables["crc"] = temp;
+  
+  fileVariables["bytes"] = file.readAll();
+  
+  sendPacket("getmultimediamessage", fileVariables);
 }
 
 
