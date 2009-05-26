@@ -25,6 +25,9 @@ ChatArea::ChatArea(QWidget * parent ) : QWidget(parent) {
   
   connect(chatInput,  SIGNAL(returnPressed ()), this, SLOT(emitSendMessageFromChatInput()));
   connect(chatInput,  SIGNAL(returnPressed ()), chatInput, SLOT(clear()));
+  
+  chatWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+
 }
 
 

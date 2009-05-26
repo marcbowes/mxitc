@@ -124,6 +124,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
             SIGNAL (updated(const Conversation* )), 
             chatAreaController, 
             SLOT(updateTabOf(const  Conversation* )));
+            
   connect(
             conversations, 
             SIGNAL (updated(const Conversation* )), 
@@ -138,6 +139,11 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
 
   connect(  conversationsWidget, SIGNAL(conversationRequest ( const Conversation *  )), 
             chatAreaController, SLOT(switchToConversationTab( const Conversation *  )));
+            
+  connect(  conversationsWidget, SIGNAL(conversationRemovedFromGUI ( const Conversation *  )), 
+            chatAreaController, SLOT(removeAndDeleteConversationFromGUI( const Conversation *  )));
+            
+            
   
   connect(mxit, SIGNAL(outgoingConnectionState(Network::Connection::State)), this, SLOT(incomingConnectionState(Network::Connection::State)));
           
@@ -169,8 +175,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
             chatAreaController, SLOT(switchToConversationTab( const Contact *  )));
   
   
-  connect(  optionsWidget, SIGNAL(gatewaySelected(const QString&, const QString&, const QString&)), 
-            this, SLOT(sendGatewayToClient(const QString&, const QString&, const QString&))  );  
+  connect(  optionsWidget, SIGNAL(gatewaySelected(const QString&, const QString&, const QString&, const QString&, const QString&)), 
+            this, SLOT(sendGatewayToClient(const QString&, const QString&, const QString&, const QString&, const QString&))  );  
 
   
   /*------------------------------------------------------------------------------------------*/
@@ -358,12 +364,13 @@ void MXitC::environmentVariablesReady() {
 ****************************************************************************/
 
 /* TODO fix up the gateway stuff and the gateway stuff in options*/
-void MXitC::sendGatewayToClient(const QString& gateway, const QString &proxyHost, const QString &proxyPort)
+void MXitC::sendGatewayToClient(const QString& gateway, const QString &proxyHost, const QString &proxyPort,
+  const QString &username, const QString &password)
 {
   settings->setValue("gateway", gateway);
   settings->setValue("proxyHost", proxyHost);
   settings->setValue("proxyPort", proxyPort);
-  mxit->setGateway(gateway, proxyHost, proxyPort.toUInt());
+  mxit->setGateway(gateway, proxyHost, proxyPort.toUInt(), username, password);
 }
 
 /****************************************************************************
@@ -622,6 +629,7 @@ void MXitC::incomingAction(Action action)
 
 void MXitC::messageReceived(){
 
+  qDebug() << "messageReceived()";
   /* make sure conversation exists */
   chatAreaController->ensureExistanceOfConversation(mxit->variableValue("contactAddress"));
   

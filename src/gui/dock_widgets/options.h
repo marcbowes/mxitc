@@ -57,7 +57,8 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   signals:
   
   void conversationLogDirectorySelected(const QDir &dir);
-  void gatewaySelected(const QString &gateway, const QString &proxyHost, const QString &proxyPort);
+  void gatewaySelected(const QString &gateway, const QString &proxyHost, const QString &proxyPort,
+    const QString &username, const QString &password);
   
   void themeChanged( );
   void requestRefresh( );

@@ -79,7 +79,8 @@ class Client : public QObject
   void pollDifference();
   void removeContact(const QString &contactAddress);
   void sendFile(QFile &file, const ContactList &contacts);
-  void setGateway(const QString &connectionString, const QString &proxyHost, quint16 proxyPort);
+  void setGateway(const QString &connectionString, const QString &proxyHost, quint16 proxyPort,
+    const QString &username, const QString &password);
   void setMood(Protocol::Enumerables::Contact::Mood mood);
   void setShownPresenceAndStatus(Protocol::Enumerables::Contact::Presence presence,
     const QString &status = "");
@@ -87,7 +88,8 @@ class Client : public QObject
     const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags);
   void sendMessage(const QString &contactAddress, const QString &message,
     Protocol::Enumerables::Message::Type, unsigned int flags);
-  void signup();
+  void signup(const QString &cellphone, const QString &password, const QString &captcha,
+    const VariableHash &settings);
   void updateContactInfo(const QString &group, const QString &contactAddress,
     const QString &nickname);
   void updateProfile(const QString &pin, const QString &name, bool hiddenLoginname,
@@ -124,6 +126,7 @@ class Client : public QObject
   Protocol::Handshaker       *handshaker;
   QTimer                      keepAliveTimer;
   QTimer                      pollTimer;
+  bool                        registerAfterChallenge;
   Status                      state;
   VariableHash                variables;
 };

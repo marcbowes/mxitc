@@ -59,7 +59,8 @@ class Connection : public QObject
   State getState();
   bool isHTTP();
   void open(const Packet *login);
-  void setGateway(const QString &connectionString, const QString &proxyHost, quint16 port);
+  void setGateway(const QString &connectionString, const QString &proxyHost, quint16 port,
+    const QString &username, const QString &password);
   void sendPacket(const Packet *packet);
 
   private slots:

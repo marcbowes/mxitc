@@ -82,7 +82,8 @@ Conversations::~Conversations()
 
 void Conversations::selectConversation(const Conversation *conversation) {
 
-  conversationToLwi[conversation]->setSelected(true);
+  if(conversationToLwi.contains(conversation))
+    conversationToLwi.value(conversation)->setSelected(true);
 }
   
 /****************************************************************************
@@ -244,7 +245,10 @@ void Conversations::popUpContextMenu(const QPoint &point) {
   
   if (selection == "Close Conversation") {
     /* closes conversation */
+    qDebug() << "Close Conversation(" <<conversation->uniqueIdentifier <<") active = " <<conversation->active;
     conversations.toggleActive(conversation->uniqueIdentifier);
+    
+    qDebug() << "Close Conversation(" <<conversation->uniqueIdentifier <<") active = " <<conversation->active;
     emit conversationRequest(NULL);
   }
 }
@@ -330,6 +334,8 @@ void Conversations::refresh(const MXit::OrderedConversationMap& conversationsMap
     else {
       /* then the lwi should NOT be in the list */
       /* remove it and clean up */
+      
+      emit conversationRemovedFromGUI ( lwiToConversation[lwi] );
       conversationsList->removeItemWidget(lwi);
       conversationToLwi.remove(lwiToConversation[lwi]);
       lwiToConversation.remove(lwi);

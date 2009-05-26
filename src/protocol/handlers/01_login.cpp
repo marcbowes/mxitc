@@ -3,7 +3,7 @@
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
 ****************************************************************************/
-#include <QDebug>
+
 #include "protocol/aes.h"
 
 #include "01_login.h"
