@@ -24,7 +24,6 @@ namespace MXit
 
 /****************************************************************************
 **
-** Author: Richard Baxter
 ** Author: Marc Bowes
 **
 ** Client constructor

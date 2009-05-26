@@ -34,11 +34,16 @@ void Chat::load(QDir theme)
   }
   
   /* load from disk */
-  QImage _group = QImage(theme.absoluteFilePath("group.png"));
+  QImage _group  = QImage(theme.absoluteFilePath("group.png"));
+  QImage _unread = QImage(theme.absoluteFilePath("unread.png"));
   
   /* build pixmaps from images, or use defaults */
   if (!_group.isNull()) {
     group = QPixmap::fromImage(_group);
+  }
+  
+  if (!_unread.isNull()) {
+    unread = QPixmap::fromImage(_unread);
   }
 }
 
@@ -56,6 +61,9 @@ void Chat::loadDefaults()
   
   group = QPixmap(DEFAULT_SIZE);
   group.fill(Qt::black);
+  
+  unread = QPixmap(DEFAULT_SIZE);
+  unread.fill(Qt::yellow);
 }
 
 }

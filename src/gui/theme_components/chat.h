@@ -40,6 +40,7 @@ class Chat
   
   QPixmap   group;
   QString   stylesheet;
+  QPixmap   unread;
 };
 
 }
