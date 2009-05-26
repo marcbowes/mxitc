@@ -629,7 +629,6 @@ void MXitC::incomingAction(Action action)
 
 void MXitC::messageReceived(){
 
-  qDebug() << "messageReceived()";
   /* make sure conversation exists */
   chatAreaController->ensureExistanceOfConversation(mxit->variableValue("contactAddress"));
   

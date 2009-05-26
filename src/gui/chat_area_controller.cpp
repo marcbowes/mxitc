@@ -72,7 +72,6 @@ void ChatAreaController::emitConversationChanged ( int index ) {
 ****************************************************************************/
 
 void ChatAreaController::updateTabOf(const  Conversation* conversation) {
-  qDebug() << "updateTabOf(" <<conversation->uniqueIdentifier <<") active = " <<conversation->active;
   if (!conversation->active)
     return;
     
@@ -147,8 +146,7 @@ void ChatAreaController::outgoingMessage(const QString & message, const Conversa
 ****************************************************************************/
 
 const Conversation * ChatAreaController::ensureExistanceOfConversation(const QString & uniqueId) {
-  qDebug() << "ensureExistanceOfConversation(" << uniqueId << ")";
-
+  
   const Conversation * conversation = conversations.getConversation(uniqueId);
 
   if (!conversation) {
@@ -208,7 +206,6 @@ void ChatAreaController::switchToConversationTab(const Conversation * conversati
 /***************************************************************************/
 
 void ChatAreaController::switchToConversationTab(const QString & uniqueId){
-  qDebug() << "switchToConversationTab(" << uniqueId << ")";
   ensureExistanceOfConversation(uniqueId);
   ensureExistanceOfChatAreaAndTab(uniqueId);
   chatTabWidget->setCurrentIndex(chatTabWidget->indexOf(conversationToChatArea[conversations.getConversation(uniqueId)]));
@@ -226,8 +223,7 @@ void ChatAreaController::switchToConversationTab(const QString & uniqueId){
 ****************************************************************************/
   
 ChatArea* ChatAreaController::ensureExistanceOfChatAreaAndTab(const QString & uniqueId) {
-  qDebug() << "ensureExistanceOfChatAreaAndTab(" << uniqueId << ")";
-
+  
   const Conversation *conversation = ensureExistanceOfConversation(uniqueId);
 
   if (!conversationToChatArea.contains(conversation)) {
@@ -281,8 +277,7 @@ void ChatAreaController::removeAndDeleteConversationFromGUI( int index ){
 ****************************************************************************/
 
 void ChatAreaController::removeAndDeleteConversationFromGUI( const Conversation* conversation ) {
-  qDebug() << "removeAndDeleteConversationFromGUI(" << conversation->uniqueIdentifier << ")";
-
+  
   if (conversationToChatArea.contains(conversation)) {
     disconnect(
                 conversationToChatArea[conversation]->chatWebView, 

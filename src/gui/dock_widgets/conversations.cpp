@@ -50,6 +50,8 @@ Conversations::Conversations(QWidget* parent, Theme &theme, MXit::Client& mxit, 
   /* right clicking on a conversation emits signal#conversationContextMenuRequest */
   connect(conversationsList, SIGNAL(customContextMenuRequested(const QPoint&)), 
           this,              SLOT(popUpContextMenu(const QPoint &)));
+          
+         
 }
 
 
@@ -82,9 +84,14 @@ Conversations::~Conversations()
 
 void Conversations::selectConversation(const Conversation *conversation) {
 
-  if(conversationToLwi.contains(conversation))
+  if(conversationToLwi.contains(conversation))  {
     conversationToLwi.value(conversation)->setSelected(true);
+    
+    conversationRead(conversation);
+  }
 }
+  
+  
   
 /****************************************************************************
 **
@@ -118,6 +125,13 @@ void Conversations::refreshThemeing() {
 **
 ** Author: Richard Baxter
 **
+****************************************************************************/
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
 ** refreshes a listWidgetItem (just icon for now)
 **
 ****************************************************************************/
@@ -133,8 +147,10 @@ void Conversations::refreshListWidgetItem(QListWidgetItem *item) {
       item->setIcon(theme.contact.presence.pixmap((*conversation->getContacts().begin())->presence));
       break;
   }
-  
   item->setText(conversation->displayName);
+  
+  //if(item->isSelected())
+  //  conversationToLwi.value(conversation)->setForeground ( QBrush(Qt::black) );
 }
 
 /****************************************************************************
@@ -245,10 +261,8 @@ void Conversations::popUpContextMenu(const QPoint &point) {
   
   if (selection == "Close Conversation") {
     /* closes conversation */
-    qDebug() << "Close Conversation(" <<conversation->uniqueIdentifier <<") active = " <<conversation->active;
     conversations.toggleActive(conversation->uniqueIdentifier);
     
-    qDebug() << "Close Conversation(" <<conversation->uniqueIdentifier <<") active = " <<conversation->active;
     emit conversationRequest(NULL);
   }
 }
@@ -267,6 +281,9 @@ void Conversations::popUpContextMenu(const QPoint &point) {
 ****************************************************************************/
 
 void Conversations::conversationUpdated(const MXit::Conversation* conversation) {
+
+
+    
   /*TODO use the pointer*/
   refresh(conversations.getConversations());
   
