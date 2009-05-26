@@ -354,9 +354,15 @@ void Client::setGateway(const QString &connectionString, const QString &httpHost
 ** Author: Marc Bowes
 **
 ****************************************************************************/
-void Client::setShownPresenceAndStatus()
+void Client::setShownPresenceAndStatus(Protocol::Enumerables::Contact::Presence presence,
+  const QString &status)
 {
-  /* FIXME: stub */
+  /* packet variables */
+  VariableHash presenceVariables;
+  presenceVariables["show"]   = QByteArray::number(presence);
+  presenceVariables["status"] = status.toUtf8();
+  
+  sendPacket("setshownpresenceandstatus", presenceVariables);
 }
 
 
@@ -594,9 +600,7 @@ void Client::incomingPacket(QByteArray packet)
       useVariable("loginname", 0);
       
       /* send custom online presence */
-      variables["show"]   = "1";        /* online */
-      variables["status"] = "mxitc";
-      sendPacket("setshownpresenceandstatus");
+      setShownPresenceAndStatus(Protocol::Enumerables::Contact::Online, "mxitc");
       
       if (connection->isHTTP()) {
         /* start the first pollDifference */
