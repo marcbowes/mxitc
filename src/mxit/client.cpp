@@ -189,29 +189,6 @@ void Client::authenticate(const VariableHash &settings)
 **
 ** Author: Marc Bowes
 **
-** Passes parameters onto a packet handler and transmits result
-** If block is set to true a block request will be sent (prevents future
-** subscription attempts)
-**
-****************************************************************************/
-void Client::denySubscription(const QString &contactAddress, bool block)
-{
-  /* packet variables */
-  VariableHash subscriptionVariables;
-  subscriptionVariables["contactAddress"]
-                           = contactAddress.toUtf8();
-
-  if (block)
-    sendPacket("blocksubscription", subscriptionVariables);
-  else
-    sendPacket("denysubscription", subscriptionVariables);
-}
-
-
-/****************************************************************************
-**
-** Author: Marc Bowes
-**
 ** Creates a new Group Chat
 **
 ****************************************************************************/
@@ -230,6 +207,29 @@ void Client::createNewGroupChat(const QString &roomName, const ContactList &cont
   groupVariables["contactList"] = contactList.join("\1").toUtf8();
 
   sendPacket("createnewgroupchat", groupVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Passes parameters onto a packet handler and transmits result
+** If block is set to true a block request will be sent (prevents future
+** subscription attempts)
+**
+****************************************************************************/
+void Client::denySubscription(const QString &contactAddress, bool block)
+{
+  /* packet variables */
+  VariableHash subscriptionVariables;
+  subscriptionVariables["contactAddress"]
+                           = contactAddress.toUtf8();
+
+  if (block)
+    sendPacket("blocksubscription", subscriptionVariables);
+  else
+    sendPacket("denysubscription", subscriptionVariables);
 }
 
 

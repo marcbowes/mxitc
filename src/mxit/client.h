@@ -67,8 +67,8 @@ class Client : public QObject
   void allowSubscription(const QString &contactAddress, const QString &group,
     const QString &nickname);
   void authenticate(const VariableHash &settings);
-  void denySubscription(const QString &contactAddress, bool block=false);
   void createNewGroupChat(const QString &roomName, const ContactList &contacts);
+  void denySubscription(const QString &contactAddress, bool block=false);
   void initialize();
   void getContacts();
   void getNewMessages();
