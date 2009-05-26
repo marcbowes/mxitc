@@ -39,18 +39,18 @@ class Client : public QObject
   Q_OBJECT
 
   public:         /* class specific */
-	
+
   Client();
   ~Client();
-  
+
   enum Status {
     IDLE,
     INITIALIZING,
     CHALLENGING
   };
-  
+
   signals:
-  
+
   void environmentReady();
   void errorEncountered(const QString &);
   void outgoingAction(Action);
@@ -59,9 +59,9 @@ class Client : public QObject
   void outgoingMessage(const QString & contactAddress, const QString & message);
   void outgoingError(int code, const QString &message);
   void outgoingVariables(const VariableHash&);
-    
+
   public slots:
-  
+
   void addContact(const QString &group, const QString &contactAddress, const QString &nickname,
     Protocol::Enumerables::Contact::Type type, const QString &message);
   void allowSubscription(const QString &contactAddress, const QString &group,
@@ -72,6 +72,7 @@ class Client : public QObject
   void initialize();
   void getContacts();
   void getNewMessages();
+  void linkClicked(const QUrl &url);
   void login(const QString &cellphone, const QString &password, const QString &captcha,
     const VariableHash &settings);
   void pollDifference();
@@ -89,21 +90,20 @@ class Client : public QObject
     const QString &nickname);
   void updateProfile(const QString &pin, const QString &name, bool hiddenLoginname,
     const QDate &dateOfBirth, const QString &gender);
-  void linkClicked(const QUrl &url);
-  
+
   public:         /* methods */
-  
+
   QByteArray variableValue(const QString &name);
-  
+
   private slots:
-  
+
   void incomingError(const QString &error);
   void incomingPacket(QByteArray packet);
   void incomingVariables(const VariableHash &variables);
   void keepAlive();
 
   private:        /* methods */
-  
+
   MXit::Network::Packet* buildPacket();
   void challenge(const QString &captcha);
   MXit::Network::Packet* getPacket(const QString &handler);
@@ -116,7 +116,7 @@ class Client : public QObject
   void useVariable(const QString &variable, unsigned int index);
 
   private:        /* variables */
-  
+
   Network::Connection        *connection;
   Protocol::HandlerHash       handlers;
   Protocol::Handshaker       *handshaker;

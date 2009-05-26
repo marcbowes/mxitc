@@ -12,11 +12,11 @@ namespace MXit
 {
 
 /****************************************************************************
-        __                                _ ____    
+        __                                _ ____
    ____/ /__ ____ ___   ___ ___  ___ ____(_) _(_)___
   / __/ / _ `(_-<(_-<  (_-</ _ \/ -_) __/ / _/ / __/
-  \__/_/\_,_/___/___/ /___/ .__/\__/\__/_/_//_/\__/ 
-                         /_/                        
+  \__/_/\_,_/___/___/ /___/ .__/\__/\__/_/_//_/\__/
+                         /_/
 
 ****************************************************************************/
 
@@ -34,30 +34,30 @@ Client::Client()
 {
   connection = new MXit::Network::Connection();
   handshaker = new MXit::Protocol::Handshaker();
-  
+
   /* variable passing */
   connect(handshaker, SIGNAL(outgoingVariables(const VariableHash &)),
     this, SLOT(incomingVariables(const VariableHash &)));
-  
+
   /* incoming packets */
   connect(connection, SIGNAL(outgoingPacket(const QByteArray &)),
     this, SLOT(incomingPacket(QByteArray)));
-  
+
   /* incoming states */
   connect(connection, SIGNAL(outgoingState(Network::Connection::State)),
     this, SIGNAL(outgoingConnectionState(Network::Connection::State)));
-  
+
   /* error bubbling between connection and ui */
   connect(connection, SIGNAL(outgoingError(const QString &)),
     this, SLOT(incomingError(const QString &)));
-    
+
   /* keep alive */
   connect(&keepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
   keepAliveTimer.setSingleShot(true);
-  
+
   /* poll difference */
   connect(&pollTimer, SIGNAL(timeout()), this, SLOT(pollDifference()));
-  
+
   /* create handlers */
   using namespace MXit::Protocol::Handlers;
   /* 01 */ handlers["login"]                      = new Login();
@@ -103,7 +103,7 @@ Client::~Client()
 {
   delete connection;
   delete handshaker;
-  
+
   /* free handlers */
   Q_FOREACH(MXit::Protocol::Handler *h, handlers)
     delete h;
@@ -111,11 +111,11 @@ Client::~Client()
 
 
 /****************************************************************************
-                __   ___           __     __    
+                __   ___           __     __
      ___  __ __/ /  / (_)___  ___ / /__  / /____
     / _ \/ // / _ \/ / / __/ (_-</ / _ \/ __(_-<
    / .__/\_,_/_.__/_/_/\__/ /___/_/\___/\__/___/
-  /_/                                           
+  /_/
 
 ****************************************************************************/
 
@@ -138,7 +138,7 @@ void Client::addContact(const QString &group, const QString &contactAddress, con
   subscriptionVariables["nickname"]   = nickname.toUtf8();
   subscriptionVariables["type"]       = QString("%1").arg(type).toUtf8();
   subscriptionVariables["msg"]        = message.toUtf8();
-  
+
   sendPacket("subscribetoanewcontact", subscriptionVariables);
 }
 
@@ -161,7 +161,7 @@ void Client::allowSubscription(const QString &contactAddress, const QString &gro
                           = group.toUtf8();
   subscriptionVariables["nickname"]
                           = nickname.toUtf8();
-  
+
   sendPacket("allowsubscription", subscriptionVariables);
 }
 
@@ -179,7 +179,7 @@ void Client::authenticate(const VariableHash &settings)
   variables.unite(settings);
   emit environmentReady();
   emit outgoingVariables(variables);
-  
+
   connection->setGateway(variables["soc1"], "", 0);
   connection->open(getPacket("login"));
 }
@@ -200,7 +200,7 @@ void Client::denySubscription(const QString &contactAddress, bool block)
   VariableHash subscriptionVariables;
   subscriptionVariables["contactAddress"]
                            = contactAddress.toUtf8();
-  
+
   if (block)
     sendPacket("blocksubscription", subscriptionVariables);
   else
@@ -222,13 +222,13 @@ void Client::createNewGroupChat(const QString &roomName, const ContactList &cont
   Q_FOREACH(const Contact *contact, contacts)
     if (contact->notBot())
       contactList << contact->contactAddress;
-  
+
   /* packet variables */
   VariableHash groupVariables;
   groupVariables["roomname"] = roomName.toUtf8();
   groupVariables["numContacts"] = QByteArray::number(contacts.size());
   groupVariables["contactList"] = contactList.join("\1").toUtf8();
-  
+
   sendPacket("createnewgroupchat", groupVariables);
 }
 
@@ -273,6 +273,71 @@ void Client::getNewMessages()
 
 /****************************************************************************
 **
+** Author: Tim Sjoberg
+** Author: Marc Bowes
+**
+** Deals with commands/markup by messaging-out the text clicked on
+**
+****************************************************************************/
+void Client::linkClicked(const QUrl &url)
+{
+  QString contactAddress, wholeUrl;
+  int position, type;
+
+  wholeUrl = url.toString();
+  position = wholeUrl.lastIndexOf("/");
+  type = wholeUrl.right(wholeUrl.length() - position - 1).toInt();
+  wholeUrl = wholeUrl.left(position);
+
+  position = wholeUrl.lastIndexOf("/");
+  contactAddress = wholeUrl.right(wholeUrl.length() - position - 1);
+  wholeUrl = wholeUrl.left(position);
+
+  qDebug() << type;
+  qDebug() << contactAddress;
+  qDebug() << wholeUrl;
+
+  if (contactAddress.isEmpty())
+    return;
+
+  if (type == 2) {
+    VariableHash messageVariables;
+    messageVariables["contactAddress"]  = contactAddress.toUtf8();
+    messageVariables["message"]         = wholeUrl.toUtf8();
+    messageVariables["type"]            = QString("%1").arg(type).toUtf8();
+    messageVariables["flags"]           = QString("%1").arg(Protocol::Enumerables::Message::MayContainMarkup).toUtf8();
+
+    sendPacket("sendnewmessage", messageVariables);
+  } else if (type == 7) {
+    //format reply FIXME: hack for reply only
+    QStringList tempData(wholeUrl.split("|"));
+    VariableHash tempHash;
+
+    Q_FOREACH (const QString &option, tempData) {
+      int equalsPos = option.indexOf("=");
+      tempHash[option.mid(0, equalsPos)] = option.mid(equalsPos + 1).toUtf8();
+    }
+
+    if (tempHash["type"] == "reply") {
+      wholeUrl = "::type=reply|res=";
+      wholeUrl += QString(tempHash["replymsg"]);
+      wholeUrl += "|err=0:";
+
+      VariableHash messageVariables;
+      messageVariables["contactAddress"]  = contactAddress.toUtf8();
+      messageVariables["message"]         = wholeUrl.toUtf8();
+      messageVariables["type"]            = QString("%1").arg(type).toUtf8();
+      messageVariables["flags"]           = QString("%1").arg(0).toUtf8();
+    qDebug() << messageVariables;
+      sendPacket("sendnewmessage", messageVariables);
+    }
+  }
+}
+
+
+
+/****************************************************************************
+**
 ** Author: Marc Bowes
 **
 ** abstraction method to simply login process, see submethod calls
@@ -283,16 +348,16 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
 {
   /* need to store cellphone so it can be used as "id" in packets */
   variables["_cellphone"] = cellphone.toLatin1();
-  
+
   /* need to store password so that it can be sent after challenge is complete */
   variables["_password"] = password.toLatin1();
-  
+
   /* merge in settings */
   variables.unite(settings);
-  
+
   /* begin challenge */
   challenge(captcha);
-  
+
   emit outgoingVariables(variables);
 }
 
@@ -325,7 +390,7 @@ void Client::removeContact(const QString &contactAddress)
   /* packet variables */
   VariableHash removeVariables;
   removeVariables["contactAddress"]   = contactAddress.toUtf8();
-  
+
   sendPacket("removecontact", removeVariables);
 }
 
@@ -359,7 +424,7 @@ void Client::setMood(Protocol::Enumerables::Contact::Mood mood)
   /* packet variables */
   VariableHash moodVariables;
   moodVariables["mood"] = QByteArray::number(mood);
-  
+
   sendPacket("setmood", moodVariables);
 }
 
@@ -376,7 +441,7 @@ void Client::setShownPresenceAndStatus(Protocol::Enumerables::Contact::Presence 
   VariableHash presenceVariables;
   presenceVariables["show"]   = QByteArray::number(presence);
   presenceVariables["status"] = status.toUtf8();
-  
+
   sendPacket("setshownpresenceandstatus", presenceVariables);
 }
 
@@ -394,7 +459,7 @@ void Client::sendGroupMessage(const QString &group, const ContactList &contacts,
   Q_FOREACH(const Contact *contact, contacts)
     if (contact->type != Protocol::Enumerables::Contact::Bot)
       contactList << contact->contactAddress;
-  
+
   /* packet variables */
   VariableHash groupVariables;
   groupVariables["group"] = group.toUtf8();
@@ -402,7 +467,7 @@ void Client::sendGroupMessage(const QString &group, const ContactList &contacts,
   groupVariables["contactList"] = contactList.join("\1").toUtf8();
   groupVariables["type"] = QByteArray::number(type);
   groupVariables["flags"] = QByteArray::number(flags);
-  
+
   sendPacket("sendmessagetogroup", groupVariables);
 }
 
@@ -422,7 +487,7 @@ void Client::sendMessage(const QString &contactAddress, const QString &message, 
   messageVariables["message"]         = message.toUtf8();
   messageVariables["type"]            = QString("%1").arg(type).toUtf8();
   messageVariables["flags"]           = QString("%1").arg(flags).toUtf8();
-  
+
   sendPacket("sendnewmessage", messageVariables);
 }
 
@@ -451,7 +516,7 @@ void Client::updateContactInfo(const QString &group, const QString &contactAddre
   updateVariables["contactAddress"]  = contactAddress.toUtf8();
   updateVariables["group"]           = group.toUtf8();
   updateVariables["nickname"]        = nickname.toUtf8();
-  
+
   sendPacket("updatecontactinfo", updateVariables);
 }
 
@@ -470,72 +535,17 @@ void Client::updateProfile(const QString &pin, const QString &name, bool hiddenL
   profileVariables["hiddenLoginname"] = hiddenLoginname ? "1" : "0";
   profileVariables["dateOfBirth"]     = dateOfBirth.toString(Qt::ISODate).toUtf8();
   profileVariables["gender"]          = gender.toLower() == "male" ? "1" : "0";
-  
-  sendPacket("updateprofile", profileVariables);
-}
 
-void Client::linkClicked(const QUrl &url)
-{
-  QString contactAddress, wholeUrl;
-  int position, type;
-  
-  wholeUrl = url.toString();
-  position = wholeUrl.lastIndexOf("/");
-  type = wholeUrl.right(wholeUrl.length() - position - 1).toInt();
-  wholeUrl = wholeUrl.left(position);
-  
-  position = wholeUrl.lastIndexOf("/");
-  contactAddress = wholeUrl.right(wholeUrl.length() - position - 1);
-  wholeUrl = wholeUrl.left(position);
-  
-  qDebug() << type;
-  qDebug() << contactAddress;
-  qDebug() << wholeUrl;
-  
-  if (contactAddress.isEmpty())
-    return;
-  
-  if (type == 2) {
-    VariableHash messageVariables;
-    messageVariables["contactAddress"]  = contactAddress.toUtf8();
-    messageVariables["message"]         = wholeUrl.toUtf8();
-    messageVariables["type"]            = QString("%1").arg(type).toUtf8();
-    messageVariables["flags"]           = QString("%1").arg(Protocol::Enumerables::Message::MayContainMarkup).toUtf8();
-  
-    sendPacket("sendnewmessage", messageVariables);
-  } else if (type == 7) {
-    //format reply FIXME: hack for reply only
-    QStringList tempData(wholeUrl.split("|"));
-    VariableHash tempHash;
-    
-    Q_FOREACH (const QString &option, tempData) {
-      int equalsPos = option.indexOf("=");
-      tempHash[option.mid(0, equalsPos)] = option.mid(equalsPos + 1).toUtf8();
-    }
-    
-    if (tempHash["type"] == "reply") {
-      wholeUrl = "::type=reply|res=";
-      wholeUrl += QString(tempHash["replymsg"]);
-      wholeUrl += "|err=0:";
-      
-      VariableHash messageVariables;
-      messageVariables["contactAddress"]  = contactAddress.toUtf8();
-      messageVariables["message"]         = wholeUrl.toUtf8();
-      messageVariables["type"]            = QString("%1").arg(type).toUtf8();
-      messageVariables["flags"]           = QString("%1").arg(0).toUtf8();
-    qDebug() << messageVariables;
-      sendPacket("sendnewmessage", messageVariables);
-    }
-  }
+  sendPacket("updateprofile", profileVariables);
 }
 
 
 /****************************************************************************
-                __   ___                 __  __           __  
+                __   ___                 __  __           __
      ___  __ __/ /  / (_)___  __ _  ___ / /_/ /  ___  ___/ /__
     / _ \/ // / _ \/ / / __/ /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
    / .__/\_,_/_.__/_/_/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
-  /_/                                                         
+  /_/
 
 ****************************************************************************/
 
@@ -554,11 +564,11 @@ QByteArray Client::variableValue(const QString &name)
 
 
 /****************************************************************************
-               _           __            __     __    
+               _           __            __     __
      ___  ____(_)  _____ _/ /____   ___ / /__  / /____
     / _ \/ __/ / |/ / _ `/ __/ -_) (_-</ / _ \/ __(_-<
    / .__/_/ /_/|___/\_,_/\__/\__/ /___/_/\___/\__/___/
-  /_/                                                 
+  /_/
 
 /***************************************************************************/
 
@@ -587,25 +597,25 @@ void Client::incomingPacket(QByteArray packet)
 {
   /* error checking */
   VariableHash packetHeader = MXit::Protocol::packetHeader(packet);
-  if (packetHeader["errorCode"] != "0") {    
+  if (packetHeader["errorCode"] != "0") {
     emit outgoingError(packetHeader["errorCode"].toInt(), packetHeader["errorMessage"]);
     return;
   }
-  
+
   MXit::Protocol::Handler *handler = handlerFor(packetHeader["command"]);
-  
+
   /* deal with unknown packets */
   if (!handler) {
     emit outgoingError(99, QString("Unkown packet handler for command %1").arg(QString(packetHeader["command"])));
     return;
   }
-  
+
   /* pass on to handler */
   VariableHash handledPacket = handler->handle(packet);
   variables.unite(handledPacket);
-  
+
   QByteArray handle; /* for #27 */
-  
+
   /* post packet-level handling */
   switch (packetHeader["command"].toUInt()) {
     case LOGIN:
@@ -613,10 +623,10 @@ void Client::incomingPacket(QByteArray packet)
 
       /* variable scrubbing */
       useVariable("loginname", 0);
-      
+
       /* send custom online presence */
       setShownPresenceAndStatus(Protocol::Enumerables::Contact::Online, "mxitc");
-      
+
       if (connection->isHTTP()) {
         /* start the first pollDifference */
         if (variables["polltimer"].toUInt() == 0)
@@ -626,7 +636,7 @@ void Client::incomingPacket(QByteArray packet)
       break;
     case LOGOUT:
       connection->close();
-      
+
       emit outgoingAction(LOGGED_OUT);
       break;
     case GETCONTACTS:
@@ -649,7 +659,7 @@ void Client::incomingPacket(QByteArray packet)
       break;
     case GETMULTIMEDIAMESSAGE:
       emit outgoingAction(MULTIMEDIA_RECEIVED);
-      
+
       /* variable scrubbing */
       handle = variables.value("handle");
       variables.remove(handle + "_anchor");
@@ -669,7 +679,7 @@ void Client::incomingPacket(QByteArray packet)
       sendPacket("login");
       break;
   }
-  
+
   emit outgoingVariables(variables);
 }
 
@@ -692,7 +702,7 @@ void Client::incomingVariables(const VariableHash &params)
    * to prevent a very long useless list building up.
    */
   variables.unite(params);
-  
+
   /* deal with the incoming variables */
   switch (state) {
     case INITIALIZING:
@@ -705,7 +715,7 @@ void Client::incomingVariables(const VariableHash &params)
       // TODO: what here?
       break;
   }
-  
+
   /* clean up values we don't wish to store
    *
    * == NOTE
@@ -713,7 +723,7 @@ void Client::incomingVariables(const VariableHash &params)
    */
   variables.remove("err");
   variables.remove("captcha");
-  
+
   emit outgoingVariables(variables);
 }
 
@@ -734,11 +744,11 @@ void Client::keepAlive()
 
 
 /****************************************************************************
-               _           __                  __  __           __  
+               _           __                  __  __           __
      ___  ____(_)  _____ _/ /____   __ _  ___ / /_/ /  ___  ___/ /__
     / _ \/ __/ / |/ / _ `/ __/ -_) /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
    / .__/_/ /_/|___/\_,_/\__/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
-  /_/                                                               
+  /_/
 
 ****************************************************************************/
 
@@ -755,15 +765,15 @@ MXit::Network::Packet* Client::buildPacket()
 {
   /* get the base built by the connection */
   MXit::Network::Packet *packet = connection->buildPacket();
-  
+
   /* HTTP/TCP setup */
   packet->setCellphone(variables["loginname"]);
-  
+
   /* HTTP only */
   if (connection->isHTTP()) {
     static_cast<MXit::Network::Packets::HTTP*>(packet)->setSessionID(variables["sesid"].toInt());
   }
-  
+
   return packet;
 }
 
@@ -826,7 +836,7 @@ MXit::Protocol::Handler* Client::handlerFor(const QByteArray &command)
   Q_FOREACH(MXit::Protocol::Handler *h, handlers) {
     if (h->command == c) return h;
   }
-  
+
   return NULL; /* no packet found */
 }
 
@@ -884,95 +894,95 @@ void Client::setupReceived()
 {
   state = IDLE;
   int error = variables["err"].toInt();
-  
+
   if (error != 0) {                         /* No error */
     /* setup */
     QByteArray captcha;
     QByteArray sessionid;
-    
+
     switch (error) {
       case 1:                               /* Wrong answer to captcha */
         /* Response: 1;captcha */
-        
+
         /* there are two CAPTCHA's in the variables, we need to remove the old one */
         useVariable("captcha", 0);
-        
+
         /* reporting error to client */
         emit errorEncountered("Wrong answer to CAPTCHA");
-        
+
         break;
       case 2:                               /* Session expired */
         /* Response: 2;sessionid;captcha or 2;captcha */
-        
+
         /* we need to correct our stored sessionid */
         useVariable("sessionid", variables["sessionid"].isEmpty() ? 1 : 0);
-        
+
         /* there are two captcha's in the variables, we need to remove the old one */
         useVariable("captcha", 0);
-        
+
         /* reporting error to client */
         emit errorEncountered("Session Expired");
-        
+
         break;
       case 3:                               /* Undefined */
         /* Response: 3; */
         // FIXME: how to handle this?
-        
+
         emit errorEncountered("Undefined Challenge error");
         break;
       case 4:                               /* Critical error */
         /* Response: 4;mxitid@domain */
         // FIXME: how to handle this?
-        
+
         /* reporting error to client */
         emit errorEncountered("Critical Challenge error");
-        
-        break;  
+
+        break;
       case 5:                               /* Internal Error - Country code not available, select another country */
         /* Response: 5; */
         emit errorEncountered("Country Code not available");
         break;
       case 6:                               /* User isn't registered (and path=0 was specified) */
         /* Response: 6;sessionid;captcha */
-        
+
         /* there are two sessionid's in the variables, we need to remove the old one */
         useVariable("sessionid", 0);
-        
+
         /* there are two captcha's in the variables, we need to remove the old one */
         useVariable("captcha", 0);
-        
+
         /* reporting error to client */
         emit errorEncountered("User is not registered");
-        
+
         break;
       case 7:                               /* User is already registered (and path=1 was specified) */
         /* Response: 7;sessionid;captcha */
-        
+
         /* there are two sessionid's in the variables, we need to remove the old one */
         useVariable("sessionid", 0);
-        
+
         /* there are two captcha's in the variables, we need to remove the old one */
         useVariable("captcha", 0);
-        
+
         /* reporting error to client */
         emit errorEncountered("User is already registered");
-        
+
         break;
     }
-    
+
     return;
   }
-  
+
   connection->setGateway(variables["soc1"], "", 0);
   connection->open(getPacket("login"));
-  
+
   /* cleanup */
   variables.remove("sessionid");
   variables.remove("_cellphone");
   variables.remove("_password");
   useVariable("cc", 0);
   useVariable("locale", 0);
-  
+
   emit outgoingVariables(variables);
 }
 
@@ -992,7 +1002,7 @@ void Client::useVariable(const QString &variable, unsigned int index)
   if (itr == variables.end()) {                   /* no references found */
     return;
   }
-  
+
   /* try iterate up to index */
   const QByteArray *ref = &itr.value(); /* Initialise this, index was set to 0 and ref was NULL*/
   unsigned int walk = 0;
@@ -1000,12 +1010,12 @@ void Client::useVariable(const QString &variable, unsigned int index)
     itr++; walk++;
     ref = &itr.value();
   }
-  
+
   /* assign *only* the found value */
   QByteArray value = *ref;                        /* make a duplication of desired reference */
   variables.remove(variable);                     /* remove all copies of the variable */
   variables[variable] = value;                    /* now assign our unique value */
-  
+
   emit outgoingVariables(variables);
 }
 
