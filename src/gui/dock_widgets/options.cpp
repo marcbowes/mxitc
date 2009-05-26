@@ -156,7 +156,7 @@ void Options::addGateway(const QString& gateway) {
 **
 ****************************************************************************/
 void Options::emitGatewaySignal () {
-  emit gatewaySelected(gatewayComboBox->currentText (), httpProxyLineEdit->text(), portLineEdit->text());
+  emit gatewaySelected(gatewayComboBox->currentText (), httpProxyLineEdit->text(), portLineEdit->text(), usernameLineEdit->text(), passwordLineEdit->text());
 }
 
 

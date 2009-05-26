@@ -4,6 +4,8 @@
 **
 ****************************************************************************/
 
+#include "protocol/aes.h"
+
 #include "11_register.h"
 
 namespace MXit
@@ -62,17 +64,30 @@ void Register::buildPacket(MXit::Network::Packet *packet, VariableHash &variable
   **
   ***************************************************************************
   */
+  
+  /* first - password encryption (Appendix B) */
+  QString key = QString("6170383452343567").replace(0, 8, variables["pid"].right(8));
+  QString pass = "<mxit/>" + variables["_password"];
+  MXit::Protocol::AES encryptor;
+  variables["encryptedpassword"] = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
     
-  /* packet data setup FIXME: not all this stuff is stored i dont think*/
-  (*packet) << variables["password"]
-            << variables["maxReplyLen"]
+  /* next - get distributor code from pid */
+  if (variables["dc"].isEmpty()) {
+    QByteArray dc = variables["pid"];
+    dc.replace(0, 2, "");
+    dc = dc.left(dc.length() - 8);
+    variables["dc"] = dc;
+  }
+  
+  (*packet) << variables["encryptedpassword"]
+            << "150000"                       /* maxReplyLen, sniffed from a Nokia E51 */
             << variables["name"]
             << variables["dateOfBirth"]
             << variables["gender"]
             << variables["location"]
-            << variables["capabilities"]
+            << "utf8=false;ctyp=8129"         /* capabilities */
             << variables["dc"]
-            << variables["features"]
+            << "524287"                       /* features */
             << variables["dialingCode"]
             << variables["locale"]
   ;

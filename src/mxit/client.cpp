@@ -30,7 +30,7 @@ namespace MXit
 **
 ****************************************************************************/
 Client::Client()
-  : state (IDLE), variables(), keepAliveTimer()
+  : state (IDLE), variables(), keepAliveTimer(), registerAfterChallenge(false)
 {
   connection = new MXit::Network::Connection();
   handshaker = new MXit::Protocol::Handshaker();
@@ -180,7 +180,7 @@ void Client::authenticate(const VariableHash &settings)
   emit environmentReady();
   emit outgoingVariables(variables);
 
-  connection->setGateway(variables["soc1"], "", 0);
+  connection->setGateway(variables["soc1"], "", 0, "", "");
   connection->open(getPacket("login"));
 }
 
@@ -401,14 +401,15 @@ void Client::removeContact(const QString &contactAddress)
 ** sets the gateway, and deals with reconnecting
 **
 ****************************************************************************/
-void Client::setGateway(const QString &connectionString, const QString &httpHost, quint16 port)
+void Client::setGateway(const QString &connectionString, const QString &httpHost, quint16 port,
+  const QString &username, const QString &password)
 {
   if (connection->getState() != MXit::Network::Connection::DISCONNECTED) {
     sendPacket("logout");
     connection->close();
     emit outgoingAction(LOGGED_OUT);
   }
-  connection->setGateway(connectionString, httpHost, port);
+  connection->setGateway(connectionString, httpHost, port, username, password);
   connection->open(getPacket("login"));
 }
 
@@ -496,9 +497,23 @@ void Client::sendMessage(const QString &contactAddress, const QString &message, 
 ** Author: Marc Bowes
 **
 ****************************************************************************/
-void Client::signup()
+void Client::signup(const QString &cellphone, const QString &password, const QString &captcha,
+    const VariableHash &settings)
 {
-  /* FIXME: stub */
+  /* need to store cellphone so it can be used as "id" in packets */
+  variables["_cellphone"] = cellphone.toLatin1();
+
+  /* need to store password so that it can be sent after challenge is complete */
+  variables["_password"] = password.toLatin1();
+
+  /* merge in settings */
+  variables.unite(settings);
+
+  /* begin challenge */
+  registerAfterChallenge = true;
+  challenge(captcha);
+
+  emit outgoingVariables(variables);
 }
 
 
@@ -972,8 +987,13 @@ void Client::setupReceived()
     return;
   }
 
-  connection->setGateway(variables["soc1"], "", 0);
-  connection->open(getPacket("login"));
+  connection->setGateway(variables["soc1"], "", 0, "", "");
+  if (!registerAfterChallenge)
+    connection->open(getPacket("login"));
+  else {
+    connection->open(getPacket("register"));
+    registerAfterChallenge = false;
+  }
 
   /* cleanup */
   variables.remove("sessionid");
