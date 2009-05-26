@@ -135,9 +135,9 @@ QString Message::commandUp(const QString &markup, const Contact *contact)
     if (!line.isEmpty()) {
       if (rx.indexIn(line) != -1) {
         markedUp += "<a href=\"mxit://";
-        markedUp += rx.cap(1);
-        markedUp += "/";
         markedUp += contact->contactAddress;
+        markedUp += "/";
+        markedUp += rx.cap(1);
         markedUp += "/7";
         markedUp += "\">";
         markedUp += rx.cap(2);

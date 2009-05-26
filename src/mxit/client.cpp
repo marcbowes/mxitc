@@ -311,18 +311,13 @@ void Client::linkClicked(const QUrl &url)
   
   text = urlString; /* readability */
 
-  switch (type) {
-    case Protocol::Enumerables::Message::Chat:
-      /* reply with the text to the contact */
-      /* essentially, $this$ = message the contact with "this" */
-      sendMessage(contactAddress, text,
-        Protocol::Enumerables::Message::Type(type), Protocol::Enumerables::Message::MayContainMarkup);
-      break;
-    case Protocol::Enumerables::Message::Command:
-      break;
-  } if (type == 7) {
+  if (type == Protocol::Enumerables::Message::Chat) {
+    /* reply with the text to the contact */
+    /* essentially, $this$ = message the contact with "this" */
+    sendMessage(contactAddress, text, type, Protocol::Enumerables::Message::MayContainMarkup);
+  } else if (type == Protocol::Enumerables::Message::Command) {
     /* format reply: FIXME: hack for reply only */
-    QStringList tempData(urlString.split("|"));
+    QStringList tempData(text.split("|"));
     VariableHash tempHash;
 
     Q_FOREACH (const QString &option, tempData) {
@@ -331,17 +326,8 @@ void Client::linkClicked(const QUrl &url)
     }
 
     if (tempHash["type"] == "reply") {
-      urlString = "::type=reply|res=";
-      urlString += QString(tempHash["replymsg"]);
-      urlString += "|err=0:";
-
-      VariableHash messageVariables;
-      messageVariables["contactAddress"]  = contactAddress.toUtf8();
-      messageVariables["message"]         = urlString.toUtf8();
-      messageVariables["type"]            = QString("%1").arg(type).toUtf8();
-      messageVariables["flags"]           = QString("%1").arg(0).toUtf8();
-    qDebug() << messageVariables;
-      sendPacket("sendnewmessage", messageVariables);
+      text = QString("::type=reply|res=%1|error=0:").arg(QString(tempHash["replymsg"]));
+      sendMessage(contactAddress, text, type, 0);
     }
   }
 }
