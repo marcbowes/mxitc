@@ -86,7 +86,8 @@ class Client : public QObject
     const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags);
   void sendMessage(const QString &contactAddress, const QString &message,
     Protocol::Enumerables::Message::Type, unsigned int flags);
-  void signup();
+  void signup(const QString &cellphone, const QString &password, const QString &captcha,
+    const VariableHash &settings);
   void updateContactInfo(const QString &group, const QString &contactAddress,
     const QString &nickname);
   void updateProfile(const QString &pin, const QString &name, bool hiddenLoginname,
@@ -123,6 +124,7 @@ class Client : public QObject
   Protocol::Handshaker       *handshaker;
   QTimer                      keepAliveTimer;
   QTimer                      pollTimer;
+  bool                        registerAfterChallenge;
   Status                      state;
   VariableHash                variables;
 };

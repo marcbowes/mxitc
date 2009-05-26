@@ -30,7 +30,7 @@ namespace MXit
 **
 ****************************************************************************/
 Client::Client()
-  : state (IDLE), variables(), keepAliveTimer()
+  : state (IDLE), variables(), keepAliveTimer(), registerAfterChallenge(false)
 {
   connection = new MXit::Network::Connection();
   handshaker = new MXit::Protocol::Handshaker();
@@ -497,9 +497,23 @@ void Client::sendMessage(const QString &contactAddress, const QString &message, 
 ** Author: Marc Bowes
 **
 ****************************************************************************/
-void Client::signup()
+void Client::signup(const QString &cellphone, const QString &password, const QString &captcha,
+    const VariableHash &settings)
 {
-  /* FIXME: stub */
+  /* need to store cellphone so it can be used as "id" in packets */
+  variables["_cellphone"] = cellphone.toLatin1();
+
+  /* need to store password so that it can be sent after challenge is complete */
+  variables["_password"] = password.toLatin1();
+
+  /* merge in settings */
+  variables.unite(settings);
+
+  /* begin challenge */
+  registerAfterChallenge = true;
+  challenge(captcha);
+
+  emit outgoingVariables(variables);
 }
 
 
@@ -974,7 +988,12 @@ void Client::setupReceived()
   }
 
   connection->setGateway(variables["soc1"], "", 0, "", "");
-  connection->open(getPacket("login"));
+  if (!registerAfterChallenge)
+    connection->open(getPacket("login"));
+  else {
+    connection->open(getPacket("register"));
+    registerAfterChallenge = false;
+  }
 
   /* cleanup */
   variables.remove("sessionid");
