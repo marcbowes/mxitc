@@ -138,6 +138,11 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
 
   connect(  conversationsWidget, SIGNAL(conversationRequest ( const Conversation *  )), 
             chatAreaController, SLOT(switchToConversationTab( const Conversation *  )));
+            
+  connect(  conversationsWidget, SIGNAL(conversationRemoved ( const Conversation *  )), 
+            chatAreaController, SLOT(removeAndDeleteConversationFromGUI( const Conversation *  )));
+            
+            
   
   connect(mxit, SIGNAL(outgoingConnectionState(Network::Connection::State)), this, SLOT(incomingConnectionState(Network::Connection::State)));
           

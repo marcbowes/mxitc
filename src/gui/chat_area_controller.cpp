@@ -27,6 +27,8 @@ ChatAreaController::ChatAreaController(Theme &theme, MXit::Client &mxit, Convers
   
   connect(chatTabWidget, SIGNAL(currentChanged( int )), this, SLOT(emitConversationChanged ( int )));
   
+  connect(chatTabWidget, SIGNAL(tabCloseRequested( int )), this, SLOT(removeAndDeleteConversationFromGUI ( int )));
+  
     /*FIXME - to chat area controller*///connect(mainWebView, SIGNAL(linkClicked(const QUrl&)), mxit, SLOT(linkClicked(const QUrl&)));
   
   /*TODO put this somewhere useful*/
@@ -218,8 +220,16 @@ ChatArea* ChatAreaController::ensureExistanceOfChatAreaAndTab(const QString & un
 
   if (!conversationToChatArea.contains(conversation)) {
     conversationToChatArea[conversation] = new ChatArea();
-    chatAreaToConversation[conversationToChatArea[conversation]] = conversation;
-    chatTabWidget->addTab(conversationToChatArea[conversation], conversation->displayName);
+    
+    ChatArea* chatArea = conversationToChatArea[conversation];
+    chatAreaToConversation[chatArea] = conversation;
+    chatTabWidget->addTab(chatArea, conversation->displayName);
+    
+    connect(
+              chatArea->chatWebView, 
+              SIGNAL(linkClicked(const QUrl&)), 
+              &mxit, 
+              SLOT(linkClicked(const QUrl&)));
     
     connect(conversationToChatArea[conversation], SIGNAL(sendMessageFromChatInput(const ChatArea *)), this, SLOT(sendMessageFromChatArea (const ChatArea *)));
   }
