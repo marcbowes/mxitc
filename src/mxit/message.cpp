@@ -16,11 +16,11 @@ namespace MXit
 {
 
 /****************************************************************************
-        __                                _ ____    
+        __                                _ ____
    ____/ /__ ____ ___   ___ ___  ___ ____(_) _(_)___
   / __/ / _ `(_-<(_-<  (_-</ _ \/ -_) __/ / _/ / __/
-  \__/_/\_,_/___/___/ /___/ .__/\__/\__/_/_//_/\__/ 
-                         /_/                        
+  \__/_/\_,_/___/___/ /___/ .__/\__/\__/_/_//_/\__/
+                         /_/
 
 ****************************************************************************/
 
@@ -36,7 +36,7 @@ Message::Message(const QString &message, const bool hasMarkup, const int message
   : contact(NULL), markedupMessage(markup(message, NULL)), rawMessage(message),
     system(false),
     timestamp(QTime::currentTime()),
-    
+
     containsMarkup(hasMarkup),
     type(messageType),
     deliveryNotification(false),
@@ -84,12 +84,12 @@ Message::Message(const Contact *contact, const QString &message, const QByteArra
 **
 ****************************************************************************/
 Message::Message(const Message &other)
-  : contact(other.contact), 
+  : contact(other.contact),
     rawMessage(other.rawMessage),
     markedupMessage(other.markedupMessage),
     system(other.system),
     timestamp(other.timestamp),
-    
+
     deliveryNotification(other.deliveryNotification),
     readNotification(other.readNotification),
     passwordEncrypted(other.passwordEncrypted),
@@ -130,7 +130,7 @@ QString Message::commandUp(const QString &markup, const Contact *contact)
   //FIXME: reply only hack
   QRegExp rx("::(.*):(.*)");
   QString markedUp;
-  
+
   Q_FOREACH(const QString &line, lines) {
     if (!line.isEmpty()) {
       if (rx.indexIn(line) != -1) {
@@ -148,7 +148,7 @@ QString Message::commandUp(const QString &markup, const Contact *contact)
       }
     }
   }
-  
+
   return markedUp;
 }
 
@@ -167,21 +167,21 @@ QString Message::markup(const QString &markup, const Contact *contact)
 {
   /* HTML encode so that any HTML in the message isn't interpreted */
   QString escaped = Qt::escape(markup);
-  
+
   /* setup */
   QRegExp finder("[\\*/_\\$]");                       /* find any of * / _ $ */
   bool    bold = 0, italic = 0, underline = 0;        /* tag counters so we can properly close */
   quint16 idx1 = 0, idx2   = 0;                       /* index of markup start and end */
   QString markedUp;                                   /* result */
-  
+
   /* iteratively find markup candidates */
   while (idx1 < escaped.length()) {
     idx2 = escaped.indexOf(finder, idx1);
-    
+
     /* found a tag */
     if (idx2 != quint16(-1)) {
       markedUp.append(escaped.mid(idx1, idx2 - idx1));     /* capture everything between the indices */
-      
+
       if ((idx2 == 0 || idx2 == quint16(-1)) || escaped.at(idx2 - 1) != '\\') {
         /* append the correct HTML tag */
         switch (escaped.at(idx2).toAscii()) {
@@ -217,7 +217,7 @@ QString Message::markup(const QString &markup, const Contact *contact)
               if (idx3 == 0 || escaped.at(idx3) != '\\')
                 found = true;
             } while (!found);
-            
+
             if (idx3 != quint16(-1)) {
               /* close all remaining tags, $ is a anti-markup barrier */
               if (bold) {
@@ -232,15 +232,15 @@ QString Message::markup(const QString &markup, const Contact *contact)
                 markedUp.append("</u>");
                 underline = false;
               }
-              
+
               /* <a href="john/link/2">link</a>, where john is the contact and link is the text inside the $'s */
               QString ca = contact ? contact->contactAddress + "/" : "";
               QString ht = escaped.mid(idx2 + 1, idx3 - idx2 - 1);
               markedUp.append(QString("<a href=\"%1%2/2\">%2</a>").arg(ca).arg(ht));
-              
+
               idx2 = idx3;
             }
-            
+
             break;
             /* no need for default */
         }
@@ -250,13 +250,13 @@ QString Message::markup(const QString &markup, const Contact *contact)
         markedUp.remove(markedUp.length() - 1, 1);
         markedUp.append(escaped.at(idx2));
       }
-      
+
       idx1 = idx2 + 1;
     }
     /* no tag found, end loop */
     else {
       markedUp.append(escaped.mid(idx1));  /* append rest of string */
-      
+
       /* close all remaining tags for valid HTML */
       if (bold)
         markedUp.append("</b>");
@@ -264,11 +264,11 @@ QString Message::markup(const QString &markup, const Contact *contact)
         markedUp.append("</i>");
       if (underline)
         markedUp.append("</u>");
-      
+
       idx1 = escaped.length();
     }
   }
-  
+
   return markedUp;
 }
 
@@ -330,11 +330,11 @@ bool Message::flagContainsCustomEmoticons(const QByteArray flags)
 
 
 /****************************************************************************
-                __   ___                 __  __           __  
+                __   ___                 __  __           __
      ___  __ __/ /  / (_)___  __ _  ___ / /_/ /  ___  ___/ /__
     / _ \/ // / _ \/ / / __/ /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
    / .__/\_,_/_.__/_/_/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
-  /_/                                                         
+  /_/
 
 ****************************************************************************/
 
