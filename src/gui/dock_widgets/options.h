@@ -39,6 +39,7 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   
   /*accessors TODO make a variableHash*/
   bool isAutoLogin();
+  bool hideOfflineContacts();
   
   void addGateway(const QString& gateway);
   void setSelectedGateway(const QString& gateway);
@@ -50,20 +51,22 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   void setSelectedTheme(const QString& theme);
   
   private slots:
-  void saveSettings( bool nothing = false);
+  void saveSettings( );
+  
   
   signals:
   
   void conversationLogDirectorySelected(const QDir &dir);
   void gatewaySelected(const QString &gateway, const QString &proxyHost, const QString &proxyPort);
   
-  void themeChanged();
+  void themeChanged( );
+  void requestRefresh( );
   
   
   private slots:
   
   void emitGatewaySignal ();
-  void saveGatewaySettings(bool nothing = false);
+  void saveGatewaySettings();
   
   void openConversationsBrowser ();
   void openThemeBrowser ();

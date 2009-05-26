@@ -13,6 +13,7 @@
 #include "mxit/conversations.h"
 #include "mxit/contact.h"
 #include "mxit/client.h"
+#include "options.h"
 
 #include <QTreeWidget>
 
@@ -35,7 +36,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   public: /*class specific */
 
-  Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBook & addressBook, MXit::Conversations & conversations);
+  Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBook & addressBook, MXit::Conversations & conversations, Options & options);
   ~Contacts();
   
   
@@ -47,10 +48,12 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   public: /* methods */
   
   QStringList getGroupNames(); /* recreates list... slow! FIXME ?*/
-  void refresh(const OrderedContactMap& contacts);
+  
+  void clearList();
   
   private: /* methods */
   
+  void refreshList(const OrderedContactMap& contacts);
   void refreshTreeWidgetItem(QTreeWidgetItem* twi);
   void removeAndDeleteContactOrGroupFromGUI (QTreeWidgetItem* twi);
   
@@ -82,6 +85,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   MXit::Conversations& conversations;
   AddressBook& addressBook;
   MXit::Client& mxit;
+  Options& options;
   
   QMap<QString, bool> orderedGroupNames;
   

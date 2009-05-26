@@ -34,9 +34,12 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Contacts::Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBook & addressBook, MXit::Conversations & conversations) : MXitDockWidget(parent, theme), mxit(mxit), addressBook(addressBook), conversations(conversations)
+Contacts::Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBook & addressBook, MXit::Conversations & conversations, Options & options) : MXitDockWidget(parent, theme), mxit(mxit), addressBook(addressBook), conversations(conversations), options(options)
 {
   setupUi(this);
+  
+  connect(  &options, SIGNAL(requestRefresh()), this, SLOT(refreshThemeing()));
+  
   
   connect(  &addressBook, SIGNAL( updated(const ContactList&)),
             this, SLOT (contactsUpdated(const ContactList&)));
@@ -503,6 +506,9 @@ void Contacts::refreshTreeWidgetItem(QTreeWidgetItem *item) {
     
       
     item->setForeground(0, contact->presence == Protocol::Enumerables::Contact::Unaffiliated?Qt::blue:Qt::black);
+    
+    bool hideOfflineContacts = options.hideOfflineContacts();
+    item->setHidden(hideOfflineContacts && contact->presence == MXit::Protocol::Enumerables::Contact::Offline);
   }
 }
 
@@ -513,7 +519,7 @@ void Contacts::refreshTreeWidgetItem(QTreeWidgetItem *item) {
 ****************************************************************************/
 
 void Contacts::contactsUpdated(const ContactList& contacts) {
-  refresh(addressBook.getContacts());
+  refreshList(addressBook.getContacts());
 }
 
 /****************************************************************************
@@ -522,7 +528,19 @@ void Contacts::contactsUpdated(const ContactList& contacts) {
 **
 ****************************************************************************/
 
-void Contacts::refresh(const OrderedContactMap& contacts) {
+void Contacts::clearList() {
+
+  refreshList(OrderedContactMap());
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Contacts::refreshList(const OrderedContactMap& contacts) {
+
 
   QSet<QTreeWidgetItem*> shouldBeInList;
   QSet<QTreeWidgetItem*> groupShouldBeInList;
@@ -621,22 +639,18 @@ void Contacts::refresh(const OrderedContactMap& contacts) {
         
       }
       
-      bool hideOfflineContacts = false; /*TODO*/
-      if(!hideOfflineContacts) {
-        //qDebug() << "adding " << contact->nickname;
-        /* updating listWidgetItem's lable and pixmap*/
-        refreshTreeWidgetItem(treeItemToAdd);
-        
-        shouldBeInList.insert(treeItemToAdd);
-        groupToTwi[contact->group]->addChild (treeItemToAdd);
-        //shouldBeInTree.insert(treeItemToAdd);
-      }
+      
+      /* updating listWidgetItem's lable and pixmap*/
+      refreshTreeWidgetItem(treeItemToAdd);
+      shouldBeInList.insert(treeItemToAdd);
+      
+      groupToTwi[contact->group]->addChild (treeItemToAdd);
     }
     
   }
   
   
-  /* scanning through list items to look for ones that should not be in their */
+  /* scanning through list items to look for ones that should not be in there */
   for (int j = 0 ; j < contactsTree->topLevelItemCount() ; j++) {
     QTreeWidgetItem * groupTwi = contactsTree->topLevelItem(j);
     

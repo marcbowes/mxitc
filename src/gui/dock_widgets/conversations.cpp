@@ -74,7 +74,17 @@ Conversations::~Conversations()
 
 ****************************************************************************/
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
 
+void Conversations::selectConversation(const Conversation *conversation) {
+
+  conversationToLwi[conversation]->setSelected(true);
+}
+  
 /****************************************************************************
 **
 ** Author: Richard Baxter

@@ -78,6 +78,8 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/dialogs/login.cpp
   
   gui/mxitc.cpp
+  gui/chat_area.cpp
+  gui/chat_area_controller.cpp
   gui/mxit_dialog.cpp
   gui/mxit_dock_widget.cpp
   gui/theme.cpp
@@ -111,6 +113,8 @@ SET(MXIT_CLIENT_MOC_SRCS
   gui/dialogs/allow_subscription.h
   
   gui/mxitc.h
+  gui/chat_area.h
+  gui/chat_area_controller.h
   gui/mxit_dialog.h
   gui/mxit_dock_widget.h
 )
@@ -130,6 +134,7 @@ SET(MXIT_CLIENT_UI
   gui/dialogs/login.ui
   
   gui/mxitc.ui
+  gui/chat_area.ui
 )
 
 # build ui_XXX files from the XML-style .ui files

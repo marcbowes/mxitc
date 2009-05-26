@@ -28,9 +28,8 @@ namespace GUI
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), currentConversation(NULL), splash(this) 
+MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(this) 
 {
-  
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   if (QSystemTrayIcon::isSystemTrayAvailable()) {
     trayIcon = new QSystemTrayIcon(this);
@@ -41,11 +40,27 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   application = app;  /* store a copy */
   
   login = NULL;
-   
-  /* Loading settings */
+  
+  
+  /* Getting settings from file*/
   settings = new QSettings ( "mxitc", "env", this );
   
   conversations = new MXit::Conversations(&addressBook, QDir(settings->value("logConversations").toString()));
+  
+  chatAreaController = new ChatAreaController(theme, *mxit, *conversations, addressBook);
+  /*------------------------------------------------------------------------------------------*/
+  /* Setting up tab-able chat window*/
+  /*------------------------------------------------------------------------------------------*/
+  
+  
+  this->centralWidget()->layout ()->addWidget (chatAreaController->getCentralChatArea());
+  
+  
+   
+  
+  
+  
+  
   
   /*------------------------------------------------------------------------------------------*/
   /* Adding MXitDockWidgets - appendDockWidget will restore their closed& floating states as well as add thme to the necessary data structures*/
@@ -63,36 +78,14 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   conversationsWidget = new DockWidget::Conversations (this, theme, *mxit, *conversations);
   appendDockWidget(conversationsWidget, Qt::LeftDockWidgetArea, actionConversations);
   
-  contactsWidget = new DockWidget::Contacts (this, theme, *mxit, addressBook, *conversations);
+  contactsWidget = new DockWidget::Contacts (this, theme, *mxit, addressBook, *conversations, *optionsWidget);
+  
   appendDockWidget(contactsWidget, Qt::LeftDockWidgetArea, actionContacts);
   
   addContactWidget = new DockWidget::AddContact (this, theme);
   appendDockWidget(addContactWidget, Qt::LeftDockWidgetArea, actionAdd_Contact);
   
-  /* After the MXitDockWidget has been added, it attributes can be restored*/
-  /* this function is a bit inefficient but what the hell, this happens only once pre application run*/
-  restoreState(settings->value("gui layout").toByteArray());
-  /*------------------------------------------------------------------------------------------*/
-  /*Settings restore */
-  /*------------------------------------------------------------------------------------------*/
   
-  /* Restoring theme information */
-  optionsWidget->setBaseThemeDirectory(settings->value("themeBaseDirectory").toString());
-  optionsWidget->setSelectedTheme(settings->value("selectedTheme").toString());
-  
-  if(settings->contains("mainWindowSize"))
-    resize(settings->value("mainWindowSize").toSize());
-
-  /* After the MXitDockWidget has been added, it attributes can be restored*/
-  /* this function is a bit inefficient but what the hell, this happens only once pre application run*/
-  //restoreState(settings->value("gui layout").toByteArray());
-  
-  /* normally the optionsWidget->setSelectedTheme will trigger the optionWidget's themeChanged SIGNAL which will (in a few lines) be connected to this class's themeChange SLOT
-  We can't connect the themeChanged SIGNAL/SLOTs up since that would cause a QSettings save on the 'selected theme' on index 0 of the list and this->themeChanged which will overwrite the restored (correct!) QSettings value for 'selected theme' (something [TODO find out again] sets index to 0 => changes index of list => optionsWidget's loadTheme => this class's themeChanged => which overwrites the settings)*/
-  themeChanged(); /* so we just call this manually since we know now the correct theme is selected*/
-  
-  /* connecting widgets */
-  connectWidgets();
   
   /*------------------------------------------------------------------------------------------*/
   /* Connecting of functionality from child widgets to client*/
@@ -115,8 +108,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*------------------------------------------------------------------------------------------*/
   connect(mxit, SIGNAL(outgoingVariables(const VariableHash&)), debugWidget, SLOT(incomingVariableHash(const VariableHash&)));
   
-  /*TODO put this somewhere useful*/
-  mainWebView->setFocusProxy(chatInput);
   
   /*------------------------------------------------------------------------------------------*/
   /* Unsorted connects
@@ -126,11 +117,27 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   connect(contactsWidget, SIGNAL (groupsUpdated( const QStringList & )), addContactWidget, SLOT(updateGroups(const QStringList & )));
   
-  connect(conversations, SIGNAL (updated(const Conversation* )), this, SLOT(refreshChatBox(const  Conversation* ))); /*refreshChatBox(const  Conversation* ) HACK HACK HACK*/
+
+  /*FIXME, this sends the same signal to two places, migth be a more general way of doing this*/
+  connect(
+            conversations, 
+            SIGNAL (updated(const Conversation* )), 
+            chatAreaController, 
+            SLOT(updateTabOf(const  Conversation* )));
+  connect(
+            conversations, 
+            SIGNAL (updated(const Conversation* )), 
+            conversationsWidget, 
+            SLOT(conversationRead(const  Conversation* )));
   
-  /*TODO put this somewhere useful*/
-  mainWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-  connect(mainWebView, SIGNAL(linkClicked(const QUrl&)), mxit, SLOT(linkClicked(const QUrl&)));
+  connect(  
+            chatAreaController, 
+            SIGNAL(conversationChanged(const Conversation *)),
+            conversationsWidget,
+            SLOT(selectConversation(const Conversation *)));
+
+  connect(  conversationsWidget, SIGNAL(conversationRequest ( const Conversation *  )), 
+            chatAreaController, SLOT(switchToConversationTab( const Conversation *  )));
   
   connect(mxit, SIGNAL(outgoingConnectionState(Network::Connection::State)), this, SLOT(incomingConnectionState(Network::Connection::State)));
           
@@ -148,8 +155,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginDialog()));
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
   
-  connect(chatInput,  SIGNAL(returnPressed ()), this, SLOT(sendMessageFromChatInput()));
-  
 
   connect(  mxit, SIGNAL(outgoingError(int, const QString &)), 
             this, SLOT(incomingError(int, const QString &)));
@@ -161,10 +166,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
             this, SLOT(incomingConnectionError(const QString &))  );
   
   connect(  contactsWidget, SIGNAL(conversationRequest ( const Contact *  )), 
-            this, SLOT(setCurrentConversation( const Contact *  )));
+            chatAreaController, SLOT(switchToConversationTab( const Contact *  )));
   
-  connect(  conversationsWidget, SIGNAL(conversationRequest ( const Conversation *  )), 
-            this, SLOT(setCurrentConversation( const Conversation *  )));
   
   connect(  optionsWidget, SIGNAL(gatewaySelected(const QString&, const QString&, const QString&)), 
             this, SLOT(sendGatewayToClient(const QString&, const QString&, const QString&))  );  
@@ -175,7 +178,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   /*------------------------------------------------------------------------------------------*/
   
   connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
-  connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(refreshChatBox()));
+  /*refresh tab widget themeing*/
+  //connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(refreshChatBox()));
   connect(  optionsWidget, SIGNAL(themeChanged()), conversationsWidget, SLOT(refreshThemeing()));
   connect(  optionsWidget, SIGNAL(themeChanged()), contactsWidget, SLOT(refreshThemeing()));
   
@@ -228,7 +232,29 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow ( 0 ), curre
   
   autoLogin (optionsWidget->isAutoLogin());
   
+  /* After the MXitDockWidget has been added, it attributes can be restored*/
+  restoreState(settings->value("gui layout").toByteArray());
+  /*------------------------------------------------------------------------------------------*/
+  /*Settings restore */
+  /*------------------------------------------------------------------------------------------*/
+  
+  /* Restoring theme information */
+  optionsWidget->setBaseThemeDirectory(settings->value("themeBaseDirectory").toString());
+  optionsWidget->setSelectedTheme(settings->value("selectedTheme").toString());
+  
+  if(settings->contains("mainWindowSize"))
+    resize(settings->value("mainWindowSize").toSize());
 
+  /* After the MXitDockWidget has been added, it attributes can be restored*/
+  /* this function is a bit inefficient but what the hell, this happens only once pre application run*/
+  //restoreState(settings->value("gui layout").toByteArray());
+  
+  /* normally the optionsWidget->setSelectedTheme will trigger the optionWidget's themeChanged SIGNAL which will (in a few lines) be connected to this class's themeChange SLOT
+  We can't connect the themeChanged SIGNAL/SLOTs up since that would cause a QSettings save on the 'selected theme' on index 0 of the list and this->themeChanged which will overwrite the restored (correct!) QSettings value for 'selected theme' (something [TODO find out again] sets index to 0 => changes index of list => optionsWidget's loadTheme => this class's themeChanged => which overwrites the settings)*/
+  themeChanged(); /* so we just call this manually since we know now the correct theme is selected*/
+  
+  /* connecting widgets */
+  connectWidgets();
 }
 
 
@@ -597,7 +623,7 @@ void MXitC::incomingAction(Action action)
 void MXitC::messageReceived(){
 
   /* make sure conversation exists */
-  ensureExistanceOfConversation(mxit->variableValue("contactAddress"));
+  chatAreaController->ensureExistanceOfConversation(mxit->variableValue("contactAddress"));
   
   conversations->addMessage(  mxit->variableValue("contactAddress"),
                               mxit->variableValue("dateTime"), 
@@ -605,49 +631,8 @@ void MXitC::messageReceived(){
                               mxit->variableValue("contactAddress"), 
                               mxit->variableValue("flags"),
                               mxit->variableValue("message"));
-  /*TODO send message to conversations*/
   
-  /*TODO hook up Conversations updated signal to the contactsWidget (do in contactDockWidget class!)*/
-  refreshChatBox();
-}
-
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** Handles an outgoing message (sends it to the network controller)
-**
-****************************************************************************/
-
-void MXitC::outgoingMessage(const QString & message)
-{
-  if (currentConversation) {
-    //currentConversation->incomingMessage( Message ( message) );
-    //currentConversation->unreadMessage = false;
-    
-    /*TODO send message to Conversations*/
-    
-    Q_FOREACH(const Contact* contact, currentConversation->getContacts()) {
-      mxit->sendMessage(contact->contactAddress, message, Protocol::Enumerables::Message::Normal /* FIXME? */, Protocol::Enumerables::Message::MayContainMarkup);
-      
-     /*void addMessage( const QByteArray &contactAddress,
-                        const QByteArray &dateTime, 
-                        const QByteArray &type,
-                        const QByteArray &id, 
-                        const QByteArray &flags,
-                        const QByteArray &msg);*/
-      
-      conversations->addMessage(  QByteArray(), /*FIXME, should be 'me'*/
-                                  mxit->variableValue("dateTime"),  /*FIXME, where do i get this from?*/
-                                  mxit->variableValue("time"), /*FIXME, where do i get this from?*/
-                                  QByteArray().append (contact->contactAddress),
-                                  mxit->variableValue("flags"), /*FIXME, where do i get this from?*/
-                                  QByteArray().append (message) );
-    }
-    
-    refreshChatBox();
-  }
+  //chatAreaController->refreshTabs(); /*TODO check how things refresh now, might be a signal from the conversations that can be hooked up*/
 }
 
 
@@ -661,37 +646,10 @@ void MXitC::outgoingMessage(const QString & message)
 
 void MXitC::sendMessageFromChatInput()
 {
-  outgoingMessage(chatInput->text()); /*signals to this classes outgoing messages so it can go to the client*/
-  chatInput->setText("");
+  /*FIXME - to chat area controller*///outgoingMessage(chatInput->text()); /*signals to this classes outgoing messages so it can go to the client*/
+  /*FIXME - to chat area controller*///chatInput->setText("");
 }
 
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** Refreshes the chatBox area TODO change name to refreshMainTextArea
-**
-****************************************************************************/
-
-void MXitC::refreshChatBox(const Conversation * conversation /*hack?*/){
-
-
-  if (currentConversation) {
-    chattingToLabel->setText(currentConversation->displayName);
-    mainWebView->setHtml(currentConversation->conversationHtml);
-    
-    QWebFrame * frame = mainWebView->page ()->currentFrame ();
-    frame->setScrollBarValue(Qt::Vertical, frame->scrollBarMaximum(Qt::Vertical));
-    conversationsWidget->conversationRead(currentConversation);
-  }
-  else {
-    chattingToLabel->setText("Chatting to nobody");
-    mainWebView->setHtml("");
-  }
-  
-  
-}
 
 
 /****************************************************************************
@@ -800,77 +758,6 @@ QString MXitC::getPresenceString(Protocol::Enumerables::Contact::Presence presen
   return "Unknown"; 
 }
 
-/****************************************************************************
-  _____                               __  _             
- / ___/__  ___ _  _____ _______ ___ _/ /_(_)__  ___  ___
-/ /__/ _ \/ _ \ |/ / -_) __(_-</ _ `/ __/ / _ \/ _ \(_-<
-\___/\___/_//_/___/\__/_/ /___/\_,_/\__/_/\___/_//_/___/
-                                                        
-****************************************************************************/
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** Sets the curent conversation
-** NOTE:  Assumes that the conversation | contact | uniqueId is correct! 
-**        error checking should be done higher up
-**
-****************************************************************************/
-
-/* TODO some of this logic would be better in ensure existance(?)*/
-void MXitC::setCurrentConversation(const Conversation * conversation){
-  
-  currentConversation = conversation;
-  chatInput->setFocus(Qt::OtherFocusReason);
-  refreshChatBox();
-}
-
-void MXitC::setCurrentConversation(const Contact * contact) {
-  
-  if (contact == NULL)
-    setCurrentConversation((const Conversation *) NULL);
-  else
-    setCurrentConversation(ensureExistanceOfConversation(contact->contactAddress));
-}
-
-
-void MXitC::setCurrentConversation(const QString & uniqueId) {
-  
-  setCurrentConversation(ensureExistanceOfConversation(uniqueId));
-}
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** returns the conversation if it exists, otehrwise creates it and returns that
-**
-****************************************************************************/
-
-const Conversation * MXitC::ensureExistanceOfConversation(const QString & uniqueId) {
-
-  const Conversation* conversation = conversations->getConversation(uniqueId);
-
-
-  if (!conversation) {
-    /* conversations does not exist, need to create it*/
-    /* create personal (single contact) conversation */
-    Conversation *newConversation = new Conversation(addressBook.contactFromAddress(uniqueId));
-    newConversation->setCss(theme.chat.stylesheet);
-    conversations->addConversation(newConversation);
-    
-    /*this *will* return a valid pointer*/
-    conversation = conversations->getConversation(uniqueId);
-  }
-  else {
-    /* conversations does exist, need to ensure it is active*/
-    if (!conversation->active)
-      conversations->toggleActive(uniqueId);
-  }
-  
-  return conversation;
-}
 
 
 /****************************************************************************
@@ -892,7 +779,7 @@ void MXitC::setStatus(State newState)
     case LOGGED_IN:  statusLabel->setText("LOGGED IN");  
     break;
     case LOGGED_OUT: statusLabel->setText("LOGGED OUT"); 
-    contactsWidget->refresh(OrderedContactMap ());
+    contactsWidget->clearList();
     break;
     case LOGGING_IN: statusLabel->setText("LOGGING IN");
      break;
