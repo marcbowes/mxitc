@@ -182,32 +182,40 @@ QString Message::markup(const QString &markup, const Contact *contact)
     if (idx2 != quint16(-1)) {
       markedUp += escaped.mid(idx1, idx2 - idx1);     /* capture everything between the indices */
       
-      switch (escaped.at(idx2).toAscii()) {
-        case '*':
-          if (bold)
-            markedUp += "</b>";
-          else
-            markedUp += "<b>";
-          bold = !bold;
-          break;
-        case '/':
-          if (italic)
-            markedUp += "</i>";
-          else
-            markedUp += "<i>";
-          italic = !italic;
-          break;
-        case '_':
-          if (underline)
-            markedUp += "</u>";
-          else
-            markedUp += "<u>";
-          underline = !underline;
-          break;
-        case '$':
-          /* STUB */
-          break;
-        /* no need for default */
+      if ((idx2 == 0 || idx2 == quint16(-1)) || escaped.at(idx2 - 1) != '\\') {
+        /* append the correct HTML tag */
+        switch (escaped.at(idx2).toAscii()) {
+          case '*':
+            if (bold)
+              markedUp += "</b>";
+            else
+              markedUp += "<b>";
+            bold = !bold;
+            break;
+          case '/':
+            if (italic)
+              markedUp += "</i>";
+            else
+              markedUp += "<i>";
+            italic = !italic;
+            break;
+          case '_':
+            if (underline)
+              markedUp += "</u>";
+            else
+              markedUp += "<u>";
+            underline = !underline;
+            break;
+          case '$':
+            /* STUB */
+            break;
+          /* no need for default */
+        }
+      }
+      else {
+        /* remove \ and append letter */
+        markedUp.remove(markedUp.length() - 1, 1);
+        markedUp += escaped.at(idx2);
       }
       
       idx1 = idx2 + 1;
