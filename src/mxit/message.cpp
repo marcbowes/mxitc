@@ -119,102 +119,11 @@ Message::~Message()
 
 /****************************************************************************
 **
-** Author: Marc Bowes
+** Author: Tim Sjoberg
 **
-** Implements MXit Markup
-** All text is first CGI escaped, and then markup-up into HTML using MXit-
-**  specifc rules.
+** Implements MXit Commands (incomplete)
 **
 ****************************************************************************/
-QString Message::markup(const QString &markup, const Contact *contact)
-{
-  /* CGI escape so that any HTML in the message isn't interpreted */
-  QString escaped = Qt::escape(markup);
-  QString markedUp;
-  QRegExp rx("[\\^\\][\\*\\/_\\$]");
-  
-  int position = 0;
-  int nextPos;
-  
-  bool boldOpen = false;
-  bool italicOpen = false;
-  bool underlineOpen = false;
-  
-  while (position < escaped.length()) {
-    nextPos = escaped.indexOf(rx, position);
-
-    if (nextPos != -1) {
-      markedUp += escaped.mid(position, nextPos - position);
-      
-      if (escaped.at(nextPos) == '*') {
-        if (boldOpen)
-          markedUp += "</b>";
-        else
-          markedUp += "<b>";
-        boldOpen = !boldOpen;
-      } else if (escaped.at(nextPos) == '/') {
-        if (italicOpen)
-          markedUp += "</i>";
-        else
-          markedUp += "<i>";
-        italicOpen = !italicOpen;
-      } else if (escaped.at(nextPos) == '_') {
-        if (underlineOpen)
-          markedUp += "</u>";
-        else
-          markedUp += "<u>";
-        underlineOpen = !underlineOpen;
-      } else if (escaped.at(nextPos) == '$') { //we dont interpret markup within highlight tags
-        int nextHighlight = escaped.indexOf(QRegExp("[\\^\\][\\$]"), nextPos + 1);
-        
-        if (nextHighlight != -1) { 
-          QString highlightText = escaped.mid(nextPos + 1, nextHighlight - nextPos - 1);
-          
-          //close tags
-          if (boldOpen)
-            markedUp += "</b>";
-          if (italicOpen)
-            markedUp += "</i>";
-          if (underlineOpen)
-            markedUp += "</u>";
-          
-          boldOpen = false;
-          italicOpen = false;
-          underlineOpen = false;
-          
-          markedUp += "<a href=\"";
-          markedUp += highlightText;
-          markedUp += "/";
-          if (contact) {
-            markedUp += contact->contactAddress;
-          }
-          markedUp += "/2\">";
-          markedUp += highlightText;
-          markedUp += "</a>";
-          
-          nextPos = nextHighlight;
-        } //otherise no other $s, ignore
-      }
-      
-      position = nextPos + 1;
-    } else {
-      markedUp += escaped.mid(position);
-      
-      //close tags
-      if (boldOpen)
-        markedUp += "</b>";
-      if (italicOpen)
-        markedUp += "</i>";
-      if (underlineOpen)
-        markedUp += "</u>";
-      
-      position = escaped.length();
-    }
-  }
-  
-  return markedUp;
-}
-\
 QString Message::commandUp(const QString &markup, const Contact *contact)
 {
   QStringList lines(markup.split('\n'));
@@ -237,6 +146,84 @@ QString Message::commandUp(const QString &markup, const Contact *contact)
         markedUp += line;
         markedUp += "<br>";
       }
+    }
+  }
+  
+  return markedUp;
+}
+
+
+/****************************************************************************
+**
+** Author: Tim Sjoberg
+** Author: Marc Bowes
+**
+** Implements MXit Markup
+** All text is first CGI escaped, and then markup-up into HTML using MXit-
+**  specifc rules.
+**
+****************************************************************************/
+QString Message::markup(const QString &markup, const Contact *contact)
+{
+  /* HTML encode so that any HTML in the message isn't interpreted */
+  QString escaped = Qt::escape(markup);
+  
+  /* setup */
+  QRegExp finder("[\\*/_\\$]");                       /* find any of * / _ $ */
+  bool    bold = 0, italic = 0, underline = 0;        /* tag counters so we can properly close */
+  quint16 idx1 = 0, idx2   = 0;                       /* index of markup start and end */
+  QString markedUp;                                   /* result */
+  
+  /* iteratively find markup candidates */
+  while (idx1 < escaped.length()) {
+    idx2 = escaped.indexOf(finder, idx1);
+    
+    /* found a tag */
+    if (idx2 != quint16(-1)) {
+      markedUp += escaped.mid(idx1, idx2 - idx1);     /* capture everything between the indices */
+      
+      switch (escaped.at(idx2).toAscii()) {
+        case '*':
+          if (bold)
+            markedUp += "</b>";
+          else
+            markedUp += "<b>";
+          bold = !bold;
+          break;
+        case '/':
+          if (italic)
+            markedUp += "</i>";
+          else
+            markedUp += "<i>";
+          italic = !italic;
+          break;
+        case '_':
+          if (underline)
+            markedUp += "</u>";
+          else
+            markedUp += "<u>";
+          underline = !underline;
+          break;
+        case '$':
+          /* STUB */
+          break;
+        /* no need for default */
+      }
+      
+      idx1 = idx2 + 1;
+    }
+    /* no tag found, close remaining tags for valid HTML */
+    else {
+      markedUp += escaped.mid(idx1);
+      
+      if (bold)
+        markedUp += "</b>";
+      if (italic)
+        markedUp += "</i>";
+      if (underline)
+        markedUp += "</u>";
+      
+      idx1 = escaped.length();
     }
   }
   
