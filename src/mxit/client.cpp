@@ -327,7 +327,8 @@ void Client::linkClicked(const QUrl &url)
 
     if (tempHash["type"] == "reply") {
       text = QString("::type=reply|res=%1|error=0:").arg(QString(tempHash["replymsg"]));
-      sendMessage(contactAddress, text, type, 0);
+      /* sendMessage(contactAddress, text, type, 0);/* /* FIXME: MXit don't implement their own protocol?? */
+      sendMessage(contactAddress, tempHash["replymsg"], type, 0);
     }
   }
 }
