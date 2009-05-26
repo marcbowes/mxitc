@@ -173,11 +173,11 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   requiredToAuth.append("sessionid");            /* unique identifier to identify the session for code image answer */
   requiredToAuth.append("captcha");              /* base64 encoded image data */
   requiredToAuth.append("countries");            /* list of available countries (countrycode|countryname)
-                                        * the list of country names should be presented to the user in order to
-                                        * find the country code that should be used later on */
+                                                  * the list of country names should be presented to the user in order to
+                                                  * find the country code that should be used later on */
   requiredToAuth.append("languages");            /* list of supported languages (locale|languagename)
-                                        * the list of language names should be presented to the user and the
-                                        * corresponding locale saved by the client to be used later on */
+                                                  * the list of language names should be presented to the user and the
+                                                  * corresponding locale saved by the client to be used later on */
   requiredToAuth.append("defaultCountryName");   /* country name of the country detenced from the requestors IP */
   requiredToAuth.append("defaultCountryCode");   /* country code associated with the defaultCountryName */
   requiredToAuth.append("regions");              /* a '|' seperated list of regions if requested */
