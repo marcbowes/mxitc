@@ -134,7 +134,7 @@ QString Message::commandUp(const QString &markup, const Contact *contact)
   Q_FOREACH(const QString &line, lines) {
     if (!line.isEmpty()) {
       if (rx.indexIn(line) != -1) {
-        markedUp += "<a href=\"";
+        markedUp += "<a href=\"mxit://";
         markedUp += rx.cap(1);
         markedUp += "/";
         markedUp += contact->contactAddress;
@@ -233,10 +233,10 @@ QString Message::markup(const QString &markup, const Contact *contact)
                 underline = false;
               }
 
-              /* <a href="john/link/2">link</a>, where john is the contact and link is the text inside the $'s */
-              QString ca = contact ? contact->contactAddress + "/" : "";
+              /* <a href="mxit://john/link/2">link</a>, where john is the contact and link is the text inside the $'s */
+              QString ca = contact ? contact->contactAddress : "";
               QString ht = escaped.mid(idx2 + 1, idx3 - idx2 - 1);
-              markedUp.append(QString("<a href=\"%1%2/2\">%2</a>").arg(ca).arg(ht));
+              markedUp.append(QString("<a href=\"mxit://%1/%2/2\">%2</a>").arg(ca).arg(ht));
 
               idx2 = idx3;
             }

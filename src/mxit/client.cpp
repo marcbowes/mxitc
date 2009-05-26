@@ -277,40 +277,52 @@ void Client::getNewMessages()
 ** Author: Marc Bowes
 **
 ** Deals with commands/markup by messaging-out the text clicked on
+** Assumes the URL is properly formatted
 **
 ****************************************************************************/
 void Client::linkClicked(const QUrl &url)
 {
-  QString contactAddress, wholeUrl;
-  int position, type;
+  QString contactAddress, text, urlString;
+  quint16 idx;
+  Protocol::Enumerables::Message::Type type;
 
-  wholeUrl = url.toString();
-  position = wholeUrl.lastIndexOf("/");
-  type = wholeUrl.right(wholeUrl.length() - position - 1).toInt();
-  wholeUrl = wholeUrl.left(position);
-
-  position = wholeUrl.lastIndexOf("/");
-  contactAddress = wholeUrl.right(wholeUrl.length() - position - 1);
-  wholeUrl = wholeUrl.left(position);
-
-  qDebug() << type;
-  qDebug() << contactAddress;
-  qDebug() << wholeUrl;
-
-  if (contactAddress.isEmpty())
+  /* strip mxit:/ */
+  urlString = url.toString(QUrl::RemoveScheme);
+  
+  /* bogus URL, eg. message from self */
+  if (!urlString.startsWith("//"))
     return;
+  
+  /* remove the // */
+  urlString.remove(0, 2);
+  
+  /* find contactAddress (before first /) */
+  idx = urlString.indexOf('/');
+  contactAddress = urlString.left(idx);
+  /* remove everything until after the first / */
+  urlString.remove(0, idx + 1);
+  
+  /* find type (after last /) */
+  idx = urlString.lastIndexOf('/');
+  type = Protocol::Enumerables::Message::Type(
+    urlString.right(urlString.length() - idx - 1).toUInt());
+  /* remove everything after the last / */
+  urlString.truncate(idx);
+  
+  text = urlString; /* readability */
 
-  if (type == 2) {
-    VariableHash messageVariables;
-    messageVariables["contactAddress"]  = contactAddress.toUtf8();
-    messageVariables["message"]         = wholeUrl.toUtf8();
-    messageVariables["type"]            = QString("%1").arg(type).toUtf8();
-    messageVariables["flags"]           = QString("%1").arg(Protocol::Enumerables::Message::MayContainMarkup).toUtf8();
-
-    sendPacket("sendnewmessage", messageVariables);
-  } else if (type == 7) {
-    //format reply FIXME: hack for reply only
-    QStringList tempData(wholeUrl.split("|"));
+  switch (type) {
+    case Protocol::Enumerables::Message::Chat:
+      /* reply with the text to the contact */
+      /* essentially, $this$ = message the contact with "this" */
+      sendMessage(contactAddress, text,
+        Protocol::Enumerables::Message::Type(type), Protocol::Enumerables::Message::MayContainMarkup);
+      break;
+    case Protocol::Enumerables::Message::Command:
+      break;
+  } if (type == 7) {
+    /* format reply: FIXME: hack for reply only */
+    QStringList tempData(urlString.split("|"));
     VariableHash tempHash;
 
     Q_FOREACH (const QString &option, tempData) {
@@ -319,13 +331,13 @@ void Client::linkClicked(const QUrl &url)
     }
 
     if (tempHash["type"] == "reply") {
-      wholeUrl = "::type=reply|res=";
-      wholeUrl += QString(tempHash["replymsg"]);
-      wholeUrl += "|err=0:";
+      urlString = "::type=reply|res=";
+      urlString += QString(tempHash["replymsg"]);
+      urlString += "|err=0:";
 
       VariableHash messageVariables;
       messageVariables["contactAddress"]  = contactAddress.toUtf8();
-      messageVariables["message"]         = wholeUrl.toUtf8();
+      messageVariables["message"]         = urlString.toUtf8();
       messageVariables["type"]            = QString("%1").arg(type).toUtf8();
       messageVariables["flags"]           = QString("%1").arg(0).toUtf8();
     qDebug() << messageVariables;
