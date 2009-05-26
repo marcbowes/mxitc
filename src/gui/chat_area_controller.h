@@ -40,10 +40,27 @@ class ChatAreaController : public QObject {
   ~ChatAreaController();
 
   signals:
-  void conversationChanged(const Conversation *);
+  void conversationRequested(const Conversation *);
 
+  void outgoingConversationRequest(const Conversation *);
   public slots:
   
+  
+  /*DOES NOTHING! FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME*/
+  void incomingConversationUpdate(const Conversation *);
+  void incomingConversationRequest(const Conversation *);
+  
+  
+  
+  
+  private slots:
+  void sendMessageFromChatArea (const ChatArea * chatArea);
+
+  void emitConversationRequested ( int index );
+  
+  void removeAndDeleteConversationFromGUI( int index );
+
+  public: /* methods */
   void updateTabOf(const  Conversation *);
 
   void switchToConversationTab(const Contact * contact);
@@ -51,15 +68,6 @@ class ChatAreaController : public QObject {
   void switchToConversationTab(const Conversation * Conversation); /* for compatibility with contacts list*/
   
   void removeAndDeleteConversationFromGUI( const Conversation* conversation );
-  
-  private slots:
-  void sendMessageFromChatArea (const ChatArea * chatArea);
-
-  void emitConversationChanged ( int index );
-  
-  void removeAndDeleteConversationFromGUI( int index );
-
-  public: /* methods */
   QWidget * getCentralChatArea();
   
   /*FIXME these methods should be in Conversations*/

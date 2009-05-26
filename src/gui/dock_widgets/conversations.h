@@ -50,18 +50,27 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
   
   public:
   
-  void conversationRead(const Conversation * conversation);
   void setConversationCss();
   void refresh(const MXit::OrderedConversationMap& conversations);
+  void conversationRead(const Conversation * conversation);
+  
+  void selectConversation(const Conversation *);
+  void refreshThemeing();
   
   private:
   
   void refreshListWidgetItem(QListWidgetItem* lwi);
 
+  
+  signals:
+  void outgoingConversationRequest(const Conversation *);
   public slots:
   
-  void selectConversation(const Conversation *);
-  void refreshThemeing();
+  /*DOES NOTHING! FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME*/
+  void incomingConversationUpdate(const Conversation *);
+  void incomingConversationRequest(const Conversation *);
+  
+  
 
   private slots:
   

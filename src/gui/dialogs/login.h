@@ -50,7 +50,8 @@ class Login : public MXitDialog, private Ui::Login
   
   void cellphoneChanged(const QString &text);
   void error(const QString &text);
-  void login(bool register_ = false);
+  void login(bool signUp = false);
+  void signUp();
   void passwordChanged(const QString &text);
   
 };

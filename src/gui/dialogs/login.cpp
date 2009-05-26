@@ -50,7 +50,7 @@ Login::Login(
   connect(captcha, SIGNAL(returnPressed()), this, SLOT(login()));
   connect(loginButton, SIGNAL(released()), this, SLOT(login()));
   /*FIXME*/
-  connect(registerButton, SIGNAL(released()), this, SLOT(login(true)));
+  connect(registerButton, SIGNAL(released()), this, SLOT( signUp() ));
   connect(cancelButton, SIGNAL(released()), this, SLOT(reject ()));
   
   /* when a CAPTCHA is received from the MXit gateway, display it */
@@ -151,6 +151,18 @@ void Login::error(const QString &text)
   error.exec();
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** this resets the buttons for relogin
+**
+****************************************************************************/
+
+void Login::signUp() {
+
+  login(true);
+}
 
 /****************************************************************************
 **
@@ -159,7 +171,7 @@ void Login::error(const QString &text)
 ** this SLOT is triggered by pressing 'Login' or typing return
 **
 ****************************************************************************/
-void Login::login(bool register_)
+void Login::login(bool signUp)
 {
   if (!captcha->text().isEmpty()) {
     loginButton->setDisabled(true);
@@ -171,9 +183,9 @@ void Login::login(bool register_)
     variables["cc"] = countriesComboBox->itemData(countriesComboBox->currentIndex ()).toByteArray().replace('-', '_'); /*country code*/
     
     /*TODO does successful registration mean it logs you in automatically*/
-    if (register_) {
+    if (signUp) {
       /*TODO wait for implementation*/
-      //mxit->register(cellphone->text().toLatin1(), password->text().toLatin1(),captcha->text().toLatin1(), variables);
+      //mxit->signUp(cellphone->text().toLatin1(), password->text().toLatin1(),captcha->text().toLatin1(), variables);
     }
     else {
       mxit->login(cellphone->text().toLatin1(), password->text().toLatin1(),captcha->text().toLatin1(), variables);

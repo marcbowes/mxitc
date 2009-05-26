@@ -76,6 +76,10 @@ Conversations::~Conversations()
 
 ****************************************************************************/
 
+/*DOES NOTHING! FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME*/
+void Conversations::incomingConversationUpdate(const Conversation *) {}
+void Conversations::incomingConversationRequest(const Conversation *) {}
+
 /****************************************************************************
 **
 ** Author: Richard Baxter
@@ -85,8 +89,6 @@ Conversations::~Conversations()
 void Conversations::selectConversation(const Conversation *conversation) {
 
   if(conversationToLwi.contains(conversation))  {
-    conversationToLwi.value(conversation)->setSelected(true);
-    
     conversationRead(conversation);
   }
 }
@@ -149,8 +151,6 @@ void Conversations::refreshListWidgetItem(QListWidgetItem *item) {
   }
   item->setText(conversation->displayName);
   
-  //if(item->isSelected())
-  //  conversationToLwi.value(conversation)->setForeground ( QBrush(Qt::black) );
 }
 
 /****************************************************************************
@@ -172,8 +172,11 @@ void Conversations::refreshListWidgetItem(QListWidgetItem *item) {
 
 void Conversations::conversationRead(const Conversation * conversation) {
   
-  if (conversationToLwi.contains(conversation))
+  if (conversationToLwi.contains(conversation)) {
     conversationToLwi.value(conversation)->setForeground ( QBrush(Qt::black) );
+    
+    refreshListWidgetItem(conversationToLwi.value(conversation));
+  }
 }
 
 
@@ -209,7 +212,8 @@ void Conversations::setConversationCss()
 ****************************************************************************/
 
 void Conversations::emitConversationRequest(QListWidgetItem *lwi) {
-  emit conversationRequest (lwiToConversation[lwi]);
+  if (lwi)
+    emit conversationRequest (lwiToConversation[lwi]);
   
   //lwi->setForeground ( QBrush(Qt::black) );
 }
@@ -283,14 +287,16 @@ void Conversations::popUpContextMenu(const QPoint &point) {
 void Conversations::conversationUpdated(const MXit::Conversation* conversation) {
 
 
+  if (conversationToLwi.contains(conversation)) {
+    conversationToLwi.value(conversation)->setForeground ( QBrush(Qt::red) );
+    
+  }
     
   /*TODO use the pointer*/
   refresh(conversations.getConversations());
   
-  /*FIXME add remove add remove segfaults, tries to re add instead of retoggle - FIXME FIXME*/
   if (conversationToLwi.contains(conversation))
-    conversationToLwi.value(conversation)->setForeground ( QBrush(Qt::red) );
-  
+    conversationToLwi.value(conversation)->setIcon ( theme.chat.unread );
 }
 
 

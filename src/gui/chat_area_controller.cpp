@@ -25,7 +25,7 @@ ChatAreaController::ChatAreaController(Theme &theme, MXit::Client &mxit, Convers
   chatTabWidget->setMovable ( true );
   chatTabWidget->setTabsClosable ( true );
   
-  connect(chatTabWidget, SIGNAL(currentChanged( int )), this, SLOT(emitConversationChanged ( int )));
+  connect(chatTabWidget, SIGNAL(currentChanged( int )), this, SLOT(emitConversationRequested ( int )));
   
   connect(chatTabWidget, SIGNAL(tabCloseRequested( int )), this, SLOT(removeAndDeleteConversationFromGUI ( int )));
   
@@ -54,8 +54,28 @@ ChatAreaController::~ChatAreaController() {
 
 }
 
-void ChatAreaController::emitConversationChanged ( int index ) {
-  emit conversationChanged ( chatAreaToConversation[chatTabWidget->widget ( index )] );
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+/*DOES NOTHING! FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME*/
+void ChatAreaController::incomingConversationUpdate(const Conversation *) {}
+void ChatAreaController::incomingConversationRequest(const Conversation *) {}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Widget destructor
+**
+****************************************************************************/
+
+
+void ChatAreaController::emitConversationRequested ( int index ) {
+  emit conversationRequested ( chatAreaToConversation[chatTabWidget->widget ( index )] );
 }
 
 

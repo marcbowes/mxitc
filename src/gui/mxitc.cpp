@@ -118,30 +118,42 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   connect(contactsWidget, SIGNAL (groupsUpdated( const QStringList & )), addContactWidget, SLOT(updateGroups(const QStringList & )));
   
 
-  /*FIXME, this sends the same signal to two places, migth be a more general way of doing this*/
+  /* Updates, chatAreaController <-> conversationsWidget*/
   connect(
             conversations, 
             SIGNAL (updated(const Conversation* )), 
             chatAreaController, 
-            SLOT(updateTabOf(const  Conversation* )));
+            SLOT(incomingConversationUpdate(const  Conversation* )));
             
   connect(
             conversations, 
             SIGNAL (updated(const Conversation* )), 
             conversationsWidget, 
-            SLOT(conversationRead(const  Conversation* )));
-  
+            SLOT(incomingConversationUpdate(const  Conversation* )));
+ 
+  /* Conversation Requested(changed), chatAreaController <-> conversationsWidget*/
   connect(  
             chatAreaController, 
-            SIGNAL(conversationChanged(const Conversation *)),
+            SIGNAL(outgoingConversationRequest(const Conversation *)),
             conversationsWidget,
-            SLOT(selectConversation(const Conversation *)));
-
-  connect(  conversationsWidget, SIGNAL(conversationRequest ( const Conversation *  )), 
-            chatAreaController, SLOT(switchToConversationTab( const Conversation *  )));
+            SLOT(incomingConversationRequest(const Conversation *)));
+  /*--*/
+  
+  connect(  
+            conversationsWidget, 
+            SIGNAL(outgoingConversationRequest ( const Conversation *  )), 
+            chatAreaController, 
+            SLOT(incomingConversationRequest( const Conversation *  )));
             
-  connect(  conversationsWidget, SIGNAL(conversationRemovedFromGUI ( const Conversation *  )), 
-            chatAreaController, SLOT(removeAndDeleteConversationFromGUI( const Conversation *  )));
+            
+            
+  /* Removal from GUI (deactived), chatAreaController <- conversationsWidget*/
+  connect(  
+            conversationsWidget, 
+            SIGNAL(conversationRemovedFromGUI ( const Conversation *  )), 
+            chatAreaController, 
+            SLOT(removeAndDeleteConversationFromGUI( const Conversation *  )));
+            /*TODO, other way: chatAreaController -> conversationsWidget*/
             
             
   
