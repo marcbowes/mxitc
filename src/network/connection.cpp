@@ -187,10 +187,11 @@ void Connection::open(const Packet *login)
 ** sets the gateway to connect through
 **
 ****************************************************************************/
-void Connection::setGateway(const QString &connectionString, const QString &proxyHost, quint16 port)
+void Connection::setGateway(const QString &connectionString, const QString &proxyHost, quint16 port,
+  const QString &username, const QString &password)
 {
   gateway.build(connectionString);
-  http.setProxy(proxyHost, port);
+  http.setProxy(proxyHost, port, username, password);
 }
 
 

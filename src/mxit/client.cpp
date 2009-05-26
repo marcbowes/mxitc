@@ -180,7 +180,7 @@ void Client::authenticate(const VariableHash &settings)
   emit environmentReady();
   emit outgoingVariables(variables);
 
-  connection->setGateway(variables["soc1"], "", 0);
+  connection->setGateway(variables["soc1"], "", 0, "", "");
   connection->open(getPacket("login"));
 }
 
@@ -401,14 +401,15 @@ void Client::removeContact(const QString &contactAddress)
 ** sets the gateway, and deals with reconnecting
 **
 ****************************************************************************/
-void Client::setGateway(const QString &connectionString, const QString &httpHost, quint16 port)
+void Client::setGateway(const QString &connectionString, const QString &httpHost, quint16 port,
+  const QString &username, const QString &password)
 {
   if (connection->getState() != MXit::Network::Connection::DISCONNECTED) {
     sendPacket("logout");
     connection->close();
     emit outgoingAction(LOGGED_OUT);
   }
-  connection->setGateway(connectionString, httpHost, port);
+  connection->setGateway(connectionString, httpHost, port, username, password);
   connection->open(getPacket("login"));
 }
 
@@ -972,7 +973,7 @@ void Client::setupReceived()
     return;
   }
 
-  connection->setGateway(variables["soc1"], "", 0);
+  connection->setGateway(variables["soc1"], "", 0, "", "");
   connection->open(getPacket("login"));
 
   /* cleanup */

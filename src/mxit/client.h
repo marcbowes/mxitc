@@ -77,7 +77,8 @@ class Client : public QObject
     const VariableHash &settings);
   void pollDifference();
   void removeContact(const QString &contactAddress);
-  void setGateway(const QString &connectionString, const QString &proxyHost, quint16 proxyPort);
+  void setGateway(const QString &connectionString, const QString &proxyHost, quint16 proxyPort,
+    const QString &username, const QString &password);
   void setMood(Protocol::Enumerables::Contact::Mood mood);
   void setShownPresenceAndStatus(Protocol::Enumerables::Contact::Presence presence,
     const QString &status = "");
