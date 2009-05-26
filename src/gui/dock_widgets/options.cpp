@@ -28,9 +28,10 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
   
   /* ======= general tab ======= */
   
-  connect(autoLoginCheckBox, SIGNAL(toggled ( bool )), this, SLOT(saveSettings ( bool )));
+  connect(autoLoginCheckBox, SIGNAL(clicked ()), this, SLOT(saveSettings ( )));
   /*TODO hide offline contacts*/
   
+  connect(hideOfflineCheckBox, SIGNAL( clicked () ), this, SIGNAL(requestRefresh ( )));
   
   /* ======= gateway tab ======= */
   connect(httpRadioButton, SIGNAL(toggled ( bool )), httpWidget, SLOT(setEnabled ( bool )));
@@ -38,7 +39,7 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
   connect(applyButton, SIGNAL(released ()), this, SLOT(emitGatewaySignal()));
   
   /*gateway settings save*/
-  connect(httpRadioButton, SIGNAL(toggled ( bool )), this, SLOT(saveGatewaySettings ( bool )));
+  connect(httpRadioButton, SIGNAL(clicked ()), this, SLOT(saveGatewaySettings ( )));
   
     /*TODO send port and proxy down*/
   connect(httpProxyLineEdit, SIGNAL(editingFinished ()), this, SLOT(saveGatewaySettings ( )));
@@ -82,7 +83,7 @@ Options::~Options() {
 ** Author: Richard Baxter
 **
 ****************************************************************************/
-void Options::saveSettings(bool nothing) {
+void Options::saveSettings() {
 
   settings.setValue("autoLogin", isAutoLogin());
 }
@@ -104,6 +105,16 @@ void Options::saveSettings(bool nothing) {
 
 bool Options::isAutoLogin() {
   return autoLoginCheckBox->isChecked();
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+bool Options::hideOfflineContacts() {
+  return hideOfflineCheckBox->isChecked();
 }
 
 /****************************************************************************
@@ -155,7 +166,7 @@ void Options::emitGatewaySignal () {
 **
 ****************************************************************************/
 
-void Options::saveGatewaySettings(bool nothing) {
+void Options::saveGatewaySettings() {
   /*TODO*/
   //settings->setValue("httpProxy", );
 }

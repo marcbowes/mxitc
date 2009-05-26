@@ -36,7 +36,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="checkBox">
+         <widget class="QCheckBox" name="hideOfflineCheckBox">
           <property name="text">
            <string>Hide offline contacts</string>
           </property>

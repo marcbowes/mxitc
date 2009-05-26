@@ -31,6 +31,7 @@ class MXitDockWidget : public QDockWidget
   signals:
   
   void sendLog(const QString& message);
+  //void requestRefresh();
 
   private: /* methods */
 

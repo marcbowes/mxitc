@@ -60,6 +60,7 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
 
   public slots:
   
+  void selectConversation(const Conversation *);
   void refreshThemeing();
 
   private slots:

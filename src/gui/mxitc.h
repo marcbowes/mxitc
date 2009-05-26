@@ -23,7 +23,6 @@
 #include <QTextBlock>
 #include <QSplashScreen>
 #include <QSystemTrayIcon>
-#include <QUrl>
 
 #include "common/types.h"
 #include "common/actions.h"
@@ -41,6 +40,7 @@
 
 #include "gui/dialogs/login.h"
 #include "gui/theme.h"
+#include "gui/chat_area_controller.h"
 
 #include "protocol/enumerables/chunked_data.h"
 #include "protocol/enumerables/message.h"
@@ -78,8 +78,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void messageReceived();
   //void subscriptionsReceived();
   
-  const Conversation * ensureExistanceOfConversation(const QString & uniqueId);
-  
   void appendDockWidget(MXitDockWidget * dockWiget, Qt::DockWidgetArea area, QAction* action);
   
   QString getPresenceString(Protocol::Enumerables::Contact::Presence presence);
@@ -113,10 +111,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void incomingAction(Action action);
   void incomingConnectionState(Network::Connection::State networkState);
   
-  void setCurrentConversation(const Conversation * conversation);
-  void setCurrentConversation(const Contact * contact);
-  void setCurrentConversation(const QString & uniqueId);
-  
   //void chatRequestedViaContact ( QListWidgetItem * item);
   //void chatRequestedViaContact ( const QString& nickname );
   
@@ -128,15 +122,16 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void themeChanged();
   
-  void refreshChatBox(const Conversation * conversation = NULL);
+  //void refreshChatBox(const Conversation * conversation = NULL);
   void presenceToggled(const  Contact*);
   
   
   
   private:        /* variables */
   
-  const Conversation * currentConversation;
+  //const Conversation * currentConversation;
   
+  ChatAreaController *chatAreaController;
   AddressBook addressBook;
   Conversations *conversations;
   
