@@ -354,6 +354,21 @@ void Client::setGateway(const QString &connectionString, const QString &httpHost
 ** Author: Marc Bowes
 **
 ****************************************************************************/
+void Client::setMood(Protocol::Enumerables::Contact::Mood mood)
+{
+  /* packet variables */
+  VariableHash moodVariables;
+  moodVariables["mood"] = QByteArray::number(mood);
+  
+  sendPacket("setmood", moodVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
 void Client::setShownPresenceAndStatus(Protocol::Enumerables::Contact::Presence presence,
   const QString &status)
 {
