@@ -50,13 +50,14 @@ class ChatAreaController : public QObject {
   void switchToConversationTab(const QString & uniqueId);
   void switchToConversationTab(const Conversation * Conversation); /* for compatibility with contacts list*/
   
+  void removeAndDeleteConversationFromGUI( const Conversation* conversation );
+  
   private slots:
   void sendMessageFromChatArea (const ChatArea * chatArea);
 
   void emitConversationChanged ( int index );
   
   void removeAndDeleteConversationFromGUI( int index );
-  void removeAndDeleteConversationFromGUI( const Conversation* conversation );
 
   public: /* methods */
   QWidget * getCentralChatArea();
