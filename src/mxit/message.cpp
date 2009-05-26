@@ -180,56 +180,90 @@ QString Message::markup(const QString &markup, const Contact *contact)
     
     /* found a tag */
     if (idx2 != quint16(-1)) {
-      markedUp += escaped.mid(idx1, idx2 - idx1);     /* capture everything between the indices */
+      markedUp.append(escaped.mid(idx1, idx2 - idx1));     /* capture everything between the indices */
       
       if ((idx2 == 0 || idx2 == quint16(-1)) || escaped.at(idx2 - 1) != '\\') {
         /* append the correct HTML tag */
         switch (escaped.at(idx2).toAscii()) {
           case '*':
             if (bold)
-              markedUp += "</b>";
+              markedUp.append("</b>");
             else
-              markedUp += "<b>";
+              markedUp.append("<b>");
             bold = !bold;
             break;
           case '/':
             if (italic)
-              markedUp += "</i>";
+              markedUp.append("</i>");
             else
-              markedUp += "<i>";
+              markedUp.append("<i>");
             italic = !italic;
             break;
           case '_':
             if (underline)
-              markedUp += "</u>";
+              markedUp.append("</u>");
             else
-              markedUp += "<u>";
+              markedUp.append("<u>");
             underline = !underline;
             break;
           case '$':
-            /* STUB */
+            /* find next non-escaped $ */
+            quint16 idx3 = 0;
+            bool found = false;
+            do {
+              idx3 = escaped.indexOf('$', idx2 + 1);
+              if (idx3 == quint16(-1))
+                break;
+              if (idx3 == 0 || escaped.at(idx3) != '\\')
+                found = true;
+            } while (!found);
+            
+            if (idx3 != quint16(-1)) {
+              /* close all remaining tags, $ is a anti-markup barrier */
+              if (bold) {
+                markedUp.append("</b>");
+                bold = false;
+              }
+              if (italic) {
+                markedUp.append("</i>");
+                italic = false;
+              }
+              if (underline) {
+                markedUp.append("</u>");
+                underline = false;
+              }
+              
+              /* <a href="john/link/2">link</a>, where john is the contact and link is the text inside the $'s */
+              QString ca = contact ? contact->contactAddress + "/" : "";
+              QString ht = escaped.mid(idx2 + 1, idx3 - idx2 - 1);
+              markedUp.append(QString("<a href=\"%1%2/2\">%2</a>").arg(ca).arg(ht));
+              
+              idx2 = idx3;
+            }
+            
             break;
-          /* no need for default */
+            /* no need for default */
         }
       }
       else {
         /* remove \ and append letter */
         markedUp.remove(markedUp.length() - 1, 1);
-        markedUp += escaped.at(idx2);
+        markedUp.append(escaped.at(idx2));
       }
       
       idx1 = idx2 + 1;
     }
-    /* no tag found, close remaining tags for valid HTML */
+    /* no tag found, end loop */
     else {
-      markedUp += escaped.mid(idx1);
+      markedUp.append(escaped.mid(idx1));  /* append rest of string */
       
+      /* close all remaining tags for valid HTML */
       if (bold)
-        markedUp += "</b>";
+        markedUp.append("</b>");
       if (italic)
-        markedUp += "</i>";
+        markedUp.append("</i>");
       if (underline)
-        markedUp += "</u>";
+        markedUp.append("</u>");
       
       idx1 = escaped.length();
     }
