@@ -14,7 +14,7 @@ namespace GUI
 {
 
 
-class ConversationsWidget /*TODO, do I need this virtual here?*/ {
+class ConversationsWidget {
 
   ///Q_OBJECT
   
@@ -37,9 +37,12 @@ class ConversationsWidget /*TODO, do I need this virtual here?*/ {
   virtual void incomingConversationShowRequest        (const Conversation *) = 0; // user requested, from another object, this conversation be shown in UI so they may chat
   virtual void incomingConversationCloseRequest       (const Conversation *) = 0; // user requested, from another object, this conversation be closed in list (implies it won't be shown as well)
   virtual void incomingConversationReadNotification   (const Conversation *) = 0; // user, from another object, read the conversation
-  virtual void incomingConversationUpdated            (const Conversation *) = 0; // this conversation has been updated
-  
   */
+  
+  //virtual void incomingConversationUpdated            (const Conversation *) = 0; // this conversation has been updated
+  //virtual void incomingConversationUpdatedFinished    (const Conversation *) = 0; // this conversation has been updated
+  
+  
   protected: /* variables */
   
   Conversations& conversations;

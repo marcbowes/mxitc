@@ -22,7 +22,7 @@ namespace GUI
 **
 ****************************************************************************/
 
-ConversationsTabWidget::ConversationsTabWidget(Theme &theme, MXit::Client &mxit, Conversations& conversations, AddressBook& addressBook, QWidget* parent) : QTabWidget(parent), ConversationsWidget(conversations, addressBook), mxit(mxit), nonUserTabChange(false)  {
+ConversationsTabWidget::ConversationsTabWidget(Theme &theme, MXit::Client &mxit, Conversations& conversations, AddressBook& addressBook, QWidget* parent) : QTabWidget(parent), ConversationsWidget(conversations, addressBook), theme(theme), mxit(mxit), nonUserTabChange(false)  {
   
   setMovable ( true );
   setTabsClosable ( true );
@@ -41,8 +41,9 @@ ConversationsTabWidget::ConversationsTabWidget(Theme &theme, MXit::Client &mxit,
 ****************************************************************************/
 
 ConversationsTabWidget::~ConversationsTabWidget() {
-
+  disconnect();
   Q_FOREACH(ChatArea * chatArea, conversationToChatArea.values()) {
+    removeTab ( indexOf(chatArea) );
     delete chatArea;
   }
 }
@@ -83,7 +84,10 @@ void ConversationsTabWidget::incomingConversationCloseRequest      (const Conver
 **
 ****************************************************************************/
 void ConversationsTabWidget::incomingConversationReadNotification  (const Conversation *conversation) {
-  /*TODO change icon*/
+
+  ChatArea * chatArea =  conversationToChatArea.value( conversation );
+  /* TODO - change to group chat icon if group chat*/
+  setTabIcon(indexOf(chatArea), theme.contact.presence.pixmap((*conversation->getContacts().begin())->presence));
 }
 
 /****************************************************************************
@@ -93,20 +97,32 @@ void ConversationsTabWidget::incomingConversationReadNotification  (const Conver
 ****************************************************************************/
 void ConversationsTabWidget::incomingConversationUpdated           (const Conversation *conversation) {
 
-  ensureExistanceOfChatAreaAndTab( conversation );
-  updateTabOf(conversation);
+  if(conversation->active) {
+    ChatArea * chatArea =  ensureExistanceOfChatAreaAndTab( conversation );
+    updateTabOf(chatArea);
+    setTabIcon ( indexOf(chatArea), theme.chat.unread );
+  }
   
-  /*TODO change icon*/
+  
+  
+}
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+void ConversationsTabWidget::incomingConversationUpdatedFinished    (const Conversation *conversation) {
+  
+  if (currentWidget ())
+    emit outgoingConversationReadNotification( chatAreaToConversation[currentWidget ()] );
+  
 }
 
 /****************************************************************************
 **
 ** Author: Richard Baxter
 **
-** Widget destructor
-**
 ****************************************************************************/
-
 
 void ConversationsTabWidget::currentChanged ( int index ) {
   if (!nonUserTabChange) {
@@ -126,25 +142,14 @@ void ConversationsTabWidget::tabCloseRequested ( int index ) {
 **
 ****************************************************************************/
 
-void ConversationsTabWidget::updateTabOf(const  Conversation* conversation) {
-  if (!conversation->active)
-    return;
-    
-  ChatArea * chatArea = ensureExistanceOfChatAreaAndTab(conversation);
-  //chatArea = conversationToChatArea[conversation];
-  if (chatArea == NULL) {
-    qDebug() << "Chat Area is NULL!! - must put the ensureConversationExists method in MXit::Conversations";
-    return;
-  }
+void ConversationsTabWidget::updateTabOf(ChatArea * chatArea) {
+
   
   chatArea->chatWebView->setHtml(chatAreaToConversation[chatArea]->conversationHtml);
 
   QWebFrame * frame = chatArea->chatWebView->page ()->currentFrame ();
   frame->setScrollBarValue(Qt::Vertical, frame->scrollBarMaximum(Qt::Vertical));
   
-  /* FIXME implement red label thing*/
-  //conversationsWidget->conversationRead(currentConversation);
-  /* make label red if not selected tab*/
 }
 
 /****************************************************************************
@@ -174,8 +179,13 @@ void ConversationsTabWidget::sendMessageFromChatArea (const ChatArea * chatArea)
 void ConversationsTabWidget::switchToConversationTab(const Conversation * conversation) {
   if (conversation) {
     ensureExistanceOfChatAreaAndTab(conversation);
-    setCurrentIndex(indexOf(conversationToChatArea[conversation]));
-    emit outgoingConversationReadNotification( conversation );
+    int newIndex = indexOf(conversationToChatArea[conversation]);
+    if (newIndex != currentIndex()) {
+      setCurrentIndex(newIndex);
+    }
+    else {  
+      emit outgoingConversationReadNotification( conversation );
+    }
   }
 }
 
@@ -197,7 +207,11 @@ ChatArea* ConversationsTabWidget::ensureExistanceOfChatAreaAndTab(const Conversa
     
     ChatArea* chatArea = conversationToChatArea[conversation];
     chatAreaToConversation[chatArea] = conversation;
+    
+    
+    nonUserTabChange = true;
     addTab(chatArea, QIcon(QPixmap(16,16)), conversation->displayName);
+    nonUserTabChange = false;
     
     connect(
               chatArea->chatWebView, 
@@ -226,7 +240,9 @@ void ConversationsTabWidget::removeAndDeleteConversationFromGUI( const Conversat
                 &mxit, 
                 SLOT(linkClicked(const QUrl&)));
                 
+    nonUserTabChange = true;
     removeTab ( indexOf(conversationToChatArea[conversation]) );
+    nonUserTabChange = false;
 
     chatAreaToConversation.remove(conversationToChatArea[conversation]);
     conversationToChatArea.remove(conversation);
@@ -237,12 +253,6 @@ void ConversationsTabWidget::removeAndDeleteConversationFromGUI( const Conversat
   }
 }
 
-
-void ConversationsTabWidget::removeTab ( int index ) {
-  nonUserTabChange = true;
-  QTabWidget::removeTab ( index );
-  nonUserTabChange = false;
-}
 
 
 } /* end of GUI namespace */

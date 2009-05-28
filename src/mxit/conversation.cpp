@@ -143,6 +143,7 @@ void Conversation::appendMessage(const Message &message)
   insertion.append(        "</div>");
   conversationHtml.insert(conversationHtml.size() - 21, insertion);
   messages.append(new Message(message));
+  emit messageAdded(this);
   emit updated(this);
 }
 

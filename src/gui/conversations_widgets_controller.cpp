@@ -22,6 +22,7 @@ ConversationsWidgetsController::ConversationsWidgetsController(Theme &theme, MXi
 
 
   
+  
   /*FIXME - to chat area controller*///connect(mainWebView, SIGNAL(linkClicked(const QUrl&)), mxit, SLOT(linkClicked(const QUrl&)));
   
   
@@ -62,9 +63,82 @@ void ConversationsWidgetsController::addConversationsWidget(QWidget * newConvers
   
   QWidget* newConversationObject = (QWidget*)newConversationWidget;
 
+
+          
+  /* conversation outgoing message  */    
+            
+  connect(
+            newConversationObject, 
+            SIGNAL(outgoingMessage(QString&, const Conversation *)),
+            this,
+            SLOT(incomingMessageFromWidget(QString&, const Conversation *))
+            );
+            
+  
+  connect(
+            this,
+            SIGNAL(incomingConversationShowRequestsToWidgets(const Conversation *)),
+            newConversationObject, 
+            SLOT(incomingConversationShowRequest( const Conversation *))
+            );
+
+  Q_FOREACH(QWidget * conversationWidget, conversationsWidgets) {
+      
+    disconnect(
+            &conversations,
+            SIGNAL(messageAdded(const Conversation *)),
+            conversationWidget, 
+            SLOT(incomingConversationUpdated( const Conversation *))
+            );
+      
+    disconnect(
+            &conversations,
+            SIGNAL(messageAdded(const Conversation *)),
+            conversationWidget, 
+            SLOT(incomingConversationUpdatedFinished( const Conversation *))
+            );
+  }
+  
+  Q_FOREACH(QWidget * conversationWidget, conversationsWidgets) {
+  
+    QWidget* conversationObject = conversationWidget;
+    /* conversation requests */
+    connect(
+              conversationObject, 
+              SIGNAL(outgoingConversationRequest(const Conversation *)),
+              newConversationObject,
+              SLOT(incomingConversationRequest(const Conversation *))
+              );
+              
+    /* conversation show requests */
+    connect(
+              conversationObject, 
+              SIGNAL(outgoingConversationRequest(const Conversation *)),
+              newConversationObject,
+              SLOT(incomingConversationRequest(const Conversation *))
+              );
+              
+    /* conversation close requests */
+    connect(
+              conversationObject, 
+              SIGNAL(outgoingConversationCloseRequest(const Conversation *)),
+              newConversationObject,
+              SLOT(incomingConversationCloseRequest(const Conversation *))
+              );
+              
+    /* conversation read notification */
+    connect(
+              conversationObject, 
+              SIGNAL(outgoingConversationReadNotification(const Conversation *)),
+              newConversationObject,
+              SLOT(incomingConversationReadNotification(const Conversation *))
+              );
+  
+  }
+  
   conversationsWidgets.append(newConversationWidget);
   
-  /*yes, I realise this will hook up incomings and outgoing to itself*/
+  
   Q_FOREACH(QWidget * conversationWidget, conversationsWidgets) {
   
     QWidget* conversationObject = conversationWidget;
@@ -75,12 +149,6 @@ void ConversationsWidgetsController::addConversationsWidget(QWidget * newConvers
               conversationObject,
               SLOT(incomingConversationRequest(const Conversation *))
               );
-    connect(
-              conversationObject, 
-              SIGNAL(outgoingConversationRequest(const Conversation *)),
-              newConversationObject,
-              SLOT(incomingConversationRequest(const Conversation *))
-              );
               
     /* conversation show requests */
     connect(
@@ -89,24 +157,12 @@ void ConversationsWidgetsController::addConversationsWidget(QWidget * newConvers
               conversationObject,
               SLOT(incomingConversationShowRequest(const Conversation *))
               );
-    connect(
-              conversationObject, 
-              SIGNAL(outgoingConversationRequest(const Conversation *)),
-              newConversationObject,
-              SLOT(incomingConversationRequest(const Conversation *))
-              );
               
     /* conversation close requests */
     connect(
               newConversationObject, 
               SIGNAL(outgoingConversationCloseRequest(const Conversation *)),
               conversationObject,
-              SLOT(incomingConversationCloseRequest(const Conversation *))
-              );
-    connect(
-              conversationObject, 
-              SIGNAL(outgoingConversationCloseRequest(const Conversation *)),
-              newConversationObject,
               SLOT(incomingConversationCloseRequest(const Conversation *))
               );
               
@@ -117,45 +173,32 @@ void ConversationsWidgetsController::addConversationsWidget(QWidget * newConvers
               conversationObject,
               SLOT(incomingConversationReadNotification(const Conversation *))
               );
-    connect(
-              conversationObject, 
-              SIGNAL(outgoingConversationReadNotification(const Conversation *)),
-              newConversationObject,
-              SLOT(incomingConversationReadNotification(const Conversation *))
-              );
   
   }
-          
-  /* conversation outgoing message  */    
-  connect(
-            newConversationObject, 
-            SIGNAL(outgoingMessage(QString&, const Conversation *)),
-            this,
-            SLOT(incomingMessageFromWidget(QString&, const Conversation *))
-            );
   
-  connect(
+  
+  
+  Q_FOREACH(QWidget * conversationWidget, conversationsWidgets) {
+      
+    connect(
             &conversations,
-            SIGNAL(updated(const Conversation *)),
-            newConversationObject, 
+            SIGNAL(messageAdded(const Conversation *)),
+            conversationWidget, 
             SLOT(incomingConversationUpdated( const Conversation *))
             );
-            
-  /*connect(
-            this,
-            SIGNAL(incomingConversationUpdatesToWidgets(const Conversation *)),
-            newConversationObject, 
-            SLOT(incomingConversationUpdated( const Conversation *))
-            );*/
-  
-  connect(
-            this,
-            SIGNAL(incomingConversationShowRequestsToWidgets(const Conversation *)),
-            newConversationObject, 
-            SLOT(incomingConversationShowRequest( const Conversation *))
+  }
+  Q_FOREACH(QWidget * conversationWidget, conversationsWidgets) {
+      
+    connect(
+            &conversations,
+            SIGNAL(messageAdded(const Conversation *)),
+            conversationWidget, 
+            SLOT(incomingConversationUpdatedFinished( const Conversation *))
             );
+  }
   
 }
+
 
 /****************************************************************************
 **

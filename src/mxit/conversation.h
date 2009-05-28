@@ -38,6 +38,7 @@ class Conversation : public QObject
   signals:
   
   void updated(const Conversation*);
+  void messageAdded(const Conversation*);
 
   public:         /* methods */
   

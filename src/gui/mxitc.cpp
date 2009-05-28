@@ -108,7 +108,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
             conversationsWidgetsController, SLOT(incomingConversationShowRequest( const Contact * )));
      
      
-  
   connect(contactsWidget, SIGNAL (groupsUpdated( const QStringList & )), addContactWidget, SLOT(updateGroups(const QStringList & )));
   
             
@@ -124,7 +123,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   /*------------------------------------------------------------------------------------------*/
   /* Connecting new variables SIGNAL from the widgets to the client
   /*------------------------------------------------------------------------------------------*/
-  /*TODO sort out what connects need to go where*/
   
   connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginDialog()));
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
@@ -237,6 +235,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
 ****************************************************************************/
 MXitC::~MXitC()
 {
+  disconnect();
+
   statusbar->removeWidget(statusLabel);
   delete statusLabel;
   
@@ -247,7 +247,10 @@ MXitC::~MXitC()
   
   if (trayIcon)
     delete trayIcon;
-    
+  
+  delete conversationsWidgetsController;
+  delete conversationsTabWidget;
+  
     
   /* MUST delete this last as dockwidgets might be using it in their destructors*/
   settings->sync(); /*just in case*/
@@ -834,6 +837,7 @@ void MXitC::closeEvent(QCloseEvent *event)
 void MXitC::loggingIn(){
   setStatus(LOGGING_IN);
 }
+
 /****************************************************************************
 **
 ** Author: Richard Baxter

@@ -72,6 +72,8 @@ void Conversations::addConversation(Conversation *conversation)
   /* bubble the Conversation's update SIGNAL */
   connect(conversation, SIGNAL(updated(const Conversation*)),
           this, SIGNAL(updated(const Conversation*)));
+  connect(conversation, SIGNAL(messageAdded(const Conversation*)),
+          this, SIGNAL(messageAdded(const Conversation*)));
   
   /* invert the Conversation for fast Contact-involvement lookups */
   Q_FOREACH(const Contact *contact, conversation->getContacts())

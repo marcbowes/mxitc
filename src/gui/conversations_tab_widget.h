@@ -39,7 +39,7 @@ class ConversationsTabWidget : public QTabWidget, public ConversationsWidget{
   void incomingConversationShowRequest        (const Conversation *conversation);
   void incomingConversationReadNotification   (const Conversation *conversation);
   void incomingConversationUpdated            (const Conversation *conversation);
-  
+  void incomingConversationUpdatedFinished    (const Conversation *conversation);
   
   
   private slots:
@@ -50,14 +50,11 @@ class ConversationsTabWidget : public QTabWidget, public ConversationsWidget{
   
   void removeAndDeleteConversationFromGUI( const Conversation* conversation );
   
-  public: /* methods */
-  
-  void removeTab ( int index );
   
   private: /* methods */
   
 
-  void updateTabOf(const  Conversation *);
+  void updateTabOf(ChatArea * chatArea);
 
   void switchToConversationTab(const Conversation * Conversation); /* for compatibility with contacts list*/
   
@@ -73,6 +70,7 @@ class ConversationsTabWidget : public QTabWidget, public ConversationsWidget{
   QHash<const QWidget*, const Conversation*> chatAreaToConversation;
   
   MXit::Client &mxit;
+  Theme &theme;
   
   bool nonUserTabChange;
 };

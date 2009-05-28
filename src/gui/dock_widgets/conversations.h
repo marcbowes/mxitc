@@ -57,7 +57,7 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
   void incomingConversationShowRequest        (const Conversation *conversation);
   void incomingConversationReadNotification   (const Conversation *conversation);
   void incomingConversationUpdated            (const Conversation *conversation);
-  
+  void incomingConversationUpdatedFinished    (const Conversation *conversation);
   
   private slots:
   

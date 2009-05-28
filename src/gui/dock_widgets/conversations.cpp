@@ -122,13 +122,20 @@ void Conversations::incomingConversationReadNotification   (const Conversation *
 void Conversations::incomingConversationUpdated            (const Conversation *conversation) {
 
   refresh(conversations.getConversations());
-  
   if (conversationToLwi.contains(conversation)) {
     conversationToLwi.value(conversation)->setForeground ( QBrush(Qt::red) );
     conversationToLwi.value(conversation)->setIcon ( theme.chat.unread );
     
   }
-  
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+void Conversations::incomingConversationUpdatedFinished     (const Conversation *conversation) {
+
 }
 
 /****************************************************************************
@@ -288,9 +295,10 @@ void Conversations::popUpContextMenu(const QPoint &point) {
   
   if (selection == "Close Conversation") {
     /* closes conversation */
+    
     conversations.toggleActive(conversation->uniqueIdentifier);
     
-    emit outgoingConversationCloseRequest ( lwiToConversation[lwi] );
+    emit outgoingConversationCloseRequest ( conversation );
   }
 }
 
