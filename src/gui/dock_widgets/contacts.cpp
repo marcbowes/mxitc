@@ -55,7 +55,7 @@ Contacts::Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBoo
         contactsTree, 
         SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int ) ),
         this, 
-        SLOT( emitConversationRequest( QTreeWidgetItem *, int ) )  );
+        SLOT( emitConversationShowRequest( QTreeWidgetItem *, int ) )  );
 }
 
 
@@ -261,7 +261,7 @@ void Contacts::singleContactMenu(const QString & selection, const QList<QTreeWid
   Contact * contact = twiToContact.value(twi);
   if (selection == "Chat") 
   {
-    emitConversationRequest(twi);
+    emitConversationShowRequest(twi);
   }
   else if (selection == "Change Nickname or Group") {
     Dialog::UpdateContactInfo update(contact->nickname, getGroupNames(), contact->group, this);
@@ -467,8 +467,8 @@ ContactList Contacts::genContactsListFromTwiSelection(const QList<QTreeWidgetIte
 **
 ****************************************************************************/
 
-void Contacts::emitConversationRequest(QTreeWidgetItem *item, int index) {
-  emit conversationRequest(twiToContact.value(item));
+void Contacts::emitConversationShowRequest(QTreeWidgetItem *item, int index) {
+  emit outgoingConversationShowRequest(twiToContact.value(item));
 }
 
 

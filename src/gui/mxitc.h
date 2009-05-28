@@ -6,7 +6,7 @@
 ** This is an extension of the generated dialog, made with Designer.
 **
 ****************************************************************************/
-#define VARIABLE_DEBUGGER
+
 #ifndef __MXIT_GUI_MXITC_H__
 #define __MXIT_GUI_MXITC_H__
 
@@ -40,7 +40,8 @@
 
 #include "gui/dialogs/login.h"
 #include "gui/theme.h"
-#include "gui/chat_area_controller.h"
+#include "gui/conversations_widgets_controller.h"
+#include "gui/conversations_tab_widget.h"
 
 #include "protocol/enumerables/chunked_data.h"
 #include "protocol/enumerables/message.h"
@@ -131,7 +132,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   //const Conversation * currentConversation;
   
-  ChatAreaController *chatAreaController;
   AddressBook addressBook;
   Conversations *conversations;
   
@@ -150,6 +150,12 @@ class MXitC : public QMainWindow, private Ui::MXitC
   QLabel * statusLabel;
   
   StringVec requiredToAuth;
+  
+  
+  
+  ConversationsWidgetsController * conversationsWidgetsController;
+  ConversationsTabWidget * conversationsTabWidget;
+  
   
   /* Dockable Widgets*/
   QVector<QDockWidget *> dockWidgets;

@@ -40,12 +40,12 @@ Conversations::Conversations(QWidget* parent, Theme &theme, MXit::Client& mxit, 
   setupUi(this);
   
   
-  connect(  &conversations, SIGNAL( updated(const Conversation*)),
-            this, SLOT (conversationUpdated(const Conversation*)));
+  //connect(  &conversations, SIGNAL( updated(const Conversation*)),
+ //          this, SLOT (conversationUpdated(const Conversation*)));
   
   /* clicking on a conversation emits signal#conversationSelected */
   connect(conversationsList, SIGNAL(itemPressed(QListWidgetItem*)),
-          this,              SLOT(emitConversationRequest(QListWidgetItem*)));
+          this,              SLOT(emitConversationShowRequest(QListWidgetItem*)));
   
   /* right clicking on a conversation emits signal#conversationContextMenuRequest */
   connect(conversationsList, SIGNAL(customContextMenuRequested(const QPoint&)), 
@@ -68,6 +68,70 @@ Conversations::~Conversations()
 
 
 /****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Conversations::incomingConversationRequest            (const Conversation *conversation) {
+  /*do nothing*/
+  
+  refresh(conversations.getConversations());
+  conversationToLwi.value(conversation)->setSelected(true);
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+void Conversations::incomingConversationCloseRequest       (const Conversation *conversation) {
+  /*do nothing*/
+  refresh(conversations.getConversations());
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+void Conversations::incomingConversationShowRequest        (const Conversation *conversation) {
+  /*do nothing*/
+  incomingConversationRequest (conversation);
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+void Conversations::incomingConversationReadNotification   (const Conversation *conversation) {
+
+  if (conversationToLwi.contains(conversation)) {
+    conversationToLwi.value(conversation)->setForeground ( QBrush(Qt::black) );
+    
+    refreshListWidgetItem(conversationToLwi.value(conversation));
+  }
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+void Conversations::incomingConversationUpdated            (const Conversation *conversation) {
+
+  refresh(conversations.getConversations());
+  
+  if (conversationToLwi.contains(conversation)) {
+    conversationToLwi.value(conversation)->setForeground ( QBrush(Qt::red) );
+    conversationToLwi.value(conversation)->setIcon ( theme.chat.unread );
+    
+  }
+  
+}
+
+/****************************************************************************
                 __   ___           __     __    
      ___  __ __/ /  / (_)___  ___ / /__  / /____
     / _ \/ // / _ \/ / / __/ (_-</ / _ \/ __(_-<
@@ -76,23 +140,6 @@ Conversations::~Conversations()
 
 ****************************************************************************/
 
-/*DOES NOTHING! FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME*/
-void Conversations::incomingConversationUpdate(const Conversation *) {}
-void Conversations::incomingConversationRequest(const Conversation *) {}
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void Conversations::selectConversation(const Conversation *conversation) {
-
-  if(conversationToLwi.contains(conversation))  {
-    conversationRead(conversation);
-  }
-}
-  
   
   
 /****************************************************************************
@@ -104,6 +151,9 @@ void Conversations::selectConversation(const Conversation *conversation) {
 ****************************************************************************/
 
 void Conversations::refreshThemeing() {
+
+  setConversationCss();
+  setStyleSheet(theme.contact.stylesheet);  
 
   /*refreshing all contacts*/
   for (int i = 0 ; i < conversationsList->count() ; i++) {
@@ -122,13 +172,20 @@ void Conversations::refreshThemeing() {
 
 ****************************************************************************/
 
-
 /****************************************************************************
 **
 ** Author: Richard Baxter
 **
+** refreshes a listWidgetItem (just icon for now)
+**
 ****************************************************************************/
 
+void Conversations::emitConversationShowRequest(QListWidgetItem *lwi) {
+  if (lwi)
+    emit outgoingConversationShowRequest (lwiToConversation[lwi]);
+  
+  //lwi->setForeground ( QBrush(Qt::black) );
+}
 
 /****************************************************************************
 **
@@ -164,24 +221,6 @@ void Conversations::refreshListWidgetItem(QListWidgetItem *item) {
 
 /****************************************************************************
 **
-** Author: Richard Baxter
-**
-** tells this class that the conversation has been read
-**
-****************************************************************************/
-
-void Conversations::conversationRead(const Conversation * conversation) {
-  
-  if (conversationToLwi.contains(conversation)) {
-    conversationToLwi.value(conversation)->setForeground ( QBrush(Qt::black) );
-    
-    refreshListWidgetItem(conversationToLwi.value(conversation));
-  }
-}
-
-
-/****************************************************************************
-**
 ** Author: Marc Bowes
 **
 ** Changes HTML head to use theme's CSS file
@@ -201,22 +240,6 @@ void Conversations::setConversationCss()
   /_/                                                 
 
 /***************************************************************************/
-
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** emits a signal containing the contact selected
-**
-****************************************************************************/
-
-void Conversations::emitConversationRequest(QListWidgetItem *lwi) {
-  if (lwi)
-    emit conversationRequest (lwiToConversation[lwi]);
-  
-  //lwi->setForeground ( QBrush(Qt::black) );
-}
 
 /****************************************************************************
 **
@@ -267,7 +290,7 @@ void Conversations::popUpContextMenu(const QPoint &point) {
     /* closes conversation */
     conversations.toggleActive(conversation->uniqueIdentifier);
     
-    emit conversationRequest(NULL);
+    emit outgoingConversationCloseRequest ( lwiToConversation[lwi] );
   }
 }
 
@@ -276,28 +299,6 @@ void Conversations::popUpContextMenu(const QPoint &point) {
 #undef MENU_ITEM
 #undef MENU_EXEC
 
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-**
-****************************************************************************/
-
-void Conversations::conversationUpdated(const MXit::Conversation* conversation) {
-
-
-  if (conversationToLwi.contains(conversation)) {
-    conversationToLwi.value(conversation)->setForeground ( QBrush(Qt::red) );
-    
-  }
-    
-  /*TODO use the pointer*/
-  refresh(conversations.getConversations());
-  
-  if (conversationToLwi.contains(conversation))
-    conversationToLwi.value(conversation)->setIcon ( theme.chat.unread );
-}
 
 
 /****************************************************************************
@@ -346,7 +347,7 @@ void Conversations::refresh(const MXit::OrderedConversationMap& conversationsMap
   }
   
   
-  /* scanning through list items to look for ones that should not be in their */
+  /* scanning through list items to look for ones that should not be in there */
   for (int i = 0 ; i < conversationsList->count() ; i++) {
     QListWidgetItem * lwi = conversationsList->item(i);
     
@@ -358,7 +359,6 @@ void Conversations::refresh(const MXit::OrderedConversationMap& conversationsMap
       /* then the lwi should NOT be in the list */
       /* remove it and clean up */
       
-      emit conversationRemovedFromGUI ( lwiToConversation[lwi] );
       conversationsList->removeItemWidget(lwi);
       conversationToLwi.remove(lwiToConversation[lwi]);
       lwiToConversation.remove(lwi);

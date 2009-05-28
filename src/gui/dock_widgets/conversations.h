@@ -41,43 +41,40 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
   Conversations(QWidget *parent, Theme &theme, MXit::Client& mxit, MXit::Conversations & conversations);
   ~Conversations();
   
+  
   signals:
   
-  //void outgoingItemPressed ( QListWidgetItem *  ); // depricated maybe
-  void conversationRemovedFromGUI ( const Conversation * conversation  );
+  void outgoingConversationRequest            (const Conversation *conversation);
+  void outgoingConversationShowRequest        (const Conversation *conversation);
+  void outgoingConversationCloseRequest       (const Conversation *conversation);
+  void outgoingConversationReadNotification   (const Conversation *conversation);
+  void outgoingMessage                        (QString& message, const Conversation *conversation);
+
+  public slots:
+
+  void incomingConversationRequest            (const Conversation *conversation);
+  void incomingConversationCloseRequest       (const Conversation *conversation);
+  void incomingConversationShowRequest        (const Conversation *conversation);
+  void incomingConversationReadNotification   (const Conversation *conversation);
+  void incomingConversationUpdated            (const Conversation *conversation);
   
-  void conversationRequest ( const Conversation * conversation );
   
-  public:
+  private slots:
   
-  void setConversationCss();
-  void refresh(const MXit::OrderedConversationMap& conversations);
-  void conversationRead(const Conversation * conversation);
+  void emitConversationShowRequest(QListWidgetItem *lwi);
   
-  void selectConversation(const Conversation *);
+  void popUpContextMenu(const QPoint & pos);
+  
+  public slots:
+  
   void refreshThemeing();
   
   private:
   
+  void refresh(const MXit::OrderedConversationMap& conversations);
+  void setConversationCss();
+  
   void refreshListWidgetItem(QListWidgetItem* lwi);
-
-  
-  signals:
-  void outgoingConversationRequest(const Conversation *);
-  public slots:
-  
-  /*DOES NOTHING! FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME*/
-  void incomingConversationUpdate(const Conversation *);
-  void incomingConversationRequest(const Conversation *);
-  
-  
-
-  private slots:
-  
-  void emitConversationRequest(QListWidgetItem *lwi);
-  
-  void conversationUpdated(const Conversation* conversation);
-  void popUpContextMenu(const QPoint & pos);
   
   
   private:

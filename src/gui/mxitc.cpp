@@ -4,8 +4,6 @@
 **
 ****************************************************************************/
 
-#include <QTextDocument>
-#include <QWebFrame>
 
 #include "mxitc.h"
 
@@ -46,17 +44,19 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   settings = new QSettings ( "mxitc", "env", this );
   
   conversations = new MXit::Conversations(&addressBook, QDir(settings->value("logConversations").toString()));
-  
-  chatAreaController = new ChatAreaController(theme, *mxit, *conversations, addressBook);
   /*------------------------------------------------------------------------------------------*/
   /* Setting up tab-able chat window*/
   /*------------------------------------------------------------------------------------------*/
   
   
-  this->centralWidget()->layout ()->addWidget (chatAreaController->getCentralChatArea());
+  
+  conversationsWidgetsController = new ConversationsWidgetsController(theme, *mxit, *conversations, addressBook);
   
   
+  conversationsTabWidget = new ConversationsTabWidget(theme, *mxit, *conversations, addressBook);
+  this->centralWidget()->layout ()->addWidget (conversationsTabWidget);
    
+  
   
   
   
@@ -79,29 +79,17 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   appendDockWidget(conversationsWidget, Qt::LeftDockWidgetArea, actionConversations);
   
   contactsWidget = new DockWidget::Contacts (this, theme, *mxit, addressBook, *conversations, *optionsWidget);
-  
   appendDockWidget(contactsWidget, Qt::LeftDockWidgetArea, actionContacts);
   
-  addContactWidget = new DockWidget::AddContact (this, theme);
+  addContactWidget = new DockWidget::AddContact (this, theme, *mxit);
   appendDockWidget(addContactWidget, Qt::LeftDockWidgetArea, actionAdd_Contact);
   
   
   
-  /*------------------------------------------------------------------------------------------*/
-  /* Connecting of functionality from child widgets to client*/
-  /*------------------------------------------------------------------------------------------*/
-  /* connecting the addContact functionality from the widget to the client*/
-  connect(addContactWidget, 
-          SIGNAL(addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &)), 
-          mxit, 
-          SLOT  (addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &))  );
+  conversationsWidgetsController = new ConversationsWidgetsController(theme, *mxit, *conversations, addressBook);
+  conversationsWidgetsController->addConversationsWidget(conversationsTabWidget);
+  conversationsWidgetsController->addConversationsWidget(conversationsWidget);
   
-  
-  
-  
-  /*this should be somewhere else*/
-  //connect( contactsWidget, SIGNAL(chatRequest ( QListWidgetItem * )),
-  //          this, SLOT(chatRequestedViaContact ( QListWidgetItem * ) )  );
   
   /*------------------------------------------------------------------------------------------*/
   /* Connecting new variables SIGNAL from the client to tell debugWidget to update
@@ -115,46 +103,14 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   
   connect(mxit, SIGNAL(environmentReady()), this, SLOT(environmentVariablesReady()));
   
+  
+  connect(  contactsWidget, SIGNAL(outgoingConversationShowRequest ( const Contact *  )), 
+            conversationsWidgetsController, SLOT(incomingConversationShowRequest( const Contact * )));
+     
+     
+  
   connect(contactsWidget, SIGNAL (groupsUpdated( const QStringList & )), addContactWidget, SLOT(updateGroups(const QStringList & )));
   
-
-  /* Updates, chatAreaController <-> conversationsWidget*/
-  connect(
-            conversations, 
-            SIGNAL (updated(const Conversation* )), 
-            chatAreaController, 
-            SLOT(incomingConversationUpdate(const  Conversation* )));
-            
-  connect(
-            conversations, 
-            SIGNAL (updated(const Conversation* )), 
-            conversationsWidget, 
-            SLOT(incomingConversationUpdate(const  Conversation* )));
- 
-  /* Conversation Requested(changed), chatAreaController <-> conversationsWidget*/
-  connect(  
-            chatAreaController, 
-            SIGNAL(outgoingConversationRequest(const Conversation *)),
-            conversationsWidget,
-            SLOT(incomingConversationRequest(const Conversation *)));
-  /*--*/
-  
-  connect(  
-            conversationsWidget, 
-            SIGNAL(outgoingConversationRequest ( const Conversation *  )), 
-            chatAreaController, 
-            SLOT(incomingConversationRequest( const Conversation *  )));
-            
-            
-            
-  /* Removal from GUI (deactived), chatAreaController <- conversationsWidget*/
-  connect(  
-            conversationsWidget, 
-            SIGNAL(conversationRemovedFromGUI ( const Conversation *  )), 
-            chatAreaController, 
-            SLOT(removeAndDeleteConversationFromGUI( const Conversation *  )));
-            /*TODO, other way: chatAreaController -> conversationsWidget*/
-            
             
   
   connect(mxit, SIGNAL(outgoingConnectionState(Network::Connection::State)), this, SLOT(incomingConnectionState(Network::Connection::State)));
@@ -183,10 +139,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   connect(  mxit, SIGNAL(outgoingConnectionError(const QString &)), 
             this, SLOT(incomingConnectionError(const QString &))  );
   
-  connect(  contactsWidget, SIGNAL(conversationRequest ( const Contact *  )), 
-            chatAreaController, SLOT(switchToConversationTab( const Contact *  )));
-  
-  
   connect(  optionsWidget, SIGNAL(gatewaySelected(const QString&, const QString&, const QString&, const QString&, const QString&)), 
             this, SLOT(sendGatewayToClient(const QString&, const QString&, const QString&, const QString&, const QString&))  );  
 
@@ -196,9 +148,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   /*------------------------------------------------------------------------------------------*/
   
   connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
-  /*refresh tab widget themeing*/
-  //connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(refreshChatBox()));
   connect(  optionsWidget, SIGNAL(themeChanged()), conversationsWidget, SLOT(refreshThemeing()));
+  /* hook up to conversations controller*/
+  
   connect(  optionsWidget, SIGNAL(themeChanged()), contactsWidget, SLOT(refreshThemeing()));
   
   /* Conversation log dir */
@@ -642,7 +594,7 @@ void MXitC::incomingAction(Action action)
 void MXitC::messageReceived(){
 
   /* make sure conversation exists */
-  chatAreaController->ensureExistanceOfConversation(mxit->variableValue("contactAddress"));
+  conversationsWidgetsController->ensureExistanceAndActivationOfConversation(mxit->variableValue("contactAddress"));
   
   conversations->addMessage(  mxit->variableValue("contactAddress"),
                               mxit->variableValue("dateTime"), 
@@ -727,14 +679,10 @@ void MXitC::themeChanged(){
     if (!trayIcon->isVisible()) /* skip warning about no icon before a theme is set */
       trayIcon->show();
   }
-  //refreshConversations();
-  //refreshContacts();
-  conversationsWidget->setConversationCss();
   
-  addContactWidget->refresh(); /* since it contains icons*/
   /*TODO maybe make refresh a MXitDockWidget function and loop over all widgets. i.e. generalise? - rax*/
   
-  conversationsWidget->setStyleSheet(theme.contact.stylesheet);
+  addContactWidget->refresh(); /* since it contains icons*/
   
   /* saving theme to settings*/
   settings->setValue("themeBaseDirectory", optionsWidget->getBaseThemeDirectory());

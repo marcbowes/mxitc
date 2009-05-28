@@ -20,7 +20,7 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-AddContact::AddContact(QWidget* parent, Theme &theme) : MXitDockWidget(parent, theme)
+AddContact::AddContact(QWidget* parent, Theme &theme, MXit::Client& mxit) : MXitDockWidget(parent, theme), mxit(mxit)
 {
   setupUi(this);
   
@@ -50,6 +50,14 @@ AddContact::AddContact(QWidget* parent, Theme &theme) : MXitDockWidget(parent, t
   connect(addButton, SIGNAL(released()), this, SLOT(sendAddContactInfo()));
   
   connect(networkComboBox, SIGNAL(currentIndexChanged ( int )), this, SLOT(networkChanged( int )));
+  
+  
+  /*connect(this, 
+          SIGNAL(addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &)), 
+          mxit, 
+          SLOT  (addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &))  );*/
+  
+  
   
 }
 
@@ -130,7 +138,7 @@ void AddContact::sendAddContactInfo() {
 
   //const QString &group, const QString &contactAddress, const QString &nickname, Protocol::Enumerables::Contact::Type type, const QString &message
 
-  emit addContact(
+  mxit.addContact(
                     groupComboBox->currentText (), 
                     cellphoneLineEdit->text(), 
                     nicknameLineEdit->text(), 

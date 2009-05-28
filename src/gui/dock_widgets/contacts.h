@@ -41,7 +41,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   
   
   signals:
-  void conversationRequest ( const Contact * contact );
+  void outgoingConversationShowRequest ( const Contact * contact );
   
   void groupsUpdated( const QStringList& groupNames);
   
@@ -74,7 +74,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
 
   private slots:
   
-  void emitConversationRequest (QTreeWidgetItem* twi, int index = 0);
+  void emitConversationShowRequest (QTreeWidgetItem* twi, int index = 0);
   
   void contactsUpdated(const ContactList& contacts);
   void popUpContextMenu(const QPoint & pos);

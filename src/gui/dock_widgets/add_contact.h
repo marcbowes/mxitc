@@ -10,6 +10,7 @@
 #define __MXIT_GUI_DOCKWIDGET_ADDCONTACT_H__
 
 #include "gui/mxit_dock_widget.h"
+#include "mxit/client.h"
 
 #include "ui_add_contact.h"
 
@@ -30,7 +31,7 @@ class AddContact : public MXitDockWidget, private Ui::AddContactDockWidget
   
   public: /*class specific */
 
-  AddContact(QWidget* parent, Theme &theme);
+  AddContact(QWidget* parent, Theme &theme, MXit::Client& mxit);
   ~AddContact();
   
   signals:
@@ -47,6 +48,8 @@ class AddContact : public MXitDockWidget, private Ui::AddContactDockWidget
   void sendAddContactInfo();
   
 
+  private:
+  MXit::Client& mxit;
 
 };
 
