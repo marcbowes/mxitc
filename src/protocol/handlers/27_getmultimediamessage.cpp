@@ -137,7 +137,7 @@ void GetMultimediaMessage::buildPacket(MXit::Network::Packet *packet, VariableHa
   length = data.size();
   
   data.prepend(intToHex(length, 4));
-  data.prepend(variables["type"]);
+  data.prepend(intToHex(variables["type"].toInt(), 1));
   
   /* packet data setup */
   (*packet) << data;
@@ -467,7 +467,7 @@ QByteArray GetMultimediaMessage::intToHex(int number, int numberOfBytes)
   QByteArray output = QByteArray::number(number, 16);
   while (output.size() < (numberOfBytes*2))
     output.prepend("0");
-  return output.toHex();
+  return QByteArray::fromHex(output.toHex());
 }
 
 }

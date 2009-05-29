@@ -403,24 +403,28 @@ void Client::removeContact(const QString &contactAddress)
 ****************************************************************************/
 void Client::sendFile(QFile &file, const ContactList &contacts)
 {
+  //type
   VariableHash fileVariables;
   fileVariables["type"] = QByteArray::number(MXit::Protocol::Enumerables::ChunkedData::SendFileDirect);
   
   if (!file.isOpen())
     file.open(QIODevice::ReadOnly);
   
+  //size
   int size = file.size();
   QByteArray temp = QByteArray::number(size, 16);
   while (temp.size() < (4*2))
     temp.prepend("0");
-  fileVariables["size"] = temp.toHex();
+  fileVariables["size"] = QByteArray::fromHex(temp.toHex());
   
+  //numContacts
   int numContacts = contacts.size();
   temp = QByteArray::number(numContacts, 16);
   while (temp.size() < (2*2))
     temp.prepend("0");
   fileVariables["numContacts"] = temp;
   
+  //list of contacts
   temp.clear();
   Q_FOREACH(const Contact *contact, contacts) {
     QString contactAddress = contact->contactAddress;
@@ -428,16 +432,33 @@ void Client::sendFile(QFile &file, const ContactList &contacts)
     QByteArray byteLength = QByteArray::number(length, 16);
     while (byteLength.size() < (2*2))
       byteLength.prepend("0");
-    temp.append(byteLength.toHex());
+    temp.append(QByteArray::fromHex(byteLength.toHex()));
     temp.append(contactAddress);
   }
   fileVariables["addresses"] = temp;
   
-  fileVariables["name"] = file.fileName().toUtf8();
+  //filename
+  QString fileName = file.fileName();
+  fileVariables["name"] = fileName.toUtf8();
   
   //FIXME: actually do mimetypes
-  fileVariables["mimetype"] = "application/octet-stream";
+  if ((fileName.endsWith(".png")) || (fileName.endsWith(".x-png"))) {
+    fileVariables["mimetype"] = "image/png";
+  } else if ((fileName.endsWith(".jpe")) || (fileName.endsWith(".jpg")) || (fileName.endsWith(".jpeg")) || (fileName.endsWith(".jfif"))) {
+    fileVariables["mimetype"] = "image/jpeg";
+  } else if (fileName.endsWith(".svg")) {
+    fileVariables["mimetype"] = "image/svg+xml";
+  } else if (fileName.endsWith(".svgz")) { //FIXME this shouldnt be image/svgz+xml, but mxit wants it that way afaik
+    fileVariables["mimetype"] = "image/svgz+xml";
+  } else if (fileName.endsWith(".wav")) {
+    fileVariables["mimetype"] = "audio/wav";
+  } else if ((fileName.endsWith(".midi")) || (fileName.endsWith(".kar")) || (fileName.endsWith(".mid"))) {
+    fileVariables["mimetype"] = "audio/midi";//FIXME not finished
+  } else {
+    fileVariables["mimetype"] = "application/octet-stream";
+  }
   
+  //description TODO: maybe allow for a description
   fileVariables["description"] = "";
   
   //FIXME: implement crc
@@ -446,6 +467,7 @@ void Client::sendFile(QFile &file, const ContactList &contacts)
     temp.prepend("0");
   fileVariables["crc"] = temp;
   
+  //actual file data
   fileVariables["bytes"] = file.readAll();
   
   sendPacket("getmultimediamessage", fileVariables);
