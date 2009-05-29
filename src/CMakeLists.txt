@@ -74,6 +74,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   
   gui/dialogs/start_group_chat.cpp
   gui/dialogs/update_contact_info.cpp
+  gui/dialogs/update_group_name.cpp
   gui/dialogs/allow_subscription.cpp
   gui/dialogs/login.cpp
   
@@ -110,6 +111,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   
   gui/dialogs/start_group_chat.h
   gui/dialogs/update_contact_info.h
+  gui/dialogs/update_group_name.h
   gui/dialogs/login.h
   gui/dialogs/allow_subscription.h
   
@@ -132,6 +134,7 @@ SET(MXIT_CLIENT_UI
   
   gui/dialogs/start_group_chat.ui
   gui/dialogs/update_contact_info.ui
+  gui/dialogs/update_group_name.ui
   gui/dialogs/allow_subscription.ui
   gui/dialogs/login.ui
   

@@ -78,16 +78,16 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
   setBaseThemeDirectory(settings.value("baseThemeDirectory").toString());
 
   
-  qDebug() << themeComboBox->findText (settings.value("themeSubDirectory").toString());
+  //qDebug() << themeComboBox->findText (settings.value("themeSubDirectory").toString());
   themeComboBox->setCurrentIndex (themeComboBox->findText (settings.value("themeSubDirectory").toString()));  
   loadTheme(settings.value("themeSubDirectory").toString());
   
   
-  qDebug() << settings.value("autoLogin").toBool();
-  qDebug() << settings.value("hideOfflineContacts").toBool();
-  qDebug() << settings.value("baseThemeDirectory").toString();
-  qDebug() << settings.value("baseConversationsDirectory").toString();
-  qDebug() << settings.value("themeSubDirectory").toString();
+  //qDebug() << settings.value("autoLogin").toBool();
+  //qDebug() << settings.value("hideOfflineContacts").toBool();
+  //qDebug() << settings.value("baseThemeDirectory").toString();
+  //qDebug() << settings.value("baseConversationsDirectory").toString();
+  //qDebug() << settings.value("themeSubDirectory").toString();
   
   
   loadingSettings = false;
@@ -368,7 +368,7 @@ void Options::refreshComboBox ()
 **
 ****************************************************************************/
 void Options::loadTheme(const QString &dir){
-  qDebug() << "loadTheme " << dir;
+  //qDebug() << "loadTheme " << dir;
   QDir themeDir = getBaseThemeDirectory();
   themeDir.cd(dir);
   theme.load(themeDir);

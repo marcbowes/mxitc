@@ -42,7 +42,6 @@ void StartGroupChat::setText(const QString& text) {
   return mainText->setText(text);
 }
 
-
 /****************************************************************************
 **
 ** Author: Richard Baxter

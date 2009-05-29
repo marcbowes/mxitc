@@ -12,6 +12,7 @@
 #include "gui/dialogs/allow_subscription.h"
 
 #include "gui/dialogs/update_contact_info.h"
+#include "gui/dialogs/update_group_name.h"
 
 #include "gui/dialogs/start_group_chat.h"
 
@@ -189,12 +190,14 @@ void Contacts::popUpContextMenu(const QPoint & point) {
     menuItems.append("Send Message To Group");
     menuItems.append("Start Group Chat");
     menuItems.append("Remove Group");
+    menuItems.append("Send File to Group");
   }
   else if (menuType == MULTI && (menuFunction = &Contacts::multiContactMenu)) {
     title = "Multiple Contacts";
     menuItems.append("Start Group Chat");
     menuItems.append("Change Group");
     menuItems.append("Remove Contacts");
+    menuItems.append("Send File");
   }
   else if (menuType == NONE && (menuFunction = NULL)) {
   }
@@ -278,13 +281,11 @@ void Contacts::singleContactMenu(const QString & selection, const QList<QTreeWid
       
   }
   else if (selection == "Send File") {
-    QFileDialog fileDialog;
     
     QString name = QFileDialog::getOpenFileName ();
-    qDebug() << name;
     if (name != "") {
-      ContactList contactList;
-      contactList.append(contact);
+      qDebug() << name;
+      ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
       QFile file(name);
       mxit.sendFile(file, contactList);
     }
@@ -379,19 +380,26 @@ void Contacts::unaffiliatedContactMenu(const QString & selection, const QList<QT
 
 void Contacts::groupContactMenu(const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi) {
 
+  ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
   if (selection == "Change Group Name") {
-    /*TODO*/
+    changeGroupName(contactList);
   }
   else if (selection == "Send Message To Group") {
-    ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
     //mxit->sendGroupMessage(const QString &group, const ContactList &contacts, const QString &message, Protocol::Enumerables::Message::Type type, unsigned int flags); /*TODO WTF do these mean!??*/
   }
   else if (selection == "Start Group Chat") {
-    ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
     createNewGroupChat(contactList);
   }
   else if (selection == "Remove Group") {
     /*TODO*/
+  }
+  else if (selection == "Send File to Group") {
+    
+    QString name = QFileDialog::getOpenFileName ();
+    if (name != "") {
+      QFile file(name);
+      mxit.sendFile(file, contactList);
+    }
   }
 }
 
@@ -403,17 +411,52 @@ void Contacts::groupContactMenu(const QString & selection, const QList<QTreeWidg
 
 void Contacts::multiContactMenu(const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi) {
 
+  ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
+    
   if (selection == "Start Group Chat") {
     /**/
-    ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
     createNewGroupChat(contactList);
     /*TODO*/
   }
   else if (selection == "Change Group") {
-    /*TODO*/
+  
+    changeGroupName(contactList);
   }
   else if (selection == "Remove Contacts") {
     /*TODO*/
+  }
+  else if (selection == "Send File to Group") {
+    
+    QString name = QFileDialog::getOpenFileName ();
+    if (name != "") {
+      QFile file(name);
+      mxit.sendFile(file, contactList);
+    }
+  }
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Contacts::changeGroupName(const ContactList& contactList) {
+
+  Dialog::UpdateGroupName updateGroupName(getGroupNames(), "");
+
+  QString names = genContactListString(contactList);
+  updateGroupName.setText("Select a new group name for "+names);
+  
+  if (updateGroupName.exec() == QDialog::Accepted) {
+  
+    Q_FOREACH(const Contact * contact, contactList) {
+    
+      addressBook.updateContact(updateGroupName.getGroup(), contact->contactAddress, contact->nickname);
+      mxit.updateContactInfo(updateGroupName.getGroup(), contact->contactAddress, contact->nickname);
+    
+    }
+    emit sendLog("GUI::Contacts group of "+names+" updated to "+updateGroupName.getGroup());
   }
 }
 
@@ -427,13 +470,7 @@ void Contacts::createNewGroupChat(const ContactList& contactList) {
 
   Dialog::StartGroupChat start;
   
-  QStringList stringList;
-  Q_FOREACH (const Contact * contact, contactList) { stringList.append(contact->nickname); }
-  
-  QString lastName = stringList.back(); stringList.pop_back();
-  
-  qDebug() << contactList.size();
-  QString names = (contactList.size() != 1?stringList.join(", ") + QString(" and ") + lastName:lastName);
+  QString names = genContactListString(contactList);
   start.setText("Select a room name for your chat with "+names);
   
   if (start.exec() == QDialog::Accepted) {
@@ -442,6 +479,24 @@ void Contacts::createNewGroupChat(const ContactList& contactList) {
       
     /*FIXME cant switch to new group chat since it doesn't exist yet*/
   }
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+QString Contacts::genContactListString(const ContactList& contactList) {
+
+  QStringList stringList;
+  Q_FOREACH (const Contact * contact, contactList) { stringList.append(contact->nickname); }
+  
+  QString lastName = stringList.back(); stringList.pop_back();
+  
+  QString names = (contactList.size() != 1?stringList.join(", ") + QString(" and ") + lastName:lastName);
+  
+  return names;
 }
 
 /****************************************************************************

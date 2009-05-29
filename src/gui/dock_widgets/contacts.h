@@ -65,7 +65,9 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   void singleContactMenu        (const QString & selection, const QList<QTreeWidgetItem *>& selectedTwi);
   
   
+  QString genContactListString(const ContactList& contactList);
   void createNewGroupChat(const ContactList& contactList);
+  void changeGroupName(const ContactList& contactList);
   ContactList genContactsListFromTwiSelection(const QList<QTreeWidgetItem *>& selectedTwi);
   
   public slots:

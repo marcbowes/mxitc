@@ -7,6 +7,7 @@
 #include "conversations.h"
 
 #include <QMenu>
+#include <QFileDialog>
 
 namespace MXit
 {
@@ -289,6 +290,7 @@ void Conversations::popUpContextMenu(const QPoint &point) {
   //contextMenu.addAction(&title);
   
   MENU_ITEM("Close Conversation");
+  MENU_ITEM("Send File");
  
   QString selection;
   MENU_EXEC(selection);
@@ -299,6 +301,16 @@ void Conversations::popUpContextMenu(const QPoint &point) {
     conversations.toggleActive(conversation->uniqueIdentifier);
     
     emit outgoingConversationCloseRequest ( conversation );
+  }
+  
+  else if (selection == "Send File") {
+    
+    QString name = QFileDialog::getOpenFileName ();
+    if (name != "") {
+      ContactList contactList = ContactList::fromSet(conversation->getContacts());
+      QFile file(name);
+      mxit.sendFile(file, contactList);
+    }
   }
 }
 
