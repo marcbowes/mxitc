@@ -12,7 +12,8 @@
 #ifndef __MXIT_NETWORK_PACKET_H__
 #define __MXIT_NETWORK_PACKET_H__
 
-#include <QStringList>
+#include <QList>
+#include <QListIterator>
 
 #include "common/types.h"
 
@@ -21,6 +22,8 @@ namespace MXit
 
 namespace Network
 {
+
+typedef QList<QByteArray> ByteList;
 
 class Packet
 {
@@ -31,7 +34,7 @@ class Packet
 
   public:           /* methods */
   
-  Packet& operator<<(const QString &message);
+  Packet& operator<<(const QByteArray &message);
   virtual operator QByteArray() const = 0;
   virtual void setCellphone(const QString &cellphone);
   virtual void setCommand(const QString &command);
@@ -39,13 +42,13 @@ class Packet
 
   protected:         /* methods */
   
-  QString getData() const;
+  QByteArray getData() const;
   
   protected:       /* variables */
   
   QString     cellphone;
   QString     command;
-  QStringList data;
+  ByteList    data;
   QByteArray  extra;
 };
 

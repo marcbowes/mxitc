@@ -45,9 +45,16 @@ Packet::~Packet()
 ** turns the data vector into a single QString seperated by \1
 **
 ****************************************************************************/
-QString Packet::getData() const
+QByteArray Packet::getData() const
 {
-  return data.join("\1");
+  QByteArray _data;
+  QListIterator<QByteArray> itr (data);
+  while (itr.hasNext()) {
+    const QByteArray &i = itr.next();
+    _data.append(i);
+    if (itr.hasNext())
+      _data.append('\1');
+  }
 }
 
 
@@ -91,7 +98,7 @@ void Packet::setPostMs(const QByteArray &extra)
 ** appends the message to this packet's data
 **
 ****************************************************************************/
-Packet& Packet::operator<<(const QString &message)
+Packet& Packet::operator<<(const QByteArray &message)
 {
   data << message;
   return *this;
