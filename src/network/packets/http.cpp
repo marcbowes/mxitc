@@ -85,9 +85,11 @@ HTTP::operator QByteArray() const
   self.append   ( QString("%1&")      .arg(sequenceNumber) );
   self.append   ( QString("cm=%1")    .arg(command)        );
   
-  QString ms = QUrl::toPercentEncoding(getData()).replace('\1', "%01");
-  if (!ms.isEmpty())
-    self.append ( QString("&ms=%1")    .arg(ms)            );
+  QByteArray ms = QUrl::toPercentEncoding(getData()).replace('\1', "%01");
+  if (!ms.isEmpty()) {
+    self.append ( "&ms=" );
+    self.append ( ms );
+  }
   
   self.append   ( extra );
   self.append   ("&"); /* HTTP record terminator */

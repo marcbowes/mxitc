@@ -55,6 +55,7 @@ QByteArray Packet::getData() const
     if (itr.hasNext())
       _data.append('\1');
   }
+  return _data;
 }
 
 

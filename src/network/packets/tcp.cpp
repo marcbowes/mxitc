@@ -69,10 +69,11 @@ TCP::operator QByteArray() const
   self.append   ( QString("id=%1")  .arg(cellphone) ); self.append('\0');
   self.append   ( QString("cm=%1")  .arg(command)   ); 
   
-  QString ms = getData();
+  QByteArray ms = getData();
   if (!ms.isEmpty()) {
     self.append ('\0');
-    self.append ( QString("ms=%1")  .arg(ms) ); 
+    self.append ( "ms=" );
+    self.append ( ms );
   }
   
   self.append   ( extra );
