@@ -147,9 +147,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   
   connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
   connect(  optionsWidget, SIGNAL(themeChanged()), conversationsWidget, SLOT(refreshThemeing()));
-  /* hook up to conversations controller*/
-  
   connect(  optionsWidget, SIGNAL(themeChanged()), contactsWidget, SLOT(refreshThemeing()));
+  connect(  optionsWidget, SIGNAL(themeChanged()), conversationsTabWidget, SLOT(refreshThemeing()));
   
   /* Conversation log dir */
   connect(optionsWidget, SIGNAL(conversationLogDirectorySelected(const QDir&)),

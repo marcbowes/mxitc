@@ -136,6 +136,16 @@ void ConversationsTabWidget::tabCloseRequested ( int index ) {
   emit outgoingConversationCloseRequest ( chatAreaToConversation[widget ( index )] );
 }
 
+
+void ConversationsTabWidget::refreshThemeing() {
+  
+  for (int i = 0 ; i < tabBar()->count(); i++) {
+    
+    setTabIcon(i, theme.contact.presence.pixmap((*chatAreaToConversation[widget(i)]->getContacts().begin())->presence));
+    
+  }
+}
+
 /****************************************************************************
 **
 ** Author: Richard Baxter

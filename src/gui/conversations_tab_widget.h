@@ -51,6 +51,10 @@ class ConversationsTabWidget : public QTabWidget, public ConversationsWidget{
   void removeAndDeleteConversationFromGUI( const Conversation* conversation );
   
   
+  public slots:
+  
+  void refreshThemeing();
+  
   private: /* methods */
   
 
