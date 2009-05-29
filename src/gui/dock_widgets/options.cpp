@@ -22,9 +22,12 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockWidget(parent, theme), settings(settings)
+Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockWidget(parent, theme), settings(settings), loadingSettings(false)
 {
   setupUi(this);
+  
+ 
+  loadingSettings = true;
   
   /* ======= general tab ======= */
   
@@ -54,14 +57,39 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
   connect(
             reloadButton, SIGNAL( released () ), 
             this, SLOT(reloadCurrentTheme()));
+            
+            
+  connect(reloadButton, SIGNAL(released ()), this, SLOT(saveGatewaySettings ( )));
   
   /* ======= conversations tab ======= */
   connect(conversationsOpenButton, SIGNAL( released () )   , this, SLOT(openConversationsBrowser ()));
   
   connect(directoryLineEdit , SIGNAL(editingFinished ()), this, SLOT (refreshComboBox ())); 
   
+  
+  
   /*load settings*/
+  
   autoLoginCheckBox->setChecked(settings.value("autoLogin").toBool());
+  hideOfflineCheckBox->setChecked(settings.value("hideOfflineContacts").toBool());
+  
+  setBaseThemeDirectory(settings.value("baseThemeDirectory").toString());
+  setBaseConversationsDirectory(settings.value("baseConversationsDirectory").toString());
+
+  loadingSettings = false;
+  
+  qDebug() << themeComboBox->findText (settings.value("themeSubDirectory").toString());
+  themeComboBox->setCurrentIndex (themeComboBox->findText (settings.value("themeSubDirectory").toString()));  
+  refreshComboBox ();
+  
+  qDebug() << themeComboBox->findText (settings.value("themeSubDirectory").toString());
+  
+  qDebug() << settings.value("autoLogin").toBool();
+  qDebug() << settings.value("hideOfflineContacts").toBool();
+  qDebug() << settings.value("baseThemeDirectory").toString();
+  qDebug() << settings.value("baseConversationsDirectory").toString();
+  qDebug() << settings.value("themeSubDirectory").toString();
+  
 }
 
 
@@ -85,7 +113,14 @@ Options::~Options() {
 ****************************************************************************/
 void Options::saveSettings() {
 
-  settings.setValue("autoLogin", isAutoLogin());
+  if (!loadingSettings) {
+    settings.setValue("autoLogin", isAutoLogin());
+    settings.setValue("hideOfflineContacts", hideOfflineContacts());
+    
+    saveGatewaySettings();
+    saveThemeOptionsSettings();
+    
+  }
 }
 
 /****************************************************************************
@@ -243,9 +278,22 @@ void Options::setSelectedTheme(const QString& theme) {
 **
 ****************************************************************************/
 
+void Options::saveThemeOptionsSettings() {
 
-QString Options::getBaseThemeDirectory() {
-  return directoryLineEdit->text();
+  settings.setValue("baseThemeDirectory", getBaseThemeDirectory());
+  settings.setValue("baseConversationsDirectory", getBaseConversationsDirectory());
+  settings.setValue("themeSubDirectory", themeComboBox->currentText ());
+
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+QString Options::getBaseConversationsDirectory() {
+  return conversationsLineEdit->text();
 }
 
 /****************************************************************************
@@ -259,6 +307,17 @@ void Options::setBaseConversationsDirectory(const QString& dir) {
   QDir log(conversationsLineEdit->text());
   if (log.exists())
     emit conversationLogDirectorySelected(log);
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+QString Options::getBaseThemeDirectory() {
+  return directoryLineEdit->text();
 }
 
 /****************************************************************************
@@ -296,6 +355,7 @@ void Options::refreshComboBox ()
     //directoryLineEdit->setForground(QBrush(Qt::red));
     themeComboBox->clear();
   }
+  saveSettings();
 }
 
 /****************************************************************************

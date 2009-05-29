@@ -44,8 +44,9 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   void addGateway(const QString& gateway);
   void setSelectedGateway(const QString& gateway);
   
-  QString getBaseThemeDirectory();
+  QString getBaseConversationsDirectory();
   void setBaseConversationsDirectory(const QString& dir);
+  QString getBaseThemeDirectory();
   void setBaseThemeDirectory(const QString& dir);
   QString getSelectedTheme();
   void setSelectedTheme(const QString& theme);
@@ -68,6 +69,7 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   
   void emitGatewaySignal ();
   void saveGatewaySettings();
+  void saveThemeOptionsSettings();
   
   void openConversationsBrowser ();
   void openThemeBrowser ();
@@ -78,6 +80,8 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   private: /* variables */
   
   QSettings& settings;
+  
+  bool loadingSettings;
 
 
 };
