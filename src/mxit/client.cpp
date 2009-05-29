@@ -415,7 +415,7 @@ void Client::sendFile(QFile &file, const ContactList &contacts)
   QByteArray temp = QByteArray::number(size, 16);
   while (temp.size() < (4*2))
     temp.prepend("0");
-  fileVariables["size"] = QByteArray::fromHex(temp.toHex());
+  fileVariables["size"] = QByteArray::fromHex(temp);
   
   //numContacts
   int numContacts = contacts.size();
@@ -432,7 +432,7 @@ void Client::sendFile(QFile &file, const ContactList &contacts)
     QByteArray byteLength = QByteArray::number(length, 16);
     while (byteLength.size() < (2*2))
       byteLength.prepend("0");
-    temp.append(QByteArray::fromHex(byteLength.toHex()));
+    temp.append(QByteArray::fromHex(byteLength));
     temp.append(contactAddress);
   }
   fileVariables["addresses"] = temp;

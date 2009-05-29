@@ -467,7 +467,7 @@ QByteArray GetMultimediaMessage::intToHex(int number, int numberOfBytes)
   QByteArray output = QByteArray::number(number, 16);
   while (output.size() < (numberOfBytes*2))
     output.prepend("0");
-  return QByteArray::fromHex(output.toHex());
+  return QByteArray::fromHex(output);
 }
 
 }
