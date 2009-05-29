@@ -278,7 +278,16 @@ void Contacts::singleContactMenu(const QString & selection, const QList<QTreeWid
       
   }
   else if (selection == "Send File") {
-    /* TODO */
+    QFileDialog fileDialog;
+    
+    QString name = QFileDialog::getOpenFileName ();
+    qDebug() << name;
+    if (name != "") {
+      ContactList contactList;
+      contactList.append(contact);
+      QFile file(name);
+      mxit.sendFile(file, contactList);
+    }
   }
   else if (selection == "Remove Contact") {
     
