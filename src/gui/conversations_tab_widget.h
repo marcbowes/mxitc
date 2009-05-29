@@ -2,10 +2,10 @@
 #define __MXIT_GUI_CONVERSATION_TAB_WIDGET_H__
 
 
-#include "gui/conversations_widget.h"
 #include "gui/chat_area.h"
 
 #include "mxit/client.h"
+#include "mxit/conversations.h"
 #include "gui/theme.h"
 
 #include <QTabWidget>
@@ -17,7 +17,7 @@ namespace GUI
 {
 
 
-class ConversationsTabWidget : public QTabWidget, public ConversationsWidget{
+class ConversationsTabWidget : public QTabWidget{
   Q_OBJECT
 
   public: /* class specific */
@@ -75,6 +75,9 @@ class ConversationsTabWidget : public QTabWidget, public ConversationsWidget{
   
   MXit::Client &mxit;
   Theme &theme;
+  
+  Conversations& conversations;
+  AddressBook& addressBook;
   
   bool nonUserTabChange;
 };

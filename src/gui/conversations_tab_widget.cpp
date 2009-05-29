@@ -22,7 +22,7 @@ namespace GUI
 **
 ****************************************************************************/
 
-ConversationsTabWidget::ConversationsTabWidget(Theme &theme, MXit::Client &mxit, Conversations& conversations, AddressBook& addressBook, QWidget* parent) : QTabWidget(parent), ConversationsWidget(conversations, addressBook), theme(theme), mxit(mxit), nonUserTabChange(false)  {
+ConversationsTabWidget::ConversationsTabWidget(Theme &theme, MXit::Client &mxit, Conversations& conversations, AddressBook& addressBook, QWidget* parent) : QTabWidget(parent), conversations(conversations), addressBook(addressBook), theme(theme), mxit(mxit), nonUserTabChange(false)  {
   
   setMovable ( true );
   setTabsClosable ( true );
@@ -143,6 +143,7 @@ void ConversationsTabWidget::refreshThemeing() {
     
     setTabIcon(i, theme.contact.presence.pixmap((*chatAreaToConversation[widget(i)]->getContacts().begin())->presence));
     
+    updateTabOf((ChatArea*)widget(i));
   }
 }
 

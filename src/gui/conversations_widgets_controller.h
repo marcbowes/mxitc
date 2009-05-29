@@ -17,7 +17,6 @@
 
 #include "gui/chat_area.h"
 #include "gui/theme.h"
-#include "gui/conversations_widget.h"
 
 #include <QUrl>
 #include <QWebView>
