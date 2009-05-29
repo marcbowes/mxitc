@@ -42,7 +42,7 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
   connect(applyButton, SIGNAL(released ()), this, SLOT(emitGatewaySignal()));
   
   /*gateway settings save*/
-  connect(httpRadioButton, SIGNAL(clicked ()), this, SLOT(saveGatewaySettings ( )));
+  connect(httpRadioButton, SIGNAL(clicked ()), this, SLOT(saveSettings ( )));
   
     /*TODO send port and proxy down*/
   connect(httpProxyLineEdit, SIGNAL(editingFinished ()), this, SLOT(saveGatewaySettings ( )));
@@ -59,10 +59,10 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
             this, SLOT(reloadCurrentTheme()));
             
             
-  connect(reloadButton, SIGNAL(released ()), this, SLOT(saveGatewaySettings ( )));
+  connect(reloadButton, SIGNAL(released ()), this, SLOT(saveSettings ( )));
   
   /* ======= conversations tab ======= */
-  connect(conversationsOpenButton, SIGNAL( released () )   , this, SLOT(openConversationsBrowser ()));
+  connect(conversationsOpenButton, SIGNAL( released () ), this, SLOT(openConversationsBrowser ()));
   
   connect(directoryLineEdit , SIGNAL(editingFinished ()), this, SLOT (refreshComboBox ())); 
   
@@ -73,22 +73,24 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
   autoLoginCheckBox->setChecked(settings.value("autoLogin").toBool());
   hideOfflineCheckBox->setChecked(settings.value("hideOfflineContacts").toBool());
   
-  setBaseThemeDirectory(settings.value("baseThemeDirectory").toString());
   setBaseConversationsDirectory(settings.value("baseConversationsDirectory").toString());
+  
+  setBaseThemeDirectory(settings.value("baseThemeDirectory").toString());
 
-  loadingSettings = false;
   
   qDebug() << themeComboBox->findText (settings.value("themeSubDirectory").toString());
   themeComboBox->setCurrentIndex (themeComboBox->findText (settings.value("themeSubDirectory").toString()));  
-  refreshComboBox ();
+  loadTheme(settings.value("themeSubDirectory").toString());
   
-  qDebug() << themeComboBox->findText (settings.value("themeSubDirectory").toString());
   
   qDebug() << settings.value("autoLogin").toBool();
   qDebug() << settings.value("hideOfflineContacts").toBool();
   qDebug() << settings.value("baseThemeDirectory").toString();
   qDebug() << settings.value("baseConversationsDirectory").toString();
   qDebug() << settings.value("themeSubDirectory").toString();
+  
+  
+  loadingSettings = false;
   
 }
 
@@ -344,12 +346,14 @@ void Options::refreshComboBox ()
 
   if (dir.exists()) {
     //directoryLineEdit->setForground(QBrush(Qt::black));
+    QString selectedText = themeComboBox->currentText ();
     themeComboBox->clear();
     QFileInfoList fil = dir.entryInfoList ( QStringList(), QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name );
     
     Q_FOREACH(const QFileInfo& fileInfo, fil) {
       themeComboBox->addItem (fileInfo.fileName());
     }
+    themeComboBox->setCurrentIndex (themeComboBox->findText (selectedText));  
   }
   else {
     //directoryLineEdit->setForground(QBrush(Qt::red));
@@ -364,6 +368,7 @@ void Options::refreshComboBox ()
 **
 ****************************************************************************/
 void Options::loadTheme(const QString &dir){
+  qDebug() << "loadTheme " << dir;
   QDir themeDir = getBaseThemeDirectory();
   themeDir.cd(dir);
   theme.load(themeDir);
