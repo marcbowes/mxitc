@@ -71,7 +71,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   DockWidget::Debug * debugWidget = new DockWidget::Debug (this, theme);
   appendDockWidget(debugWidget,    Qt::RightDockWidgetArea, actionDebug_Variables);
   
-  optionsWidget = new DockWidget::Options (this, theme, *settings);
+  optionsWidget = new DockWidget::Options (this, theme, *mxit, *settings);
   appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
   
   conversationsWidget = new DockWidget::Conversations (this, theme, *mxit, *conversations);
@@ -145,8 +145,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   connect(  mxit, SIGNAL(outgoingConnectionError(const QString &)), 
             this, SLOT(incomingConnectionError(const QString &))  );
   
-  connect(  optionsWidget, SIGNAL(gatewaySelected(const QString&, const QString&, const QString&, const QString&, const QString&)), 
-            this, SLOT(sendGatewayToClient(const QString&, const QString&, const QString&, const QString&, const QString&))  );  
 
   connect(  mxit, SIGNAL(outgoingConnectionState(Network::Connection::State)), 
             this, SLOT(incomingConnectionState(Network::Connection::State))  );
@@ -232,8 +230,13 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   connectWidgets();
   loadLayout();
   
-  FirstRunWizard frw(*mxit, *optionsWidget);
-  frw.exec();
+  mxit->initialize();
+  
+  if (!settings->contains("wizardRun")) {
+    FirstRunWizard frw(*mxit, *optionsWidget);
+    frw.exec();
+    settings->setValue("wizardRun", true);
+  }
   
   autoLogin (optionsWidget->isAutoLogin());
 }
@@ -318,40 +321,10 @@ void MXitC::environmentVariablesReady() {
 
   environmentVariablesAreReady = true;
   /*TODO make a log*///qDebug() << "environmentVariablesReady";
-  /* notify gateway */
-  
-  optionsWidget->addGateway(mxit->variableValue("soc1"));
-  optionsWidget->addGateway(mxit->variableValue("soc2"));
-  optionsWidget->addGateway(mxit->variableValue("http1"));
-  optionsWidget->addGateway(mxit->variableValue("http2"));
-  
-  if (settings->contains("gateway")) {
-    optionsWidget->setSelectedGateway(settings->value("gateway").toString());
-  }
-  else {
-    optionsWidget->setSelectedGateway(mxit->variableValue("soc1"));
-  }
 }
 
 
 
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** Requests the new gateway that should be used to the client 
-**
-****************************************************************************/
-
-/* TODO fix up the gateway stuff and the gateway stuff in options*/
-void MXitC::sendGatewayToClient(const QString& gateway, const QString &proxyHost, const QString &proxyPort,
-  const QString &username, const QString &password)
-{
-  settings->setValue("gateway", gateway);
-  settings->setValue("proxyHost", proxyHost);
-  settings->setValue("proxyPort", proxyPort);
-  mxit->setGateway(gateway, proxyHost, proxyPort.toUInt(), username, password);
-}
 
 /****************************************************************************
 **
@@ -809,7 +782,7 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
     trayIcon->showMessage(QString("Error #%1").arg(errorCode),  errorString);
   }
   
-  //TODO emit errorOrSomethingIfTheLoginOrRegisterDialogNeedsIt()
+  emit outgoingLoginError(errorString);
   
   // old code
   //if (login != NULL) {
@@ -874,7 +847,8 @@ void MXitC::registering(){
 
 void MXitC::incomingEnvironmentVariablesPing() {
 
-  mxit->initialize();
+  if (!environmentVariablesAreReady)
+    mxit->initialize();
 }
 
 
@@ -894,7 +868,9 @@ void MXitC::openLoginDialog(){
   connect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
   connect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
   connect(this, SIGNAL(stateChanged(State)), &login, SLOT(incomingStateChange(State)));
+  connect(this, SIGNAL(outgoingLoginError(const QString&)), &login, SLOT(incomingError(const QString&)));
   login.exec();
+  disconnect(this, SIGNAL(outgoingLoginError(const QString&)), &login, SLOT(incomingError(const QString&)));
   disconnect(this, SIGNAL(stateChanged(State)), &login, SLOT(incomingStateChange(State)));
   disconnect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
   disconnect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));

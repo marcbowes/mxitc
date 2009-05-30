@@ -22,7 +22,7 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockWidget(parent, theme), settings(settings), loadingSettings(false)
+Options::Options(QWidget* parent, Theme &theme, MXit::Client& mxit, QSettings& settings) : MXitDockWidget(parent, theme), mxit(mxit), settings(settings), loadingSettings(false)
 {
   setupUi(this);
   
@@ -37,9 +37,10 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
   connect(hideOfflineCheckBox, SIGNAL( clicked () ), this, SIGNAL(requestRefresh ( )));
   
   /* ======= gateway tab ======= */
+  /*TODO, set this in Ui rather*/
   connect(httpRadioButton, SIGNAL(toggled ( bool )), httpWidget, SLOT(setEnabled ( bool )));
   
-  connect(applyButton, SIGNAL(released ()), this, SLOT(emitGatewaySignal()));
+  connect(applyButton, SIGNAL(released ()), this, SLOT(setGatewayInClient()));
   
   /*gateway settings save*/
   connect(httpRadioButton, SIGNAL(clicked ()), this, SLOT(saveSettings ( )));
@@ -48,8 +49,14 @@ Options::Options(QWidget* parent, Theme &theme, QSettings& settings) : MXitDockW
   connect(httpProxyLineEdit, SIGNAL(editingFinished ()), this, SLOT(saveGatewaySettings ( )));
   connect(portLineEdit, SIGNAL(editingFinished ()), this, SLOT(saveGatewaySettings ( )));
   
+  
+  connect(  &mxit, 
+            SIGNAL(outgoingVariables(const VariableHash&)), 
+            this, 
+            SLOT(incomingVariables(const VariableHash&))  );
+  
   /* ======= theme tab ======= */
-  connect(themeOpenButton, SIGNAL( released () )   , this, SLOT(openThemeBrowser ()));
+  connect(  themeOpenButton, SIGNAL( released () ), this, SLOT(openThemeBrowser ()));
   
   connect(
             themeComboBox, SIGNAL( currentIndexChanged ( const QString & ) ), 
@@ -163,6 +170,45 @@ bool Options::hideOfflineContacts() {
 
 ****************************************************************************/
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Requests the new gateway that should be used to the client 
+**
+****************************************************************************/
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Options::incomingVariables(const VariableHash& variables) {
+  
+  qDebug() << "Options::incomingVariables()";
+  qDebug() << variables;
+  /* notify gateway */
+  gatewayComboBox->clear();
+  addGateway(variables.value("soc1"));
+  addGateway(variables.value("soc2"));
+  addGateway(variables.value("http1"));
+  addGateway(variables.value("http2"));
+  
+  if (settings.contains("gateway")) {
+    setSelectedGateway(settings.value("gateway").toString());
+  }
+  else {
+    setSelectedGateway(variables.value("soc1"));
+  }
+  httpProxyLineEdit->setText(settings.value("proxyHost").toString());
+  portLineEdit->setText(settings.value("proxyPort").toString());
+  usernameLineEdit->setText(settings.value("proxyUsername").toString());
+  passwordLineEdit->setText(settings.value("proxyPassword").toString());
+  
+  saveGatewaySettings();
+}
 
 /****************************************************************************
 **
@@ -171,7 +217,6 @@ bool Options::hideOfflineContacts() {
 ****************************************************************************/
 
 void Options::setSelectedGateway(const QString& gateway) {
-
   gatewayComboBox->setCurrentIndex( gatewayComboBox->findText ( gateway ));
 }
   
@@ -192,8 +237,9 @@ void Options::addGateway(const QString& gateway) {
 ** Author: Marc Bowes (proxy)
 **
 ****************************************************************************/
-void Options::emitGatewaySignal () {
-  emit gatewaySelected(gatewayComboBox->currentText (), httpProxyLineEdit->text(), portLineEdit->text(), usernameLineEdit->text(), passwordLineEdit->text());
+void Options::setGatewayInClient () {
+  
+  mxit.setGateway(gatewayComboBox->currentText (), httpProxyLineEdit->text(), portLineEdit->text().toUInt(), usernameLineEdit->text(), passwordLineEdit->text());
 }
 
 
@@ -204,8 +250,12 @@ void Options::emitGatewaySignal () {
 ****************************************************************************/
 
 void Options::saveGatewaySettings() {
-  /*TODO*/
-  //settings->setValue("httpProxy", );
+  
+  settings.setValue("gateway", gatewayComboBox->currentText () );
+  settings.setValue("proxyHost", httpProxyLineEdit->text());
+  settings.setValue("proxyPort", portLineEdit->text());
+  settings.setValue("proxyUsername", usernameLineEdit->text());
+  settings.setValue("proxyPassword", passwordLineEdit->text());
 }
 
 /****************************************************************************

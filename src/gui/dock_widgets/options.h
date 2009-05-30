@@ -14,6 +14,7 @@
 #include <QSettings>
 
 #include "gui/mxit_dock_widget.h"
+#include "mxit/client.h"
 
 #include "ui_options.h"
 
@@ -32,7 +33,7 @@ class Options : public MXitDockWidget, public Ui::OptionsDockWidget
   
   public: /*class specific */
 
-  Options(QWidget* parent, Theme &theme, QSettings& settings);
+  Options(QWidget* parent, Theme &theme, MXit::Client& mxit, QSettings& settings);
   ~Options();
     
   public: /*method */
@@ -52,15 +53,16 @@ class Options : public MXitDockWidget, public Ui::OptionsDockWidget
   void setSelectedTheme(const QString& theme);
   void reAdd();
   
+  
   private slots:
   void saveSettings( );
+  
+  void incomingVariables(const VariableHash& variables);
   
   
   signals:
   
   void conversationLogDirectorySelected(const QDir &dir);
-  void gatewaySelected(const QString &gateway, const QString &proxyHost, const QString &proxyPort,
-    const QString &username, const QString &password);
   
   void themeChanged( );
   void requestRefresh( );
@@ -68,7 +70,7 @@ class Options : public MXitDockWidget, public Ui::OptionsDockWidget
   
   private slots:
   
-  void emitGatewaySignal ();
+  void setGatewayInClient ();
   void saveGatewaySettings();
   void saveThemeOptionsSettings();
   
@@ -81,7 +83,7 @@ class Options : public MXitDockWidget, public Ui::OptionsDockWidget
   private: /* variables */
   
   QSettings& settings;
-  
+  MXit::Client& mxit;
   bool loadingSettings;
 
 

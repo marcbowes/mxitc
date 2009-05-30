@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="generalTab">
        <attribute name="title">
@@ -133,6 +133,9 @@
            </item>
            <item>
             <widget class="QWidget" name="httpWidget" native="true">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <layout class="QGridLayout" name="gridLayout">
               <property name="topMargin">
                <number>0</number>

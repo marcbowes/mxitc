@@ -56,7 +56,7 @@ class Login : public MXitDialog, private Ui::Login
   
   void checkIfLoginClickable(const QString &text);
     
-  void error(const QString &text);
+  void incomingError(const QString &text);
   
   void login();
   

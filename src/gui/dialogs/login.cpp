@@ -146,7 +146,7 @@ void Login::environmentVariablesReady()
 ** this SLOT is triggered when the client reports an error
 **
 ****************************************************************************/
-void Login::error(const QString &text)
+void Login::incomingError(const QString &text)
 {
   QMessageBox error; error.setText(text);
   error.exec();
