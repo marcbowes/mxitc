@@ -12,15 +12,12 @@ namespace GUI
 {
 
 
-FirstRunWizard::FirstRunWizard(MXit::Client& mxit, DockWidget::Options &options): QWizard(), options(options) {
+FirstRunWizard::FirstRunWizard(DockWidget::Options &options): QWizard(), options(options) {
   setupUi(this);
   
-  mxit.initialize();
-  //gatewayFrame->layout()->addWidget(widget ( ) );
-  gatewayPage->layout()->addWidget(options.gatewayWidget);
   generalPage->layout()->addWidget(options.generalWidget);
-  themAndLogPage->layout()->addWidget(options.themeWidget);
-  themAndLogPage->layout()->addWidget(options.conversationsWidget);
+  themePage->layout()->addWidget(options.themeWidget);
+  conversationsPage->layout()->addWidget(options.conversationsWidget);
   
 }
 

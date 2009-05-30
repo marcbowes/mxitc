@@ -110,6 +110,7 @@ void Login::checkIfLoginClickable(const QString &text) {
 
 void Login::environmentVariablesReady()
 {
+
   /* captcha */
   QByteArray captcha = QByteArray::fromBase64(mxit->variableValue("captcha"));
   QImage captchaImage;

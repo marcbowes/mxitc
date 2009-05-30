@@ -187,8 +187,6 @@ bool Options::hideOfflineContacts() {
 
 void Options::incomingVariables(const VariableHash& variables) {
   
-  qDebug() << "Options::incomingVariables()";
-  qDebug() << variables;
   /* notify gateway */
   gatewayComboBox->clear();
   addGateway(variables.value("soc1"));
@@ -444,7 +442,6 @@ void Options::reloadCurrentTheme(){
 
 void Options::reAdd() {
   generalTab->layout()->addWidget(generalWidget);
-  gatewayTab->layout()->addWidget(gatewayWidget);
   themeTab->layout()->addWidget(themeWidget);
   conversationsTab->layout()->addWidget(conversationsWidget);
 

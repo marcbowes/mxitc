@@ -75,6 +75,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void outgoingLoginError(const QString&);
   
+  void outgoingEnvironmentVariablesReady();
   
   protected:
 
