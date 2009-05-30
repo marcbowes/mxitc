@@ -59,11 +59,27 @@ QString Chat::spokenToShorthand(const QString &spoken)
 **
 ** Author: Marc Bowes
 **
+** Takes a message and replaces text with emoticon images (HTML img)
+**
+****************************************************************************/
+void Chat::injectEmoticons(QString &message) const
+{
+  Q_FOREACH(const Emoticon &emoticon, emoticons)
+    emoticon.shorthandToHtml(message, theme.canonicalPath() + "/emoticons/");
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** loads components
 **
 ****************************************************************************/
 void Chat::load(QDir theme)
 {
+  this->theme = theme;
+  
   /* html stylesheet */
   QFile css(theme.filePath("stylesheet.css"));
   css.open(QFile::ReadOnly);
@@ -97,7 +113,7 @@ void Chat::load(QDir theme)
       QString shorthand = spokenToShorthand(spoken);
       if (shorthand.isEmpty()) continue; /* dictionary can't translate */
       /* shorthand = :) */
-      emoticons << Emoticon(shorthand, spoken, QPixmap::fromImage(QImage(theme.absoluteFilePath(file))));
+      emoticons << Emoticon(shorthand, spoken, file);
     }
     theme.cdUp();
   }

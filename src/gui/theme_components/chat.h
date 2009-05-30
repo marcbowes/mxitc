@@ -37,6 +37,7 @@ class Chat
 
   public:         /* methods */
   
+  void injectEmoticons(QString &message) const;
   void load(QDir theme);
   void loadDefaults();
 
@@ -45,6 +46,7 @@ class Chat
   QList<Emoticon> emoticons;
   QPixmap         group;
   QString         stylesheet;
+  QDir            theme;
   QPixmap         unread;
 };
 

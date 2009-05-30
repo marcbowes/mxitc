@@ -21,8 +21,8 @@ namespace GUI
 ** Constructrs from params
 **
 ****************************************************************************/
-Emoticon::Emoticon(const QString &shorthand, const QString &spoken, const QPixmap &pixmap)
-  : shorthand (shorthand), spoken (spoken), pixmap (pixmap)
+Emoticon::Emoticon(const QString &shorthand, const QString &spoken, const QString &file)
+  : shorthand(shorthand), spoken(spoken), file(file)
 {
   /* nothing */
 }
@@ -37,7 +37,7 @@ Emoticon::Emoticon(const QString &shorthand, const QString &spoken, const QPixma
 ****************************************************************************/
 void Emoticon::HtmlToShorthand(QString &message)
 {
-  QRegExp rx ("<img alt=\"(.*?)\" src=\"(.*?)\" class=\"emoticon\" />");
+  QRegExp rx("<img alt=\"(.*?)\" src=\"(.*?)\" class=\"emoticon\" />");
   message.replace(rx, "\\1");
 }
 
@@ -49,9 +49,9 @@ void Emoticon::HtmlToShorthand(QString &message)
 ** Replaces shorthand with and HTML img tag
 **
 ****************************************************************************/
-void Emoticon::shorthandToHtml(QString &message, const QString &path)
+void Emoticon::shorthandToHtml(QString &message, const QString &path) const
 {
-  message.replace(shorthand, QString("<img alt=\"%1\" src=\"%2%3\" class=\"emoticon\" />").arg(shorthand).arg(path).arg(spoken));
+  message.replace(shorthand, QString("<img alt=\"%1\" src=\"%2%3\" class=\"emoticon\" />").arg(shorthand).arg(path).arg(file));
 }
 
 }

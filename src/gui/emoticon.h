@@ -23,18 +23,18 @@ class Emoticon
 {
   public:         /* class specific */
 
-  Emoticon(const QString &shorthand, const QString &spoken, const QPixmap &pixmap);
+  Emoticon(const QString &shorthand, const QString &spoken, const QString &file);
   ~Emoticon() {}
   
   static void HtmlToShorthand(QString &message);
 
   public:         /* methods */
   
-  void shorthandToHtml(QString &message, const QString &path);
+  void shorthandToHtml(QString &message, const QString &path) const;
   
   public:         /* variables */
   
-  QPixmap pixmap;
+  QString file;
   QString shorthand;
   QString spoken;
 };

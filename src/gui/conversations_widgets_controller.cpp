@@ -213,7 +213,7 @@ const Conversation * ConversationsWidgetsController::ensureExistanceAndActivatio
   if (!conversation) {
     /* conversations does not exist, need to create it*/
     /* create personal (single contact) conversation */
-    Conversation *newConversation = new Conversation(addressBook.contactFromAddress(uniqueId));
+    Conversation *newConversation = new Conversation(addressBook.contactFromAddress(uniqueId), theme); /* FIXME: theme passing */
     newConversation->setCss(theme.chat.stylesheet);
     conversations.addConversation(newConversation);
     
