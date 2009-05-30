@@ -230,7 +230,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   connectWidgets();
   loadLayout();
   
-  mxit->initialize();
   
   if (!settings->contains("wizardRun")) {
     FirstRunWizard frw(*mxit, *optionsWidget);
@@ -846,9 +845,15 @@ void MXitC::registering(){
 ****************************************************************************/
 
 void MXitC::incomingEnvironmentVariablesPing() {
-
-  if (!environmentVariablesAreReady)
+  qDebug() << "wtff";
+  if (!environmentVariablesAreReady) {
     mxit->initialize();
+  qDebug() << "1";
+    }
+  else {
+    emit outgoingEnvironmentVariablesReady();
+  qDebug() << "2";
+    }
 }
 
 
@@ -869,7 +874,11 @@ void MXitC::openLoginDialog(){
   connect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
   connect(this, SIGNAL(stateChanged(State)), &login, SLOT(incomingStateChange(State)));
   connect(this, SIGNAL(outgoingLoginError(const QString&)), &login, SLOT(incomingError(const QString&)));
+  connect(this, SIGNAL(outgoingEnvironmentVariablesReady()), &login, SLOT(environmentVariablesReady()));
+  connect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
   login.exec();
+  disconnect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
+  disconnect(this, SIGNAL(outgoingEnvironmentVariablesReady()), &login, SLOT(environmentVariablesReady()));
   disconnect(this, SIGNAL(outgoingLoginError(const QString&)), &login, SLOT(incomingError(const QString&)));
   disconnect(this, SIGNAL(stateChanged(State)), &login, SLOT(incomingStateChange(State)));
   disconnect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));

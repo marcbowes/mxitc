@@ -444,7 +444,6 @@ void Options::reloadCurrentTheme(){
 
 void Options::reAdd() {
   generalTab->layout()->addWidget(generalWidget);
-  gatewayTab->layout()->addWidget(gatewayWidget);
   themeTab->layout()->addWidget(themeWidget);
   conversationsTab->layout()->addWidget(conversationsWidget);
 

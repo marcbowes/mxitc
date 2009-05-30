@@ -50,15 +50,15 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="gatewayPage">
+  <widget class="QWizardPage" name="themePage">
    <property name="title">
-    <string>Gateway Settings</string>
+    <string>Theme Settings</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <widget class="QLabel" name="label_4">
       <property name="text">
-       <string>If you are running your own local network, you might want to use your own proxy settings.</string>
+       <string>Your MXit Client can be personalised with themes, choose the directory where your themes are stored</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -67,15 +67,15 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="themAndLogPage">
+  <widget class="QWizardPage" name="conversationsPage">
    <property name="title">
-    <string>Themes and Logging Settings</string>
+    <string>Conversations Log Settings</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
      <widget class="QLabel" name="label_5">
       <property name="text">
-       <string>Your MXit Client can be personalised with themes and your conversations can be saved to your computer</string>
+       <string>Logs of all your conversations can be saved to your computer. Leave blank if you don't wish to log </string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>

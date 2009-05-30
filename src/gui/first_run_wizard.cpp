@@ -16,11 +16,9 @@ FirstRunWizard::FirstRunWizard(MXit::Client& mxit, DockWidget::Options &options)
   setupUi(this);
   
   mxit.initialize();
-  //gatewayFrame->layout()->addWidget(widget ( ) );
-  gatewayPage->layout()->addWidget(options.gatewayWidget);
   generalPage->layout()->addWidget(options.generalWidget);
-  themAndLogPage->layout()->addWidget(options.themeWidget);
-  themAndLogPage->layout()->addWidget(options.conversationsWidget);
+  themePage->layout()->addWidget(options.themeWidget);
+  conversationsPage->layout()->addWidget(options.conversationsWidget);
   
 }
 
