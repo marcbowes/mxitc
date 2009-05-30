@@ -42,7 +42,9 @@
 
 #include "gui/dialogs/login.h"
 #include "gui/dialogs/register.h"
+
 #include "gui/theme.h"
+#include "gui/first_run_wizard.h"
 #include "gui/conversations_widgets_controller.h"
 #include "gui/conversations_tab_widget.h"
 

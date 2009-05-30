@@ -81,6 +81,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   
   gui/mxitc.cpp
   gui/chat_area.cpp
+  gui/first_run_wizard.cpp
   gui/conversations_widgets_controller.cpp
   gui/conversations_tab_widget.cpp
   gui/mxit_dialog.cpp
@@ -119,6 +120,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   
   gui/mxitc.h
   gui/chat_area.h
+  gui/first_run_wizard.h
   gui/conversations_widgets_controller.h
   gui/conversations_tab_widget.h
   gui/mxit_dialog.h
@@ -143,6 +145,7 @@ SET(MXIT_CLIENT_UI
   
   gui/mxitc.ui
   gui/chat_area.ui
+  gui/first_run_wizard.ui
 )
 
 # build ui_XXX files from the XML-style .ui files

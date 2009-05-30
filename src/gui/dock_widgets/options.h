@@ -26,7 +26,7 @@ namespace GUI
 namespace DockWidget
 {
 
-class Options : public MXitDockWidget, private Ui::OptionsDockWidget
+class Options : public MXitDockWidget, public Ui::OptionsDockWidget
 {
   Q_OBJECT
   
@@ -50,6 +50,7 @@ class Options : public MXitDockWidget, private Ui::OptionsDockWidget
   void setBaseThemeDirectory(const QString& dir);
   QString getSelectedTheme();
   void setSelectedTheme(const QString& theme);
+  void reAdd();
   
   private slots:
   void saveSettings( );

@@ -386,6 +386,19 @@ void Options::reloadCurrentTheme(){
   loadTheme(themeComboBox->currentText ());
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Options::reAdd() {
+  generalTab->layout()->addWidget(generalWidget);
+  gatewayTab->layout()->addWidget(gatewayWidget);
+  themeTab->layout()->addWidget(themeWidget);
+  conversationsTab->layout()->addWidget(conversationsWidget);
+
+}
 
 } /* end of DockWidget namespace */
 

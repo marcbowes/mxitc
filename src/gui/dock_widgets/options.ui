@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>384</width>
-    <height>464</height>
+    <width>354</width>
+    <height>474</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="generalTab">
        <attribute name="title">
@@ -26,34 +26,43 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
-         <widget class="QCheckBox" name="autoLoginCheckBox">
-          <property name="text">
-           <string>AutoLogin</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
+         <widget class="QWidget" name="generalWidget" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_8">
+           <property name="margin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="autoLoginCheckBox">
+             <property name="text">
+              <string>AutoLogin</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="hideOfflineCheckBox">
+             <property name="text">
+              <string>Hide offline contacts</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="hideOfflineCheckBox">
-          <property name="text">
-           <string>Hide offline contacts</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </widget>
@@ -63,14 +72,20 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Gateway Protocol</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
+         <widget class="QWidget" name="gatewayWidget" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <property name="margin">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QWidget" name="widget_2" native="true">
              <layout class="QVBoxLayout" name="verticalLayout_6">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QLabel" name="label_2">
                 <property name="text">
@@ -85,95 +100,85 @@
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="tcpRadioButton">
-             <property name="text">
-              <string>TCP</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="httpRadioButton">
-             <property name="text">
-              <string>HTTP</string>
-             </property>
+            <widget class="QWidget" name="widget_8" native="true">
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="tcpRadioButton">
+                <property name="text">
+                 <string>TCP</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="httpRadioButton">
+                <property name="text">
+                 <string>HTTP</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
            <item>
             <widget class="QWidget" name="httpWidget" native="true">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_3">
-              <property name="spacing">
+             <layout class="QGridLayout" name="gridLayout">
+              <property name="topMargin">
                <number>0</number>
               </property>
-              <property name="margin">
+              <property name="bottomMargin">
                <number>0</number>
               </property>
-              <item>
-               <widget class="QWidget" name="httpProxyWidget" native="true">
-                <layout class="QHBoxLayout" name="horizontalLayout_2">
-                 <item>
-                  <widget class="QLabel" name="httpProxyLabel">
-                   <property name="text">
-                    <string>HTTP proxy</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="httpProxyLineEdit"/>
-                 </item>
-                </layout>
+              <item row="0" column="0">
+               <widget class="QLabel" name="httpProxyLabel">
+                <property name="text">
+                 <string>HTTP proxy</string>
+                </property>
                </widget>
               </item>
-              <item>
-               <widget class="QWidget" name="portWidget" native="true">
-                <layout class="QHBoxLayout" name="horizontalLayout_3">
-                 <item>
-                  <widget class="QLabel" name="label">
-                   <property name="text">
-                    <string>Port</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="portLineEdit"/>
-                 </item>
-                </layout>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="httpProxyLineEdit"/>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Port</string>
+                </property>
                </widget>
               </item>
-              <item>
-               <widget class="QWidget" name="usernameWidget" native="true">
-                <layout class="QHBoxLayout" name="horizontalLayout_10">
-                 <item>
-                  <widget class="QLabel" name="usernameLabel">
-                   <property name="text">
-                    <string>Username</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="usernameLineEdit"/>
-                 </item>
-                </layout>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="portLineEdit"/>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="usernameLabel">
+                <property name="text">
+                 <string>Username</string>
+                </property>
                </widget>
               </item>
-              <item>
-               <layout class="QHBoxLayout" name="passwordWidget">
-                <item>
-                 <widget class="QLabel" name="passwordLabel">
-                  <property name="text">
-                   <string>Password</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="passwordLineEdit"/>
-                </item>
-               </layout>
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="usernameLineEdit"/>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="passwordLabel">
+                <property name="text">
+                 <string>Password</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLineEdit" name="passwordLineEdit"/>
               </item>
              </layout>
             </widget>
@@ -228,111 +233,165 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <widget class="QLabel" name="themeDirLabel">
-          <property name="text">
-           <string>Themes Directory</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="widget_3" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <widget class="QWidget" name="themeWidget" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <property name="margin">
+            <number>0</number>
+           </property>
            <item>
-            <widget class="QLineEdit" name="directoryLineEdit"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="themeOpenButton">
+            <widget class="QLabel" name="themeDirLabel">
              <property name="text">
-              <string>Open</string>
+              <string>Themes Directory</string>
              </property>
             </widget>
            </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="themeComboBox"/>
-        </item>
-        <item>
-         <widget class="QWidget" name="widget" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
-            <spacer name="horizontalSpacer">
+            <widget class="QWidget" name="widget_3" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QLineEdit" name="directoryLineEdit"/>
+              </item>
+              <item>
+               <widget class="QPushButton" name="themeOpenButton">
+                <property name="text">
+                 <string>Open</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget_7" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QComboBox" name="themeComboBox"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="reloadButton">
+                <property name="text">
+                 <string>Reload Current Theme</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_3">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>40</width>
-               <height>20</height>
+               <width>20</width>
+               <height>40</height>
               </size>
              </property>
             </spacer>
            </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="conversationsTab">
+       <attribute name="title">
+        <string>Conversations</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_9">
+        <item>
+         <widget class="QWidget" name="conversationsWidget" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_10">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>9</number>
+           </property>
            <item>
-            <widget class="QPushButton" name="reloadButton">
+            <widget class="QLabel" name="themeDirLabel_2">
              <property name="text">
-              <string>Reload Current Theme</string>
+              <string>Conversation Log directory</string>
              </property>
             </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget_6" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QLineEdit" name="conversationsLineEdit"/>
+              </item>
+              <item>
+               <widget class="QPushButton" name="conversationsOpenButton">
+                <property name="text">
+                 <string>Open</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>
         </item>
-        <item>
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
-      </widget>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Conversations</string>
-       </attribute>
-       <widget class="QWidget" name="widget_6" native="true">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>228</width>
-          <height>45</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
-         <item>
-          <widget class="QLineEdit" name="conversationsLineEdit"/>
-         </item>
-         <item>
-          <widget class="QPushButton" name="conversationsOpenButton">
-           <property name="text">
-            <string>Open</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QLabel" name="themeDirLabel_2">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>228</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Conversation Log directory</string>
-        </property>
-       </widget>
       </widget>
      </widget>
     </item>

@@ -207,8 +207,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   
   requiredToAuth.append("locale");
   
-  autoLogin (optionsWidget->isAutoLogin());
-  
   /* After the MXitDockWidget has been added, it attributes can be restored*/
   restoreState(settings->value("gui layout").toByteArray());
   /*------------------------------------------------------------------------------------------*/
@@ -233,6 +231,11 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   /* connecting widgets */
   connectWidgets();
   loadLayout();
+  
+  FirstRunWizard frw(*mxit, *optionsWidget);
+  frw.exec();
+  
+  autoLogin (optionsWidget->isAutoLogin());
 }
 
 
