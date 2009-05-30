@@ -8,8 +8,8 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUID_THEMECOMPONENTS_CHAT_H__
-#define __MXIT_GUID_THEMECOMPONENTS_CHAT_H__
+#ifndef __MXIT_GUI_THEMECOMPONENTS_CHAT_H__
+#define __MXIT_GUI_THEMECOMPONENTS_CHAT_H__
 
 #include <QDir>
 #include <QHash>
@@ -52,5 +52,5 @@ class Chat
 
 }
 
-#endif /* __MXIT_GUID_THEMECOMPONENTS_CHAT_H__ */
+#endif /* __MXIT_GUI_THEMECOMPONENTS_CHAT_H__ */
 
