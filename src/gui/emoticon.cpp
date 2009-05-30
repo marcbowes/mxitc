@@ -25,7 +25,7 @@ namespace Emoticon
 QString spokenToShorthand(QString spoken)
 {
   static Dictionary dictionary;
-  static bool dictionaryLoaded;
+  static bool dictionaryLoaded (false);
   
   /* build dictionary if it wasn't previously built */
   if (!dictionaryLoaded) {
