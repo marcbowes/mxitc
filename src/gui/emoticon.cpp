@@ -4,6 +4,8 @@
 **
 ****************************************************************************/
 
+#include <QStringList>
+
 #include "emoticon.h"
 
 namespace MXit
@@ -39,11 +41,11 @@ QString spokenToShorthand(QString spoken)
   
   /* do translation */
   QString shorthand;
-  Q_FOREACH(const QChar &character, spoken) {
-    if (!dictionary.contains(character))
+  Q_FOREACH(const QString &string, spoken.split(".")) {
+    if (!dictionary.contains(string))
       return QString(); /* no match */
     else
-      shorthand.append(dictionary.value(character));
+      shorthand.append(dictionary.value(string));
   }
   
   /* returns ":)" for "semicolon.rightbracket" */

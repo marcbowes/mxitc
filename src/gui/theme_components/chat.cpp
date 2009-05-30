@@ -4,6 +4,8 @@
 **
 ****************************************************************************/
 
+#include "gui/emoticon.h"
+
 #include "chat.h"
 
 #define DEFAULT_SIZE QSize(16, 16)

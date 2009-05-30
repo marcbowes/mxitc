@@ -21,7 +21,7 @@ namespace GUI
 
 namespace Emoticon
 {
-  #define shorthandToHTML(x)    QString("<img alt=\"%1\" src=\"%2%1.png\"").arg(x).arg(emoticonDir);
+  #define shorthandToHTML(x) QString("<img alt=\"%1\" src=\"%2%1.png\" />").arg(x).arg(emoticonDir);
   
   typedef QHash<QString, QChar> Dictionary;
   
