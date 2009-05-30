@@ -23,9 +23,9 @@ namespace Emoticon
 {
   #define shorthandToHTML(x)    QString("<img alt=\"%1\" src=\"%2%1.png\"").arg(x).arg(emoticonDir);
   
-  typedef QHash<QString, QString> WordHash;
+  typedef QHash<QString, QChar> Dictionary;
   
-  static WordHash shorthandToSpoken(QString shorthand);
+  static QString spokenToShorthand(QString shorthand);
 };
 
 }

@@ -22,9 +22,32 @@ namespace Emoticon
 ** spoken -> shorthand translation.
 **
 ****************************************************************************/
-WordHash shorthandToSpoken(QString shorthand)
+QString spokenToShorthand(QString spoken)
 {
-  static WordHash dictionary;
+  static Dictionary dictionary;
+  static bool dictionaryLoaded;
+  
+  /* build dictionary if it wasn't previously built */
+  if (!dictionaryLoaded) {
+    /* ordered alphabetically by spoken */
+    dictionary["leftbracket"]   = '(';
+    dictionary["rightbracket"]  = ')';
+    dictionary["semicolon"]     = ':';
+    
+    dictionaryLoaded = true;
+  }
+  
+  /* do translation */
+  QString shorthand;
+  Q_FOREACH(const QChar &character, spoken) {
+    if (!dictionary.contains(character))
+      return QString(); /* no match */
+    else
+      shorthand.append(dictionary.value(character));
+  }
+  
+  /* returns ":)" for "semicolon.rightbracket" */
+  return shorthand;
 }
 
 }
