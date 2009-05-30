@@ -37,7 +37,8 @@ Emoticon::Emoticon(const QString &shorthand, const QString &spoken, const QStrin
 ****************************************************************************/
 void Emoticon::HtmlToShorthand(QString &message)
 {
-  QRegExp rx("<img alt=\"(.*?)\" src=\"(.*?)\" class=\"emoticon\" />");
+  QRegExp rx("<img alt=\"(.*)\" src=\"(.*)\" class=\"emoticon\" />");
+  rx.setMinimal(true);
   message.replace(rx, "\\1");
 }
 
