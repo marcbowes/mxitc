@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include <QStringList>
+#include <QRegExp>
 
 #include "emoticon.h"
 
@@ -14,11 +14,44 @@ namespace MXit
 namespace GUI
 {
 
-namespace Emoticon
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Constructrs from params
+**
+****************************************************************************/
+Emoticon::Emoticon(const QString &shorthand, const QString &spoken, const QPixmap &pixmap)
+  : shorthand (shorthand), spoken (spoken), pixmap (pixmap)
 {
+  /* nothing */
+}
 
 
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Replaces emoticon img tags with the shorthand text
+**
+****************************************************************************/
+void Emoticon::HtmlToShorthand(QString &message)
+{
+  QRegExp rx ("<img alt=\"(.*?)\" src=\"(.*?)\" class=\"emoticon\" />");
+  message.replace(rx, "\\1");
+}
 
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Replaces shorthand with and HTML img tag
+**
+****************************************************************************/
+void Emoticon::shorthandToHtml(QString &message, const QString &path)
+{
+  message.replace(shorthand, QString("<img alt=\"%1\" src=\"%2%3\" class=\"emoticon\" />").arg(shorthand).arg(path).arg(spoken));
 }
 
 }

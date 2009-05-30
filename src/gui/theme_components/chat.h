@@ -12,9 +12,10 @@
 #define __MXIT_GUI_THEMECOMPONENTS_CHAT_H__
 
 #include <QDir>
-#include <QHash>
 #include <QPixmap>
 #include <QString>
+
+#include "gui/emoticon.h"
 
 namespace MXit
 {
@@ -31,6 +32,8 @@ class Chat
 
   Chat()  {}
   ~Chat() {}
+  
+  static QString spokenToShorthand(const QString &spoken);
 
   public:         /* methods */
   
@@ -39,11 +42,10 @@ class Chat
 
   public:         /* variables */
   
-  QHash<QString, QPixmap>
-            emoticons;
-  QPixmap   group;
-  QString   stylesheet;
-  QPixmap   unread;
+  QList<Emoticon> emoticons;
+  QPixmap         group;
+  QString         stylesheet;
+  QPixmap         unread;
 };
 
 }

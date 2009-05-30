@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include "gui/emoticon.h"
+#include <QHash>
 
 #include "chat.h"
 
@@ -18,6 +18,42 @@ namespace GUI
 
 namespace ThemeComponents
 {
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** spoken -> shorthand translation.
+**
+****************************************************************************/
+QString Chat::spokenToShorthand(const QString &spoken)
+{
+  static QHash<QString, QChar> dictionary;
+  static bool dictionaryLoaded (false); /* only set false first time */
+  
+  /* build dictionary if it wasn't previously built */
+  if (!dictionaryLoaded) {
+    /* ordered alphabetically by spoken */
+    dictionary["leftbracket"]   = '(';
+    dictionary["rightbracket"]  = ')';
+    dictionary["colon"]         = ':';
+    
+    dictionaryLoaded = true;
+  }
+  
+  /* do translation */
+  QString shorthand;
+  Q_FOREACH(const QString &string, spoken.split(".")) {
+    if (!dictionary.contains(string))
+      return QString(); /* no match */
+    else
+      shorthand.append(dictionary.value(string));
+  }
+  
+  /* returns ":)" for "semicolon.rightbracket" */
+  return shorthand;
+}
+
 
 /****************************************************************************
 **
@@ -51,28 +87,17 @@ void Chat::load(QDir theme)
   /* load emoticons */
   emoticons.clear();
   if (theme.cd("emoticons")) {
-    QStringList filter; filter << "*.png";
-    QStringList files = theme.entryList(filter);
+    QStringList files = theme.entryList();
     Q_FOREACH(const QString &file, files) {
-      /* file = semicolon.rightbracket.png */
+      /* file = colon.rightbracket.gif */
       int idx = file.lastIndexOf('.');
       if (idx == -1) continue; /* safety check, even though filter.. */
-      QString fileWithoutExtension = file.left(idx);
-      /* fileWithoutExtension = semicolon.rightbracket */
-      QString emoticon = Emoticon::spokenToShorthand(fileWithoutExtension);
-      if (emoticon.isEmpty()) continue; /* dictionary can't translate */
-      /* emoticon = :) */
-      emoticons[emoticon] = QPixmap::fromImage(QImage(theme.absoluteFilePath(fileWithoutExtension)));
-      /* emoticons[":)"] = 
-                                .-""""""-.
-                              .'          '.
-                             /   O      O   \
-                            :                :
-                            |                |
-                            : ',          ,' :
-                             \  '-......-'  /
-                              '.          .'
-                                '-......-' */
+      QString spoken = file.left(idx);
+      /* fileWithoutExtension = colon.rightbracket */
+      QString shorthand = spokenToShorthand(spoken);
+      if (shorthand.isEmpty()) continue; /* dictionary can't translate */
+      /* shorthand = :) */
+      emoticons << Emoticon(shorthand, spoken, QPixmap::fromImage(QImage(theme.absoluteFilePath(file))));
     }
     theme.cdUp();
   }

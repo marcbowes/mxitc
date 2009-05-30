@@ -11,8 +11,7 @@
 #ifndef __MXIT_GUI_EMOTICON_H__
 #define __MXIT_GUI_EMOTICON_H__
 
-#include <QHash>
-#include <QStringList>
+#include <QPixmap>
 
 namespace MXit
 {
@@ -20,48 +19,25 @@ namespace MXit
 namespace GUI
 {
 
-namespace Emoticon
+class Emoticon
 {
+  public:         /* class specific */
 
-  #define shorthandToHTML(x) QString("<img alt=\"%1\" src=\"%2%1.png\" />").arg(x).arg(emoticonDir);
+  Emoticon(const QString &shorthand, const QString &spoken, const QPixmap &pixmap);
+  ~Emoticon() {}
   
-  typedef QHash<QString, QChar> Dictionary;
+  static void HtmlToShorthand(QString &message);
+
+  public:         /* methods */
   
-  /****************************************************************************
-  **
-  ** Author: Marc Bowes
-  **
-  ** spoken -> shorthand translation.
-  **
-  ****************************************************************************/
-  static QString spokenToShorthand(QString spoken)
-  {
-    static Dictionary dictionary;
-    static bool dictionaryLoaded (false); /* only set false first time */
-    
-    /* build dictionary if it wasn't previously built */
-    if (!dictionaryLoaded) {
-      /* ordered alphabetically by spoken */
-      dictionary["leftbracket"]   = '(';
-      dictionary["rightbracket"]  = ')';
-      dictionary["semicolon"]     = ':';
-      
-      dictionaryLoaded = true;
-    }
-    
-    /* do translation */
-    QString shorthand;
-    Q_FOREACH(const QString &string, spoken.split(".")) {
-      if (!dictionary.contains(string))
-        return QString(); /* no match */
-      else
-        shorthand.append(dictionary.value(string));
-    }
-    
-    /* returns ":)" for "semicolon.rightbracket" */
-    return shorthand;
-  }
-}
+  void shorthandToHtml(QString &message, const QString &path);
+  
+  public:         /* variables */
+  
+  QPixmap pixmap;
+  QString shorthand;
+  QString spoken;
+};
 
 }
 

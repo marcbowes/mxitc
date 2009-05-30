@@ -79,6 +79,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/dialogs/login.cpp
   gui/dialogs/register.cpp
   
+  gui/emoticon.cpp
   gui/mxitc.cpp
   gui/chat_area.cpp
   gui/first_run_wizard.cpp
