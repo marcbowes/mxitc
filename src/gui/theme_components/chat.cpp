@@ -53,8 +53,27 @@ void Chat::load(QDir theme)
   if (theme.cd("emoticons")) {
     QStringList filter; filter << "*.png";
     QStringList files = theme.entryList(filter);
-    Q_FOREACH(const QString &file, files)
-      emoticons[file] = QPixmap::fromImage(QImage(theme.absoluteFilePath(file)));
+    Q_FOREACH(const QString &file, files) {
+      /* file = semicolon.rightbracket.png */
+      int idx = file.lastIndexOf('.');
+      if (idx == -1) continue; /* safety check, even though filter.. */
+      QString fileWithoutExtension = file.left(idx);
+      /* fileWithoutExtension = semicolon.rightbracket */
+      QString emoticon = Emoticon::spokenToShorthand(fileWithoutExtension);
+      if (emoticon.isEmpty()) continue; /* dictionary can't translate */
+      /* emoticon = :) */
+      emoticons[emoticon] = QPixmap::fromImage(QImage(theme.absoluteFilePath(fileWithoutExtension)));
+      /* emoticons[":)"] = 
+                                .-""""""-.
+                              .'          '.
+                             /   O      O   \
+                            :                :
+                            |                |
+                            : ',          ,' :
+                             \  '-......-'  /
+                              '.          .'
+                                '-......-' */
+    }
     theme.cdUp();
   }
 }
