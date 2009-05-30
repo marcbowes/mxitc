@@ -12,6 +12,7 @@
 #define __MXIT_GUID_THEMECOMPONENTS_CHAT_H__
 
 #include <QDir>
+#include <QHash>
 #include <QPixmap>
 #include <QString>
 
@@ -38,6 +39,8 @@ class Chat
 
   public:         /* variables */
   
+  QHash<QString, QPixmap>
+            emoticons;
   QPixmap   group;
   QString   stylesheet;
   QPixmap   unread;

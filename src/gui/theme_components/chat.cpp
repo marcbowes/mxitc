@@ -45,6 +45,16 @@ void Chat::load(QDir theme)
   if (!_unread.isNull()) {
     unread = QPixmap::fromImage(_unread);
   }
+  
+  /* load emoticons */
+  emoticons.clear();
+  if (theme.cd("emoticons")) {
+    QStringList filter; filter << "*.png";
+    QStringList files = theme.entryList(filter);
+    Q_FOREACH(const QString &file, files)
+      emoticons[file] = QPixmap::fromImage(QImage(theme.absoluteFilePath(file)));
+    theme.cdUp();
+  }
 }
 
 
@@ -58,12 +68,13 @@ void Chat::load(QDir theme)
 void Chat::loadDefaults()
 {
   stylesheet = QString();
+  emoticons.clear();
   
   group = QPixmap(DEFAULT_SIZE);
   group.fill(Qt::black);
   
   unread = QPixmap(DEFAULT_SIZE);
-  unread.fill(Qt::yellow);
+  unread.fill(Qt::yellow);  
 }
 
 }
