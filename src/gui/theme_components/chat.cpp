@@ -37,6 +37,7 @@ QString Chat::spokenToShorthand(const QString &spoken)
     dictionary["leftbracket"]   = '(';
     dictionary["rightbracket"]  = ')';
     dictionary["colon"]         = ':';
+    dictionary["dee"]           = 'D';
     
     dictionaryLoaded = true;
   }
