@@ -187,8 +187,6 @@ bool Options::hideOfflineContacts() {
 
 void Options::incomingVariables(const VariableHash& variables) {
   
-  qDebug() << "Options::incomingVariables()";
-  qDebug() << variables;
   /* notify gateway */
   gatewayComboBox->clear();
   addGateway(variables.value("soc1"));

@@ -232,7 +232,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   
   
   if (!settings->contains("wizardRun")) {
-    FirstRunWizard frw(*mxit, *optionsWidget);
+    FirstRunWizard frw(*optionsWidget);
     frw.exec();
     settings->setValue("wizardRun", true);
   }
@@ -318,6 +318,7 @@ void MXitC::autoLogin (bool autologin) {
 
 void MXitC::environmentVariablesReady() {
 
+  qDebug() << "environmentVariablesAreReady = true";
   environmentVariablesAreReady = true;
   /*TODO make a log*///qDebug() << "environmentVariablesReady";
 }
@@ -845,15 +846,12 @@ void MXitC::registering(){
 ****************************************************************************/
 
 void MXitC::incomingEnvironmentVariablesPing() {
-  qDebug() << "wtff";
   if (!environmentVariablesAreReady) {
     mxit->initialize();
-  qDebug() << "1";
     }
   else {
     emit outgoingEnvironmentVariablesReady();
-  qDebug() << "2";
-    }
+  }
 }
 
 

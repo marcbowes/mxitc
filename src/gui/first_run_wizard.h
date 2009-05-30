@@ -19,7 +19,7 @@ class FirstRunWizard: public QWizard, private Ui::FirstRunWizard {
 
 
   public:
-  FirstRunWizard(MXit::Client& mxit,DockWidget::Options &options);
+  FirstRunWizard(DockWidget::Options &options);
   ~FirstRunWizard();
 
 
