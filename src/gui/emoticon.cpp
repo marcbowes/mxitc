@@ -12,7 +12,22 @@ namespace MXit
 namespace GUI
 {
 
-/* STUB */
+namespace Emoticon
+{
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** spoken -> shorthand translation.
+**
+****************************************************************************/
+WordHash shorthandToSpoken(QString shorthand)
+{
+  static WordHash dictionary;
+}
+
+}
 
 }
 

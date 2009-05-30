@@ -4,13 +4,14 @@
 **
 ** Author: Marc Bowes, 2009
 **
-** Class for emoticon converting between English, shorthand and HTML.
+** Class for emoticon converting between spoken, shorthand and HTML.
 **
 ****************************************************************************/
 
 #ifndef __MXIT_GUI_EMOTICON_H__
 #define __MXIT_GUI_EMOTICON_H__
 
+#include <QHash>
 
 namespace MXit
 {
@@ -18,12 +19,13 @@ namespace MXit
 namespace GUI
 {
 
-class Emoticon
+namespace Emoticon
 {
-  public:         /* class specific */
-
-  Emoticon()  {}
-  ~Emoticon() {}
+  #define shorthandToHTML(x)    QString("<img alt=\"%1\" src=\"%2%1.png\"").arg(x).arg(emoticonDir);
+  
+  typedef QHash<QString, QString> WordHash;
+  
+  static WordHash shorthandToSpoken(QString shorthand);
 };
 
 }
