@@ -26,7 +26,7 @@ namespace GUI
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(this) 
+MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(this) , environmentVariablesAreReady(false)
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   if (QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -37,7 +37,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   mxit = client;      /* store a copy */
   application = app;  /* store a copy */
   
-  login = NULL;
   
   
   /* Getting settings from file*/
@@ -104,6 +103,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   connect(mxit, SIGNAL(environmentReady()), this, SLOT(environmentVariablesReady()));
   
   
+  /*NOTE: this is contact -> conversation, not conversation -> conversation, otherwise it would go inside the controller*/
   connect(  contactsWidget, SIGNAL(outgoingConversationShowRequest ( const Contact *  )), 
             conversationsWidgetsController, SLOT(incomingConversationShowRequest( const Contact * )));
      
@@ -111,23 +111,31 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   connect(contactsWidget, SIGNAL (groupsUpdated( const QStringList & )), addContactWidget, SLOT(updateGroups(const QStringList & )));
   
             
-  
-  connect(mxit, SIGNAL(outgoingConnectionState(Network::Connection::State)), this, SLOT(incomingConnectionState(Network::Connection::State)));
           
   connect(&addressBook, SIGNAL(presenceToggled(const Contact*)),
           this,         SLOT(presenceToggled(const  Contact*)));
           
+          
+   
+  /*------------------------------------------------------------------------------------------*/
+  /* MenuBar Actions
+  /*------------------------------------------------------------------------------------------*/
+          
+  /*TODO, this needs to be implemented in the client*/
   //connect(actionLogoff,  SIGNAL(triggered()), mxit, SLOT(logoff()));
-  connect(actionAuto_Logon,  SIGNAL(triggered()), this, SLOT(autoLogin()));/* TODO should check is authenticatable first*/
+  connect(actionAuto_Logon,  SIGNAL(triggered()), this, SLOT(autoLogin()));
   
-  /*------------------------------------------------------------------------------------------*/
-  /* Connecting new variables SIGNAL from the widgets to the client
-  /*------------------------------------------------------------------------------------------*/
+  connect(actionRegister,  SIGNAL(triggered()), this, SLOT(openRegisterDialog())); /*TODO check the whole shpeel with the GUI state == REGISTERING and whatnot*/
   
   connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginDialog()));
+  
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
   
-
+  
+  /*------------------------------------------------------------------------------------------*/
+  /* Connecting various signals from the widgets to the client
+  /*------------------------------------------------------------------------------------------*/
+  
   connect(  mxit, SIGNAL(outgoingError(int, const QString &)), 
             this, SLOT(incomingError(int, const QString &)));
             
@@ -140,9 +148,11 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   connect(  optionsWidget, SIGNAL(gatewaySelected(const QString&, const QString&, const QString&, const QString&, const QString&)), 
             this, SLOT(sendGatewayToClient(const QString&, const QString&, const QString&, const QString&, const QString&))  );  
 
+  connect(  mxit, SIGNAL(outgoingConnectionState(Network::Connection::State)), 
+            this, SLOT(incomingConnectionState(Network::Connection::State))  );
   
   /*------------------------------------------------------------------------------------------*/
-  /* Hooking up themeing refreshes */
+  /* Hooking up themeing refreshes and logging */
   /*------------------------------------------------------------------------------------------*/
   
   connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
@@ -165,7 +175,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   /* Loading client hash variables from QSettings and passing to client
   /*------------------------------------------------------------------------------------------*/
   
-  /* this is the list of variables that should be loaded*/
+  /* this is the list of variables that are needed for authentication*/
   
   requiredToAuth.append("err");                  /* 0 = success, else failed */
   requiredToAuth.append("url");                  /* URL that should be used for the Get PID request */
@@ -222,6 +232,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   
   /* connecting widgets */
   connectWidgets();
+  loadLayout();
 }
 
 
@@ -281,15 +292,14 @@ void MXitC::autoLogin (bool autologin) {
   
     /*TODO sort out autologin, what if the user has deselected it in options, how do the hash variables get to the client, does the user still want an autologin but just promted or does the user want to retype in their password and captch each time?*/
     
-  /*if the settings was able to load all the necessary variables, the autologin can commence*/
-  /*TODO don't autologin if user has set it to not do so in options*/
+  /*if the settings was able to load all the necessary variables, and the autologin is set to true, the autologin can commence*/
   if (autologin && hasAllVariables) {
     loggingIn();
     mxit->authenticate(variableHash);
   }
   else {
-    mxit->initialize();
-    openLoginDialog();
+    //mxit->initialize();
+    openLoginDialog(); /* will initialize automatically*/
   }
 }
 
@@ -303,6 +313,7 @@ void MXitC::autoLogin (bool autologin) {
 
 void MXitC::environmentVariablesReady() {
 
+  environmentVariablesAreReady = true;
   /*TODO make a log*///qDebug() << "environmentVariablesReady";
   /* notify gateway */
   
@@ -363,20 +374,34 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
   addDockWidget(Qt::RightDockWidgetArea, dockWidget);
   dockWidget->setVisible ( false );
     
-  /* loading visibility and floating attributes*/
-  dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
-  dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
-    
-  dockWidget->resize(settings->value(QString("size?")+dockWidget->objectName ()).toSize());
-  
-  
 }
+
 
 /****************************************************************************
 **
 ** Author: Richard Baxter
 **
-** saves all the widget's attributes
+** loads all the widget's attributes
+**
+****************************************************************************/
+
+void MXitC::loadLayout() {
+  
+  
+  Q_FOREACH (QDockWidget * dockWidget, dockWidgets) {
+  
+    /* loading visibility, size and floating attributes*/
+    dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
+    dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
+    
+    dockWidget->resize(settings->value(QString("size?")+dockWidget->objectName ()).toSize());
+  }
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
 **
 ****************************************************************************/
 
@@ -416,6 +441,7 @@ void MXitC::connectWidgets() {
 
 /* this was provided so that it could be connected nicely*/
 void MXitC::saveLayout(bool b) {
+  saveLayout();
 }
 
 /*Qt::DockWidgetArea is never actually used, it's there so this function could be connected nicely*/
@@ -487,7 +513,7 @@ void MXitC::incomingAction(Action action)
       logWidget->logMessage("GUI::LOGGED_IN");
       if (currentState == LOGGED_IN)
         ;/* do nothing TODO */
-      else /* if (currentState == LOGGED_OUT) */
+      else /* if (currentState != LOGGED_IN) */
       {
         /* TODO get the PID and encrypted password*/
         
@@ -529,11 +555,6 @@ void MXitC::incomingAction(Action action)
         settings->sync();
         
         setStatus(LOGGED_IN);
-        
-        /* closing the login window if it is open (i.e. login != NULL)*/
-        if (login != NULL) {
-          login->close();
-        }
       }
       
       break;
@@ -544,7 +565,7 @@ void MXitC::incomingAction(Action action)
       
       if (currentState == LOGGED_OUT)
         ;/* do nothing TODO */
-      else /* if (currentState == LOGGED_IN) */
+      else /* if (currentState != LOGGED_OUT) */
       {
         setStatus(LOGGED_OUT);
       }
@@ -605,24 +626,7 @@ void MXitC::messageReceived(){
                               mxit->variableValue("flags"),
                               mxit->variableValue("message"));
   
-  //chatAreaController->refreshTabs(); /*TODO check how things refresh now, might be a signal from the conversations that can be hooked up*/
 }
-
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-** Sends the chatInput to the ougoing slot and clears the chat lineText object
-**
-****************************************************************************/
-
-void MXitC::sendMessageFromChatInput()
-{
-  /*FIXME - to chat area controller*///outgoingMessage(chatInput->text()); /*signals to this classes outgoing messages so it can go to the client*/
-  /*FIXME - to chat area controller*///chatInput->setText("");
-}
-
 
 
 /****************************************************************************
@@ -741,22 +745,25 @@ void MXitC::setStatus(State newState)
 {
 
   currentState = newState;
-/*TODO make this a set status function*/
-/*TODO disable main chat area when logged out and logging in*/
+  
   switch (currentState) {
   
-    case LOGGED_IN:  statusLabel->setText("LOGGED IN");  
+    case LOGGED_IN:  statusLabel->setText("Logged in");  
     break;
-    case LOGGED_OUT: statusLabel->setText("LOGGED OUT"); 
+    case LOGGED_OUT: statusLabel->setText("Logged out"); 
     contactsWidget->clearList();
     break;
-    case LOGGING_IN: statusLabel->setText("LOGGING IN");
+    case LOGGING_IN: statusLabel->setText("Logging in");
+     break;
+    case REGISTERING: statusLabel->setText("Registering");
      break;
   
   }
   logWidget->logMessage("GUI:: State set to "+statusLabel->text());
   
   centralwidget->setEnabled(currentState == LOGGED_IN);
+  
+  emit stateChanged(currentState);
 }
 
 /****************************************************************************
@@ -774,9 +781,12 @@ void MXitC::incomingConnectionError(const QString & errorString)
     trayIcon->showMessage("Network Error",  errorString);
   }
   
-  if (login != NULL) {
-    login->resetButtons();
-  }
+  //TODO emit errorOrSomethingIfTheLoginOrRegisterDialogNeedsIt()
+  
+  // old code
+  //if (login != NULL) {
+  //  login->resetButtons();
+  //}
 }
 
 
@@ -796,9 +806,12 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
     trayIcon->showMessage(QString("Error #%1").arg(errorCode),  errorString);
   }
   
-  if (login != NULL) {
-    login->resetButtons();
-  }
+  //TODO emit errorOrSomethingIfTheLoginOrRegisterDialogNeedsIt()
+  
+  // old code
+  //if (login != NULL) {
+  //  login->resetButtons();
+  //}
 }
 
 /****************************************************************************
@@ -841,24 +854,80 @@ void MXitC::loggingIn(){
 **
 ** Author: Richard Baxter
 **
+** tells the gui that it's state should be logging in
+**
+****************************************************************************/
+
+void MXitC::registering(){
+  /*FIXME, do I log off here if registering?*/
+  setStatus(REGISTERING);
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::incomingEnvironmentVariablesPing() {
+
+  mxit->initialize();
+}
+
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
 ** Opens the login dialog
 **
 ****************************************************************************/
 
 void MXitC::openLoginDialog(){
   
+  Dialog::Login login(this, mxit, settings);
   
-  login = new Dialog::Login(this, mxit, settings);
-  connect(login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
-  login->exec();
-  disconnect(login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
-  delete login;
-  login = NULL;
+  connect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
+  connect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
+  connect(this, SIGNAL(stateChanged(State)), &login, SLOT(incomingStateChange(State)));
+  login.exec();
+  disconnect(this, SIGNAL(stateChanged(State)), &login, SLOT(incomingStateChange(State)));
+  disconnect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
+  disconnect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
 }
 
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+** Opens the register dialog
+**
+****************************************************************************/
+
+void MXitC::openRegisterDialog(){
+  
+  Dialog::Register registerDialog(this, mxit, settings);
+  
+  connect(&registerDialog, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
+  connect(&registerDialog, SIGNAL(registering()), this, SLOT(registering()));
+  connect(this, SIGNAL(stateChanged(State)), &registerDialog, SLOT(incomingStateChange(State)));
+  registerDialog.exec();
+  disconnect(this, SIGNAL(stateChanged(State)), &registerDialog, SLOT(incomingStateChange(State)));
+  disconnect(&registerDialog, SIGNAL(registering()), this, SLOT(registering()));
+  disconnect(&registerDialog, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
+}
   
   
 }
 
 }
+
+
+
+
+
+
+
 

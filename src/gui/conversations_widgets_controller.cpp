@@ -113,9 +113,9 @@ void ConversationsWidgetsController::addConversationsWidget(QWidget * newConvers
     /* conversation show requests */
     connect(
               conversationObject, 
-              SIGNAL(outgoingConversationRequest(const Conversation *)),
+              SIGNAL(outgoingConversationShowRequest(const Conversation *)),
               newConversationObject,
-              SLOT(incomingConversationRequest(const Conversation *))
+              SLOT(incomingConversationShowRequest(const Conversation *))
               );
               
     /* conversation close requests */

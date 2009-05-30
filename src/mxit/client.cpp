@@ -180,7 +180,7 @@ void Client::authenticate(const VariableHash &settings)
   emit environmentReady();
   emit outgoingVariables(variables);
 
-  connection->setGateway(variables["soc1"], "", 0, "", "");
+  connection->setGateway(variables["soc1"], "", 0, "", ""); /*FIXME, get these from settings!*/
   connection->open(getPacket("login"));
 }
 

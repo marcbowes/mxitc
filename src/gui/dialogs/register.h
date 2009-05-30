@@ -7,13 +7,13 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_DIALOG_LOGIN_H__
-#define __MXIT_GUI_DIALOG_LOGIN_H__
+#ifndef __MXIT_GUI_DIALOG_REGISTER_H__
+#define __MXIT_GUI_DIALOG_REGISTER_H__
 
 #include "mxit/client.h"
 #include "gui/mxit_dialog.h"
 
-#include "ui_login.h"
+#include "ui_register.h"
 
 #include "gui/common.h" /*FIXME*/
 
@@ -26,15 +26,14 @@ namespace GUI
 namespace Dialog
 {
 
-
-class Login : public MXitDialog, private Ui::Login
+class Register : public MXitDialog, private Ui::Register
 {
   Q_OBJECT
 
-  public: /* class specific */
+  public:         /* class specific */
   
-  Login(QWidget *parent = 0, MXit::Client *client = 0, QSettings* settings = 0);
-  ~Login();
+  Register(QWidget *parent = 0, MXit::Client *client = 0, QSettings* settings = 0);
+  ~Register();
   
   public: /* methods */
   
@@ -42,23 +41,24 @@ class Login : public MXitDialog, private Ui::Login
   
   signals:
   
-  void loggingIn();
+  void registering();
   void pingEnvironmentVariables();
   
   public slots:
+  
   void exec();
   
   void incomingStateChange(State newState);
-  
-  void environmentVariablesReady();
 
   private slots:
   
-  void checkIfLoginClickable(const QString &text);
-    
+  void environmentVariablesReady();
+  
+  void checkIfRegisterClickable(const QString &text);
+  
   void error(const QString &text);
   
-  void login();
+  void signUp();
   
 };
 

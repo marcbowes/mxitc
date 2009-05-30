@@ -4,7 +4,7 @@
 **
 ****************************************************************************/
 
-#include "login.h"
+#include "register.h"
 
 namespace MXit
 {
@@ -26,38 +26,36 @@ namespace Dialog
 ** - client: owned by main.cpp
 **
 ****************************************************************************/
-Login::Login(
+Register::Register(
               QWidget *parent, 
               MXit::Client *client, 
               QSettings* settings) : MXitDialog (parent, client, settings)
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   
+  /* add in an image to display the login CAPTCHA */
+  //mxit->initialize(); /* NOTE moved to mxitc.cpp*/
     
   /* enable/disable 'Login' based on the validity of the user inputs */
   connect(cellphone, SIGNAL(textChanged(const QString &)), 
-          this, SLOT(checkIfLoginClickable(const QString &)));
+          this, SLOT(checkIfRegisterClickable(const QString &)));
   connect(password, SIGNAL(textChanged(const QString &)), 
-          this, SLOT(checkIfLoginClickable(const QString &)));
+          this, SLOT(checkIfRegisterClickable(const QString &)));
   connect(captchaLineEdit, SIGNAL(textChanged(const QString &)), 
-          this, SLOT(checkIfLoginClickable(const QString &)));
+          this, SLOT(checkIfRegisterClickable(const QString &)));
   
   /* when 'Login' is clicked, or the user presses return */
-  connect(cellphone, SIGNAL(returnPressed()), this, SLOT(login()));
-  connect(password, SIGNAL(returnPressed()), this, SLOT(login()));
-  connect(captchaLineEdit, SIGNAL(returnPressed()), this, SLOT(login()));
-  
-  connect(loginButton, SIGNAL(released()), this, SLOT(login()));
-  
+  connect(cellphone, SIGNAL(returnPressed()), this, SLOT(signUp()));
+  connect(password, SIGNAL(returnPressed()), this, SLOT(signUp()));
+  connect(captchaLineEdit, SIGNAL(returnPressed()), this, SLOT(signUp()));
+  connect(registerButton, SIGNAL(released()), this, SLOT( signUp() ));
   connect(cancelButton, SIGNAL(released()), this, SLOT(reject ()));
   
   /* when a CAPTCHA is received from the MXit gateway, display it */
   connect(mxit, SIGNAL(environmentReady()), this, SLOT(environmentVariablesReady()));
   
-  if(settings->contains ("cellphone"))
-    cellphone->setText(settings->value("cellphone").toString());
-  
 }
+
 
 /****************************************************************************
 **
@@ -66,12 +64,10 @@ Login::Login(
 ** Dialog deconstructor
 **
 ****************************************************************************/
-Login::~Login()
+Register::~Register()
 {
   disconnect();
 }
-
-
 
 /****************************************************************************
 **
@@ -79,7 +75,7 @@ Login::~Login()
 **
 ****************************************************************************/
 
-void Login::exec() {
+void Register::exec() {
 
   emit pingEnvironmentVariables();
   
@@ -94,11 +90,31 @@ void Login::exec() {
 **
 ****************************************************************************/
 
-void Login::checkIfLoginClickable(const QString &text) {
+void Register::checkIfRegisterClickable(const QString &text) {
   /*TODO, more accurate checks*/
-  loginButton->setDisabled(cellphone->text().isEmpty());
+  registerButton->setDisabled(cellphone->text().isEmpty());
 }
 
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Register::incomingStateChange(State newState) {
+  if (newState == LOGGED_IN) {
+    qDebug() << "Register::incomingStateChange(LOGGED_IN)";
+  }
+  else if (newState == LOGGING_IN) {
+  }
+  else if (newState == REGISTERING) {
+  }
+  else if (newState == LOGGED_OUT) {
+    qDebug() << "Register::incomingStateChange(LOGGED_OUT)";
+  }
+
+}
 
 /****************************************************************************
 **
@@ -107,8 +123,8 @@ void Login::checkIfLoginClickable(const QString &text) {
 ** this SLOT is triggered when the client receives the environment variables
 **
 ****************************************************************************/
-
-void Login::environmentVariablesReady()
+/*TODO gray out everything but cancle button until environment variables have been received*/
+void Register::environmentVariablesReady()
 {
   /* captcha */
   QByteArray captcha = QByteArray::fromBase64(mxit->variableValue("captcha"));
@@ -118,24 +134,6 @@ void Login::environmentVariablesReady()
   
   captchaLineEdit->setEnabled(true);
   captchaLineEdit->setText("");
-  
-  /* countries */
-  QList<QByteArray> countriesList = mxit->variableValue("countries").split(',');
-  
-  Q_FOREACH(QByteArray s, countriesList) {
-    QList<QByteArray> split = s.split('|');
-    countriesComboBox->addItem( split.back(), split.front());
-  }
-  countriesComboBox->setCurrentIndex ( countriesComboBox->findData (QString(mxit->variableValue("defaultCountryCode"))) );
-  
-  /* languages */
-  QList<QByteArray> languagesList = mxit->variableValue("languages").split(',');
-  
-  Q_FOREACH(QByteArray s, languagesList) {
-    QList<QByteArray> split = s.split('|');
-    languageComboBox->addItem( split.back(), split.front());
-  }
-  languageComboBox->setCurrentIndex ( languageComboBox->findData ("en") );
 }
 
 
@@ -146,55 +144,34 @@ void Login::environmentVariablesReady()
 ** this SLOT is triggered when the client reports an error
 **
 ****************************************************************************/
-void Login::error(const QString &text)
+void Register::error(const QString &text)
 {
   QMessageBox error; error.setText(text);
   error.exec();
 }
+
 /****************************************************************************
 **
 ** Author: Marc Bowes
 **
-** this SLOT is triggered by pressing 'Login' or typing return
+** this SLOT is triggered by pressing 'Register' or typing return
 **
 ****************************************************************************/
-void Login::login()
+void Register::signUp()
 {
   if (!captchaLineEdit->text().isEmpty()) { /*FIXME more stringent test*/
-    loginButton->setDisabled(true);
-    loginButton->setText("Logging in..");
+    registerButton->setDisabled(true);
+    registerButton->setText("Registering..");
     
     VariableHash variables;
-    variables["locale"] = languageComboBox->itemData(languageComboBox->currentIndex ()).toByteArray(); /*language code - locale*/
-    variables["cc"] = countriesComboBox->itemData(countriesComboBox->currentIndex ()).toByteArray().replace('-', '_'); /*country code*/
+    /*FIXME what must go in variables !!*/
+    mxit->signup(cellphone->text().toLatin1(), password->text().toLatin1(),captchaLineEdit->text().toLatin1(), variables);
+
+    emit registering();
     
-    mxit->login(cellphone->text().toLatin1(), password->text().toLatin1(),captchaLineEdit->text().toLatin1(), variables);
-    
-    emit loggingIn();
-    
-    settings->setValue("locale", variables["locale"]);
-    settings->setValue("cellphone", cellphone->text());
-    settings->sync();
   }
 }
 
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
-****************************************************************************/
-
-void Login::incomingStateChange(State newState) {
-  if (newState == LOGGED_IN) {
-    close(); 
-  }
-  else if (newState == LOGGING_IN) {
-  }
-  else if (newState == LOGGED_OUT) {
-    resetButtons();
-  }
-
-}
 
 /****************************************************************************
 **
@@ -203,13 +180,12 @@ void Login::incomingStateChange(State newState) {
 ** this resets the buttons for relogin
 **
 ****************************************************************************/
-void Login::resetButtons()
+void Register::resetButtons()
 {
-  loginButton->setDisabled(false);
-  loginButton->setText("Login");
-  
-  emit pingEnvironmentVariables();
+  registerButton->setDisabled(false);
+  registerButton->setText("Register");
 }
+
 
 
 } /* end of Dialog namespace */

@@ -36,6 +36,7 @@
     <addaction name="actionLogon_to_MXIT"/>
     <addaction name="actionLogoff"/>
     <addaction name="separator"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -77,6 +78,7 @@
    </attribute>
    <addaction name="actionAuto_Logon"/>
    <addaction name="actionLogon_to_MXIT"/>
+   <addaction name="actionRegister"/>
    <addaction name="actionLogoff"/>
   </widget>
   <action name="actionLogon_to_MXIT">
@@ -161,6 +163,11 @@
   <action name="actionAuto_Logon">
    <property name="text">
     <string>Auto Logon</string>
+   </property>
+  </action>
+  <action name="actionRegister">
+   <property name="text">
+    <string>Register</string>
    </property>
   </action>
  </widget>

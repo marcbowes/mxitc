@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Login</class>
- <widget class="QDialog" name="Login">
+ <class>Register</class>
+ <widget class="QDialog" name="Register">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>310</width>
-    <height>438</height>
+    <width>272</width>
+    <height>321</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Login</string>
+   <string>Register</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -66,26 +66,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Language</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QComboBox" name="languageComboBox"/>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Country</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QComboBox" name="countriesComboBox"/>
-   </item>
-   <item>
     <widget class="QWidget" name="widget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
@@ -102,12 +82,12 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="loginButton">
+       <widget class="QPushButton" name="registerButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Login</string>
+         <string>Register</string>
         </property>
        </widget>
       </item>

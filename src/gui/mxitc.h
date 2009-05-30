@@ -27,6 +27,8 @@
 #include "common/types.h"
 #include "common/actions.h"
 
+#include "common.h" /*FIXME*/
+
 #include "mxit/client.h"
 #include "mxit/contact.h"
 #include "mxit/address_book.h"
@@ -39,6 +41,7 @@
 #include "gui/dock_widgets/add_contact.h"
 
 #include "gui/dialogs/login.h"
+#include "gui/dialogs/register.h"
 #include "gui/theme.h"
 #include "gui/conversations_widgets_controller.h"
 #include "gui/conversations_tab_widget.h"
@@ -63,7 +66,11 @@ class MXitC : public QMainWindow, private Ui::MXitC
   MXitC(QApplication *app, MXit::Client *client = 0);
   ~MXitC();
   
-  enum State  {LOGGED_IN, LOGGED_OUT, LOGGING_IN};
+  
+  signals:
+  
+  void stateChanged(State newState);
+  
   
   protected:
 
@@ -90,7 +97,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   public slots:
   
-  void sendMessageFromChatInput();
   void incomingConnectionError(const QString & errorString);
   void incomingError(int errorCode, const QString & errorString);
 
@@ -105,15 +111,13 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void dealWithMultimedia();
   void logConversations(const QDir &log);
-  void openLoginDialog();
-  void loggingIn();
+  
   void environmentVariablesReady();
   
   void incomingAction(Action action);
   void incomingConnectionState(Network::Connection::State networkState);
   
-  //void chatRequestedViaContact ( QListWidgetItem * item);
-  //void chatRequestedViaContact ( const QString& nickname );
+  void loadLayout();
   
   void saveLayout(bool b);
   void saveLayout(Qt::DockWidgetArea area = Qt::NoDockWidgetArea); 
@@ -123,10 +127,15 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void themeChanged();
   
-  //void refreshChatBox(const Conversation * conversation = NULL);
   void presenceToggled(const  Contact*);
   
+  void incomingEnvironmentVariablesPing();
   
+  void openLoginDialog();
+  void openRegisterDialog();
+  
+  void loggingIn();
+  void registering();
   
   private:        /* variables */
   
@@ -146,11 +155,12 @@ class MXitC : public QMainWindow, private Ui::MXitC
   State currentState;
   Theme theme;
  
-  Dialog::Login * login;
   QLabel * statusLabel;
   
   StringVec requiredToAuth;
   
+  
+  bool environmentVariablesAreReady;
   
   
   ConversationsWidgetsController * conversationsWidgetsController;
