@@ -36,8 +36,13 @@ QString Chat::spokenToShorthand(const QString &spoken)
     /* ordered alphabetically by spoken */
     dictionary["leftbracket"]   = '(';
     dictionary["rightbracket"]  = ')';
+    dictionary["B"]             = 'B';
     dictionary["colon"]         = ':';
-    dictionary["dee"]           = 'D';
+    dictionary["D"]             = 'D';
+    dictionary["O"]             = 'O';
+    dictionary["P"]             = 'P';
+    dictionary["semicolon"]     = ';';
+    dictionary["star"]          = '*';
     
     dictionaryLoaded = true;
   }
