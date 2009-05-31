@@ -521,8 +521,6 @@ void MXitC::setUpStatusBar() {
 ****************************************************************************/
 
 void MXitC::presenceChanged(int index) {
-  qDebug() << "presenceChanged(" << index;
-  qDebug() << "data(" << presenceComboBox->itemData ( index ).toInt();
   
   if(currentState == LOGGED_IN)
     mxit->setShownPresenceAndStatus(MXit::Protocol::Enumerables::Contact::Presence());

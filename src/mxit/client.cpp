@@ -989,7 +989,6 @@ void Client::setupReceived()
 {
   state = IDLE;
   int error = variables["err"].toInt();
-  qDebug() << "in setupReceived -- " << error;
 
   if (error != 0) {                         /* No error */
     /* setup */
@@ -1073,7 +1072,6 @@ void Client::setupReceived()
   if (!registerAfterChallenge)
     connection->open(getPacket("login"));
   else {
-    qDebug() << "registering?";
     connection->open(getPacket("register"));
     registerAfterChallenge = false;
   }
