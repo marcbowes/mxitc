@@ -75,6 +75,7 @@ class Client : public QObject
   void linkClicked(const QUrl &url);
   void login(const QString &cellphone, const QString &password, const QString &captcha,
     const VariableHash &settings);
+  void logout();
   void pollDifference();
   void removeContact(const QString &contactAddress);
   void sendFile(QFile &file, const ContactList &contacts);

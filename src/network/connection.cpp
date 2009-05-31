@@ -162,6 +162,10 @@ bool Connection::isHTTP()
 ****************************************************************************/
 void Connection::open(const Packet *login)
 {
+  /* close any active connections */
+  if (state == CONNECTED)
+    close();
+  
   /* determine type of connection to open */
   switch (gateway.type) {
     case Gateway::HTTP:

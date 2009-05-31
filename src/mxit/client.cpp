@@ -365,6 +365,20 @@ void Client::login(const QString &cellphone, const QString &password, const QStr
 **
 ** Author: Marc Bowes
 **
+** sends a logout packet (connection closing happens after a response)
+**
+****************************************************************************/
+void Client::logout()
+{
+  sendPacket("logout");
+}
+
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Sends a pollDifference packet, only intended for use with HTTP.
 **
 ****************************************************************************/
