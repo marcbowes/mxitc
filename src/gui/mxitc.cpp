@@ -521,10 +521,8 @@ void MXitC::setUpStatusBar() {
 ****************************************************************************/
 
 void MXitC::presenceChanged(int index) {
-  
   if(currentState == LOGGED_IN)
     mxit->setShownPresenceAndStatus(MXit::Protocol::Enumerables::Contact::Presence(presenceComboBox->itemData ( index ).toInt()));
-
 }
 
 
@@ -535,10 +533,8 @@ void MXitC::presenceChanged(int index) {
 ****************************************************************************/
 
 void MXitC::moodChanged(int index) {
-  qDebug() << "moodChanged(" << index;
   if(currentState == LOGGED_IN)
     mxit->setMood(MXit::Protocol::Enumerables::Contact::Mood(moodComboBox->itemData ( index).toInt()));
-
 }
 
 /****************************************************************************

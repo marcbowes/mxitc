@@ -165,7 +165,7 @@ void Register::signUp()
     
     VariableHash variables;
     variables["name"] = profileSettings->nicknameLineEdit->text().toLatin1();
-    variables["dateofbirth"] = profileSettings->dateEdit->date ().toString(Qt::ISODate).toLatin1();
+    variables["dateOfBirth"] = profileSettings->dateEdit->date ().toString(Qt::ISODate).toLatin1();
     variables["gender"] = QString::number(profileSettings->genderComboBox->currentIndex()).toLatin1();
     variables["locale"] = loginWidget->languageComboBox->itemData(loginWidget->languageComboBox->currentIndex ()).toByteArray(); /*language code - locale*/
     variables["cc"] = loginWidget->countriesComboBox->itemData(loginWidget->countriesComboBox->currentIndex ()).toByteArray().replace('-', '_'); /*country code*/
