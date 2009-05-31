@@ -118,19 +118,20 @@ void Handshaker::initialize()
 ** variables starting with an underscore were set by a previous response
 **
 ****************************************************************************/
-void Handshaker::challenge(const QString &captcha, const VariableHash &settings)
+void Handshaker::challenge(const QString &captcha, const VariableHash &settings, bool signup)
 {
   QUrl url(settings["url"]);
   http->setHost(url.host(), 80);
   
   QString query =
-    QString("%1?type=getpid&sessionid=%2&ver=5.8.2&login=%3&cat=E&chalresp=%4&cc=%5&loc=%6&brand=PC&model=mxitc&path=1")
+    QString("%1?type=getpid&sessionid=%2&ver=5.8.2&login=%3&cat=E&chalresp=%4&cc=%5&loc=%6&brand=PC&model=mxitc&path=%7")
     .arg(url.path())
     .arg(QString(settings["sessionid"]))
     .arg(QString(settings["_cellphone"]))
     .arg(captcha)
     .arg(QString(settings["cc"]))
     .arg(QString(settings["locale"]))
+    .arg(signup ? "0" : "1")
   ;
 
   state = CHALLENGING;
