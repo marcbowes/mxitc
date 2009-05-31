@@ -14,6 +14,9 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
@@ -76,7 +79,7 @@
     <widget class="QComboBox" name="languageComboBox"/>
    </item>
    <item>
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel" name="countryLabel">
      <property name="text">
       <string>Country</string>
      </property>

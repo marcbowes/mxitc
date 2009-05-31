@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
-    <height>318</height>
+    <width>460</width>
+    <height>212</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,8 +30,8 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QWidget" name="loginHoldWidget" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout_3"/>
+          <widget class="QWidget" name="profileSettingWidget" native="true">
+           <layout class="QVBoxLayout" name="verticalLayout"/>
           </widget>
          </item>
          <item>
@@ -60,8 +60,8 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QWidget" name="profileSettingWidget" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout"/>
+          <widget class="QWidget" name="loginHoldWidget" native="true">
+           <layout class="QVBoxLayout" name="verticalLayout_3"/>
           </widget>
          </item>
          <item>

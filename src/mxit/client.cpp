@@ -713,6 +713,7 @@ void Client::incomingPacket(QByteArray packet)
   /* post packet-level handling */
   switch (packetHeader["command"].toUInt()) {
     case LOGIN:
+    case REGISTER:
       emit outgoingAction(LOGGED_IN);
 
       /* variable scrubbing */

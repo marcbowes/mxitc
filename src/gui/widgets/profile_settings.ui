@@ -77,7 +77,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="checkBox_2">
+    <widget class="QCheckBox" name="hiddenLoginNameCheckBox">
      <property name="text">
       <string>Hidden log in name</string>
      </property>

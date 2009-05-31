@@ -33,14 +33,23 @@ Register::Register(
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   
-  profileSettings = new Widget::ProfileSettings(true, this);
+  /*TODO ensure user is logged out before registering!*/
+  
+  profileSettings = new Widget::ProfileSettings(this);
   profileSettingWidget->layout()->addWidget(profileSettings);
+  
+  profileSettings->passwordLabel->hide();
+  profileSettings->passwordLineEdit->hide();
+  profileSettings->hiddenLoginNameCheckBox->hide();
   
   loginWidget = new Widget::LoginSettings(this);
   loginHoldWidget->layout()->addWidget(loginWidget);
+  
+  loginWidget->countriesComboBox->hide();
+  loginWidget->countryLabel->hide();
     
   /* enable/disable 'Reg5ster' based on the validity of the user inputs */
-  connect(loginWidget, SIGNAL(textChanged(const QString &)), 
+  connect(loginWidget, SIGNAL(lineEditChanged(const QString &)), 
           this, SLOT(checkIfRegisterClickable(const QString &)));
   
   /* when 'Login' is clicked, or the user presses return */
@@ -91,7 +100,7 @@ void Register::exec() {
 
 void Register::checkIfRegisterClickable(const QString &text) {
   /*TODO, more accurate checks*/
-  registerButton->setDisabled(loginWidget->isInputValid() /*&& profileSetting->isValid TODO TODO*/);
+  registerButton->setEnabled(loginWidget->isInputValid() /*&& profileSetting->isValid TODO TODO*/);
 }
 
 
@@ -141,6 +150,7 @@ void Register::incomingError(const QString &text)
 {
   QMessageBox error; error.setText(text);
   error.exec();
+  resetButtons();
 }
 
 /****************************************************************************
@@ -153,14 +163,15 @@ void Register::incomingError(const QString &text)
 void Register::signUp()
 {
   if (loginWidget->isInputValid() /*&& profileSetting->isValid TODO TODO*/) {
+    qDebug() << "wtff";
     registerButton->setDisabled(true);
     registerButton->setText("Registering..");
     
     VariableHash variables;
-    variables["loginname"] = profileSettings->nicknameLineEdit->text().toLatin1();
+    variables["name"] = profileSettings->nicknameLineEdit->text().toLatin1();
     variables["dateofbirth"] = profileSettings->dateEdit->date ().toString(Qt::ISODate).toLatin1();
     variables["gender"] = QString::number(profileSettings->genderComboBox->currentIndex()).toLatin1();
-    
+    variables["locale"] = loginWidget->languageComboBox->itemData(loginWidget->languageComboBox->currentIndex ()).toByteArray(); /*language code - locale*/
     
     mxit->signup(loginWidget->cellphone->text().toLatin1(), loginWidget->password->text().toLatin1(),loginWidget->captchaLineEdit->text().toLatin1(), variables);
 

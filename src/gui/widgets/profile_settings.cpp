@@ -10,13 +10,8 @@ namespace GUI
 namespace Widget
 {
 
-ProfileSettings::ProfileSettings(bool deactivatePassword, QWidget* parent) {
+ProfileSettings::ProfileSettings(QWidget* parent) {
   setupUi(this);
-  
-  if (deactivatePassword) {
-    passwordLabel->hide();
-    passwordLineEdit->hide();
-  }
   
 }
 

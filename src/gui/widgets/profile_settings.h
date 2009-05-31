@@ -27,7 +27,7 @@ class ProfileSettings : public QWidget, public Ui::ProfileSettingsWidget
   
   public: /*class specific */
 
-  ProfileSettings(bool deactivatePassword = false, QWidget* parent = 0);
+  ProfileSettings(QWidget* parent = 0);
   ~ProfileSettings();
   
   signals:
