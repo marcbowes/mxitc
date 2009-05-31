@@ -78,6 +78,7 @@ Options::Options(QWidget* parent, Theme &theme, MXit::Client& mxit, QSettings& s
   /*load settings*/
   
   autoLoginCheckBox->setChecked(settings.value("autoLogin").toBool());
+  showLoginDialogCheckBox->setChecked(settings.value("showLoginDialogOnNonAutoStart").toBool());
   hideOfflineCheckBox->setChecked(settings.value("hideOfflineContacts").toBool());
   
   setBaseConversationsDirectory(settings.value("baseConversationsDirectory").toString());
@@ -124,6 +125,7 @@ void Options::saveSettings() {
 
   if (!loadingSettings) {
     settings.setValue("autoLogin", isAutoLogin());
+    settings.setValue("showLoginDialogOnNonAutoStart", showLoginDialogOnNonAutoStart());
     settings.setValue("hideOfflineContacts", hideOfflineContacts());
     
     saveGatewaySettings();
@@ -150,6 +152,16 @@ void Options::saveSettings() {
 bool Options::isAutoLogin() {
   return autoLoginCheckBox->isChecked();
 }
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+bool Options::showLoginDialogOnNonAutoStart() {
+  return showLoginDialogCheckBox->isChecked();
+}
+
 
 /****************************************************************************
 **

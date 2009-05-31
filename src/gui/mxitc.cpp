@@ -124,11 +124,10 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   /* MenuBar Actions
   /*------------------------------------------------------------------------------------------*/
           
-  /*TODO, this needs to be implemented in the client*/
-  //connect(actionLogoff,  SIGNAL(triggered()), mxit, SLOT(logoff()));
+  connect(actionLogoff,  SIGNAL(triggered()), mxit, SLOT(logout()));
   connect(actionAuto_Logon,  SIGNAL(triggered()), this, SLOT(autoLogin()));
   
-  connect(actionRegister,  SIGNAL(triggered()), this, SLOT(openRegisterDialog())); /*TODO check the whole shpeel with the GUI state == REGISTERING and whatnot*/
+  connect(actionRegister,  SIGNAL(triggered()), this, SLOT(openRegisterDialog()));
   
   connect(actionLogon_to_MXIT, SIGNAL(triggered()), this, SLOT(openLoginDialog()));
   
@@ -146,9 +145,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
             this, SLOT(incomingAction(Action))  );
             
   connect(  mxit, SIGNAL(outgoingConnectionError(const QString &)), 
-            this, SLOT(incomingConnectionError(const QString &))  );
-            
-  connect(  mxit, SIGNAL(errorEncountered(const QString &)), 
             this, SLOT(incomingConnectionError(const QString &))  );
   
 
@@ -222,15 +218,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   requiredToAuth.append("locale");
   
   /* After the MXitDockWidget has been added, it attributes can be restored*/
-  restoreState(settings->value("gui layout").toByteArray());
-  /*------------------------------------------------------------------------------------------*/
-  /*Settings restore */
-  /*------------------------------------------------------------------------------------------*/
-  
-  if(settings->contains("mainWindowSize"))
-    resize(settings->value("mainWindowSize").toSize());
-
-  /* After the MXitDockWidget has been added, it attributes can be restored*/
   /* this function is a bit inefficient but what the hell, this happens only once pre application run*/
   //restoreState(settings->value("gui layout").toByteArray());
   
@@ -255,9 +242,19 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
     }
   }
   else 
-    autoLogin (optionsWidget->isAutoLogin());
+    autoLogin (optionsWidget->isAutoLogin(), optionsWidget->showLoginDialogOnNonAutoStart());
     
     
+  
+  /* After the MXitDockWidget has been added, it attributes can be restored*/
+  restoreState(settings->value("gui layout").toByteArray());
+  /*------------------------------------------------------------------------------------------*/
+  /*Settings restore */
+  /*------------------------------------------------------------------------------------------*/
+  
+  if(settings->contains("mainWindowSize"))
+    resize(settings->value("mainWindowSize").toSize());
+
   loadLayout();
 }
 
@@ -299,7 +296,7 @@ MXitC::~MXitC()
 ** Author: Richard Baxter
 **
 ****************************************************************************/
-void MXitC::autoLogin (bool autologin) {
+void MXitC::autoLogin (bool autologin, bool showDialog) {
 
   /* creating the variable hash*/
   VariableHash variableHash;
@@ -315,18 +312,17 @@ void MXitC::autoLogin (bool autologin) {
     /*else we add it to the hash needed to login*/
     variableHash[var] = settings->value(var).toByteArray();
   }
-  
-    /*TODO sort out autologin, what if the user has deselected it in options, how do the hash variables get to the client, does the user still want an autologin but just promted or does the user want to retype in their password and captch each time?*/
     
   /*if the settings was able to load all the necessary variables, and the autologin is set to true, the autologin can commence*/
   if (autologin && hasAllVariables) {
     loggingIn();
     mxit->authenticate(variableHash);
   }
-  else {
-    //mxit->initialize();
+  else if (showDialog){
     openLoginDialog(); /* will initialize automatically*/
   }
+  //else do nothing and just carry on
+ 
 }
 
 /****************************************************************************
@@ -340,7 +336,6 @@ void MXitC::autoLogin (bool autologin) {
 void MXitC::environmentVariablesReady() {
 
   environmentVariablesAreReady = true;
-  /*TODO make a log*///qDebug() << "environmentVariablesReady";
 }
 
 
@@ -367,8 +362,9 @@ void MXitC::appendDockWidget(MXitDockWidget * dockWidget, Qt::DockWidgetArea are
   
   /* setting up features and adding it to this class (QMainWindow)*/
   dockWidget->setFeatures (QDockWidget::AllDockWidgetFeatures);
-  addDockWidget(Qt::RightDockWidgetArea, dockWidget);
+  addDockWidget(area, dockWidget);
   dockWidget->setVisible ( false );
+  dockWidget->setFloating( true );
     
 }
 
@@ -387,10 +383,12 @@ void MXitC::loadLayout() {
   Q_FOREACH (QDockWidget * dockWidget, dockWidgets) {
   
     /* loading visibility, size and floating attributes*/
-    dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
-    dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
-    
-    dockWidget->resize(settings->value(QString("size?")+dockWidget->objectName ()).toSize());
+    if (settings->contains(QString("visible?")+dockWidget->objectName ()))
+      dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
+    if (settings->contains(QString("floating?")+dockWidget->objectName ()))
+      dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
+    if (settings->contains(QString("size?")+dockWidget->objectName ()))
+      dockWidget->resize(settings->value(QString("size?")+dockWidget->objectName ()).toSize());
   }
 }
 
@@ -552,7 +550,7 @@ void MXitC::incomingConnectionState(Network::Connection::State networkState) {
     /* TODO */
   }
   else if (networkState == Network::Connection::CONNECTED) {
-    /* FIXME reconnect? */
+    /* TODO */
   }
   else if (networkState == Network::Connection::DISCONNECTING) {
     /* TODO */
@@ -582,7 +580,6 @@ void MXitC::incomingAction(Action action)
         ;/* do nothing TODO */
       else /* if (currentState != LOGGED_IN) */
       {
-        /* TODO get the PID and encrypted password*/
         
         /* vector of variables that'll be saved in settings */
         StringVec variables;
@@ -623,6 +620,7 @@ void MXitC::incomingAction(Action action)
         
         presenceComboBox->setCurrentIndex(1);
         moodComboBox->setCurrentIndex(0);
+        profileWidget->setContentsEnabled(true);
         
         setStatus(LOGGED_IN);
       }
@@ -637,6 +635,7 @@ void MXitC::incomingAction(Action action)
         ;/* do nothing TODO */
       else /* if (currentState != LOGGED_OUT) */
       {
+        profileWidget->setContentsEnabled(false);
         setStatus(LOGGED_OUT);
       }
       break;
@@ -754,7 +753,7 @@ void MXitC::themeChanged(){
     if (!trayIcon->isVisible()) /* skip warning about no icon before a theme is set */
       trayIcon->show();
   }
-  /*TODO maybe make refresh a MXitDockWidget function and loop over all widgets. i.e. generalise? - rax*/
+  /*TODO maybe make refresh a MXitDockWidget function for themeChanged and loop over all widgets. i.e. generalise? - rax*/
   
   addContactWidget->refresh(); /* since it contains icons*/
   
@@ -849,12 +848,7 @@ void MXitC::incomingConnectionError(const QString & errorString)
     trayIcon->showMessage("Network Error",  errorString);
   }
   
-  //TODO emit errorOrSomethingIfTheLoginOrRegisterDialogNeedsIt()
-  
-  // old code
-  //if (login != NULL) {
-  //  login->resetButtons();
-  //}
+  emit outgoingLoginRegisterError(errorString);
 }
 
 
@@ -877,11 +871,6 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
   }
   
   emit outgoingLoginRegisterError(errorString);
-  
-  // old code
-  //if (login != NULL) {
-  //  login->resetButtons();
-  //}
 }
 
 /****************************************************************************
@@ -929,7 +918,6 @@ void MXitC::loggingIn(){
 ****************************************************************************/
 
 void MXitC::registering(){
-  /*FIXME, do I log off here if registering?*/
   setStatus(REGISTERING);
 }
 

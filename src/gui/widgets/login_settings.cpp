@@ -55,7 +55,10 @@ LoginSettings::~LoginSettings() {
 ****************************************************************************/
 
 bool LoginSettings::isInputValid() {
-  return !cellphone->text().isEmpty(); /*TODO more stringent*/
+
+  bool cellphoneValid = !cellphone->text().isEmpty();
+
+  return cellphoneValid; /*TODO more stringent*/
 }
 
 

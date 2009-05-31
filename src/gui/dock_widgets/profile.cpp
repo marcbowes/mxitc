@@ -33,6 +33,8 @@ Profile::Profile(QWidget* parent, Theme &theme, MXit::Client& mxit) : MXitDockWi
   connect(applyPushButton, SIGNAL(released()), this, SLOT(sendProfileChange()));
   
   checkEnabledOfApplyButton();
+  
+  setContentsEnabled(false);
 }
 
 
@@ -45,6 +47,12 @@ Profile::Profile(QWidget* parent, Theme &theme, MXit::Client& mxit) : MXitDockWi
 ****************************************************************************/
 Profile::~Profile()
 {
+
+}
+
+
+void Profile::setContentsEnabled(bool enabled) {
+  dockWidgetContents->setEnabled(enabled);
 
 }
 

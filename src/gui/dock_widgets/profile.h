@@ -35,6 +35,10 @@ class Profile : public MXitDockWidget, private Ui::ProfileDockWidget
   Profile(QWidget* parent, Theme &theme, MXit::Client& mxit);
   ~Profile();
   
+  public: /* methods */
+  
+  void setContentsEnabled(bool enabled);
+  
   private slots:
   void sendProfileChange ();
   void checkEnabledOfApplyButton();

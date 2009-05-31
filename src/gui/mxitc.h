@@ -111,7 +111,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
 
   private slots:
   
-  void autoLogin (bool autologin = true);
+  void autoLogin (bool autologin = true, bool showDialog = true);
   
   
   void dealWithMultimedia();

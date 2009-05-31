@@ -40,6 +40,7 @@ class Options : public MXitDockWidget, public Ui::OptionsDockWidget
   
   /*accessors TODO make a variableHash*/
   bool isAutoLogin();
+  bool showLoginDialogOnNonAutoStart();
   bool hideOfflineContacts();
   
   void addGateway(const QString& gateway);
