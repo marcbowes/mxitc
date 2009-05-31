@@ -521,7 +521,11 @@ void MXitC::setUpStatusBar() {
 ****************************************************************************/
 
 void MXitC::presenceChanged(int index) {
-  //mxit->setShownPresenceAndStatus(MXit::Protocol::Enumerables::Contact::Presence(presenceComboBox->itemData ( index).toInt()));
+  qDebug() << "presenceChanged(" << index;
+  qDebug() << "data(" << presenceComboBox->itemData ( index ).toInt();
+  
+  if(currentState == LOGGED_IN)
+    mxit->setShownPresenceAndStatus(MXit::Protocol::Enumerables::Contact::Presence());
 
 }
 
@@ -533,7 +537,9 @@ void MXitC::presenceChanged(int index) {
 ****************************************************************************/
 
 void MXitC::moodChanged(int index) {
-  //mxit->setMood(MXit::Protocol::Enumerables::Contact::Mood(moodComboBox->itemData ( index).toInt()));
+  qDebug() << "moodChanged(" << index;
+  if(currentState == LOGGED_IN)
+    mxit->setMood(MXit::Protocol::Enumerables::Contact::Mood(moodComboBox->itemData ( index).toInt()));
 
 }
 
@@ -620,6 +626,9 @@ void MXitC::incomingAction(Action action)
           settings->setValue(var, mxit->variableValue(var));
         }
         settings->sync();
+        
+        presenceComboBox->setCurrentIndex(1);
+        moodComboBox->setCurrentIndex(0);
         
         setStatus(LOGGED_IN);
       }
