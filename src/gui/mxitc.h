@@ -98,6 +98,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void connectWidgets();
  
+  void setUpStatusBar();
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
@@ -158,7 +159,10 @@ class MXitC : public QMainWindow, private Ui::MXitC
   State currentState;
   Theme theme;
  
+  /* status bar stuff TODO - put in own class*/
   QLabel * statusLabel;
+  QComboBox * presenceComboBox;
+  QComboBox * moodComboBox;
   
   StringVec requiredToAuth;
   

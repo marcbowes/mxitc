@@ -147,6 +147,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
             
   connect(  mxit, SIGNAL(outgoingConnectionError(const QString &)), 
             this, SLOT(incomingConnectionError(const QString &))  );
+            
+  connect(  mxit, SIGNAL(errorEncountered(const QString &)), 
+            this, SLOT(incomingConnectionError(const QString &))  );
   
 
   connect(  mxit, SIGNAL(outgoingConnectionState(Network::Connection::State)), 
@@ -168,8 +171,11 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   /*------------------------------------------------------------------------------------------*/
   /* Setting up status bar
   /*------------------------------------------------------------------------------------------*/
+  
   statusLabel = new QLabel("No status set!");
-  statusbar->addPermanentWidget(statusLabel);
+  presenceComboBox = new QComboBox();
+  moodComboBox = new QComboBox();
+  setUpStatusBar();
   setStatus(LOGGED_OUT);
   
   /*------------------------------------------------------------------------------------------*/
@@ -452,6 +458,27 @@ void MXitC::resizeEvent ( QResizeEvent * event ) {
 
 }
 
+
+void MXitC::setUpStatusBar() {
+  statusbar->addPermanentWidget(presenceComboBox);
+  statusbar->addPermanentWidget(moodComboBox);
+  statusbar->addPermanentWidget(statusLabel);
+  
+  presenceComboBox->clear();
+  moodComboBox->clear();
+  
+  #define ADD(x) presenceComboBox->addItem ( theme.contact.presence.pixmap(MXit::Protocol::Enumerables::Contact::Presence(x)), "x", MXit::Protocol::Enumerables::Contact::Presence(x));
+  
+  ADD(MXit::Protocol::Enumerables::Contact::Offline);
+  ADD(MXit::Protocol::Enumerables::Contact::Online);
+  ADD(MXit::Protocol::Enumerables::Contact::Away);
+  ADD(MXit::Protocol::Enumerables::Contact::Available);
+  ADD(MXit::Protocol::Enumerables::Contact::DoNotDisturb);
+  
+  #undef ADD
+  
+  /*TODO ensure themeing of hte comboBoxes are done on theme change*/
+}
 
 /****************************************************************************
    ____                    _             ___      __  _             
