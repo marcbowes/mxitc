@@ -88,7 +88,7 @@ void Register::buildPacket(MXit::Network::Packet *packet, VariableHash &variable
             << "utf8=false;ctyp=8129"         /* capabilities */
             << variables["dc"]
             << "524287"                       /* features */
-            << variables["dialingCode"]
+            << variables["defaultDialingCode"]
             << variables["locale"]
   ;
 }
