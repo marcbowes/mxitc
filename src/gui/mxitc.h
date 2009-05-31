@@ -39,6 +39,7 @@
 #include "gui/dock_widgets/conversations.h"
 #include "gui/dock_widgets/contacts.h"
 #include "gui/dock_widgets/add_contact.h"
+#include "gui/dock_widgets/profile.h"
 
 #include "gui/dialogs/login.h"
 #include "gui/dialogs/register.h"
@@ -178,6 +179,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   DockWidget::Log * logWidget;
   DockWidget::Options * optionsWidget;
   DockWidget::AddContact * addContactWidget;
+  DockWidget::Profile * profileWidget;
   
   QSystemTrayIcon *trayIcon;
   

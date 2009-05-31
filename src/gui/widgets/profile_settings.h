@@ -32,9 +32,12 @@ class ProfileSettings : public QWidget, public Ui::ProfileSettingsWidget
   
   signals:
   
+  void fieldChanged();
   
-  public slots:
+  private slots:
 
+  void emitFieldChanged(const QString&);
+  void emitFieldChanged(const QDate&);
 
 };
 

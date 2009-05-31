@@ -83,6 +83,9 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   addContactWidget = new DockWidget::AddContact (this, theme, *mxit);
   appendDockWidget(addContactWidget, Qt::LeftDockWidgetArea, actionAdd_Contact);
   
+  profileWidget = new DockWidget::Profile (this, theme, *mxit);
+  appendDockWidget(profileWidget, Qt::LeftDockWidgetArea, actionProfile_Settings);
+  
   
   
   conversationsWidgetsController = new ConversationsWidgetsController(theme, *mxit, *conversations, addressBook);
@@ -781,7 +784,9 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
 {
   logWidget->logMessage("GUI:: Error "+QString("(%1) %2").arg(errorCode).arg(errorString));
   
+  //qDebug() << "incomingError: " << errorString;
   if (trayIcon && trayIcon->isVisible()) {
+    //qDebug() << "sending to tray";
     trayIcon->showMessage(QString("Error #%1").arg(errorCode),  errorString);
   }
   
