@@ -24,9 +24,13 @@ FirstRunWizard::FirstRunWizard(DockWidget::Options &options): QWizard(), options
 
 FirstRunWizard::~FirstRunWizard() {
   options.reAdd();
-
 }
 
+
+
+bool FirstRunWizard::registerSelected() {
+  return notRegisterdButton->isChecked();
+}
 
 
 } /* end of GUI namespace */

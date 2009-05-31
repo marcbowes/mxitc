@@ -87,7 +87,6 @@ Options::Options(QWidget* parent, Theme &theme, MXit::Client& mxit, QSettings& s
   
   //qDebug() << themeComboBox->findText (settings.value("themeSubDirectory").toString());
   themeComboBox->setCurrentIndex (themeComboBox->findText (settings.value("themeSubDirectory").toString()));  
-  loadTheme(settings.value("themeSubDirectory").toString());
   
   
   //qDebug() << settings.value("autoLogin").toBool();
@@ -98,6 +97,7 @@ Options::Options(QWidget* parent, Theme &theme, MXit::Client& mxit, QSettings& s
   
   
   loadingSettings = false;
+  reloadCurrentTheme();
   
 }
 
@@ -416,12 +416,14 @@ void Options::refreshComboBox ()
 **
 ****************************************************************************/
 void Options::loadTheme(const QString &dir){
-  //qDebug() << "loadTheme " << dir;
-  QDir themeDir = getBaseThemeDirectory();
-  themeDir.cd(dir);
-  theme.load(themeDir);
-  
-  emit themeChanged();
+  if (!loadingSettings) {
+    //qDebug() << "loadTheme " << dir;
+    QDir themeDir = getBaseThemeDirectory();
+    themeDir.cd(dir);
+    theme.load(themeDir);
+    
+    emit themeChanged();
+  }
 }
 
 /****************************************************************************

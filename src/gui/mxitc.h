@@ -73,7 +73,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void stateChanged(State newState);
   
-  void outgoingLoginError(const QString&);
+  void outgoingLoginRegisterError(const QString&);
   
   void outgoingEnvironmentVariablesReady();
   

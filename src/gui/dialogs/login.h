@@ -12,6 +12,7 @@
 
 #include "mxit/client.h"
 #include "gui/mxit_dialog.h"
+#include "gui/widgets/login_settings.h"
 
 #include "ui_login.h"
 
@@ -59,6 +60,10 @@ class Login : public MXitDialog, private Ui::Login
   void incomingError(const QString &text);
   
   void login();
+  
+  private:
+  
+  Widget::LoginSettings* loginWidget;
   
 };
 

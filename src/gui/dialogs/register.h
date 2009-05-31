@@ -12,6 +12,8 @@
 
 #include "mxit/client.h"
 #include "gui/mxit_dialog.h"
+#include "gui/widgets/profile_settings.h"
+#include "gui/widgets/login_settings.h"
 
 #include "ui_register.h"
 
@@ -56,9 +58,15 @@ class Register : public MXitDialog, private Ui::Register
   
   void checkIfRegisterClickable(const QString &text);
   
-  void error(const QString &text);
+  void incomingError(const QString &text);
   
   void signUp();
+  
+  private:
+  
+  Widget::ProfileSettings* profileSettings;
+  
+  Widget::LoginSettings* loginWidget;
   
 };
 

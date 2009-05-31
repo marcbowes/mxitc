@@ -211,10 +211,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   /*Settings restore */
   /*------------------------------------------------------------------------------------------*/
   
-  /* Restoring theme information */
-  optionsWidget->setBaseThemeDirectory(settings->value("themeBaseDirectory").toString());
-  optionsWidget->setSelectedTheme(settings->value("selectedTheme").toString());
-  
   if(settings->contains("mainWindowSize"))
     resize(settings->value("mainWindowSize").toSize());
 
@@ -228,16 +224,25 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   
   /* connecting widgets */
   connectWidgets();
-  loadLayout();
   
   
   if (!settings->contains("wizardRun")) {
     FirstRunWizard frw(*optionsWidget);
     frw.exec();
     settings->setValue("wizardRun", true);
+    
+    if (frw.registerSelected()) {
+      openRegisterDialog ();
+    } 
+    else {
+      openLoginDialog ();
+    }
   }
-  
-  autoLogin (optionsWidget->isAutoLogin());
+  else 
+    autoLogin (optionsWidget->isAutoLogin());
+    
+    
+  loadLayout();
 }
 
 
@@ -318,7 +323,6 @@ void MXitC::autoLogin (bool autologin) {
 
 void MXitC::environmentVariablesReady() {
 
-  qDebug() << "environmentVariablesAreReady = true";
   environmentVariablesAreReady = true;
   /*TODO make a log*///qDebug() << "environmentVariablesReady";
 }
@@ -782,7 +786,7 @@ void MXitC::incomingError(int errorCode, const QString & errorString)
     trayIcon->showMessage(QString("Error #%1").arg(errorCode),  errorString);
   }
   
-  emit outgoingLoginError(errorString);
+  emit outgoingLoginRegisterError(errorString);
   
   // old code
   //if (login != NULL) {
@@ -846,12 +850,7 @@ void MXitC::registering(){
 ****************************************************************************/
 
 void MXitC::incomingEnvironmentVariablesPing() {
-  if (!environmentVariablesAreReady) {
-    mxit->initialize();
-    }
-  else {
-    emit outgoingEnvironmentVariablesReady();
-  }
+  mxit->initialize();
 }
 
 
@@ -871,13 +870,15 @@ void MXitC::openLoginDialog(){
   connect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
   connect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
   connect(this, SIGNAL(stateChanged(State)), &login, SLOT(incomingStateChange(State)));
-  connect(this, SIGNAL(outgoingLoginError(const QString&)), &login, SLOT(incomingError(const QString&)));
+  connect(this, SIGNAL(outgoingLoginRegisterError(const QString&)), &login, SLOT(incomingError(const QString&)));
   connect(this, SIGNAL(outgoingEnvironmentVariablesReady()), &login, SLOT(environmentVariablesReady()));
   connect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
+  
   login.exec();
+  
   disconnect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
   disconnect(this, SIGNAL(outgoingEnvironmentVariablesReady()), &login, SLOT(environmentVariablesReady()));
-  disconnect(this, SIGNAL(outgoingLoginError(const QString&)), &login, SLOT(incomingError(const QString&)));
+  disconnect(this, SIGNAL(outgoingLoginRegisterError(const QString&)), &login, SLOT(incomingError(const QString&)));
   disconnect(this, SIGNAL(stateChanged(State)), &login, SLOT(incomingStateChange(State)));
   disconnect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
   disconnect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
@@ -894,15 +895,24 @@ void MXitC::openLoginDialog(){
 
 void MXitC::openRegisterDialog(){
   
-  Dialog::Register registerDialog(this, mxit, settings);
+  Dialog::Register regis(this, mxit, settings);
   
-  connect(&registerDialog, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
-  connect(&registerDialog, SIGNAL(registering()), this, SLOT(registering()));
-  connect(this, SIGNAL(stateChanged(State)), &registerDialog, SLOT(incomingStateChange(State)));
-  registerDialog.exec();
-  disconnect(this, SIGNAL(stateChanged(State)), &registerDialog, SLOT(incomingStateChange(State)));
-  disconnect(&registerDialog, SIGNAL(registering()), this, SLOT(registering()));
-  disconnect(&registerDialog, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
+  
+  connect(&regis, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
+  connect(&regis, SIGNAL(registering()), this, SLOT(registering()));
+  connect(this, SIGNAL(stateChanged(State)), &regis, SLOT(incomingStateChange(State)));
+  connect(this, SIGNAL(outgoingLoginRegisterError(const QString&)), &regis, SLOT(incomingError(const QString&)));
+  connect(this, SIGNAL(outgoingEnvironmentVariablesReady()), &regis, SLOT(environmentVariablesReady()));
+  connect(&regis, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
+  
+  regis.exec();
+  
+  disconnect(&regis, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
+  disconnect(this, SIGNAL(outgoingEnvironmentVariablesReady()), &regis, SLOT(environmentVariablesReady()));
+  disconnect(this, SIGNAL(outgoingLoginRegisterError(const QString&)), &regis, SLOT(incomingError(const QString&)));
+  disconnect(this, SIGNAL(stateChanged(State)), &regis, SLOT(incomingStateChange(State)));
+  disconnect(&regis, SIGNAL(registering()), this, SLOT(registering()));
+  disconnect(&regis, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
 }
   
   

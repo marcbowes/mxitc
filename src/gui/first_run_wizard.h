@@ -22,6 +22,9 @@ class FirstRunWizard: public QWizard, private Ui::FirstRunWizard {
   FirstRunWizard(DockWidget::Options &options);
   ~FirstRunWizard();
 
+  public: /* methods */
+  
+  bool registerSelected();
 
   private:
   DockWidget::Options &options;

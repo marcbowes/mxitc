@@ -33,20 +33,17 @@ Login::Login(
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   
+  
+  loginWidget = new Widget::LoginSettings(this);
+  
+  loginHoldWidget->layout()->addWidget(loginWidget);
     
-  /* enable/disable 'Login' based on the validity of the user inputs */
-  connect(cellphone, SIGNAL(textChanged(const QString &)), 
-          this, SLOT(checkIfLoginClickable(const QString &)));
-  connect(password, SIGNAL(textChanged(const QString &)), 
-          this, SLOT(checkIfLoginClickable(const QString &)));
-  connect(captchaLineEdit, SIGNAL(textChanged(const QString &)), 
-          this, SLOT(checkIfLoginClickable(const QString &)));
   
+  connect(loginWidget, SIGNAL(lineEditChanged(const QString &)), 
+          this, SLOT(checkIfLoginClickable(const QString &)));
+          
   /* when 'Login' is clicked, or the user presses return */
-  connect(cellphone, SIGNAL(returnPressed()), this, SLOT(login()));
-  connect(password, SIGNAL(returnPressed()), this, SLOT(login()));
-  connect(captchaLineEdit, SIGNAL(returnPressed()), this, SLOT(login()));
-  
+  connect(loginWidget, SIGNAL(returnPressed()), this, SLOT(login()));
   connect(loginButton, SIGNAL(released()), this, SLOT(login()));
   
   connect(cancelButton, SIGNAL(released()), this, SLOT(reject ()));
@@ -55,7 +52,7 @@ Login::Login(
   connect(mxit, SIGNAL(environmentReady()), this, SLOT(environmentVariablesReady()));
   
   if(settings->contains ("cellphone"))
-    cellphone->setText(settings->value("cellphone").toString());
+    loginWidget->cellphone->setText(settings->value("cellphone").toString());
   
 }
 
@@ -69,6 +66,7 @@ Login::Login(
 Login::~Login()
 {
   disconnect();
+  delete loginWidget;
 }
 
 
@@ -95,8 +93,8 @@ void Login::exec() {
 ****************************************************************************/
 
 void Login::checkIfLoginClickable(const QString &text) {
-  /*TODO, more accurate checks*/
-  loginButton->setDisabled(cellphone->text().isEmpty());
+
+  loginButton->setDisabled(loginWidget->isInputValid());
 }
 
 
@@ -110,33 +108,9 @@ void Login::checkIfLoginClickable(const QString &text) {
 
 void Login::environmentVariablesReady()
 {
-
-  /* captcha */
-  QByteArray captcha = QByteArray::fromBase64(mxit->variableValue("captcha"));
-  QImage captchaImage;
-  captchaImage.loadFromData(captcha);
-  captchaLabel->setPixmap(QPixmap::fromImage(captchaImage));
+  loginWidget->setCaptcha(mxit->variableValue("captcha"));
+  loginWidget->setLanguagesAndCountries(mxit->variableValue("languages"), mxit->variableValue("countries"), mxit->variableValue("defaultCountryCode"));
   
-  captchaLineEdit->setEnabled(true);
-  captchaLineEdit->setText("");
-  
-  /* countries */
-  QList<QByteArray> countriesList = mxit->variableValue("countries").split(',');
-  
-  Q_FOREACH(QByteArray s, countriesList) {
-    QList<QByteArray> split = s.split('|');
-    countriesComboBox->addItem( split.back(), split.front());
-  }
-  countriesComboBox->setCurrentIndex ( countriesComboBox->findData (QString(mxit->variableValue("defaultCountryCode"))) );
-  
-  /* languages */
-  QList<QByteArray> languagesList = mxit->variableValue("languages").split(',');
-  
-  Q_FOREACH(QByteArray s, languagesList) {
-    QList<QByteArray> split = s.split('|');
-    languageComboBox->addItem( split.back(), split.front());
-  }
-  languageComboBox->setCurrentIndex ( languageComboBox->findData ("en") );
 }
 
 
@@ -161,20 +135,20 @@ void Login::incomingError(const QString &text)
 ****************************************************************************/
 void Login::login()
 {
-  if (!captchaLineEdit->text().isEmpty()) { /*FIXME more stringent test*/
+  if (loginWidget->isInputValid()) {
     loginButton->setDisabled(true);
     loginButton->setText("Logging in..");
     
     VariableHash variables;
-    variables["locale"] = languageComboBox->itemData(languageComboBox->currentIndex ()).toByteArray(); /*language code - locale*/
-    variables["cc"] = countriesComboBox->itemData(countriesComboBox->currentIndex ()).toByteArray().replace('-', '_'); /*country code*/
+    variables["locale"] = loginWidget->languageComboBox->itemData(loginWidget->languageComboBox->currentIndex ()).toByteArray(); /*language code - locale*/
+    variables["cc"] = loginWidget->countriesComboBox->itemData(loginWidget->countriesComboBox->currentIndex ()).toByteArray().replace('-', '_'); /*country code*/
     
-    mxit->login(cellphone->text().toLatin1(), password->text().toLatin1(),captchaLineEdit->text().toLatin1(), variables);
+    mxit->login(loginWidget->cellphone->text().toLatin1(), loginWidget->password->text().toLatin1(),loginWidget->captchaLineEdit->text().toLatin1(), variables);
     
     emit loggingIn();
     
     settings->setValue("locale", variables["locale"]);
-    settings->setValue("cellphone", cellphone->text());
+    settings->setValue("cellphone", loginWidget->cellphone->text());
     settings->sync();
   }
 }

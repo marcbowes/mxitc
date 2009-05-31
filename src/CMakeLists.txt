@@ -79,6 +79,9 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/dialogs/login.cpp
   gui/dialogs/register.cpp
   
+  gui/widgets/profile_settings.cpp
+  gui/widgets/login_settings.cpp
+  
   gui/mxitc.cpp
   gui/chat_area.cpp
   gui/first_run_wizard.cpp
@@ -118,6 +121,9 @@ SET(MXIT_CLIENT_MOC_SRCS
   gui/dialogs/login.h
   gui/dialogs/register.h
   
+  gui/widgets/profile_settings.h
+  gui/widgets/login_settings.h
+  
   gui/mxitc.h
   gui/chat_area.h
   gui/first_run_wizard.h
@@ -142,6 +148,9 @@ SET(MXIT_CLIENT_UI
   gui/dialogs/allow_subscription.ui
   gui/dialogs/login.ui
   gui/dialogs/register.ui
+  
+  gui/widgets/profile_settings.ui
+  gui/widgets/login_settings.ui
   
   gui/mxitc.ui
   gui/chat_area.ui

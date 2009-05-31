@@ -33,22 +33,20 @@ Register::Register(
 {
   setupUi(this);      /* from ui_dialog.h: generated from dialog.ui */
   
-  /* add in an image to display the login CAPTCHA */
-  //mxit->initialize(); /* NOTE moved to mxitc.cpp*/
+  profileSettings = new Widget::ProfileSettings(true, this);
+  profileSettingWidget->layout()->addWidget(profileSettings);
+  
+  loginWidget = new Widget::LoginSettings(this);
+  loginHoldWidget->layout()->addWidget(loginWidget);
     
-  /* enable/disable 'Login' based on the validity of the user inputs */
-  connect(cellphone, SIGNAL(textChanged(const QString &)), 
-          this, SLOT(checkIfRegisterClickable(const QString &)));
-  connect(password, SIGNAL(textChanged(const QString &)), 
-          this, SLOT(checkIfRegisterClickable(const QString &)));
-  connect(captchaLineEdit, SIGNAL(textChanged(const QString &)), 
+  /* enable/disable 'Reg5ster' based on the validity of the user inputs */
+  connect(loginWidget, SIGNAL(textChanged(const QString &)), 
           this, SLOT(checkIfRegisterClickable(const QString &)));
   
   /* when 'Login' is clicked, or the user presses return */
-  connect(cellphone, SIGNAL(returnPressed()), this, SLOT(signUp()));
-  connect(password, SIGNAL(returnPressed()), this, SLOT(signUp()));
-  connect(captchaLineEdit, SIGNAL(returnPressed()), this, SLOT(signUp()));
+  connect(loginWidget, SIGNAL(returnPressed()), this, SLOT(signUp()));
   connect(registerButton, SIGNAL(released()), this, SLOT( signUp() ));
+  
   connect(cancelButton, SIGNAL(released()), this, SLOT(reject ()));
   
   /* when a CAPTCHA is received from the MXit gateway, display it */
@@ -67,6 +65,7 @@ Register::Register(
 Register::~Register()
 {
   disconnect();
+  delete profileSettings;
 }
 
 /****************************************************************************
@@ -92,7 +91,7 @@ void Register::exec() {
 
 void Register::checkIfRegisterClickable(const QString &text) {
   /*TODO, more accurate checks*/
-  registerButton->setDisabled(cellphone->text().isEmpty());
+  registerButton->setDisabled(loginWidget->isInputValid() /*&& profileSetting->isValid TODO TODO*/);
 }
 
 
@@ -123,17 +122,11 @@ void Register::incomingStateChange(State newState) {
 ** this SLOT is triggered when the client receives the environment variables
 **
 ****************************************************************************/
-/*TODO gray out everything but cancle button until environment variables have been received*/
+
 void Register::environmentVariablesReady()
 {
-  /* captcha */
-  QByteArray captcha = QByteArray::fromBase64(mxit->variableValue("captcha"));
-  QImage captchaImage;
-  captchaImage.loadFromData(captcha);
-  captchaLabel->setPixmap(QPixmap::fromImage(captchaImage));
-  
-  captchaLineEdit->setEnabled(true);
-  captchaLineEdit->setText("");
+  loginWidget->setCaptcha(mxit->variableValue("captcha"));
+  loginWidget->setLanguagesAndCountries(mxit->variableValue("languages"), mxit->variableValue("countries"), mxit->variableValue("defaultCountryCode"));
 }
 
 
@@ -144,7 +137,7 @@ void Register::environmentVariablesReady()
 ** this SLOT is triggered when the client reports an error
 **
 ****************************************************************************/
-void Register::error(const QString &text)
+void Register::incomingError(const QString &text)
 {
   QMessageBox error; error.setText(text);
   error.exec();
@@ -159,13 +152,17 @@ void Register::error(const QString &text)
 ****************************************************************************/
 void Register::signUp()
 {
-  if (!captchaLineEdit->text().isEmpty()) { /*FIXME more stringent test*/
+  if (loginWidget->isInputValid() /*&& profileSetting->isValid TODO TODO*/) {
     registerButton->setDisabled(true);
     registerButton->setText("Registering..");
     
     VariableHash variables;
-    /*FIXME what must go in variables !!*/
-    mxit->signup(cellphone->text().toLatin1(), password->text().toLatin1(),captchaLineEdit->text().toLatin1(), variables);
+    variables["loginname"] = profileSettings->nicknameLineEdit->text().toLatin1();
+    variables["dateofbirth"] = profileSettings->dateEdit->date ().toString(Qt::ISODate).toLatin1();
+    variables["gender"] = QString::number(profileSettings->genderComboBox->currentIndex()).toLatin1();
+    
+    
+    mxit->signup(loginWidget->cellphone->text().toLatin1(), loginWidget->password->text().toLatin1(),loginWidget->captchaLineEdit->text().toLatin1(), variables);
 
     emit registering();
     
@@ -184,6 +181,7 @@ void Register::resetButtons()
 {
   registerButton->setDisabled(false);
   registerButton->setText("Register");
+  emit pingEnvironmentVariables();
 }
 
 

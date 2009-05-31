@@ -109,7 +109,7 @@
     <item>
      <widget class="QLabel" name="label_7">
       <property name="text">
-       <string>Thank you for completeing the first-run wizard. If you are not already registed on MXit, you can do so here.</string>
+       <string>Thank you for completeing the first-run wizard.</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -119,7 +119,43 @@
     <item>
      <widget class="QLabel" name="label_8">
       <property name="text">
-       <string>Otherwise click Finish to continue to the login dialog. Enjoy :)</string>
+       <string>Are you registerd on MXit already?</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>GroupBox</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QRadioButton" name="notRegisterdButton">
+         <property name="text">
+          <string>I'm not registered</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioButton_2">
+         <property name="text">
+          <string>I am registered, log me in!</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="reglabel">
+      <property name="text">
+       <string>Click Finish to either register or login to the MXit network. Enjoy! :)</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
