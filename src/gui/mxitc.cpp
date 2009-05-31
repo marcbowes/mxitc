@@ -160,9 +160,11 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   /*------------------------------------------------------------------------------------------*/
   
   connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
+  connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(setUpStatusBar()));
   connect(  optionsWidget, SIGNAL(themeChanged()), conversationsWidget, SLOT(refreshThemeing()));
   connect(  optionsWidget, SIGNAL(themeChanged()), contactsWidget, SLOT(refreshThemeing()));
   connect(  optionsWidget, SIGNAL(themeChanged()), conversationsTabWidget, SLOT(refreshThemeing()));
+  
   
   /* Conversation log dir */
   connect(optionsWidget, SIGNAL(conversationLogDirectorySelected(const QDir&)),
@@ -175,8 +177,13 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   statusLabel = new QLabel("No status set!");
   presenceComboBox = new QComboBox();
   moodComboBox = new QComboBox();
-  setUpStatusBar();
+  statusbar->addPermanentWidget(presenceComboBox);
+  statusbar->addPermanentWidget(moodComboBox);
+  statusbar->addPermanentWidget(statusLabel);
   setStatus(LOGGED_OUT);
+  
+  connect(presenceComboBox, SIGNAL(currentIndexChanged (int)), this, SLOT(presenceChanged(int)));
+  connect(moodComboBox, SIGNAL(currentIndexChanged (int)), this, SLOT(moodChanged(int)));
   
   /*------------------------------------------------------------------------------------------*/
   /* Loading client hash variables from QSettings and passing to client
@@ -230,7 +237,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   /* normally the optionsWidget->setSelectedTheme will trigger the optionWidget's themeChanged SIGNAL which will (in a few lines) be connected to this class's themeChange SLOT
   We can't connect the themeChanged SIGNAL/SLOTs up since that would cause a QSettings save on the 'selected theme' on index 0 of the list and this->themeChanged which will overwrite the restored (correct!) QSettings value for 'selected theme' (something [TODO find out again] sets index to 0 => changes index of list => optionsWidget's loadTheme => this class's themeChanged => which overwrites the settings)*/
   themeChanged(); /* so we just call this manually since we know now the correct theme is selected*/
-  
+  setUpStatusBar();
   /* connecting widgets */
   connectWidgets();
   
@@ -458,26 +465,76 @@ void MXitC::resizeEvent ( QResizeEvent * event ) {
 
 }
 
+/****************************************************************************
+   __  ___             __               __  ___                              
+  /  |/  /__  ___  ___/ / ___ ____  ___/ / / _ \_______ ___ ___ ___  _______ 
+ / /|_/ / _ \/ _ \/ _  / / _ `/ _ \/ _  / / ___/ __/ -_|_-</ -_) _ \/ __/ -_)
+/_/  /_/\___/\___/\_,_/  \_,_/_//_/\_,_/ /_/  /_/  \__/___/\__/_//_/\__/\__/ 
+                                                                             
+****************************************************************************/
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
 
 void MXitC::setUpStatusBar() {
-  statusbar->addPermanentWidget(presenceComboBox);
-  statusbar->addPermanentWidget(moodComboBox);
-  statusbar->addPermanentWidget(statusLabel);
   
   presenceComboBox->clear();
   moodComboBox->clear();
   
-  #define ADD(x) presenceComboBox->addItem ( theme.contact.presence.pixmap(MXit::Protocol::Enumerables::Contact::Presence(x)), "x", MXit::Protocol::Enumerables::Contact::Presence(x));
+  #define ADD(x) presenceComboBox->addItem ( theme.contact.presence.pixmap(MXit::Protocol::Enumerables::Contact::Presence(MXit::Protocol::Enumerables::Contact::x)), #x, MXit::Protocol::Enumerables::Contact::Presence(MXit::Protocol::Enumerables::Contact::x));
   
-  ADD(MXit::Protocol::Enumerables::Contact::Offline);
-  ADD(MXit::Protocol::Enumerables::Contact::Online);
-  ADD(MXit::Protocol::Enumerables::Contact::Away);
-  ADD(MXit::Protocol::Enumerables::Contact::Available);
-  ADD(MXit::Protocol::Enumerables::Contact::DoNotDisturb);
+  ADD(Offline);
+  ADD(Online);
+  ADD(Away);
+  ADD(Available);
+  ADD(DoNotDisturb);
   
   #undef ADD
   
-  /*TODO ensure themeing of hte comboBoxes are done on theme change*/
+  #define ADD(x) moodComboBox->addItem (#x, MXit::Protocol::Enumerables::Contact::Mood(MXit::Protocol::Enumerables::Contact::x));
+  
+  ADD(None);
+  ADD(Angry);
+  ADD(Excited);
+  ADD(Grumpy);
+  ADD(Happy);
+  ADD(InLove);
+  ADD(Invincible);
+  ADD(Sad);
+  ADD(Hot);
+  ADD(Sick);
+  ADD(Sleepy);
+  
+  #undef ADD
+  
+  
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::presenceChanged(int index) {
+  //mxit->setShownPresenceAndStatus(MXit::Protocol::Enumerables::Contact::Presence(presenceComboBox->itemData ( index).toInt()));
+
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void MXitC::moodChanged(int index) {
+  //mxit->setMood(MXit::Protocol::Enumerables::Contact::Mood(moodComboBox->itemData ( index).toInt()));
+
 }
 
 /****************************************************************************
@@ -694,7 +751,6 @@ void MXitC::themeChanged(){
     if (!trayIcon->isVisible()) /* skip warning about no icon before a theme is set */
       trayIcon->show();
   }
-  
   /*TODO maybe make refresh a MXitDockWidget function and loop over all widgets. i.e. generalise? - rax*/
   
   addContactWidget->refresh(); /* since it contains icons*/

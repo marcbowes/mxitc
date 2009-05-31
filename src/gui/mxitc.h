@@ -97,8 +97,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   QString getPresenceString(Protocol::Enumerables::Contact::Presence presence);
   
   void connectWidgets();
- 
-  void setUpStatusBar();
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   
@@ -140,6 +138,11 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   void loggingIn();
   void registering();
+ 
+  void setUpStatusBar();
+  
+  void presenceChanged(int index);
+  void moodChanged(int index);
   
   private:        /* variables */
   
