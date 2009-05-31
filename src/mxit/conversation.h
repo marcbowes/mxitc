@@ -16,6 +16,8 @@
 #include <QHash>
 #include <QTime>
 
+#include "gui/theme.h" /* FIXME: reliance on GUI code */
+
 #include "protocol/enumerables/message.h"
 
 #include "contact.h"
@@ -31,8 +33,8 @@ class Conversation : public QObject
   
   public:         /* class specific */
 	
-  Conversation(const Contact *contact);
-  Conversation(const ContactSet &contacts, const QString &roomName="");
+  Conversation(const Contact *contact, const GUI::Theme &theme); /* FIXME: reliance on GUI code */
+  Conversation(const ContactSet &contacts, const GUI::Theme &theme, const QString &roomName=""); /* FIXME: reliance on GUI code */
   ~Conversation();
   
   signals:
@@ -69,6 +71,7 @@ class Conversation : public QObject
   private:        /* variables */
   
   ContactSet      contacts;
+  const GUI::Theme &theme; /* FIXME: reliance on GUI code */
 };
 
 

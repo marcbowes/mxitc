@@ -605,7 +605,6 @@ void MXitC::messageReceived(){
                               mxit->variableValue("contactAddress"), 
                               mxit->variableValue("flags"),
                               mxit->variableValue("message"));
-  
 }
 
 

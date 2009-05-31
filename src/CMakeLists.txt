@@ -81,6 +81,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   
   gui/widgets/profile_settings.cpp
   gui/widgets/login_settings.cpp
+  gui/emoticon.cpp
   
   gui/mxitc.cpp
   gui/chat_area.cpp
@@ -126,7 +127,6 @@ SET(MXIT_CLIENT_MOC_SRCS
   
   gui/mxitc.h
   gui/chat_area.h
-  gui/first_run_wizard.h
   gui/conversations_widgets_controller.h
   gui/conversations_tab_widget.h
   gui/mxit_dialog.h

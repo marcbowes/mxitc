@@ -8,12 +8,14 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUID_THEMECOMPONENTS_CHAT_H__
-#define __MXIT_GUID_THEMECOMPONENTS_CHAT_H__
+#ifndef __MXIT_GUI_THEMECOMPONENTS_CHAT_H__
+#define __MXIT_GUI_THEMECOMPONENTS_CHAT_H__
 
 #include <QDir>
 #include <QPixmap>
 #include <QString>
+
+#include "gui/emoticon.h"
 
 namespace MXit
 {
@@ -30,17 +32,22 @@ class Chat
 
   Chat()  {}
   ~Chat() {}
+  
+  static QString spokenToShorthand(const QString &spoken);
 
   public:         /* methods */
   
+  void injectEmoticons(QString &message) const;
   void load(QDir theme);
   void loadDefaults();
 
   public:         /* variables */
   
-  QPixmap   group;
-  QString   stylesheet;
-  QPixmap   unread;
+  QList<Emoticon> emoticons;
+  QPixmap         group;
+  QString         stylesheet;
+  QDir            theme;
+  QPixmap         unread;
 };
 
 }
@@ -49,5 +56,5 @@ class Chat
 
 }
 
-#endif /* __MXIT_GUID_THEMECOMPONENTS_CHAT_H__ */
+#endif /* __MXIT_GUI_THEMECOMPONENTS_CHAT_H__ */
 

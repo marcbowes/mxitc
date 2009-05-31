@@ -4,6 +4,8 @@
 **
 ****************************************************************************/
 
+#include <QHash>
+
 #include "chat.h"
 
 #define DEFAULT_SIZE QSize(16, 16)
@@ -21,11 +23,69 @@ namespace ThemeComponents
 **
 ** Author: Marc Bowes
 **
+** spoken -> shorthand translation.
+**
+****************************************************************************/
+QString Chat::spokenToShorthand(const QString &spoken)
+{
+  static QHash<QString, QChar> dictionary;
+  static bool dictionaryLoaded (false); /* only set false first time */
+  
+  /* build dictionary if it wasn't previously built */
+  if (!dictionaryLoaded) {
+    /* ordered alphabetically by spoken */
+    dictionary["leftbracket"]   = '(';
+    dictionary["rightbracket"]  = ')';
+    dictionary["B"]             = 'B';
+    dictionary["colon"]         = ':';
+    dictionary["D"]             = 'D';
+    dictionary["O"]             = 'O';
+    dictionary["P"]             = 'P';
+    dictionary["semicolon"]     = ';';
+    dictionary["star"]          = '*';
+    
+    dictionaryLoaded = true;
+  }
+  
+  /* do translation */
+  QString shorthand;
+  Q_FOREACH(const QString &string, spoken.split(".")) {
+    if (!dictionary.contains(string))
+      return QString(); /* no match */
+    else
+      shorthand.append(dictionary.value(string));
+  }
+  
+  /* returns ":)" for "semicolon.rightbracket" */
+  return shorthand;
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+** Takes a message and replaces text with emoticon images (HTML img)
+**
+****************************************************************************/
+void Chat::injectEmoticons(QString &message) const
+{
+  Q_FOREACH(const Emoticon &emoticon, emoticons)
+    emoticon.shorthandToHtml(message, theme.canonicalPath() + "/emoticons/");
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** loads components
 **
 ****************************************************************************/
 void Chat::load(QDir theme)
 {
+  this->theme = theme;
+  
   /* html stylesheet */
   QFile css(theme.filePath("stylesheet.css"));
   css.open(QFile::ReadOnly);
@@ -45,6 +105,24 @@ void Chat::load(QDir theme)
   if (!_unread.isNull()) {
     unread = QPixmap::fromImage(_unread);
   }
+  
+  /* load emoticons */
+  emoticons.clear();
+  if (theme.cd("emoticons")) {
+    QStringList files = theme.entryList();
+    Q_FOREACH(const QString &file, files) {
+      /* file = colon.rightbracket.gif */
+      int idx = file.lastIndexOf('.');
+      if (idx == -1) continue; /* safety check, even though filter.. */
+      QString spoken = file.left(idx);
+      /* fileWithoutExtension = colon.rightbracket */
+      QString shorthand = spokenToShorthand(spoken);
+      if (shorthand.isEmpty()) continue; /* dictionary can't translate */
+      /* shorthand = :) */
+      emoticons << Emoticon(shorthand, spoken, file);
+    }
+    theme.cdUp();
+  }
 }
 
 
@@ -58,12 +136,13 @@ void Chat::load(QDir theme)
 void Chat::loadDefaults()
 {
   stylesheet = QString();
+  emoticons.clear();
   
   group = QPixmap(DEFAULT_SIZE);
   group.fill(Qt::black);
   
   unread = QPixmap(DEFAULT_SIZE);
-  unread.fill(Qt::yellow);
+  unread.fill(Qt::yellow);  
 }
 
 }

@@ -7,6 +7,8 @@
 #include <QRegExp>
 #include <QStringList>
 
+#include "gui/emoticon.h" /* FIXME: reliance on GUI code */
+
 #include "conversation.h"
 
 namespace MXit
@@ -40,10 +42,11 @@ const static QString initialHtml ("\
 ** Constructor for a private Conversation
 **
 ****************************************************************************/
-Conversation::Conversation(const Contact *contact)
+Conversation::Conversation(const Contact *contact, const GUI::Theme &theme) /* FIXME: reliance on GUI code */
   : active(true), displayName(contact->nickname),
     uniqueIdentifier(contact->contactAddress), type(Protocol::Enumerables::Message::Normal),
-    conversationHtml(initialHtml)
+    conversationHtml(initialHtml),
+    theme(theme) /* FIXME: reliance on GUI code */
 {
   contacts.insert(contact);
 }
@@ -56,10 +59,11 @@ Conversation::Conversation(const Contact *contact)
 ** Constructor which accepts a pre-formed ContactSet
 **
 ****************************************************************************/
-Conversation::Conversation(const ContactSet &contacts, const QString &roomName)
+Conversation::Conversation(const ContactSet &contacts, const GUI::Theme &theme, const QString &roomName)
   : active(true), displayName(roomName.isEmpty() ? buildDisplayName(contacts) : roomName),
     uniqueIdentifier(roomName), type(Protocol::Enumerables::Message::GroupChat),
-    conversationHtml(initialHtml)
+    conversationHtml(initialHtml),
+    theme(theme) /* FIXME: reliance on GUI code */
 {
   this->contacts = contacts; /* copy */
 }
@@ -138,7 +142,9 @@ void Conversation::appendMessage(const Message &message)
   insertion.append(QString("<div class=\"message%1\">").arg(cssClass));
   insertion.append(QString("<span class=\"timestamp\">[%1]</span>").arg(message.timestamp.toString()));
   insertion.append(QString("<span class=\"author\">%1</span>").arg(author));
-  insertion.append(QString("<span class=\"body\">%1</span>").arg(message.message()));
+  QString messageWithEmoticons = message.message(); /* FIXME: reliance on GUI code */
+  theme.chat.injectEmoticons(messageWithEmoticons);
+  insertion.append(QString("<span class=\"body\">%1</span>").arg(messageWithEmoticons));
   insertion.append(        "<br class=\"clear\" />");
   insertion.append(        "</div>");
   conversationHtml.insert(conversationHtml.size() - 21, insertion);
@@ -204,8 +210,11 @@ void Conversation::removeContact(const Contact *contact)
 void Conversation::setCss(const QString &css)
 {
   QRegExp rx("<style>(.*)</style>");
-  conversationHtml.replace(rx,
-    QString("<style>%1</style>").arg(css));
+  conversationHtml.replace(rx, QString("<style>%1</style>").arg(css));
+  /* rip out all emoticon img tags */
+  GUI::Emoticon::HtmlToShorthand(conversationHtml); /* FIXME: reliance on GUI code */
+  /* inject new img tags from new theme (if any) */
+  theme.chat.injectEmoticons(conversationHtml); /* FIXME: reliance on GUI code */
   emit updated(this);
 }
 

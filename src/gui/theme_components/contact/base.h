@@ -8,8 +8,8 @@
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUID_THEMECOMPONENTS_CONTACT_BASE_H__
-#define __MXIT_GUID_THEMECOMPONENTS_CONTACT_BASE_H__
+#ifndef __MXIT_GUI_THEMECOMPONENTS_CONTACT_BASE_H__
+#define __MXIT_GUI_THEMECOMPONENTS_CONTACT_BASE_H__
 
 #include <QDir>
 #include <QString>
@@ -56,5 +56,5 @@ class Base
 
 }
 
-#endif /* __MXIT_GUID_THEMECOMPONENTS_CONTACT_BASE_H__ */
+#endif /* __MXIT_GUI_THEMECOMPONENTS_CONTACT_BASE_H__ */
 
