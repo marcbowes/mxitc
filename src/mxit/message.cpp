@@ -268,6 +268,50 @@ QString Message::markup(const QString &markup, const Contact *contact)
       idx1 = escaped.length();
     }
   }
+  
+  /* colours */
+  QRegExp hex ("((#[0-9a-f]{6})|(#[\?]{6}))");
+  hex.setCaseSensitivity(Qt::CaseInsensitive);
+  
+  idx1 = 0;
+  bool font = false;
+  do {
+    /* find next color sequence */
+    idx1 = hex.indexIn(markedUp, idx1);
+    
+    /* no color sequence found? close a font tag? */
+    if (idx1 == quint16(-1)) {
+      if (font)
+        markedUp.append("</font>");
+      break;
+    }
+    
+    QString cap = hex.cap(1);
+    if (cap == "#??????") {
+      if (font) {
+        /* close font tag if open */
+        markedUp.replace(idx1, 7, "</font>");
+        font = false;
+        idx1 += 8;
+      }
+      else {
+        /* remove meaningless markup */
+        markedUp.remove(idx1, 7);
+        idx1++;
+      }
+    } else {
+      if (font) {
+        /* close font tag if open */
+        markedUp.replace(idx1, 7, QString("</font><font color=\"%1\">").arg(cap));
+        idx1 += 30;
+      } else {
+        /* replace #notatn with <font color="#notatn"> */
+        markedUp.replace(idx1, 7, QString("<font color=\"%1\">").arg(cap));
+        font = true;
+        idx1 += 23;
+      }
+    }
+  } while (idx1 != quint16(-1) && idx1 < markedUp.length());
 
   return markedUp;
 }
