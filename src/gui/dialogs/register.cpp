@@ -44,9 +44,6 @@ Register::Register(
   
   loginWidget = new Widget::LoginSettings(this);
   loginHoldWidget->layout()->addWidget(loginWidget);
-  
-  loginWidget->countriesComboBox->hide();
-  loginWidget->countryLabel->hide();
     
   /* enable/disable 'Reg5ster' based on the validity of the user inputs */
   connect(loginWidget, SIGNAL(lineEditChanged(const QString &)), 
@@ -171,6 +168,7 @@ void Register::signUp()
     variables["dateofbirth"] = profileSettings->dateEdit->date ().toString(Qt::ISODate).toLatin1();
     variables["gender"] = QString::number(profileSettings->genderComboBox->currentIndex()).toLatin1();
     variables["locale"] = loginWidget->languageComboBox->itemData(loginWidget->languageComboBox->currentIndex ()).toByteArray(); /*language code - locale*/
+    variables["cc"] = loginWidget->countriesComboBox->itemData(loginWidget->countriesComboBox->currentIndex ()).toByteArray().replace('-', '_'); /*country code*/
     
     mxit->signup(loginWidget->cellphone->text().toLatin1(), loginWidget->password->text().toLatin1(),loginWidget->captchaLineEdit->text().toLatin1(), variables);
 

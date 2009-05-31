@@ -94,7 +94,7 @@ void Login::exec() {
 
 void Login::checkIfLoginClickable(const QString &text) {
 
-  loginButton->setDisabled(loginWidget->isInputValid());
+  loginButton->setEnabled(loginWidget->isInputValid());
 }
 
 

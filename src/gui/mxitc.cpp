@@ -523,7 +523,7 @@ void MXitC::setUpStatusBar() {
 void MXitC::presenceChanged(int index) {
   
   if(currentState == LOGGED_IN)
-    mxit->setShownPresenceAndStatus(MXit::Protocol::Enumerables::Contact::Presence());
+    mxit->setShownPresenceAndStatus(MXit::Protocol::Enumerables::Contact::Presence(presenceComboBox->itemData ( index ).toInt()));
 
 }
 
