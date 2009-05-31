@@ -886,7 +886,7 @@ MXit::Network::Packet* Client::buildPacket()
 void Client::challenge(const QString &captcha)
 {
   state = CHALLENGING;
-  handshaker->challenge(captcha, variables);
+  handshaker->challenge(captcha, variables, registerAfterChallenge);
 }
 
 
@@ -989,6 +989,7 @@ void Client::setupReceived()
 {
   state = IDLE;
   int error = variables["err"].toInt();
+  qDebug() << "in setupReceived -- " << error;
 
   if (error != 0) {                         /* No error */
     /* setup */
@@ -1003,7 +1004,7 @@ void Client::setupReceived()
         useVariable("captcha", 0);
 
         /* reporting error to client */
-        emit errorEncountered("Wrong answer to CAPTCHA");
+        emit outgoingError(error, "Wrong answer to CAPTCHA");
 
         break;
       case 2:                               /* Session expired */
@@ -1016,26 +1017,26 @@ void Client::setupReceived()
         useVariable("captcha", 0);
 
         /* reporting error to client */
-        emit errorEncountered("Session Expired");
+        emit outgoingError(error, "Session Expired");
 
         break;
       case 3:                               /* Undefined */
         /* Response: 3; */
         // FIXME: how to handle this?
 
-        emit errorEncountered("Undefined Challenge error");
+        emit outgoingError(error, "Undefined Challenge error");
         break;
       case 4:                               /* Critical error */
         /* Response: 4;mxitid@domain */
         // FIXME: how to handle this?
 
         /* reporting error to client */
-        emit errorEncountered("Critical Challenge error");
+        emit outgoingError(error, "Critical Challenge error");
 
         break;
       case 5:                               /* Internal Error - Country code not available, select another country */
         /* Response: 5; */
-        emit errorEncountered("Country Code not available");
+        emit outgoingError(error, "Country Code not available");
         break;
       case 6:                               /* User isn't registered (and path=0 was specified) */
         /* Response: 6;sessionid;captcha */
@@ -1047,7 +1048,7 @@ void Client::setupReceived()
         useVariable("captcha", 0);
 
         /* reporting error to client */
-        emit errorEncountered("User is not registered");
+        emit outgoingError(error, "User is not registered");
 
         break;
       case 7:                               /* User is already registered (and path=1 was specified) */
@@ -1060,7 +1061,7 @@ void Client::setupReceived()
         useVariable("captcha", 0);
 
         /* reporting error to client */
-        emit errorEncountered("User is already registered");
+        emit outgoingError(error, "User is already registered");
 
         break;
     }
@@ -1072,6 +1073,7 @@ void Client::setupReceived()
   if (!registerAfterChallenge)
     connection->open(getPacket("login"));
   else {
+    qDebug() << "registering?";
     connection->open(getPacket("register"));
     registerAfterChallenge = false;
   }

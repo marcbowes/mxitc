@@ -163,7 +163,6 @@ void Register::incomingError(const QString &text)
 void Register::signUp()
 {
   if (loginWidget->isInputValid() /*&& profileSetting->isValid TODO TODO*/) {
-    qDebug() << "wtff";
     registerButton->setDisabled(true);
     registerButton->setText("Registering..");
     

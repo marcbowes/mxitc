@@ -79,7 +79,7 @@ void Register::buildPacket(MXit::Network::Packet *packet, VariableHash &variable
     variables["dc"] = dc;
   }
   
-  (*packet) << variables["encryptedpassword"]
+  (*packet) << variables["_password"]
             << "150000"                       /* maxReplyLen, sniffed from a Nokia E51 */
             << variables["name"]
             << variables["dateOfBirth"]

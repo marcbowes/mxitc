@@ -53,7 +53,6 @@ class Client : public QObject
   signals:
 
   void environmentReady();
-  void errorEncountered(const QString &);
   void outgoingAction(Action);
   void outgoingConnectionError(const QString &message);
   void outgoingConnectionState(Network::Connection::State);
