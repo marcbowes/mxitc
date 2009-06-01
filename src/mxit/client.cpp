@@ -394,6 +394,26 @@ void Client::pollDifference()
 **
 ** Author: Marc Bowes
 **
+** Registers a Gateway (think: a bunch of contacts in a group)
+**
+****************************************************************************/
+void Client::registerGateway(const QString &username, const QString &password,
+    Protocol::Enumerables::Contact::Type type)
+{
+  /* packet variables */
+  VariableHash gatewayVariables;
+  gatewayVariables["username"] = username.toUtf8();
+  gatewayVariables["password"] = password.toUtf8();
+  gatewayVariables["type"]     = QByteArray::number(type);
+  
+  sendPacket("registergateway", gatewayVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Passes parameters onto a packet handler and transmits result
 **
 ****************************************************************************/
