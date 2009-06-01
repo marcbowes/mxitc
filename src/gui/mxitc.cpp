@@ -248,6 +248,8 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
     
   
   /* After the MXitDockWidget has been added, it attributes can be restored*/
+
+  loadLayout();
   restoreState(settings->value("gui layout").toByteArray());
   /*------------------------------------------------------------------------------------------*/
   /*Settings restore */
@@ -255,8 +257,6 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   
   if(settings->contains("mainWindowSize"))
     resize(settings->value("mainWindowSize").toSize());
-
-  loadLayout();
 }
 
 
@@ -384,12 +384,12 @@ void MXitC::loadLayout() {
   Q_FOREACH (QDockWidget * dockWidget, dockWidgets) {
   
     /* loading visibility, size and floating attributes*/
-    if (settings->contains(QString("visible?")+dockWidget->objectName ()))
-      dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
-    if (settings->contains(QString("floating?")+dockWidget->objectName ()))
-      dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
-    if (settings->contains(QString("size?")+dockWidget->objectName ()))
-      dockWidget->resize(settings->value(QString("size?")+dockWidget->objectName ()).toSize());
+    //if (settings->contains(QString("visible?")+dockWidget->objectName ()))
+    //  dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
+    //if (settings->contains(QString("size?")+dockWidget->objectName ()))
+    //  dockWidget->resize(settings->value(QString("size?")+dockWidget->objectName ()).toSize());
+    //if (settings->contains(QString("floating?")+dockWidget->objectName ()))
+    //  dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
   }
 }
 
@@ -403,6 +403,7 @@ void MXitC::loadLayout() {
 void MXitC::connectWidgets() {
   
   
+  /*FIXME remove this, it inteferes with the auto restore*/
   Q_FOREACH (QDockWidget * dockWidget, dockWidgets) {
     /* connecting the associated action to it's toggleVisibility SLOT*/
     /* TODO still haven't figured out how to check if the widget is raised or not, right now it only toggles visibility and doesn't cycle from visible but not raised -> visible and raised -> not visible -> visible and raised*/
@@ -442,11 +443,14 @@ void MXitC::saveLayout(bool b) {
 /*Qt::DockWidgetArea is never actually used, it's there so this function could be connected nicely*/
 void MXitC::saveLayout(Qt::DockWidgetArea area) {
   
-  Q_FOREACH(const QDockWidget * dw, dockWidgets) {
+  /*FIXME remove this, it inteferes with the auto restore*/
+  Q_FOREACH(QDockWidget * dw, dockWidgets) {
   
-    settings->setValue(QString("visible?")+dw->objectName (), dw->isVisible());
-    settings->setValue(QString("floating?")+dw->objectName (), dw->isFloating());
-    settings->setValue(QString("size?")+dw->objectName (), dw->size());
+    //settings->setValue(QString("visible?")+dw->objectName (), dw->isVisible());
+    //settings->setValue(QString("floating?")+dw->objectName (), dw->isFloating());
+    //settings->setValue(QString("size?")+dw->objectName (), dw->size());
+    //settings->setValue(QString("dockWidgetArea?")+dw->objectName (), dockWidgetArea ( dw ));
+    //qDebug() << QString("dockWidgetArea?")+dw->objectName () << " = " << dockWidgetArea(dw);
   }
   
   settings->setValue("gui layout", saveState());
