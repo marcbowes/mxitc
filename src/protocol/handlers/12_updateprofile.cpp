@@ -48,13 +48,23 @@ void UpdateProfile::buildPacket(MXit::Network::Packet *packet, VariableHash &var
   ***************************************************************************
   */
   
+  /* first - password encryption (Appendix B) */
+  if (!pin.isEmpty()) {
+    variables.remove("encryptedpassword");
+    QString key = QString("6170383452343567").replace(0, 8, variables["pid"].right(8));
+    QString pass = "<mxit/>" + variables["pin"];
+    MXit::Protocol::AES encryptor;
+    variables["encryptedpassword"] = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
+  }
+  
   /* packet data setup */
-  (*packet) << variables["pin"]
+  (*packet) << variables["encryptedpassword"]
             << variables["name"]
             << variables["hiddenLoginname"]
             << variables["yearOfBirth"]
             << variables["gender"]
-  ;       /* FIXME: deprecated? */
+            << "" /* deprecated */
+  ;
 }
 
 /****************************************************************************
