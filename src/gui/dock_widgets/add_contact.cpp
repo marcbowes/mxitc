@@ -98,7 +98,6 @@ void AddContact::setContentsEnabled(bool enabled) {
 ****************************************************************************/
 
 void AddContact::registerSelectedGateway() {
-  qDebug() << "wtfffff";
   Dialog::RegisterGateway reg(QString("Register to ")+networkComboBox->currentText(), false, 0);
   
   
@@ -171,17 +170,18 @@ void AddContact::networkChanged ( int index ) {
         type == ICQ || 
         type == AIM || 
         type == GoogleTalk) {
+      addressLabel->setText("Cellphone");
     //contactWidget->setEnabled(false);
     gatewayWidget->setEnabled(true);
   }
-  else {
-    //contactWidget->setEnabled(true);
+  else
     gatewayWidget->setEnabled(false);
-    if (type == MXit || type == MultiMx)
-      addressLabel->setText("Cellphone");
-    else
-      addressLabel->setText("Address");
-  }
+    
+    
+  if (type == MXit || type == MultiMx)
+    addressLabel->setText("Cellphone");
+  else
+    addressLabel->setText("Address");
 }
 
 /****************************************************************************
