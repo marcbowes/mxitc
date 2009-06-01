@@ -246,6 +246,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
     autoLogin (optionsWidget->isAutoLogin(), optionsWidget->showLoginDialogOnNonAutoStart());
     
     
+    
   
   /* After the MXitDockWidget has been added, it attributes can be restored*/
 
@@ -257,6 +258,12 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   
   if(settings->contains("mainWindowSize"))
     resize(settings->value("mainWindowSize").toSize());
+    
+    
+    
+  logOnToolBar->hide();
+  viewsToolBar->hide();
+  optionsToolBar->hide();
 }
 
 
