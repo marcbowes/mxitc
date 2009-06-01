@@ -20,4 +20,9 @@ To build in debug, use `cmake -DCMAKE_BUILD_TYPE="Debug" ..`
 
   * Marc Bowes (marcbowes AT gmail DOT com)
   * Timothy Sjoberg (bedlamp AT gmail DOT com)
+  * Richard Baxter (richard.johnathan.baxter AT gmail DOT com)
+
+## Using the installer
+
+  Should be straight forward
 
