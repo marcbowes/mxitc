@@ -386,8 +386,8 @@ void MXitC::loadLayout() {
     /* loading visibility, size and floating attributes*/
     //if (settings->contains(QString("visible?")+dockWidget->objectName ()))
     //  dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
-    //if (settings->contains(QString("size?")+dockWidget->objectName ()))
-    //  dockWidget->resize(settings->value(QString("size?")+dockWidget->objectName ()).toSize());
+    if (settings->contains(QString("size?")+dockWidget->objectName ()))
+      dockWidget->resize(settings->value(QString("size?")+dockWidget->objectName ()).toSize());
     //if (settings->contains(QString("floating?")+dockWidget->objectName ()))
     //  dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
   }
@@ -448,7 +448,7 @@ void MXitC::saveLayout(Qt::DockWidgetArea area) {
   
     //settings->setValue(QString("visible?")+dw->objectName (), dw->isVisible());
     //settings->setValue(QString("floating?")+dw->objectName (), dw->isFloating());
-    //settings->setValue(QString("size?")+dw->objectName (), dw->size());
+    settings->setValue(QString("size?")+dw->objectName (), dw->size());
     //settings->setValue(QString("dockWidgetArea?")+dw->objectName (), dockWidgetArea ( dw ));
     //qDebug() << QString("dockWidgetArea?")+dw->objectName () << " = " << dockWidgetArea(dw);
   }
@@ -833,8 +833,6 @@ void MXitC::setStatus(State newState)
     break;
     case LOGGING_IN: statusLabel->setText("Logging in");
      break;
-    case REGISTERING: statusLabel->setText("Registering");
-     break;
   
   }
   logWidget->logMessage("GUI:: State set to "+statusLabel->text());
@@ -924,18 +922,6 @@ void MXitC::loggingIn(){
 **
 ** Author: Richard Baxter
 **
-** tells the gui that it's state should be logging in
-**
-****************************************************************************/
-
-void MXitC::registering(){
-  setStatus(REGISTERING);
-}
-
-/****************************************************************************
-**
-** Author: Richard Baxter
-**
 ****************************************************************************/
 
 void MXitC::incomingEnvironmentVariablesPing() {
@@ -988,7 +974,7 @@ void MXitC::openRegisterDialog(){
   
   
   connect(&regis, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
-  connect(&regis, SIGNAL(registering()), this, SLOT(registering()));
+  //connect(&regis, SIGNAL(registering()), this, SLOT(registering()));
   connect(this, SIGNAL(stateChanged(State)), &regis, SLOT(incomingStateChange(State)));
   connect(this, SIGNAL(outgoingLoginRegisterError(const QString&)), &regis, SLOT(incomingError(const QString&)));
   connect(this, SIGNAL(outgoingEnvironmentVariablesReady()), &regis, SLOT(environmentVariablesReady()));
@@ -1000,7 +986,7 @@ void MXitC::openRegisterDialog(){
   disconnect(this, SIGNAL(outgoingEnvironmentVariablesReady()), &regis, SLOT(environmentVariablesReady()));
   disconnect(this, SIGNAL(outgoingLoginRegisterError(const QString&)), &regis, SLOT(incomingError(const QString&)));
   disconnect(this, SIGNAL(stateChanged(State)), &regis, SLOT(incomingStateChange(State)));
-  disconnect(&regis, SIGNAL(registering()), this, SLOT(registering()));
+  //disconnect(&regis, SIGNAL(registering()), this, SLOT(registering()));
   disconnect(&regis, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
 }
   

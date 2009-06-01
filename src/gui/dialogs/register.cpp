@@ -72,6 +72,7 @@ Register::~Register()
 {
   disconnect();
   delete profileSettings;
+  delete loginWidget;
 }
 
 /****************************************************************************
@@ -109,11 +110,9 @@ void Register::checkIfRegisterClickable(const QString &text) {
 
 void Register::incomingStateChange(State newState) {
   if (newState == LOGGED_IN) {
-    qDebug() << "Register::incomingStateChange(LOGGED_IN)";
+    close(); 
   }
   else if (newState == LOGGING_IN) {
-  }
-  else if (newState == REGISTERING) {
   }
   else if (newState == LOGGED_OUT) {
     qDebug() << "Register::incomingStateChange(LOGGED_OUT)";

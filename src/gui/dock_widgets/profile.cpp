@@ -58,7 +58,7 @@ void Profile::setContentsEnabled(bool enabled) {
 
 
 bool Profile::checkIfApplyPressable() {
-  return !profileSettings->passwordLineEdit->text().isEmpty()&&!profileSettings->nicknameLineEdit->text().isEmpty();
+  return !profileSettings->nicknameLineEdit->text().isEmpty();
 
 }
 

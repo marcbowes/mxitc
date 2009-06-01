@@ -12,7 +12,7 @@ namespace GUI
   /*TODO move this to somewhere more standard, I donno where and I can't get hold of marc right now :/ */
 
   
-  enum State  {LOGGED_IN, LOGGED_OUT, LOGGING_IN, REGISTERING};
+  enum State  {LOGGED_IN, LOGGED_OUT, LOGGING_IN};
 
 }
 
