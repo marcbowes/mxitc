@@ -635,6 +635,22 @@ void Client::signup(const QString &cellphone, const QString &password, const QSt
 ** Author: Marc Bowes
 **
 ****************************************************************************/
+void Client::unregisterGateway(const QString &username, Protocol::Enumerables::Contact::Type type)
+{
+  /* packet variables */
+  VariableHash gatewayVariables;
+  gatewayVariables["username"] = username.toUtf8();
+  gatewayVariables["type"]     = QByteArray::number(type);
+
+  sendPacket("unregistergateway", gatewayVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
 void Client::updateContactInfo(const QString &group, const QString &contactAddress,
     const QString &nickname)
 {
