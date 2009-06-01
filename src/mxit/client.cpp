@@ -1085,6 +1085,9 @@ void Client::setupReceived()
   if (!registerAfterChallenge)
     connection->open(getPacket("login"));
   else {
+    /* loginname required by buildPacket */
+    variables["loginname"] = variables["_cellphone"];
+    
     connection->open(getPacket("register"));
     registerAfterChallenge = false;
   }
