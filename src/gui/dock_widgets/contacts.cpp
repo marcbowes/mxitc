@@ -551,6 +551,7 @@ QStringList Contacts::getGroupNames() {
 /****************************************************************************
 **
 ** Author: Richard Baxter
+** Author: Marc Bowes
 **
 ** refreshes a treeWidgetItem
 **
@@ -566,7 +567,18 @@ void Contacts::refreshTreeWidgetItem(QTreeWidgetItem *item) {
   else {
     /*then this is a contact item*/
     Contact * contact = twiToContact.value(item);
-    item->setIcon(0, theme.contact.presence.pixmap(contact->presence));
+    
+    /* @author Marc Bowes: icons */
+    switch (contact->type) {
+      case Protocol::Enumerables::Contact::MXit:
+      case Protocol::Enumerables::Contact::Jabber:
+        item->setIcon(0, theme.contact.presence.pixmap(contact->presence));
+        break;
+      default:
+        item->setIcon(0, theme.contact.type.pixmap(contact->type));
+        break;
+    }
+    
     item->setText(0, contact->nickname);
     
       
