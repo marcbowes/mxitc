@@ -188,7 +188,7 @@ void ConversationsTabWidget::sendMessageFromChatArea (const ChatArea * chatArea)
 
 
 void ConversationsTabWidget::switchToConversationTab(const Conversation * conversation) {
-  if (conversation) {
+  if (conversation) { /*FIXME test whether this if statement needs to be here*/
     ensureExistanceOfChatAreaAndTab(conversation);
     int newIndex = indexOf(conversationToChatArea[conversation]);
     if (newIndex != currentIndex()) {
@@ -197,6 +197,7 @@ void ConversationsTabWidget::switchToConversationTab(const Conversation * conver
     else {  
       emit outgoingConversationReadNotification( conversation );
     }
+    conversationToChatArea[conversation]->chatInput->setFocus (Qt::OtherFocusReason);
   }
 }
 

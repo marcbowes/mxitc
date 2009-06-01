@@ -140,6 +140,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void registering();
  
   void setUpStatusBar();
+  void refreshStatusBar();
   
   void presenceChanged(int index);
   void moodChanged(int index);

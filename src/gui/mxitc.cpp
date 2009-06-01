@@ -156,7 +156,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   /*------------------------------------------------------------------------------------------*/
   
   connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
-  connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(setUpStatusBar()));
+  connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(refreshStatusBar()));
   connect(  optionsWidget, SIGNAL(themeChanged()), conversationsWidget, SLOT(refreshThemeing()));
   connect(  optionsWidget, SIGNAL(themeChanged()), contactsWidget, SLOT(refreshThemeing()));
   connect(  optionsWidget, SIGNAL(themeChanged()), conversationsTabWidget, SLOT(refreshThemeing()));
@@ -225,6 +225,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   We can't connect the themeChanged SIGNAL/SLOTs up since that would cause a QSettings save on the 'selected theme' on index 0 of the list and this->themeChanged which will overwrite the restored (correct!) QSettings value for 'selected theme' (something [TODO find out again] sets index to 0 => changes index of list => optionsWidget's loadTheme => this class's themeChanged => which overwrites the settings)*/
   themeChanged(); /* so we just call this manually since we know now the correct theme is selected*/
   setUpStatusBar();
+  refreshStatusBar();
   /* connecting widgets */
   connectWidgets();
   
@@ -479,9 +480,6 @@ void MXitC::resizeEvent ( QResizeEvent * event ) {
 
 void MXitC::setUpStatusBar() {
   
-  presenceComboBox->clear();
-  moodComboBox->clear();
-  
   #define ADD(x) presenceComboBox->addItem ( theme.contact.presence.pixmap(MXit::Protocol::Enumerables::Contact::Presence(MXit::Protocol::Enumerables::Contact::x)), #x, MXit::Protocol::Enumerables::Contact::Presence(MXit::Protocol::Enumerables::Contact::x));
   
   ADD(Offline);
@@ -511,6 +509,13 @@ void MXitC::setUpStatusBar() {
   
 }
 
+
+void MXitC::refreshStatusBar() {
+  
+  for (int i = 0 ; i < presenceComboBox->count () ; i++)
+    presenceComboBox->setItemIcon ( i, theme.contact.presence.pixmap(MXit::Protocol::Enumerables::Contact::Presence(presenceComboBox->itemData(i).toInt()) ));
+  
+}
 
 /****************************************************************************
 **
