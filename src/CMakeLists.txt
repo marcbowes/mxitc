@@ -79,6 +79,7 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/dialogs/allow_subscription.cpp
   gui/dialogs/login.cpp
   gui/dialogs/register.cpp
+  gui/dialogs/register_gateway.cpp
   
   gui/widgets/profile_settings.cpp
   gui/widgets/login_settings.cpp
@@ -123,6 +124,7 @@ SET(MXIT_CLIENT_MOC_SRCS
   gui/dialogs/allow_subscription.h
   gui/dialogs/login.h
   gui/dialogs/register.h
+  gui/dialogs/register_gateway.h
   
   gui/widgets/profile_settings.h
   gui/widgets/login_settings.h
@@ -151,6 +153,7 @@ SET(MXIT_CLIENT_UI
   gui/dialogs/allow_subscription.ui
   gui/dialogs/login.ui
   gui/dialogs/register.ui
+  gui/dialogs/register_gateway.ui
   
   gui/widgets/profile_settings.ui
   gui/widgets/login_settings.ui

@@ -12,6 +12,8 @@
 #include "gui/mxit_dock_widget.h"
 #include "mxit/client.h"
 
+
+
 #include "ui_add_contact.h"
 
 #include "protocol/enumerables/contact.h"
@@ -34,11 +36,16 @@ class AddContact : public MXitDockWidget, private Ui::AddContactDockWidget
   AddContact(QWidget* parent, Theme &theme, MXit::Client& mxit);
   ~AddContact();
   
+  public: /*methods*/
+  
+  void setContentsEnabled(bool enabled);
+  
   signals:
   
   void addContact(const QString &group, const QString &contactAddress, const QString &nickname,
     Protocol::Enumerables::Contact::Type type, const QString &message);
   
+
   public slots:
   void refresh();
   void updateGroups(const QStringList& newGroupComboBox);
@@ -47,6 +54,8 @@ class AddContact : public MXitDockWidget, private Ui::AddContactDockWidget
   void networkChanged ( int index );
   void sendAddContactInfo();
   
+  void registerSelectedGateway();
+  void unregisterSelectedGateway();
 
   private:
   MXit::Client& mxit;

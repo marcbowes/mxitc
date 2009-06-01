@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>244</width>
-    <height>458</height>
+    <width>245</width>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,80 +26,10 @@
      <widget class="QComboBox" name="networkComboBox"/>
     </item>
     <item>
-     <widget class="QLabel" name="addressLabel">
-      <property name="text">
-       <string>Cellphone</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="cellphoneLineEdit"/>
-    </item>
-    <item>
-     <widget class="QLabel" name="nickLabel">
-      <property name="text">
-       <string>Nickname</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="nicknameLineEdit"/>
-    </item>
-    <item>
-     <widget class="QLabel" name="inviteMsgLabel">
-      <property name="text">
-       <string>Invite Message</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="inviteMsgLineEdit"/>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Group</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="groupComboBox">
-      <property name="editable">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Alert Profile</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QComboBox" name="alertProfileComboBox">
-      <item>
-       <property name="text">
-        <string>General</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Meeting</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Silent</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item>
-     <widget class="QWidget" name="buttonsWidget" native="true">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <widget class="QWidget" name="gatewayWidget" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <spacer name="horizontalSpacer">
+        <spacer name="horizontalSpacer_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -112,10 +42,122 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="addButton">
+        <widget class="QPushButton" name="registerButton">
          <property name="text">
-          <string>Add</string>
+          <string>Register</string>
          </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="unregisterButton">
+         <property name="text">
+          <string>Unregister</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="contactWidget" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="nickLabel">
+         <property name="text">
+          <string>Nickname</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="nicknameLineEdit"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="addressLabel">
+         <property name="text">
+          <string>Cellphone</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="cellphoneLineEdit"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="inviteMsgLabel">
+         <property name="text">
+          <string>Invite Message</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="inviteMsgLineEdit"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Group</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="groupComboBox">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Alert Profile</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="alertProfileComboBox">
+         <item>
+          <property name="text">
+           <string>General</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Meeting</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Silent</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="buttonsWidget" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="addButton">
+            <property name="text">
+             <string>Add</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>

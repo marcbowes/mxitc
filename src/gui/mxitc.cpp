@@ -621,6 +621,7 @@ void MXitC::incomingAction(Action action)
         presenceComboBox->setCurrentIndex(1);
         moodComboBox->setCurrentIndex(0);
         profileWidget->setContentsEnabled(true);
+        addContactWidget->setContentsEnabled(true);
         
         setStatus(LOGGED_IN);
       }
@@ -636,6 +637,7 @@ void MXitC::incomingAction(Action action)
       else /* if (currentState != LOGGED_OUT) */
       {
         profileWidget->setContentsEnabled(false);
+        addContactWidget->setContentsEnabled(false);
         setStatus(LOGGED_OUT);
       }
       break;

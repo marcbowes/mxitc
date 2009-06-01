@@ -2,6 +2,10 @@
 
 #include "add_contact.h"
 
+#include "gui/dialogs/register_gateway.h"
+
+#include <QDebug>
+
 namespace MXit
 {
 
@@ -46,19 +50,22 @@ AddContact::AddContact(QWidget* parent, Theme &theme, MXit::Client& mxit) : MXit
   
   
   /*TODO change "cellphone" lable to Address when MXit not slected as network*/
+  /*TODO blank out add contact if a network is chosen*/
   
   connect(addButton, SIGNAL(released()), this, SLOT(sendAddContactInfo()));
   
   connect(networkComboBox, SIGNAL(currentIndexChanged ( int )), this, SLOT(networkChanged( int )));
   
+  connect(registerButton, SIGNAL(released()), this, SLOT(registerSelectedGateway()));
+  connect(unregisterButton, SIGNAL(released()), this, SLOT(unregisterSelectedGateway()));
   
   /*connect(this, 
           SIGNAL(addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &)), 
           mxit, 
           SLOT  (addContact(const QString &, const QString &, const QString &, Protocol::Enumerables::Contact::Type, const QString &))  );*/
   
-  
-  
+  networkChanged(networkComboBox->currentIndex());
+  setContentsEnabled(false);
 }
 
 
@@ -72,6 +79,47 @@ AddContact::AddContact(QWidget* parent, Theme &theme, MXit::Client& mxit) : MXit
 AddContact::~AddContact()
 {
 
+}
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+
+void AddContact::setContentsEnabled(bool enabled) {
+  dockWidgetContents->setEnabled(enabled);
+
+}
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void AddContact::registerSelectedGateway() {
+  qDebug() << "wtfffff";
+  Dialog::RegisterGateway reg(QString("Register to ")+networkComboBox->currentText(), false, 0);
+  
+  
+  if (reg.exec() == QDialog::Accepted) {
+    mxit.registerGateway(reg.getUsername(), reg.getPassword(),(MXit::Protocol::Enumerables::Contact::Type)networkComboBox->itemData (networkComboBox->currentIndex()).toInt());
+  }
+}
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void AddContact::unregisterSelectedGateway() {
+  Dialog::RegisterGateway reg(QString("Unregister from ")+networkComboBox->currentText(), true, 0);
+  
+  
+  if (reg.exec() == QDialog::Accepted) {
+    mxit.unregisterGateway(reg.getUsername(), (MXit::Protocol::Enumerables::Contact::Type)networkComboBox->itemData (networkComboBox->currentIndex()).toInt());
+  }
 }
 
 /****************************************************************************
@@ -116,10 +164,24 @@ void AddContact::networkChanged ( int index ) {
 
   Type type = (Type)networkComboBox->itemData (index).toInt();
   
-  if (type == MXit || type == MultiMx)
-    addressLabel->setText("Cellphone");
-  else
-    addressLabel->setText("Address");
+  if (
+        type == Jabber || 
+        type == MSN || 
+        type == Yahoo || 
+        type == ICQ || 
+        type == AIM || 
+        type == GoogleTalk) {
+    //contactWidget->setEnabled(false);
+    gatewayWidget->setEnabled(true);
+  }
+  else {
+    //contactWidget->setEnabled(true);
+    gatewayWidget->setEnabled(false);
+    if (type == MXit || type == MultiMx)
+      addressLabel->setText("Cellphone");
+    else
+      addressLabel->setText("Address");
+  }
 }
 
 /****************************************************************************
