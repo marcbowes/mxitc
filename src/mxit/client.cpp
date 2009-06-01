@@ -435,7 +435,7 @@ void Client::sendFile(QFile &file, const ContactList &contacts)
   temp = QByteArray::number(numContacts, 16);
   while (temp.size() < (2*2))
     temp.prepend("0");
-  fileVariables["numContacts"] = temp;
+  fileVariables["numContacts"] = QByteArray::fromHex(temp);
   
   //list of contacts
   temp.clear();
@@ -452,33 +452,41 @@ void Client::sendFile(QFile &file, const ContactList &contacts)
   
   //filename
   QString fileName = file.fileName();
-  fileVariables["name"] = fileName.toUtf8();
+  fileVariables["name"] = "test";//fileName.toUtf8();
   
   //FIXME: actually do mimetypes
   if ((fileName.endsWith(".png")) || (fileName.endsWith(".x-png"))) {
     fileVariables["mimetype"] = "image/png";
   } else if ((fileName.endsWith(".jpe")) || (fileName.endsWith(".jpg")) || (fileName.endsWith(".jpeg")) || (fileName.endsWith(".jfif"))) {
     fileVariables["mimetype"] = "image/jpeg";
-  } else if (fileName.endsWith(".svg")) {
+  } else if ((fileName.endsWith(".svg")) || (fileName.endsWith(".svgz"))) {
     fileVariables["mimetype"] = "image/svg+xml";
-  } else if (fileName.endsWith(".svgz")) { //FIXME this shouldnt be image/svgz+xml, but mxit wants it that way afaik
-    fileVariables["mimetype"] = "image/svgz+xml";
   } else if (fileName.endsWith(".wav")) {
     fileVariables["mimetype"] = "audio/wav";
   } else if ((fileName.endsWith(".midi")) || (fileName.endsWith(".kar")) || (fileName.endsWith(".mid"))) {
-    fileVariables["mimetype"] = "audio/midi";//FIXME not finished
+    fileVariables["mimetype"] = "audio/midi";
+  }else if ((fileName.endsWith(".m4a")) || (fileName.endsWith(".m4b")) || (fileName.endsWith(".m4p")) || (fileName.endsWith(".m4v")) || (fileName.endsWith(".m4r")) || (fileName.endsWith(".3gp")) || (fileName.endsWith(".mp4")) || (fileName.endsWith(".aac"))) {
+    fileVariables["mimetype"] = "audio/aac";
+  } else if (fileName.endsWith(".mp3")) {
+    fileVariables["mimetype"] = "audio/mpeg";
+  } else if (fileName.endsWith(".amr")) {
+    fileVariables["mimetype"] = "audio/amr";
+  } else if (fileName.endsWith(".awb")) {
+    fileVariables["mimetype"] = "audio/amr-wb";
+  } else if ((fileName.endsWith(".au")) || (fileName.endsWith(".snd"))) {
+    fileVariables["mimetype"] = "audio/basic";
   } else {
     fileVariables["mimetype"] = "application/octet-stream";
   }
   
   //description TODO: maybe allow for a description
-  fileVariables["description"] = "";
+  fileVariables["description"] = "testing";
   
   //FIXME: implement crc
   temp = QByteArray::number(0, 16);
   while (temp.size() < (4*2))
     temp.prepend("0");
-  fileVariables["crc"] = temp;
+  fileVariables["crc"] = QByteArray::fromHex(temp);
   
   //actual file data
   fileVariables["bytes"] = file.readAll();
