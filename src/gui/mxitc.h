@@ -137,7 +137,6 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void openRegisterDialog();
   
   void loggingIn();
-  void registering();
  
   void setUpStatusBar();
   void refreshStatusBar();

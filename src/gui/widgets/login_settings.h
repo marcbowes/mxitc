@@ -43,6 +43,10 @@ class LoginSettings : public QWidget, public Ui::LoginWidget
                                   const QByteArray& languages, 
                                   const QByteArray& countries, 
                                   const QByteArray& defaultCountry  );
+                                  
+                                  
+  protected: /* methods */
+  
   
 
 };

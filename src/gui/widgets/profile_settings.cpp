@@ -30,7 +30,6 @@ ProfileSettings::~ProfileSettings(){
   
 }
 
-
 void ProfileSettings::emitFieldChanged(const QDate& nothing) {
   emit fieldChanged();
 }

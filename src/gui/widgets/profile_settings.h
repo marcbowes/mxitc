@@ -38,7 +38,8 @@ class ProfileSettings : public QWidget, public Ui::ProfileSettingsWidget
 
   void emitFieldChanged(const QString&);
   void emitFieldChanged(const QDate&);
-
+      
+  protected: /* methods */
 };
 
 } /* end of DockWidget namespace */
