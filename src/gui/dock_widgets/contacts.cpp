@@ -284,7 +284,7 @@ void Contacts::singleContactMenu(const QString & selection, const QList<QTreeWid
     
     QString name = QFileDialog::getOpenFileName ();
     if (name != "") {
-      qDebug() << name;
+      // qDebug() << name;
       ContactList contactList = genContactsListFromTwiSelection(selectedTwi);
       QFile file(name);
       mxit.sendFile(file, contactList);

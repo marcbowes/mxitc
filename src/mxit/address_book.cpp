@@ -6,8 +6,6 @@
 
 #include "address_book.h"
 
-#include <QDebug>
-
 namespace MXit
 {
 

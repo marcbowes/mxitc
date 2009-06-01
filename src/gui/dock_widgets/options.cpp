@@ -2,8 +2,6 @@
 
 #include "options.h"
 
-#include <QDebug>
-
 namespace MXit
 {
 

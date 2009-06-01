@@ -115,7 +115,7 @@ void Register::incomingStateChange(State newState) {
   else if (newState == LOGGING_IN) {
   }
   else if (newState == LOGGED_OUT) {
-    qDebug() << "Register::incomingStateChange(LOGGED_OUT)";
+    // qDebug() << "Register::incomingStateChange(LOGGED_OUT)";
   }
 
 }

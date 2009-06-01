@@ -1,12 +1,8 @@
 
-
-
 #include "conversations_tab_widget.h"
 
-#include <QDebug>
 #include <QTextDocument>
 #include <QWebFrame>
-
 
 namespace MXit
 {

@@ -3,7 +3,7 @@
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
 ****************************************************************************/
-#include <QDebug>
+
 #include "09_getnewmessages.h"
 
 namespace MXit

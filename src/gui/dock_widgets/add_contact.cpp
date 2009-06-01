@@ -4,8 +4,6 @@
 
 #include "gui/dialogs/register_gateway.h"
 
-#include <QDebug>
-
 namespace MXit
 {
 
