@@ -33,6 +33,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionAuto_Logon"/>
     <addaction name="actionLogon_to_MXIT"/>
     <addaction name="actionLogoff"/>
     <addaction name="separator"/>
@@ -96,7 +97,7 @@
    <addaction name="actionConversations"/>
    <addaction name="actionAdd_Contact"/>
   </widget>
-  <widget class="QToolBar" name="toolBar">
+  <widget class="QToolBar" name="optionsToolBar">
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
