@@ -4,6 +4,8 @@
 **
 ****************************************************************************/
 
+#include "protocol/aes.h"
+
 #include "12_updateprofile.h"
 
 namespace MXit
@@ -49,7 +51,7 @@ void UpdateProfile::buildPacket(MXit::Network::Packet *packet, VariableHash &var
   */
   
   /* first - password encryption (Appendix B) */
-  if (!pin.isEmpty()) {
+  if (!variables.value("pin").isEmpty()) {
     variables.remove("encryptedpassword");
     QString key = QString("6170383452343567").replace(0, 8, variables["pid"].right(8));
     QString pass = "<mxit/>" + variables["pin"];

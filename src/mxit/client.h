@@ -77,6 +77,8 @@ class Client : public QObject
     const VariableHash &settings);
   void logout();
   void pollDifference();
+  void registerGateway(const QString &username, const QString &Password,
+    Protocol::Enumerables::Contact::Type type);
   void removeContact(const QString &contactAddress);
   void sendFile(QFile &file, const ContactList &contacts);
   void setGateway(const QString &connectionString, const QString &proxyHost, quint16 proxyPort,
