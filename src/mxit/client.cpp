@@ -394,6 +394,26 @@ void Client::pollDifference()
 **
 ** Author: Marc Bowes
 **
+** Registers a Gateway (think: a bunch of contacts in a group)
+**
+****************************************************************************/
+void Client::registerGateway(const QString &username, const QString &password,
+    Protocol::Enumerables::Contact::Type type)
+{
+  /* packet variables */
+  VariableHash gatewayVariables;
+  gatewayVariables["username"] = username.toUtf8();
+  gatewayVariables["password"] = password.toUtf8();
+  gatewayVariables["type"]     = QByteArray::number(type);
+  
+  sendPacket("registergateway", gatewayVariables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
 ** Passes parameters onto a packet handler and transmits result
 **
 ****************************************************************************/
@@ -615,6 +635,22 @@ void Client::signup(const QString &cellphone, const QString &password, const QSt
   challenge(captcha);
 
   emit outgoingVariables(variables);
+}
+
+
+/****************************************************************************
+**
+** Author: Marc Bowes
+**
+****************************************************************************/
+void Client::unregisterGateway(const QString &username, Protocol::Enumerables::Contact::Type type)
+{
+  /* packet variables */
+  VariableHash gatewayVariables;
+  gatewayVariables["username"] = username.toUtf8();
+  gatewayVariables["type"]     = QByteArray::number(type);
+
+  sendPacket("unregistergateway", gatewayVariables);
 }
 
 
@@ -1093,6 +1129,9 @@ void Client::setupReceived()
   if (!registerAfterChallenge)
     connection->open(getPacket("login"));
   else {
+    /* loginname required by buildPacket */
+    variables["loginname"] = variables["_cellphone"];
+    
     connection->open(getPacket("register"));
     registerAfterChallenge = false;
   }

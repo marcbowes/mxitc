@@ -72,14 +72,14 @@ void Register::buildPacket(MXit::Network::Packet *packet, VariableHash &variable
   variables["encryptedpassword"] = encryptor.encrypt(key.toLatin1(), pass.toLatin1()).toBase64();
     
   /* next - get distributor code from pid */
-  if (variables["dc"].isEmpty()) {
-    QByteArray dc = variables["pid"];
-    dc.replace(0, 2, "");
-    dc = dc.left(dc.length() - 8);
-    variables["dc"] = dc;
-  }
+  variables.remove("dc");
+  QByteArray dc = variables["pid"];
+  dc.replace(0, 2, "");
+  dc = dc.left(dc.length() - 8);
+  variables["dc"] = dc;
   
   (*packet) << variables["encryptedpassword"]
+            << "E-5.8.2-Y-LPM"                    // version
             << "150000"                       /* maxReplyLen, sniffed from a Nokia E51 */
             << variables["name"]
             << variables["dateOfBirth"]

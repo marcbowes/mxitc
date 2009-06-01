@@ -59,7 +59,7 @@ void RegisterGateway::buildPacket(MXit::Network::Packet *packet, VariableHash &v
   
   (*packet) << variables["username"]
             << variables["password"]
-            << variables["deprecated"]
+            << "" /* deprecated */
             << variables["type"];
 }
 
