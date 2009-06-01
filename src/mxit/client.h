@@ -92,6 +92,7 @@ class Client : public QObject
     Protocol::Enumerables::Message::Type, unsigned int flags);
   void signup(const QString &cellphone, const QString &password, const QString &captcha,
     const VariableHash &settings);
+  void unregisterGateway(const QString &username, Protocol::Enumerables::Contact::Type type);
   void updateContactInfo(const QString &group, const QString &contactAddress,
     const QString &nickname);
   void updateProfile(const QString &pin, const QString &name, bool hiddenLoginname,
