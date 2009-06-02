@@ -11,9 +11,7 @@ client for use on all Qt-capable systems. This includes:
   * Windows
   * Mac OSX
 
-Note that the mxitc theme pack is a seperate project. It is availabe at:
-
-  http://github.com/marcbowes/mxitc-themes
+Note that the mxitc theme pack is a [seperate project] [1].
 
 ## Features
 
@@ -73,3 +71,4 @@ Please see the relevant build file in the docs/ folder.
 
 If you wish to contact us, please do so using GitHub.
 
+[1]: http://github.com/marcbowes/mxitc-themes "mxitc-themes"
