@@ -63,6 +63,11 @@ information.
 
 Please see the relevant build file in the docs/ folder.
 
+## Issues
+
+Please report all issues on the GitHub [issue tracker for mxitc] [2].
+Please do not post feature requests as issues.
+
 ## Authors
 
   * Marc Bowes
@@ -72,3 +77,4 @@ Please see the relevant build file in the docs/ folder.
 If you wish to contact us, please do so using GitHub.
 
 [1]: http://github.com/marcbowes/mxitc-themes "mxitc-themes"
+[2]: http://github.com/marcbowes/mxitc/issues "mxitc issues"
