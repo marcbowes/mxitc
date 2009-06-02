@@ -52,7 +52,7 @@ void Emoticon::HtmlToShorthand(QString &message)
 ****************************************************************************/
 void Emoticon::shorthandToHtml(QString &message, const QString &path) const
 {
-  message.replace(shorthand, QString("<img alt=\"%1\" src=\"%2%3\" class=\"emoticon\" />").arg(shorthand).arg(path).arg(file));
+  message.replace(shorthand, QString("<img alt=\"%1\" src=\"file://%2%3\" class=\"emoticon\" />").arg(shorthand).arg(path).arg(file));
 }
 
 }
