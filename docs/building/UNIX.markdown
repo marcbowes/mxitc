@@ -1,4 +1,4 @@
-# Compiling for Windows
+# Compiling for Unix
 
 ## Minimum requirements
 

@@ -1,1 +1,1 @@
-Please refer to Linux build instructions as they are (currently) identical.
+Please refer to UNIX build instructions as they are (currently) identical.
