@@ -19,6 +19,7 @@ you wish to use proprietry software such as Visual Studio, you may be able to
 adopt this strategy with minimal modification.
 
 We will use:
+
   * Qt 4.5 open-source edition
   * MingW32 (comes with Qt)
   * CMake to generate the MingW32 Makefile
@@ -55,8 +56,8 @@ runtime dependencies are in the same folder as mxitc.exe. These are:
 
 If you are missing any, mxitc.exe will report an error on startup.
 
-To remove these runtime dependencies, please refer to the following URL:
-
-  http://doc.trolltech.com/4.5/deployment-windows.html
+To remove these runtime dependencies, please [read this] [1]
 
 We hope to post a walkthrough on how to do this in the future.
+
+[1]: http://doc.trolltech.com/4.5/deployment-windows.html "Qt Deployment on Windows"
