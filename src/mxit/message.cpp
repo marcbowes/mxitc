@@ -392,7 +392,7 @@ bool Message::flagContainsCustomEmoticons(const QByteArray flags)
 const QString Message::message() const
 {
   if (type == MXit::Protocol::Enumerables::Message::Command) {
-    return commandUp(rawMessage, contact);
+    return commandUp(markedupMessage, contact);
   } else
     return containsMarkup ? markedupMessage : rawMessage;
 }
