@@ -525,6 +525,7 @@ void Client::sendFile(QFile &file, const ContactList &contacts)
 void Client::setGateway(const QString &connectionString, const QString &httpHost, quint16 port,
   const QString &username, const QString &password)
 {
+  handshaker->setProxy(httpHost, port, username, password);
   if (connection->getState() != MXit::Network::Connection::DISCONNECTED) {
     sendPacket("logout");
     connection->close();
