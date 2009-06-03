@@ -71,7 +71,7 @@ Please do not post feature requests as issues.
 ## Authors
 
   * Marc Bowes (marcbowes AT gmail DOT com)
-  * Timothy Sjoberg (bedlamp AT gmail DOT com)
+  * Tim Sjoberg (bedlamp AT gmail DOT com)
   * Richard Baxter (richard.johnathan.baxter AT gmail DOT com)
 
 ## Using the installer
