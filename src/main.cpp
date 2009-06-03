@@ -1,6 +1,12 @@
 #include "gui/mxitc.h"
+#include <QApplication>
 
-
+#ifdef WIN32
+  #include <QtPlugin>
+  
+  Q_IMPORT_PLUGIN(qgif)
+  Q_IMPORT_PLUGIN(qjpeg)
+#endif
 
 int main(int argc, char *argv[])
 {

@@ -5,6 +5,8 @@
 ****************************************************************************/
 
 #include <QRegExp>
+#include <QUrl>
+#include <QDir>
 
 #include "emoticon.h"
 
@@ -52,7 +54,8 @@ void Emoticon::HtmlToShorthand(QString &message)
 ****************************************************************************/
 void Emoticon::shorthandToHtml(QString &message, const QString &path) const
 {
-  message.replace(shorthand, QString("<img alt=\"%1\" src=\"file://%2%3\" class=\"emoticon\" />").arg(shorthand).arg(path).arg(file));
+  QString src = QUrl::fromLocalFile(QDir(path).absoluteFilePath(file)).toString();
+  message.replace(shorthand, QString("<img alt=\"%1\" src=\"%2\" class=\"emoticon\" />").arg(shorthand).arg(src));
 }
 
 }
