@@ -1,6 +1,7 @@
 
 
 #include "chat_area.h"
+#include <QWebFrame>
 
 
 namespace MXit
@@ -23,8 +24,9 @@ ChatArea::ChatArea(QWidget * parent ) : QWidget(parent) {
   
   chatWebView->setFocusProxy(chatInput);
   
-  connect(chatInput,  SIGNAL(returnPressed ()), this, SLOT(emitSendMessageFromChatInput()));
-  connect(chatInput,  SIGNAL(returnPressed ()), chatInput, SLOT(clear()));
+  connect(chatInput,   SIGNAL(returnPressed ()), this, SLOT(emitSendMessageFromChatInput()));
+  connect(chatInput,   SIGNAL(returnPressed ()), chatInput, SLOT(clear()));
+  connect(chatWebView, SIGNAL(loadFinished ( bool )), this, SLOT(loadFinished ( bool )));
   
   chatWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
@@ -44,6 +46,18 @@ ChatArea::~ChatArea() {
 
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void ChatArea::loadFinished ( bool ok ) {
+  
+  QWebFrame * frame = chatWebView->page ()->currentFrame ();
+  frame->setScrollBarValue(Qt::Vertical, frame->scrollBarMaximum(Qt::Vertical));
+}
+  
   
 /****************************************************************************
 **

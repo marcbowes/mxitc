@@ -34,6 +34,7 @@ class ChatArea : public QWidget, public Ui::ChatArea {
   void sendMessageFromChatInput(const ChatArea *);
 
   private slots:
+  void loadFinished ( bool ok );
 
   void emitSendMessageFromChatInput();
   public: /* methods */
