@@ -33,17 +33,20 @@ QString Chat::spokenToShorthand(const QString &spoken)
   
   /* build dictionary if it wasn't previously built */
   if (!dictionaryLoaded) {
-    /* ordered alphabetically by spoken */
-    dictionary["leftbracket"]   = '(';
-    dictionary["rightbracket"]  = ')';
+    /* ordered alphabetically by spoken */    
     dictionary["B"]             = 'B';
     dictionary["colon"]         = ':';
     dictionary["D"]             = 'D';
     dictionary["dash"]          = '-';
+    dictionary["G"]             = 'G';
+    dictionary["greaterthan"]   = '>';
     dictionary["hyphen"]        = '-';
+    dictionary["leftbracket"]   = '(';
+    dictionary["lessthan"]      = '<';
     dictionary["minus"]         = '-';
     dictionary["O"]             = 'O';
     dictionary["P"]             = 'P';
+    dictionary["rightbracket"]  = ')';
     dictionary["semicolon"]     = ';';
     dictionary["star"]          = '*';
     
