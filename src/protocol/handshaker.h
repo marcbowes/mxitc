@@ -42,15 +42,17 @@ class Handshaker : public QObject
   signals:
         
   void outgoingVariables(const VariableHash &);
-        
-  private slots:
-  
-  void requestComplete(int id, bool error);
 
   public:         /* methods */
   
   void challenge(const QString &captcha, const VariableHash &settings, bool signup);
   void initialize();
+  void setProxy(const QString &host, quint16 port,
+    const QString &username, const QString &password);
+  
+  private slots:
+  
+  void requestComplete(int id, bool error);
   
   private:        /* methods */
   

@@ -16,6 +16,16 @@ namespace Protocol
 {
 
 /****************************************************************************
+        __                                _ ____
+   ____/ /__ ____ ___   ___ ___  ___ ____(_) _(_)___
+  / __/ / _ `(_-<(_-<  (_-</ _ \/ -_) __/ / _/ / __/
+  \__/_/\_,_/___/___/ /___/ .__/\__/\__/_/_//_/\__/
+                         /_/
+
+****************************************************************************/
+
+
+/****************************************************************************
 **
 ** Author: Richard Baxter
 **
@@ -43,6 +53,81 @@ Handshaker::~Handshaker()
 {
   delete http;
 }
+
+
+/****************************************************************************
+                __   ___                 __  __           __
+     ___  __ __/ /  / (_)___  __ _  ___ / /_/ /  ___  ___/ /__
+    / _ \/ // / _ \/ / / __/ /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
+   / .__/\_,_/_.__/_/_/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
+  /_/
+
+****************************************************************************/
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+** Author: Marc Bowes
+**
+** sends challenge response to MXit
+** variables starting with an underscore were set by a previous response
+**
+****************************************************************************/
+void Handshaker::challenge(const QString &captcha, const VariableHash &settings, bool signup)
+{
+  QUrl url(settings["url"]);
+  http->setHost(url.host(), 80);
+  
+  QString query =
+    QString("%1?type=getpid&sessionid=%2&ver=5.8.2&login=%3&cat=E&chalresp=%4&cc=%5&loc=%6&brand=PC&model=mxitc&path=%7")
+    .arg(url.path())
+    .arg(QString(settings["sessionid"]))
+    .arg(QString(settings["_cellphone"]))
+    .arg(captcha)
+    .arg(QString(settings["cc"]))
+    .arg(QString(settings["locale"]))
+    .arg(signup ? "0" : "1")
+  ;
+
+  state = CHALLENGING;
+  currentRequest = http->get(query);
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+** Author: Marc Bowes
+**
+** sends initialization request to MXit
+**
+****************************************************************************/
+void Handshaker::initialize()
+{
+  QString timestamp = QString("%1").arg(QDateTime::currentDateTime().toTime_t());
+  QUrl url("http://www.mxit.com/res/");
+  http->setHost(url.host(), 80);
+  
+  QString query =
+    QString("%1?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=%2")
+    .arg(url.path())
+    .arg(timestamp)
+  ;
+  
+  state = INITIALIZING;
+  currentRequest = http->get(query);
+}
+
+
+/****************************************************************************
+               _           __            __     __
+     ___  ____(_)  _____ _/ /____   ___ / /__  / /____
+    / _ \/ __/ / |/ / _ `/ __/ -_) (_-</ / _ \/ __(_-<
+   / .__/_/ /_/|___/\_,_/\__/\__/ /___/_/\___/\__/___/
+  /_/
+
+/***************************************************************************/
 
 
 /****************************************************************************
@@ -86,57 +171,26 @@ void Handshaker::requestComplete(int id, bool error)
 
 /****************************************************************************
 **
-** Author: Richard Baxter
 ** Author: Marc Bowes
 **
-** sends initialization request to MXit
+** Set's the HTTP Proxy to be used
 **
 ****************************************************************************/
-void Handshaker::initialize()
+void Handshaker::setProxy(const QString &host, quint16 port,
+  const QString &username, const QString &password)
 {
-  QString timestamp = QString("%1").arg(QDateTime::currentDateTime().toTime_t());
-  QUrl url("http://www.mxit.com/res/");
-  http->setHost(url.host(), 80);
-  
-  QString query =
-    QString("%1?type=challenge&getcountries=true&getlanguage=true&getimage=true&ts=%2")
-    .arg(url.path())
-    .arg(timestamp)
-  ;
-  
-  state = INITIALIZING;
-  currentRequest = http->get(query);
+  http->setProxy(host, port, username, password);
 }
 
 
 /****************************************************************************
-**
-** Author: Richard Baxter
-** Author: Marc Bowes
-**
-** sends challenge response to MXit
-** variables starting with an underscore were set by a previous response
-**
-****************************************************************************/
-void Handshaker::challenge(const QString &captcha, const VariableHash &settings, bool signup)
-{
-  QUrl url(settings["url"]);
-  http->setHost(url.host(), 80);
-  
-  QString query =
-    QString("%1?type=getpid&sessionid=%2&ver=5.8.2&login=%3&cat=E&chalresp=%4&cc=%5&loc=%6&brand=PC&model=mxitc&path=%7")
-    .arg(url.path())
-    .arg(QString(settings["sessionid"]))
-    .arg(QString(settings["_cellphone"]))
-    .arg(captcha)
-    .arg(QString(settings["cc"]))
-    .arg(QString(settings["locale"]))
-    .arg(signup ? "0" : "1")
-  ;
+               _           __                  __  __           __
+     ___  ____(_)  _____ _/ /____   __ _  ___ / /_/ /  ___  ___/ /__
+    / _ \/ __/ / |/ / _ `/ __/ -_) /  ' \/ -_) __/ _ \/ _ \/ _  (_-<
+   / .__/_/ /_/|___/\_,_/\__/\__/ /_/_/_/\__/\__/_//_/\___/\_,_/___/
+  /_/
 
-  state = CHALLENGING;
-  currentRequest = http->get(query);
-}
+****************************************************************************/
 
 
 /****************************************************************************
