@@ -20,7 +20,7 @@ namespace DockWidget
 ** Widget constructor
 **
 ****************************************************************************/
-Options::Options(QWidget* parent, Theme &theme, MXit::Client& mxit, QSettings& settings) : MXitDockWidget(parent, theme), mxit(mxit), settings(settings), loadingSettings(false)
+Options::Options(QWidget* parent, Theme &theme, MXit::Client& mxit, QSettings& settings, QMainWindow& mainWindow, ConversationsComponent::TabWidget& conversationsTabWidget) : MXitDockWidget(parent, theme), mxit(mxit), settings(settings), loadingSettings(false), mainWindow(mainWindow), conversationsTabWidget(conversationsTabWidget)
 {
   setupUi(this);
   
@@ -30,9 +30,15 @@ Options::Options(QWidget* parent, Theme &theme, MXit::Client& mxit, QSettings& s
   /* ======= general tab ======= */
   
   connect(autoLoginCheckBox, SIGNAL(clicked ()), this, SLOT(saveSettings ( )));
-  /*TODO hide offline contacts*/
   
   connect(hideOfflineCheckBox, SIGNAL( clicked () ), this, SIGNAL(requestRefresh ( )));
+  
+  tabPosComboBox->addItem ( "Top", QTabWidget::North );
+  tabPosComboBox->addItem ( "Bottom", QTabWidget::South );
+  tabPosComboBox->addItem ( "Left", QTabWidget::West );
+  tabPosComboBox->addItem ( "Right", QTabWidget::East );
+  tabPosComboBox->setCurrentIndex(0);
+  connect(tabPosComboBox, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( tabPosChanged ( int ) ));
   
   /* ======= gateway tab ======= */
   /*TODO, set this in Ui rather*/
@@ -72,9 +78,9 @@ Options::Options(QWidget* parent, Theme &theme, MXit::Client& mxit, QSettings& s
   connect(directoryLineEdit , SIGNAL(editingFinished ()), this, SLOT (refreshComboBox ())); 
   
   
-  
   /*load settings*/
   
+  tabPosComboBox->setCurrentIndex(tabPosComboBox->findText (settings.value("tabPosComboBoxText").toString()));
   autoLoginCheckBox->setChecked(settings.value("autoLogin").toBool());
   showLoginDialogCheckBox->setChecked(settings.value("showLoginDialogOnNonAutoStart").toBool());
   hideOfflineCheckBox->setChecked(settings.value("hideOfflineContacts").toBool());
@@ -122,6 +128,7 @@ Options::~Options() {
 void Options::saveSettings() {
 
   if (!loadingSettings) {
+    settings.setValue("tabPosComboBoxText", tabPosComboBox->currentText());
     settings.setValue("autoLogin", isAutoLogin());
     settings.setValue("showLoginDialogOnNonAutoStart", showLoginDialogOnNonAutoStart());
     settings.setValue("hideOfflineContacts", hideOfflineContacts());
@@ -140,6 +147,16 @@ void Options::saveSettings() {
                                                             
                                
 ****************************************************************************/
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+
+void Options::tabPosChanged ( int index ) {
+  conversationsTabWidget.setTabPosition( QTabWidget::TabPosition(tabPosComboBox->itemData(index).toInt()) );
+}
 
 /****************************************************************************
 **

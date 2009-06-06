@@ -12,8 +12,10 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QSettings>
+#include <QMainWindow>
 
 #include "gui/mxit_dock_widget.h"
+#include "gui/conversations_components/tab_widget.h"
 #include "mxit/client.h"
 
 #include "ui_options.h"
@@ -33,7 +35,7 @@ class Options : public MXitDockWidget, public Ui::OptionsDockWidget
   
   public: /*class specific */
 
-  Options(QWidget* parent, Theme &theme, MXit::Client& mxit, QSettings& settings);
+  Options(QWidget* parent, Theme &theme, MXit::Client& mxit, QSettings& settings, QMainWindow& mainWindow, ConversationsComponent::TabWidget& conversationsTabWidget);
   ~Options();
     
   public: /*method */
@@ -60,6 +62,7 @@ class Options : public MXitDockWidget, public Ui::OptionsDockWidget
   
   void incomingVariables(const VariableHash& variables);
   
+  void tabPosChanged ( int index );
   
   signals:
   
@@ -85,6 +88,8 @@ class Options : public MXitDockWidget, public Ui::OptionsDockWidget
   
   QSettings& settings;
   MXit::Client& mxit;
+  QMainWindow& mainWindow;
+  ConversationsComponent::TabWidget &conversationsTabWidget;
   bool loadingSettings;
 
 

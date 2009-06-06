@@ -34,9 +34,10 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   } else {
     trayIcon = NULL;
   }
+  connect (trayIcon, SIGNAL(activated ( QSystemTrayIcon::ActivationReason )), this, SLOT(systemTrayIconActivated( QSystemTrayIcon::ActivationReason )));
+  
   mxit = client;      /* store a copy */
   application = app;  /* store a copy */
-  
   
   
   /* Getting settings from file*/
@@ -71,7 +72,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   DockWidget::Debug * debugWidget = new DockWidget::Debug (this, theme);
   appendDockWidget(debugWidget,    Qt::RightDockWidgetArea, actionDebug_Variables);
   
-  optionsWidget = new DockWidget::Options (this, theme, *mxit, *settings);
+  optionsWidget = new DockWidget::Options (this, theme, *mxit, *settings, *this, *conversationsTabWidget);
   appendDockWidget(optionsWidget,  Qt::RightDockWidgetArea, actionOptions);
   
   conversationsWidget = new DockWidget::Conversations (this, theme, *mxit, *conversations);
@@ -478,6 +479,21 @@ void MXitC::resizeEvent ( QResizeEvent * event ) {
 
   
   settings->setValue("mainWindowSize", this->size ());
+
+}
+
+
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+void MXitC::systemTrayIconActivated( QSystemTrayIcon::ActivationReason reason) {
+  if (reason == QSystemTrayIcon::DoubleClick) {
+    QShowEvent event;
+    //QApplication::sendEvent(application, &event);
+    //TODO make the application minimize/unminimize
+  }
 
 }
 
@@ -957,7 +973,7 @@ void MXitC::openLoginDialog(){
   
   connect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
   connect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
-  connect(this, SIGNAL(stateChanged(State)), &login, SLOT(incomingStateChange(State)));
+  connect(this, SIGNAL(stateChanged(GuiState)), &login, SLOT(incomingStateChange(GuiState)));
   connect(this, SIGNAL(outgoingLoginRegisterError(const QString&)), &login, SLOT(incomingError(const QString&)));
   connect(this, SIGNAL(outgoingEnvironmentVariablesReady()), &login, SLOT(environmentVariablesReady()));
   connect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
@@ -967,7 +983,7 @@ void MXitC::openLoginDialog(){
   disconnect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
   disconnect(this, SIGNAL(outgoingEnvironmentVariablesReady()), &login, SLOT(environmentVariablesReady()));
   disconnect(this, SIGNAL(outgoingLoginRegisterError(const QString&)), &login, SLOT(incomingError(const QString&)));
-  disconnect(this, SIGNAL(stateChanged(State)), &login, SLOT(incomingStateChange(State)));
+  disconnect(this, SIGNAL(stateChanged(GuiState)), &login, SLOT(incomingStateChange(GuiState)));
   disconnect(&login, SIGNAL(loggingIn()), this, SLOT(loggingIn()));
   disconnect(&login, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
 }
@@ -988,7 +1004,7 @@ void MXitC::openRegisterDialog(){
   
   connect(&regis, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
   //connect(&regis, SIGNAL(registering()), this, SLOT(registering()));
-  connect(this, SIGNAL(stateChanged(State)), &regis, SLOT(incomingStateChange(State)));
+  connect(this, SIGNAL(stateChanged(GuiState)), &regis, SLOT(incomingStateChange(GuiState)));
   connect(this, SIGNAL(outgoingLoginRegisterError(const QString&)), &regis, SLOT(incomingError(const QString&)));
   connect(this, SIGNAL(outgoingEnvironmentVariablesReady()), &regis, SLOT(environmentVariablesReady()));
   connect(&regis, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
@@ -998,7 +1014,7 @@ void MXitC::openRegisterDialog(){
   disconnect(&regis, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
   disconnect(this, SIGNAL(outgoingEnvironmentVariablesReady()), &regis, SLOT(environmentVariablesReady()));
   disconnect(this, SIGNAL(outgoingLoginRegisterError(const QString&)), &regis, SLOT(incomingError(const QString&)));
-  disconnect(this, SIGNAL(stateChanged(State)), &regis, SLOT(incomingStateChange(State)));
+  disconnect(this, SIGNAL(stateChanged(GuiState)), &regis, SLOT(incomingStateChange(GuiState)));
   //disconnect(&regis, SIGNAL(registering()), this, SLOT(registering()));
   disconnect(&regis, SIGNAL(pingEnvironmentVariables()), this, SLOT(incomingEnvironmentVariablesPing()));
 }

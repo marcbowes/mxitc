@@ -126,7 +126,7 @@
     <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
-       <string>GroupBox</string>
+       <string>Are you registered?</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>

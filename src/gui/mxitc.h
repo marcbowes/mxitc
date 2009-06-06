@@ -146,6 +146,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   void presenceChanged(int index);
   void moodChanged(int index);
   
+  void systemTrayIconActivated( QSystemTrayIcon::ActivationReason );
+  
   private:        /* variables */
   
   //const Conversation * currentConversation;

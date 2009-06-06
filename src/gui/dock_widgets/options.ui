@@ -59,6 +59,18 @@
             </widget>
            </item>
            <item>
+            <widget class="QGroupBox" name="groupBox">
+             <property name="title">
+              <string>Conversations Area Tabs Position</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_11">
+              <item>
+               <widget class="QComboBox" name="tabPosComboBox"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
             <spacer name="verticalSpacer_2">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
