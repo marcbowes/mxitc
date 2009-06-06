@@ -66,6 +66,15 @@ void MXitDockWidget::toggleVisibility() {
   //}
 }
 
+/****************************************************************************
+**
+** Author: Richard Baxter
+**
+****************************************************************************/
+void MXitDockWidget::moveEvent ( QMoveEvent * event ) {
+  emit moved();
+}
+
 
 } /* end of GUI namespace */
 

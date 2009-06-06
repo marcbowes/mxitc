@@ -395,6 +395,8 @@ void MXitC::loadLayout() {
     //  dockWidget->setVisible(settings->value(QString("visible?")+dockWidget->objectName ()).toBool());
     if (settings->contains(QString("size?")+dockWidget->objectName ()))
       dockWidget->resize(settings->value(QString("size?")+dockWidget->objectName ()).toSize());
+    if (settings->contains(QString("pos?")+dockWidget->objectName ()))
+      dockWidget->move(settings->value(QString("pos?")+dockWidget->objectName ()).toPoint());
     //if (settings->contains(QString("floating?")+dockWidget->objectName ()))
     //  dockWidget->setFloating(settings->value(QString("floating?")+dockWidget->objectName ()).toBool());
   }
@@ -420,6 +422,9 @@ void MXitC::connectWidgets() {
     connect(
             dockWidget, SIGNAL(dockLocationChanged (Qt::DockWidgetArea)), 
             this, SLOT(saveLayout(Qt::DockWidgetArea)));
+    connect(
+            dockWidget, SIGNAL(moved()), 
+            this, SLOT(saveLayout()));
     connect(
             dockWidget, SIGNAL(visibilityChanged ( bool ) ), 
             this, SLOT(saveLayout( bool )));
@@ -456,6 +461,7 @@ void MXitC::saveLayout(Qt::DockWidgetArea area) {
     //settings->setValue(QString("visible?")+dw->objectName (), dw->isVisible());
     //settings->setValue(QString("floating?")+dw->objectName (), dw->isFloating());
     settings->setValue(QString("size?")+dw->objectName (), dw->size());
+    settings->setValue(QString("pos?")+dw->objectName (), dw->pos());
     //settings->setValue(QString("dockWidgetArea?")+dw->objectName (), dockWidgetArea ( dw ));
     //qDebug() << QString("dockWidgetArea?")+dw->objectName () << " = " << dockWidgetArea(dw);
   }

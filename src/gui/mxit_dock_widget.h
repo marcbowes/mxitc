@@ -10,6 +10,7 @@
 #define __MXIT_GUI_MXIT_DOCKWIDGET_H__
 
 #include <QDockWidget>
+#include <QMoveEvent>
 
 #include "theme.h"
 
@@ -31,6 +32,8 @@ class MXitDockWidget : public QDockWidget
   signals:
   
   void sendLog(const QString& message);
+  void moved();
+  
   //void requestRefresh();
 
   private: /* methods */
@@ -41,6 +44,7 @@ class MXitDockWidget : public QDockWidget
   public slots:
   void toggleVisibility(); /*FIXME there is apparently something that does this already in Qt... find it - rax*/
   
+  void moveEvent ( QMoveEvent * event );
 
   protected slots:
   
