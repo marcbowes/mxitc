@@ -49,10 +49,10 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   
   
   
-  conversationsWidgetsController = new ConversationsWidgetsController(theme, *mxit, *conversations, addressBook);
+  //conversationsWidgetsController = new ConversationsComponent::Controller(theme, *mxit, *conversations, addressBook);
   
   
-  conversationsTabWidget = new ConversationsTabWidget(theme, *mxit, *conversations, addressBook);
+  conversationsTabWidget = new ConversationsComponent::TabWidget(theme, *mxit, *conversations, addressBook);
   this->centralWidget()->layout ()->addWidget (conversationsTabWidget);
    
   
@@ -88,7 +88,7 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
   
   
   
-  conversationsWidgetsController = new ConversationsWidgetsController(theme, *mxit, *conversations, addressBook);
+  conversationsWidgetsController = new ConversationsComponent::Controller(theme, *mxit, *conversations, addressBook);
   conversationsWidgetsController->addConversationsWidget(conversationsTabWidget);
   conversationsWidgetsController->addConversationsWidget(conversationsWidget);
   
@@ -589,9 +589,9 @@ void MXitC::incomingAction(Action action)
 {
   switch(action) {
     //--------------------------------------
-    case LOGGED_IN:
+    case LOG_IN_COMPLETED:
       
-      logWidget->logMessage("GUI::LOGGED_IN");
+      logWidget->logMessage("GUI::LOG_IN_COMLETED");
       if (currentState == LOGGED_IN)
         ;/* do nothing TODO */
       else /* if (currentState != LOGGED_IN) */
@@ -645,8 +645,8 @@ void MXitC::incomingAction(Action action)
       break;
       
     //--------------------------------------
-    case LOGGED_OUT:
-      logWidget->logMessage("GUI::LOGGED_OUT");
+    case LOG_OUT_COMPLETED:
+      logWidget->logMessage("GUI::LOG_OUT_COMLETED");
       
       if (currentState == LOGGED_OUT)
         ;/* do nothing TODO */
@@ -826,7 +826,7 @@ QString MXitC::getPresenceString(Protocol::Enumerables::Contact::Presence presen
 **
 ****************************************************************************/
 
-void MXitC::setStatus(State newState)
+void MXitC::setStatus(GuiState newState)
 {
 
   currentState = newState;

@@ -26,13 +26,14 @@
 
 #include "common/types.h"
 #include "common/actions.h"
+#include "common/gui_states.h"
 
-#include "common.h" /*FIXME*/
 
 #include "mxit/client.h"
 #include "mxit/contact.h"
 #include "mxit/address_book.h"
 #include "mxit/conversations.h"
+
 #include "gui/dock_widgets/log.h"
 #include "gui/dock_widgets/debug.h"
 #include "gui/dock_widgets/options.h"
@@ -46,8 +47,9 @@
 
 #include "gui/theme.h"
 #include "gui/first_run_wizard.h"
-#include "gui/conversations_widgets_controller.h"
-#include "gui/conversations_tab_widget.h"
+
+#include "gui/conversations_components/controller.h"
+#include "gui/conversations_components/tab_widget.h"
 
 #include "protocol/enumerables/chunked_data.h"
 #include "protocol/enumerables/message.h"
@@ -72,7 +74,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   signals:
   
-  void stateChanged(State newState);
+  void stateChanged(GuiState newState);
   
   void outgoingLoginRegisterError(const QString&);
   
@@ -85,7 +87,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   private: /* methods */
   void outgoingMessage(const QString & message);
   
-  void setStatus(State newState);
+  void setStatus(GuiState newState);
   
   /* action handlers */
   //void contactsReceived();
@@ -159,7 +161,7 @@ class MXitC : public QMainWindow, private Ui::MXitC
   
   QSettings *settings;
   
-  State currentState;
+  GuiState currentState;
   Theme theme;
  
   /* status bar stuff TODO - put in own class*/
@@ -173,8 +175,8 @@ class MXitC : public QMainWindow, private Ui::MXitC
   bool environmentVariablesAreReady;
   
   
-  ConversationsWidgetsController * conversationsWidgetsController;
-  ConversationsTabWidget * conversationsTabWidget;
+  ConversationsComponent::Controller * conversationsWidgetsController;
+  ConversationsComponent::TabWidget * conversationsTabWidget;
   
   
   /* Dockable Widgets*/

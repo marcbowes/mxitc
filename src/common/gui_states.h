@@ -6,9 +6,10 @@
 **
 ****************************************************************************/
 
-  
-#ifndef __MXIT_ACTIONS_H__
-#define __MXIT_ACTIONS_H__
+
+#ifndef __MXIT_GUI_STATES_H__
+#define __MXIT_GUI_STATES_H__
+
 
 namespace MXit
 {
@@ -17,19 +18,15 @@ namespace MXit
 **
 ** Author: Richard Baxter
 **
-** enum definition for actions
+** enum definition for gui state
 **
 ****************************************************************************/
-enum Action {
-  LOG_IN_COMPLETED,
-  LOG_OUT_COMPLETED,
-  CONTACTS_RECEIVED,
-  MESSAGE_RECEIVED,
-  MULTIMEDIA_RECEIVED,
-  SUBSCRIPTIONS_RECEIVED
-};
+  
+enum GuiState  {LOGGED_IN, LOGGED_OUT, LOGGING_IN};
 
 
 } /* end of MXit namespace */
 
+
 #endif
+

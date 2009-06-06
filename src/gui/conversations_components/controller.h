@@ -2,12 +2,12 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
-** MXit::GUI::ChatAreaControl is the class that hold all the information about the different chat area
+** ConvesationsComponent Controller, controls the various conversation views
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_CONVERSATIONS_WIDGETS_CONTROLLER_H__
-#define __MXIT_GUI_CONVERSATIONS_WIDGETS_CONTROLLER_H__
+#ifndef __MXIT_GUI_CONVERSATIONSCOMPONENTS_CONTROLLER_H__
+#define __MXIT_GUI_CONVERSATIONSCOMPONENTS_CONTROLLER_H__
 
 
 #include "mxit/client.h"
@@ -15,12 +15,8 @@
 #include "mxit/address_book.h"
 #include "mxit/conversations.h"
 
-#include "gui/chat_area.h"
+#include "gui/widgets/conversation.h"
 #include "gui/theme.h"
-
-#include <QUrl>
-#include <QWebView>
-#include <QWebFrame>
 
 
 namespace MXit
@@ -29,14 +25,17 @@ namespace MXit
 namespace GUI
 {
 
-class ConversationsWidgetsController : public QObject {
+namespace ConversationsComponent
+{
+
+class Controller : public QObject {
   Q_OBJECT
   
   
   public: /* class specific */
   
-  ConversationsWidgetsController(Theme &theme, MXit::Client &mxit, Conversations& conversations, AddressBook& addressBook);
-  ~ConversationsWidgetsController();
+  Controller(Theme &theme, MXit::Client &mxit, Conversations& conversations, AddressBook& addressBook);
+  ~Controller();
 
 
   signals:
@@ -72,6 +71,8 @@ class ConversationsWidgetsController : public QObject {
 
 };
 
+
+} /* end of ConversationsComponent namespace */
 
 } /* end of GUI namespace */
 

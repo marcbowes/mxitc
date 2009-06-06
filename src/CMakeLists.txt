@@ -87,15 +87,16 @@ SET(MXIT_CLIENT_SRCS_CXX
   gui/dialogs/register.cpp
   gui/dialogs/register_gateway.cpp
   
+  gui/conversations_components/controller.cpp
+  gui/conversations_components/tab_widget.cpp
+  
+  gui/widgets/conversation.cpp
   gui/widgets/profile_settings.cpp
   gui/widgets/login_settings.cpp
   gui/emoticon.cpp
   
   gui/mxitc.cpp
-  gui/chat_area.cpp
   gui/first_run_wizard.cpp
-  gui/conversations_widgets_controller.cpp
-  gui/conversations_tab_widget.cpp
   gui/mxit_dialog.cpp
   gui/mxit_dock_widget.cpp
   gui/theme.cpp
@@ -132,13 +133,14 @@ SET(MXIT_CLIENT_MOC_SRCS
   gui/dialogs/register.h
   gui/dialogs/register_gateway.h
   
+  gui/conversations_components/controller.h
+  gui/conversations_components/tab_widget.h
+  
+  gui/widgets/conversation.h
   gui/widgets/profile_settings.h
   gui/widgets/login_settings.h
   
   gui/mxitc.h
-  gui/chat_area.h
-  gui/conversations_widgets_controller.h
-  gui/conversations_tab_widget.h
   gui/mxit_dialog.h
   gui/mxit_dock_widget.h
 )
@@ -161,11 +163,11 @@ SET(MXIT_CLIENT_UI
   gui/dialogs/register.ui
   gui/dialogs/register_gateway.ui
   
+  gui/widgets/conversation.ui
   gui/widgets/profile_settings.ui
   gui/widgets/login_settings.ui
   
   gui/mxitc.ui
-  gui/chat_area.ui
   gui/first_run_wizard.ui
 )
 

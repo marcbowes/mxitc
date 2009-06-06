@@ -108,7 +108,7 @@ void Register::checkIfRegisterClickable(const QString &text) {
 **
 ****************************************************************************/
 
-void Register::incomingStateChange(State newState) {
+void Register::incomingStateChange(GuiState newState) {
   if (newState == LOGGED_IN) {
     close(); 
   }

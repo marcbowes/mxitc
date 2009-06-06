@@ -17,7 +17,7 @@
 
 #include "ui_register.h"
 
-#include "gui/common.h" /*FIXME*/
+#include "common/gui_states.h"
 
 namespace MXit
 {
@@ -50,7 +50,7 @@ class Register : public MXitDialog, private Ui::Register
   
   void exec();
   
-  void incomingStateChange(State newState);
+  void incomingStateChange(GuiState newState);
 
   private slots:
   

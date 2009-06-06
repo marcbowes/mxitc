@@ -1,8 +1,16 @@
-#ifndef __MXIT_GUI_CONVERSATION_TAB_WIDGET_H__
-#define __MXIT_GUI_CONVERSATION_TAB_WIDGET_H__
+/****************************************************************************
+**
+** For Copyright & Licensing information, see COPYRIGHT in project root
+**
+** 
+**
+****************************************************************************/
+
+#ifndef __MXIT_GUI_CONVERSATIONSCOMPONENTS_TABWIDGET_H__
+#define __MXIT_GUI_CONVERSATIONSCOMPONENTS_TABWIDGET_H__
 
 
-#include "gui/chat_area.h"
+#include "gui/widgets/conversation.h"
 
 #include "mxit/client.h"
 #include "mxit/conversations.h"
@@ -16,13 +24,16 @@ namespace MXit
 namespace GUI
 {
 
+namespace ConversationsComponent
+{
 
-class ConversationsTabWidget : public QTabWidget{
+
+class TabWidget : public QTabWidget{
   Q_OBJECT
 
   public: /* class specific */
-  ConversationsTabWidget(Theme &theme, MXit::Client &mxit, Conversations& conversations, AddressBook& addressBook, QWidget* parent = 0);
-  ~ConversationsTabWidget();
+  TabWidget(Theme &theme, MXit::Client &mxit, Conversations& conversations, AddressBook& addressBook, QWidget* parent = 0);
+  ~TabWidget();
   
   signals:
   
@@ -46,9 +57,9 @@ class ConversationsTabWidget : public QTabWidget{
 
   void currentChanged ( int index );
   void tabCloseRequested ( int index );
-  void sendMessageFromChatArea (const ChatArea * chatArea);
+  void sendMessageFromConversationWidget (const Widget::Conversation * conversationWidget);
   
-  void removeAndDeleteConversationFromGUI( const Conversation* conversation );
+  void removeAndDeleteConversationFromGUI( const MXit::Conversation* conversation );
   
   
   public slots:
@@ -58,20 +69,20 @@ class ConversationsTabWidget : public QTabWidget{
   private: /* methods */
   
 
-  void updateTabOf(ChatArea * chatArea);
+  void updateTabOf( Widget::Conversation * conversationWidget);
 
   void switchToConversationTab(const Conversation * Conversation); /* for compatibility with contacts list*/
   
   const Conversation * ensureExistanceOfConversation( const Conversation* conversation );
   
-  ChatArea* ensureExistanceOfChatAreaAndTab( const Conversation* conversation );
+  Widget::Conversation* ensureExistanceOfConversationWidgetAndTab( const Conversation* conversation );
   
   
   
   private: /* variables */
   
-  QHash<const Conversation*, ChatArea*> conversationToChatArea;
-  QHash<const QWidget*, const Conversation*> chatAreaToConversation;
+  QHash<const Conversation*, Widget::Conversation*> conversationToConversationWidget;
+  QHash<const QWidget*, const Conversation*> conversationWidgetToConversation;
   
   MXit::Client &mxit;
   Theme &theme;
@@ -83,6 +94,7 @@ class ConversationsTabWidget : public QTabWidget{
 };
 
 
+} /* end of ConversationsComponent namespace */
 
 } /* end of GUI namespace */
 

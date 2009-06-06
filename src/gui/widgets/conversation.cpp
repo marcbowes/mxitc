@@ -1,6 +1,6 @@
 
 
-#include "chat_area.h"
+#include "conversation.h"
 #include <QWebFrame>
 
 
@@ -8,6 +8,9 @@ namespace MXit
 {
 
 namespace GUI
+{
+
+namespace Widget
 {
 
 
@@ -19,12 +22,12 @@ namespace GUI
 **
 ****************************************************************************/
 
-ChatArea::ChatArea(QWidget * parent ) : QWidget(parent) {
+Conversation::Conversation(QWidget * parent ) : QWidget(parent) {
   setupUi(this);
   
   chatWebView->setFocusProxy(chatInput);
   
-  connect(chatInput,   SIGNAL(returnPressed ()), this, SLOT(emitSendMessageFromChatInput()));
+  connect(chatInput,   SIGNAL(returnPressed ()), this, SLOT(emitSendMessageFromConversationWidget()));
   connect(chatInput,   SIGNAL(returnPressed ()), chatInput, SLOT(clear()));
   connect(chatWebView, SIGNAL(loadFinished ( bool )), this, SLOT(loadFinished ( bool )));
   
@@ -42,7 +45,7 @@ ChatArea::ChatArea(QWidget * parent ) : QWidget(parent) {
 **
 ****************************************************************************/
 
-ChatArea::~ChatArea() {
+Conversation::~Conversation() {
 
 }
 
@@ -52,7 +55,7 @@ ChatArea::~ChatArea() {
 **
 ****************************************************************************/
 
-void ChatArea::loadFinished ( bool ok ) {
+void Conversation::loadFinished ( bool ok ) {
   
   QWebFrame * frame = chatWebView->page ()->currentFrame ();
   frame->setScrollBarValue(Qt::Vertical, frame->scrollBarMaximum(Qt::Vertical));
@@ -65,10 +68,12 @@ void ChatArea::loadFinished ( bool ok ) {
 **
 ****************************************************************************/
 
-void ChatArea::emitSendMessageFromChatInput() {
-  emit sendMessageFromChatInput(this);
+void Conversation::emitSendMessageFromConversationWidget() {
+  emit sendMessageFromConversationWidget(this);
   
 }
+
+} /* end of Widget namespace */
 
 } /* end of GUI namespace */
 

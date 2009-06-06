@@ -2,15 +2,15 @@
 **
 ** For Copyright & Licensing information, see COPYRIGHT in project root
 **
-** MXit::GUI::ChatAreaControl is the class that hold all the information about the different chat area
+** 
 **
 ****************************************************************************/
 
-#ifndef __MXIT_GUI_CHAT_AREA_H__
-#define __MXIT_GUI_CHAT_AREA_H__
+#ifndef __MXIT_GUI_WIDGET_CONVERSATION_H__
+#define __MXIT_GUI_WIDGET_CONVERSATION_H__
 
 #include <QWidget>
-#include "ui_chat_area.h"
+#include "ui_conversation.h"
 
 namespace MXit
 {
@@ -18,25 +18,28 @@ namespace MXit
 namespace GUI
 {
 
-class ChatArea : public QWidget, public Ui::ChatArea {
+namespace Widget
+{
+
+class Conversation : public QWidget, public Ui::ChatArea {
   Q_OBJECT
   
   
   public: /* class specific */
   
-  ChatArea(QWidget * parent = 0);
+  Conversation(QWidget * parent = 0);
   //ChatArea(const ChatArea& chatArea);
-  ~ChatArea();
+  ~Conversation();
   //ChatArea& operator=(const ChatArea& chatArea);
 
   signals:
   
-  void sendMessageFromChatInput(const ChatArea *);
+  void sendMessageFromConversationWidget(const Widget::Conversation *);
 
   private slots:
   void loadFinished ( bool ok );
 
-  void emitSendMessageFromChatInput();
+  void emitSendMessageFromConversationWidget();
   public: /* methods */
 
   private: /* methods */
@@ -45,6 +48,8 @@ class ChatArea : public QWidget, public Ui::ChatArea {
 
 };
 
+
+} /* end of Widget namespace */
 
 } /* end of GUI namespace */
 

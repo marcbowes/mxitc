@@ -159,7 +159,7 @@ void Login::login()
 **
 ****************************************************************************/
 
-void Login::incomingStateChange(State newState) {
+void Login::incomingStateChange(GuiState newState) {
   if (newState == LOGGED_IN) {
     close(); 
   }

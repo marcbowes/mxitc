@@ -1,12 +1,19 @@
 
 
-#include "conversations_widgets_controller.h"
+#include "controller.h"
+
+#include <QUrl>
+#include <QWebView>
+#include <QWebFrame>
 
 
 namespace MXit
 {
 
 namespace GUI
+{
+
+namespace ConversationsComponent
 {
 
 
@@ -18,12 +25,7 @@ namespace GUI
 **
 ****************************************************************************/
 
-ConversationsWidgetsController::ConversationsWidgetsController(Theme &theme, MXit::Client &mxit, Conversations& conversations, AddressBook& addressBook) : theme(theme), mxit(mxit), conversations(conversations), addressBook(addressBook)  {
-
-
-  
-  
-  /*FIXME - to chat area controller*///connect(mainWebView, SIGNAL(linkClicked(const QUrl&)), mxit, SLOT(linkClicked(const QUrl&)));
+Controller::Controller(Theme &theme, MXit::Client &mxit, Conversations& conversations, AddressBook& addressBook) : theme(theme), mxit(mxit), conversations(conversations), addressBook(addressBook)  {
   
   
 }
@@ -37,7 +39,7 @@ ConversationsWidgetsController::ConversationsWidgetsController(Theme &theme, MXi
 **
 ****************************************************************************/
 
-ConversationsWidgetsController::~ConversationsWidgetsController() {
+Controller::~Controller() {
 
 }
 
@@ -48,7 +50,7 @@ ConversationsWidgetsController::~ConversationsWidgetsController() {
 **
 ****************************************************************************/
   
-void ConversationsWidgetsController::incomingConversationShowRequest (const Contact *contact) {
+void Controller::incomingConversationShowRequest (const Contact *contact) {
   
     emit incomingConversationShowRequestsToWidgets(ensureExistanceAndActivationOfConversation(contact->contactAddress));
 }
@@ -59,7 +61,7 @@ void ConversationsWidgetsController::incomingConversationShowRequest (const Cont
 **
 ****************************************************************************/
 
-void ConversationsWidgetsController::addConversationsWidget(QWidget * newConversationWidget) {
+void Controller::addConversationsWidget(QWidget * newConversationWidget) {
   
   QWidget* newConversationObject = (QWidget*)newConversationWidget;
 
@@ -206,7 +208,7 @@ void ConversationsWidgetsController::addConversationsWidget(QWidget * newConvers
 **
 ****************************************************************************/
 
-const Conversation * ConversationsWidgetsController::ensureExistanceAndActivationOfConversation(const QString& uniqueId) {
+const Conversation * Controller::ensureExistanceAndActivationOfConversation(const QString& uniqueId) {
   
   const Conversation * conversation = conversations.getConversation(uniqueId);
 
@@ -238,22 +240,24 @@ const Conversation * ConversationsWidgetsController::ensureExistanceAndActivatio
 **
 ****************************************************************************/
 
-void ConversationsWidgetsController::incomingMessageFromWidget(QString& message, const Conversation * conversation) {
+void Controller::incomingMessageFromWidget(QString& message, const Conversation * conversation) {
   
  
   Q_FOREACH(const Contact* contact, conversation->getContacts()) {
     mxit.sendMessage(contact->contactAddress, message, Protocol::Enumerables::Message::Normal /* FIXME? */, Protocol::Enumerables::Message::MayContainMarkup);
     
     
-    conversations.addMessage(   QByteArray(), /*FIXME, should be 'me'*/
-                                mxit.variableValue("dateTime"),  /*FIXME, where do i get this from?*/
-                                mxit.variableValue("time"), /*FIXME, where do i get this from?*/
+    conversations.addMessage(   QByteArray(),
+                                mxit.variableValue("dateTime"),
+                                mxit.variableValue("time"),
                                 QByteArray().append (contact->contactAddress),
-                                mxit.variableValue("flags"), /*FIXME, where do i get this from?*/
+                                mxit.variableValue("flags"),
                                 QByteArray().append (message) );
   }
 }
 
+
+} /* end of ConversationsComponent namespace */
 
 } /* end of GUI namespace */
 

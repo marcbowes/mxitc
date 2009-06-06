@@ -529,7 +529,7 @@ void Client::setGateway(const QString &connectionString, const QString &httpHost
   if (connection->getState() != MXit::Network::Connection::DISCONNECTED) {
     sendPacket("logout");
     connection->close();
-    emit outgoingAction(LOGGED_OUT);
+    emit outgoingAction(LOG_OUT_COMPLETED);
   }
   connection->setGateway(connectionString, httpHost, port, username, password);
   connection->open(getPacket("login"));
@@ -772,7 +772,7 @@ void Client::incomingPacket(QByteArray packet)
   switch (packetHeader["command"].toUInt()) {
     case LOGIN:
     case REGISTER:
-      emit outgoingAction(LOGGED_IN);
+      emit outgoingAction(LOG_IN_COMPLETED);
 
       /* variable scrubbing */
       useVariable("loginname", 0);
@@ -790,7 +790,7 @@ void Client::incomingPacket(QByteArray packet)
     case LOGOUT:
       connection->close();
 
-      emit outgoingAction(LOGGED_OUT);
+      emit outgoingAction(LOG_OUT_COMPLETED);
       break;
     case GETCONTACTS:
       emit outgoingAction(CONTACTS_RECEIVED);
