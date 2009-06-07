@@ -140,8 +140,8 @@ void Conversation::appendMessage(const Message &message)
   /* build insertion */
   QString insertion;
   insertion.append(QString("<div class=\"message%1\">").arg(cssClass));
-  insertion.append(QString("<span class=\"timestamp\">[%1]</span>").arg(message.timestamp.toString()));
-  insertion.append(QString("<span class=\"author\">%1</span>").arg(author));
+  insertion.append(QString("<span class=\"timestamp%1\">[%2]</span>").arg(cssClass).arg(message.timestamp.toString()));
+  insertion.append(QString("<span class=\"author%1\">%2</span>").arg(cssClass).arg(author));
   QString messageWithEmoticons = message.message(); /* FIXME: reliance on GUI code */
   theme.chat.injectEmoticons(messageWithEmoticons);
   insertion.append(QString("<span class=\"body\">%1</span>").arg(messageWithEmoticons));
