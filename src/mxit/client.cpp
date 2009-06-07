@@ -1125,7 +1125,12 @@ void Client::setupReceived()
 
     return;
   }
-
+  
+  /* ensure we are using latest PID (for encryptedpassword & dc) */
+  variables.remove("dc");
+  variables.remove("encryptedpassword");
+  useVariable("pid", 0);
+  
   connection->setGateway(variables["soc1"], "", 0, "", "");
   if (!registerAfterChallenge)
     connection->open(getPacket("login"));
