@@ -46,6 +46,7 @@ QString Chat::spokenToShorthand(const QString &spoken)
     dictionary["minus"]         = '-';
     dictionary["O"]             = 'O';
     dictionary["P"]             = 'P';
+    dictionary["pipe"]          = '|';
     dictionary["rightbracket"]  = ')';
     dictionary["semicolon"]     = ';';
     dictionary["star"]          = '*';
