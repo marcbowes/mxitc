@@ -159,9 +159,7 @@ void Conversations::incomingConversationUpdatedFinished     (const Conversation 
 ****************************************************************************/
 
 void Conversations::refreshTheming() {
-
   setConversationCss();
-  setStyleSheet(theme.contact.stylesheet);  
 
   /*refreshing all contacts*/
   for (int i = 0 ; i < conversationsList->count() ; i++) {

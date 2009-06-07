@@ -92,7 +92,8 @@ Contacts::~Contacts()
 ****************************************************************************/
 
 void Contacts::refreshTheming() {
-
+  setStyleSheet(theme.contact.stylesheet);
+  
   /*refreshing all contacts*/
   for (int i = 0 ; i < contactsTree->topLevelItemCount() ; i++) {
     QTreeWidgetItem * groupTwi = contactsTree->topLevelItem(i);
