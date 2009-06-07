@@ -120,7 +120,7 @@ void Login::buildPacket(MXit::Network::Packet *packet, VariableHash &variables)
             << "utf8=false;ctyp=8129"             // capabilities
             << variables["dc"]                    // dc
             << "524287"                           // features
-            << variables["defaultDialingCode"]    // dialingCode
+            << variables["dial"]                  // dialingCode
             << variables["locale"]                // locale
   ;
   
