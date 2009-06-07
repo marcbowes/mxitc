@@ -135,7 +135,7 @@ void TabWidget::tabCloseRequested ( int index ) {
 }
 
 
-void TabWidget::refreshThemeing() {
+void TabWidget::refreshTheming() {
   
   for (int i = 0 ; i < tabBar()->count(); i++) {
     

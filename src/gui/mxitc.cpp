@@ -153,14 +153,14 @@ MXitC::MXitC(QApplication *app, MXit::Client *client) : QMainWindow (), splash(t
             this, SLOT(incomingConnectionState(Network::Connection::State))  );
   
   /*------------------------------------------------------------------------------------------*/
-  /* Hooking up themeing refreshes and logging */
+  /* Hooking up theming refreshes and logging */
   /*------------------------------------------------------------------------------------------*/
   
   connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(themeChanged()));
   connect(  optionsWidget, SIGNAL(themeChanged()), this, SLOT(refreshStatusBar()));
-  connect(  optionsWidget, SIGNAL(themeChanged()), conversationsWidget, SLOT(refreshThemeing()));
-  connect(  optionsWidget, SIGNAL(themeChanged()), contactsWidget, SLOT(refreshThemeing()));
-  connect(  optionsWidget, SIGNAL(themeChanged()), conversationsTabWidget, SLOT(refreshThemeing()));
+  connect(  optionsWidget, SIGNAL(themeChanged()), conversationsWidget, SLOT(refreshTheming()));
+  connect(  optionsWidget, SIGNAL(themeChanged()), contactsWidget, SLOT(refreshTheming()));
+  connect(  optionsWidget, SIGNAL(themeChanged()), conversationsTabWidget, SLOT(refreshTheming()));
   
   
   /* Conversation log dir */

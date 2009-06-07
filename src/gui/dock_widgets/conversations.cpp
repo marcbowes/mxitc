@@ -158,7 +158,7 @@ void Conversations::incomingConversationUpdatedFinished     (const Conversation 
 **
 ****************************************************************************/
 
-void Conversations::refreshThemeing() {
+void Conversations::refreshTheming() {
 
   setConversationCss();
   setStyleSheet(theme.contact.stylesheet);  

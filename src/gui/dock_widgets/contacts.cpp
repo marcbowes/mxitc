@@ -39,7 +39,7 @@ Contacts::Contacts(QWidget* parent, Theme &theme, MXit::Client& mxit, AddressBoo
 {
   setupUi(this);
   
-  connect(  &options, SIGNAL(requestRefresh()), this, SLOT(refreshThemeing()));
+  connect(  &options, SIGNAL(requestRefresh()), this, SLOT(refreshTheming()));
   
   
   connect(  &addressBook, SIGNAL( updated(const ContactList&)),
@@ -91,7 +91,7 @@ Contacts::~Contacts()
 **
 ****************************************************************************/
 
-void Contacts::refreshThemeing() {
+void Contacts::refreshTheming() {
 
   /*refreshing all contacts*/
   for (int i = 0 ; i < contactsTree->topLevelItemCount() ; i++) {
@@ -772,7 +772,7 @@ void Contacts::refreshList(const OrderedContactMap& contacts) {
   
   }
   
-  refreshThemeing();
+  refreshTheming();
   
   //qDebug() <<orderedGroupNames; /*TODO test groupMap thing*/
   emit groupsUpdated(getGroupNames());

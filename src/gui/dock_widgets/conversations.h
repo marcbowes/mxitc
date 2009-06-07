@@ -67,7 +67,7 @@ class Conversations : public MXitDockWidget, private Ui::ConversationsDockWidget
   
   public slots:
   
-  void refreshThemeing();
+  void refreshTheming();
   
   private:
   

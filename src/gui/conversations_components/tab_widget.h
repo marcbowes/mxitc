@@ -64,7 +64,7 @@ class TabWidget : public QTabWidget{
   
   public slots:
   
-  void refreshThemeing();
+  void refreshTheming();
   
   private: /* methods */
   

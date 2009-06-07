@@ -71,7 +71,7 @@ class Contacts : public MXitDockWidget, private Ui::ContactsDockWidget
   ContactList genContactsListFromTwiSelection(const QList<QTreeWidgetItem *>& selectedTwi);
   
   public slots:
-  void refreshThemeing();
+  void refreshTheming();
  
 
   private slots:
